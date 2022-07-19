@@ -1,0 +1,5 @@
+{
+  "block.powertool.command_block": "周期循环命令方块儿",
+  "itemGroup.powertool": "PowerTool",
+  "powertool.gui.period": "周期"
+}

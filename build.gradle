@@ -21,9 +21,6 @@ apply plugin: 'org.spongepowered.mixin'
 
 apply from: 'gradle/teacon-forge.gradle'
 
-group = 'org.teacon'
-version = '1.0.0'
-
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }

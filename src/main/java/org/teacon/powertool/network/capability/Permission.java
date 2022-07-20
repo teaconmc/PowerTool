@@ -8,8 +8,6 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
@@ -74,29 +72,15 @@ public class Permission {
         public static void on(PermissionGatherEvent.Nodes event) {
             event.addNodes(GAMEMODE, COMMAND_BLOCK);
         }
+    }
 
-        @SubscribeEvent
-        public static void on(PlayerEvent.PlayerLoggedInEvent event) {
-            if (event.getPlayer() instanceof ServerPlayer player)
-                PowerToolNetwork.channel().send(
-                    PacketDistributor.PLAYER.with(() -> player),
-                    new UpdatePermissionPacket(
-                        PermissionAPI.getPermission(player, COMMAND_BLOCK),
-                        PermissionAPI.getPermission(player, GAMEMODE)
-                    )
-                );
-        }
-
-        @SubscribeEvent
-        public static void on(PermissionsChangedEvent event) {
-            if (event.getPlayer() instanceof ServerPlayer player)
-                PowerToolNetwork.channel().send(
-                    PacketDistributor.PLAYER.with(() -> player),
-                    new UpdatePermissionPacket(
-                        PermissionAPI.getPermission(player, COMMAND_BLOCK),
-                        PermissionAPI.getPermission(player, GAMEMODE)
-                    )
-                );
-        }
+    public static void updatePermission(ServerPlayer player) {
+        PowerToolNetwork.channel().send(
+            PacketDistributor.PLAYER.with(() -> player),
+            new UpdatePermissionPacket(
+                PermissionAPI.getPermission(player, Provider.COMMAND_BLOCK),
+                PermissionAPI.getPermission(player, Provider.GAMEMODE)
+            )
+        );
     }
 }

@@ -6,9 +6,11 @@
   "refmap": "powertool.refmap.json",
   "mixins": [
     "CommandBlockMixin",
+    "CommandsMixin",
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
+    "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
     "client.PlayerMixin"
   ],

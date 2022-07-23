@@ -23,5 +23,11 @@ public class PowerToolItems {
     public static void register() {
         var bus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(bus);
+        ITEMS.register("useless_stick", () -> new Item(new Item.Properties().tab(TAB)) {
+            @Override
+            public boolean isFoil(ItemStack stack) {
+                return true;
+            }
+        });
     }
 }

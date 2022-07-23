@@ -1,5 +1,10 @@
 {
   "block.powertool.command_block": "周期循环命令方块儿",
+  "block.powertool.power_supply": "电源",
+  "block.powertool.trash_can": "垃圾桶",
+  "item.powertool.useless_stick": "看起来没用的木棍儿",
+
   "itemGroup.powertool": "PowerTool",
+
   "powertool.gui.period": "周期"
 }

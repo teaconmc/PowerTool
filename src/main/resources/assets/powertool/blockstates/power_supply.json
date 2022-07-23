@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "powertool:block/power_supply" }
+  }
+}

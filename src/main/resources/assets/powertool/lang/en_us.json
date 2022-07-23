@@ -1,5 +1,10 @@
 {
   "block.powertool.command_block": "Period Repeating Command Block",
+  "block.powertool.power_supply": "Power Supply",
+  "block.powertool.trash_can": "Trash Can",
+  "item.powertool.useless_stick": "Seemingly Useless Stick",
+
   "itemGroup.powertool": "PowerTool",
+
   "powertool.gui.period": "Period"
 }

@@ -7,6 +7,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.network.client.UpdatePermissionPacket;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
+import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 
 import java.util.Optional;
 
@@ -25,6 +26,8 @@ public class PowerToolNetwork {
             SetCommandBlockPacket::new, SetCommandBlockPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         channel.registerMessage(1, UpdatePermissionPacket.class, UpdatePermissionPacket::write,
             UpdatePermissionPacket::new, UpdatePermissionPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        channel.registerMessage(2, UpdatePowerSupplyData.class, UpdatePowerSupplyData::write,
+            UpdatePowerSupplyData::new, UpdatePowerSupplyData::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static SimpleChannel channel() {

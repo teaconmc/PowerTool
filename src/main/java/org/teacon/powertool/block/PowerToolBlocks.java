@@ -13,6 +13,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
 
@@ -27,8 +28,10 @@ public class PowerToolBlocks {
     public static RegistryObject<Block> COMMAND_BLOCK;
     public static RegistryObject<Block> TRASH_CAN;
     public static RegistryObject<Block> POWER_SUPPLY;
+    public static RegistryObject<Block> ITEM_SUPPLIER;
     public static RegistryObject<BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static RegistryObject<BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
+    public static RegistryObject<BlockEntityType<ItemSupplierBlockEntity>> ITEM_SUPPLIER_BLOCK_ENTITY;
 
     public static void register() {
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -37,17 +40,22 @@ public class PowerToolBlocks {
             BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_PURPLE).requiresCorrectToolForDrops().strength(-1.0F, 3600000.0F).noDrops(),
             false
         ));
-        TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanBlock(BlockBehaviour.Properties.of(Material.METAL)));
-        POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.of(Material.METAL)));
+        TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanBlock(BlockBehaviour.Properties.of(Material.METAL).strength(100)));
+        POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.of(Material.METAL).strength(100)));
+        ITEM_SUPPLIER = BLOCKS.register("item_supplier", () -> new ItemSupplierBlock(BlockBehaviour.Properties.of(Material.METAL).strength(100).noOcclusion()));
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ).build(DSL.remainderType()));
         POWER_SUPPLY_BLOCK_ENTITY = BLOCK_ENTITIES.register("power_supply", () -> BlockEntityType.Builder.of(
                 PowerSupplyBlockEntity::new, POWER_SUPPLY.get()
         ).build(DSL.remainderType()));
+        ITEM_SUPPLIER_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_supplier", () -> BlockEntityType.Builder.of(
+                ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get()
+        ).build(DSL.remainderType()));
 
         ITEMS.register("command_block", () -> new BlockItem(COMMAND_BLOCK.get(), new Item.Properties().tab(TAB)));
         ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties().tab(TAB)));
         ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties().tab(TAB)));
+        ITEMS.register("item_supplier", () -> new BlockItem(ITEM_SUPPLIER.get(), new Item.Properties().tab(TAB)));
     }
 }

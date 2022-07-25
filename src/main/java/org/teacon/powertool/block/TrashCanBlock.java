@@ -75,7 +75,7 @@ public class TrashCanBlock extends Block {
 
     @Override
     public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
-        return state.getValue(POWERED) ? 1 : 0;
+        return direction == Direction.DOWN && state.getValue(POWERED) ? 1 : 0;
     }
 
     @Override

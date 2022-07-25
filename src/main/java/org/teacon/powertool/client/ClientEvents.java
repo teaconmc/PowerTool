@@ -10,6 +10,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ScreenOpenEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -21,6 +22,8 @@ import org.teacon.powertool.network.capability.Permission;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class ClientEvents {
+
+    static int tickCount = 0;
 
     @SubscribeEvent
     public static void on(AttachCapabilitiesEvent<Entity> event) {
@@ -34,6 +37,13 @@ public class ClientEvents {
         if (event.getScreen() instanceof CommandBlockEditScreen screen
             && screen.autoCommandBlock instanceof PeriodicCommandBlockEntity blockEntity) {
             event.setScreen(new PeriodicCommandBlockEditScreen(blockEntity));
+        }
+    }
+
+    @SubscribeEvent
+    public static void on(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            tickCount++;
         }
     }
 

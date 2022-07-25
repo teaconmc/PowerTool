@@ -12,7 +12,8 @@
   "client": [
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
-    "client.PlayerMixin"
+    "client.PlayerMixin",
+    "client.EntityArgumentMixin"
   ],
   "injectors": {
     "defaultRequire": 1

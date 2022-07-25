@@ -30,6 +30,7 @@ public class Permission {
 
     private Boolean canUseGameMasterBlock;
     private Boolean canSwitchGameMode;
+    private Boolean canUseSelector;
 
     public Optional<Boolean> isCanUseGameMasterBlock() {
         return Optional.ofNullable(canUseGameMasterBlock);
@@ -45,6 +46,14 @@ public class Permission {
 
     public void setCanSwitchGameMode(boolean canSwitchGameMode) {
         this.canSwitchGameMode = canSwitchGameMode;
+    }
+
+    public Optional<Boolean> isCanUseSelector() {
+        return Optional.ofNullable(canUseSelector);
+    }
+
+    public void setCanUseSelector(Boolean canUseSelector) {
+        this.canUseSelector = canUseSelector;
     }
 
     @Mod.EventBusSubscriber
@@ -67,10 +76,14 @@ public class Permission {
             "minecraft", "use_gamemaster_block", PermissionTypes.BOOLEAN,
             (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.hasPermissions(2)
         );
+        private static final PermissionNode<Boolean> ENTITY_SELECTOR = new PermissionNode<>(
+            "minecraft", "command.selector", PermissionTypes.BOOLEAN,
+            (player, uuid, context) -> player != null && player.hasPermissions(2)
+        );
 
         @SubscribeEvent
         public static void on(PermissionGatherEvent.Nodes event) {
-            event.addNodes(GAMEMODE, COMMAND_BLOCK);
+            event.addNodes(GAMEMODE, COMMAND_BLOCK, ENTITY_SELECTOR);
         }
     }
 
@@ -79,7 +92,8 @@ public class Permission {
             PacketDistributor.PLAYER.with(() -> player),
             new UpdatePermissionPacket(
                 PermissionAPI.getPermission(player, Provider.COMMAND_BLOCK),
-                PermissionAPI.getPermission(player, Provider.GAMEMODE)
+                PermissionAPI.getPermission(player, Provider.GAMEMODE),
+                PermissionAPI.getPermission(player, Provider.ENTITY_SELECTOR)
             )
         );
     }

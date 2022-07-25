@@ -7,15 +7,16 @@ import org.teacon.powertool.network.capability.Permission;
 
 import java.util.function.Supplier;
 
-public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canSwitchGameMode) {
+public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canSwitchGameMode, boolean canUseSelector) {
 
     public UpdatePermissionPacket(FriendlyByteBuf buf) {
-        this(buf.readBoolean(), buf.readBoolean());
+        this(buf.readBoolean(), buf.readBoolean(), buf.readBoolean());
     }
 
     public void write(FriendlyByteBuf buf) {
         buf.writeBoolean(canUseGameMasterBlock);
         buf.writeBoolean(canSwitchGameMode);
+        buf.writeBoolean(canUseSelector);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -26,6 +27,7 @@ public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canS
                 minecraft.player.getCapability(Permission.CAPABILITY).ifPresent(it -> {
                     it.setCanSwitchGameMode(canSwitchGameMode);
                     it.setCanUseGameMasterBlock(canUseGameMasterBlock);
+                    it.setCanUseSelector(canUseSelector);
                 });
             }
         });

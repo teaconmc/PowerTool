@@ -69,11 +69,17 @@ public class ItemSupplierBlock extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (level.getBlockEntity(pos) instanceof ItemSupplierBlockEntity theBE && player.getAbilities().instabuild) {
-            theBE.theItem = player.getItemInHand(hand).copy();
-            if (!level.isClientSide) {
-                theBE.setChanged();
-                level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+        if (level.getBlockEntity(pos) instanceof ItemSupplierBlockEntity theBE) {
+            if (player.getAbilities().instabuild) {
+                theBE.theItem = player.getItemInHand(hand).copy();
+                if (!level.isClientSide) {
+                    theBE.setChanged();
+                    level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                }
+            } else {
+                ItemStack toGive = theBE.theItem.copy();
+                toGive.setCount(player.isCrouching() ? toGive.getMaxStackSize() : 1);
+                player.getInventory().add(toGive);
             }
             return InteractionResult.SUCCESS;
         }

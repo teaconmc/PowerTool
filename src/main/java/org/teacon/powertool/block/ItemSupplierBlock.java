@@ -60,7 +60,7 @@ public class ItemSupplierBlock extends BaseEntityBlock {
 
     @Override
     public void attack(BlockState state, Level level, BlockPos pos, Player player) {
-        if (level.getBlockEntity(pos) instanceof ItemSupplierBlockEntity theBE) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ItemSupplierBlockEntity theBE) {
             ItemStack thing = theBE.theItem.copy();
             thing.setCount(player.isCrouching() ? thing.getMaxStackSize() : 1);
             player.getInventory().add(thing);

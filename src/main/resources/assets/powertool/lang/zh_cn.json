@@ -3,7 +3,7 @@
   "block.powertool.power_supply": "电源",
   "block.powertool.trash_can": "垃圾桶",
   "block.powertool.item_supplier": "供货箱",
-  "block.powertool.item_supplier.tooltip": "创造模式下右击放入物品，生存模式下左击取出不限量物品。",
+  "block.powertool.item_supplier.tooltip": "创造模式下右击放入物品，其他模式下左击右击都可以取出不限量物品。",
   "block.powertool.cosmetic_hopper": "漏斗（装饰品）",
   "block.powertool.cosmetic_hopper.tooltip": "没有实际功能，可放心在建筑中使用",
   "item.powertool.useless_stick": "看起来没用的木棍儿",

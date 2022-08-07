@@ -17,6 +17,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Apply Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: $${{ runner.os }}-gradle
       - name: Maven Publish
         id: maven_publish
         env:

@@ -15,6 +15,13 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Apply Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: $${{ runner.os }}-gradle
       - name: Get Short Identifier
         uses: benjlevesque/short-sha@v1.2
         id: short-sha

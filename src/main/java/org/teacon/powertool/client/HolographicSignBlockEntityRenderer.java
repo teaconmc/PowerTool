@@ -30,8 +30,10 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
         int bgColor = (int)(opacity * 255.0F) << 24;
         int yOffset = -theSign.contents.size() / 2 * this.font.lineHeight;
         for (var text : theSign.contents) {
-            float xOffset = (float)(-this.font.width(text) / 2);
-            this.font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrix4f, bufferSource, false, bgColor, packedLight);
+            if (text != null && !text.getContents().isEmpty()) {
+                float xOffset = (float) (-this.font.width(text) / 2);
+                this.font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrix4f, bufferSource, false, bgColor, packedLight);
+            }
             yOffset += this.font.lineHeight + 2;
         }
         transform.popPose();

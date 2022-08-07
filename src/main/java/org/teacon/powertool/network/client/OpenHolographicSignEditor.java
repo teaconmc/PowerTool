@@ -27,15 +27,19 @@ public class OpenHolographicSignEditor {
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
         var context = contextSupplier.get();
-        context.enqueueWork(() -> {
-            var mc = Minecraft.getInstance();
-            var level = mc.level;
-            if (level != null && level.getBlockEntity(this.location) instanceof HolographicSignBlockEntity theSign) {
-                mc.setScreen(new HolographicSignEditingScreen(theSign, mc.isTextFilteringEnabled()));
-            }
-        });
+        context.enqueueWork(new Handler());
         context.setPacketHandled(true);
     }
 
+    public class Handler implements Runnable {
+        @Override
+        public void run() {
+            var mc = Minecraft.getInstance();
+            var level = mc.level;
+            if (level != null && level.getBlockEntity(OpenHolographicSignEditor.this.location) instanceof HolographicSignBlockEntity theSign) {
+                mc.setScreen(new HolographicSignEditingScreen(theSign, mc.isTextFilteringEnabled()));
+            }
+        }
+    }
 
 }

@@ -68,5 +68,6 @@ public class PowerToolBlocks {
         ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties().tab(TAB)));
         ITEMS.register("item_supplier", () -> new BlockItem(ITEM_SUPPLIER.get(), new Item.Properties().tab(TAB)));
         ITEMS.register("cosmetic_hopper", () -> new BlockItem(COSMETIC_HOPPER.get(), new Item.Properties().tab(TAB)));
+        ITEMS.register("holographic_sign", () -> new BlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties().tab(TAB)));
     }
 }

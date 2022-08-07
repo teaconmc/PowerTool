@@ -6,6 +6,7 @@
   "block.powertool.item_supplier.tooltip": "In creative mode, right-click to put held items in. In other modes, left-click or right-click to get unlimited items out.",
   "block.powertool.cosmetic_hopper": "Hopper (Cosmetic)",
   "block.powertool.cosmetic_hopper.tooltip": "No functionality, safe for buildings",
+  "block.powertool.holographic_sign": "Holographic Sign",
   "item.powertool.useless_stick": "Seemingly Useless Stick",
 
   "itemGroup.powertool": "PowerTool",

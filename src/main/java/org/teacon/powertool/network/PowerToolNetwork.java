@@ -5,8 +5,10 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.client.UpdatePermissionPacket;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
+import org.teacon.powertool.network.server.UpdateHolographicSignData;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 
 import java.util.Optional;
@@ -28,6 +30,10 @@ public class PowerToolNetwork {
             UpdatePermissionPacket::new, UpdatePermissionPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         channel.registerMessage(2, UpdatePowerSupplyData.class, UpdatePowerSupplyData::write,
             UpdatePowerSupplyData::new, UpdatePowerSupplyData::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        channel.registerMessage(3, OpenHolographicSignEditor.class, OpenHolographicSignEditor::write,
+            OpenHolographicSignEditor::new, OpenHolographicSignEditor::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        channel.registerMessage(4, UpdateHolographicSignData.class, UpdateHolographicSignData::write,
+            UpdateHolographicSignData::new, UpdateHolographicSignData::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static SimpleChannel channel() {

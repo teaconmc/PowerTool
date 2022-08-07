@@ -14,6 +14,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
@@ -31,9 +32,11 @@ public class PowerToolBlocks {
     public static RegistryObject<Block> POWER_SUPPLY;
     public static RegistryObject<Block> ITEM_SUPPLIER;
     public static RegistryObject<Block> COSMETIC_HOPPER;
+    public static RegistryObject<Block> HOLOGRAPHIC_SIGN;
     public static RegistryObject<BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static RegistryObject<BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
     public static RegistryObject<BlockEntityType<ItemSupplierBlockEntity>> ITEM_SUPPLIER_BLOCK_ENTITY;
+    public static RegistryObject<BlockEntityType<HolographicSignBlockEntity>> HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
 
     public static void register() {
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -46,6 +49,7 @@ public class PowerToolBlocks {
         POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.of(Material.METAL).strength(1000)));
         ITEM_SUPPLIER = BLOCKS.register("item_supplier", () -> new ItemSupplierBlock(BlockBehaviour.Properties.of(Material.METAL).strength(1000).noOcclusion()));
         COSMETIC_HOPPER = BLOCKS.register("cosmetic_hopper", () -> new CosmeticHopper(BlockBehaviour.Properties.copy(Blocks.HOPPER)));
+        HOLOGRAPHIC_SIGN = BLOCKS.register("holographic_sign", () -> new HolographicSignBlock(BlockBehaviour.Properties.copy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noDrops()));
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ).build(DSL.remainderType()));
@@ -54,6 +58,9 @@ public class PowerToolBlocks {
         ).build(DSL.remainderType()));
         ITEM_SUPPLIER_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_supplier", () -> BlockEntityType.Builder.of(
                 ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get()
+        ).build(DSL.remainderType()));
+        HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("holographic_sign", () -> BlockEntityType.Builder.of(
+                HolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()
         ).build(DSL.remainderType()));
 
         ITEMS.register("command_block", () -> new BlockItem(COMMAND_BLOCK.get(), new Item.Properties().tab(TAB)));

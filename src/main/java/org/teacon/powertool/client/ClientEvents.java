@@ -59,6 +59,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void ber(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), ItemSupplierBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), HolographicSignBlockEntityRenderer::new);
         }
     }
 }

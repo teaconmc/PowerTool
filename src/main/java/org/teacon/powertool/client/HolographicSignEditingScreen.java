@@ -109,11 +109,17 @@ public class HolographicSignEditingScreen extends Screen {
         if (keyCode == GLFW.GLFW_KEY_UP) {
             // Move up one line
             this.line = (this.line - 1) % this.messages.length;
+            if (this.line < 0) {
+                this.line = 0;
+            }
             this.signField.setCursorToEnd();
             return true;
         } else if (keyCode == GLFW.GLFW_KEY_DOWN || keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
             // Move down one line
             this.line = (this.line + 1) % this.messages.length;
+            if (this.line >= this.messages.length) {
+                this.line = this.messages.length - 1;
+            }
             this.signField.setCursorToEnd();
             return true;
         } else {

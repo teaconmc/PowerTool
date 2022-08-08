@@ -56,7 +56,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
         if (player.isCrouching()) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide() && player instanceof ServerPlayer sp) {
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && sp.getAbilities().instabuild) {
             PowerToolNetwork.channel().send(PacketDistributor.PLAYER.with(() -> sp), new OpenHolographicSignEditor(pos));
         }
         return InteractionResult.SUCCESS;

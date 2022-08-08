@@ -53,6 +53,17 @@ mixin {
     config "powertool.mixins.json"
 }
 
+repositories {
+    maven {
+        name = "Curse maven"
+        url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation fg.deobf("curse.maven:the-one-probe-245211:3671753")
 }

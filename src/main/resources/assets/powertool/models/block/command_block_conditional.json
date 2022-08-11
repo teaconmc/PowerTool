@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/template_command_block",
+  "textures": {
+    "front": "powertool:block/command_block_front",
+    "back": "powertool:block/command_block_back",
+    "side": "powertool:block/command_block_conditional"
+  }
+}

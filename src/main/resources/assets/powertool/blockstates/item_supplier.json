@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "minecraft:block/glass" }
+    "": { "model": "powertool:block/item_supplier" }
   }
 }

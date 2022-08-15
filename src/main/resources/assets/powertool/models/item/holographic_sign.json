@@ -1,3 +1,6 @@
 {
-  "parent": "powertool:item/holographic_sign"
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "powertool:item/holographic_sign"
+  }
 }

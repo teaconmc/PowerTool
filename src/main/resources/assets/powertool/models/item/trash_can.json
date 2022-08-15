@@ -1,3 +1,6 @@
 {
-  "parent": "powertool:item/trash_can"
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "powertool:item/trash_can"
+  }
 }

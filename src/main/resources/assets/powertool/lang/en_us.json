@@ -6,6 +6,10 @@
   "block.powertool.item_supplier.tooltip": "In creative mode, right-click to put held items in. In other modes, left-click or right-click to get unlimited items out.",
   "block.powertool.cosmetic_hopper": "Hopper (Cosmetic)",
   "block.powertool.cosmetic_hopper.tooltip": "No functionality, safe for buildings",
+  "block.powertool.cosmetic_campfire": "Campfire (Cosmetic)",
+  "block.powertool.cosmetic_campfire.tooltip": "No functionality, safe for buildings. Cannot be used as a signal fire.",
+  "block.powertool.cosmetic_soul_campfire": "Soul Campfire (Cosmetic)",
+  "block.powertool.cosmetic_soul_campfire.tooltip": "No functionality, safe for buildings. Cannot be used as a signal fire.",
   "block.powertool.holographic_sign": "Holographic Sign",
   "item.powertool.useless_stick": "Seemingly Useless Stick",
 

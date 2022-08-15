@@ -20,6 +20,8 @@ import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.menu.PowerToolMenus;
 import org.teacon.powertool.network.capability.Permission;
 
+import java.util.function.Predicate;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class ClientEvents {
 
@@ -53,7 +55,10 @@ public class ClientEvents {
         public static void setup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
                 MenuScreens.register(PowerToolMenus.POWER_SUPPLY_MENU.get(), PowerSupplyScreen::new);
-                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.ITEM_SUPPLIER.get(), RenderType.cutout());
+                Predicate<RenderType> cutout = RenderType.cutout()::equals;
+                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.ITEM_SUPPLIER.get(), cutout);
+                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_CAMPFIRE.get(), cutout);
+                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_SOUL_CAMPFIRE.get(), cutout);
             });
         }
         @SubscribeEvent

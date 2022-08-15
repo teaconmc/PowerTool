@@ -61,7 +61,7 @@ public class CosmeticHopper extends Block {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> tooltip, TooltipFlag pFlag) {
-        tooltip.add(new TranslatableComponent("block.powertool.cosmetic_hopper.tooltip").withStyle(ChatFormatting.GRAY));
+        tooltip.add(new TranslatableComponent("block.powertool.cosmetic_hopper.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override

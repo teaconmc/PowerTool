@@ -3,7 +3,7 @@
   "block.powertool.power_supply": "Power Supply",
   "block.powertool.trash_can": "Trash Can",
   "block.powertool.item_supplier": "Item Supplier",
-  "block.powertool.item_supplier.tooltip": "In creative mode, right-click to put held items in. In other modes, left-click or right-click to get unlimited items out.",
+  "block.powertool.item_supplier.tooltip": "In creative mode, right-click to permanently put held items in. After that, left-click or right-click to get unlimited items out.",
   "block.powertool.cosmetic_hopper": "Hopper (Cosmetic)",
   "block.powertool.cosmetic_hopper.tooltip": "No functionality, safe for buildings",
   "block.powertool.cosmetic_campfire": "Campfire (Cosmetic)",

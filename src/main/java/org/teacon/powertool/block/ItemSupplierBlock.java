@@ -70,7 +70,7 @@ public class ItemSupplierBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof ItemSupplierBlockEntity theBE) {
-            if (player.getAbilities().instabuild) {
+            if (theBE.theItem.isEmpty() && player.getAbilities().instabuild) {
                 theBE.theItem = player.getItemInHand(hand).copy();
                 if (!level.isClientSide) {
                     theBE.setChanged();

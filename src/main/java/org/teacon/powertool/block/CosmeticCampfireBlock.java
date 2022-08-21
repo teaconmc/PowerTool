@@ -10,15 +10,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -51,12 +48,10 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private final boolean spawnParticles;
-    private final int fireDamage;
 
-    public CosmeticCampfireBlock(boolean pSpawnParticles, int pFireDamage, BlockBehaviour.Properties prop) {
+    public CosmeticCampfireBlock(boolean pSpawnParticles, BlockBehaviour.Properties prop) {
         super(prop);
         this.spawnParticles = pSpawnParticles;
-        this.fireDamage = pFireDamage;
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(LIT, Boolean.TRUE)
                 .setValue(WATERLOGGED, Boolean.FALSE)
@@ -78,10 +73,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (!entity.fireImmune() && state.getValue(LIT) && entity instanceof LivingEntity && !EnchantmentHelper.hasFrostWalker((LivingEntity)entity)) {
-            entity.hurt(DamageSource.IN_FIRE, (float)this.fireDamage);
-        }
-        super.entityInside(state, level, pos, entity);
+        // No-op
     }
 
     @Nullable

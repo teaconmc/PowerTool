@@ -32,9 +32,7 @@ teacon {
     modGitHubRepo = 'teaconmc/PowerTool'
     modAuthors = ['IzzelAliz']
     modDescription = 'PowerTool by TeaCon'
-
-    platform = 'forge-1.18.2-40.1.59'
-    parchment = '2022.07.17'
+    platform = 'forge-1.19.4-45.0.64'
 
     // uncomment these lines if you need
     modName = 'PowerTool' // default to repo name
@@ -65,5 +63,5 @@ repositories {
 
 dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3671753")
+    implementation fg.deobf("curse.maven:the-one-probe-245211:4442439")
 }

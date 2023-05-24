@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,9 +22,10 @@ import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraftforge.network.PacketDistributor;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
 import org.teacon.powertool.network.PowerToolNetwork;
@@ -42,7 +43,7 @@ public class HolographicSignEditingScreen extends Screen {
     private final String[] messages;
 
     public HolographicSignEditingScreen(HolographicSignBlockEntity theSign, boolean pIsTextFilteringEnabled) {
-        super(new TranslatableComponent("sign.edit"));
+        super(Component.translatable("sign.edit"));
         var size = theSign.contents.size();
         this.messages = new String[Math.max(size, 4)];
         Arrays.fill(this.messages, "");
@@ -54,8 +55,10 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     protected void init() {
-        this.minecraft.keyboardHandler.setSendRepeatsToGui(true);
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 4 + 120, 200, 20, CommonComponents.GUI_DONE, btn -> this.onDone()));
+        //this.minecraft.keyboardHandler.setSendRepeatsToGui(true); // TODO Check if this is still needed?o
+        this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
+                .pos(this.width / 2 - 100, this.height / 4 + 120)
+                .size(200, 20).build());
         this.signField = new TextFieldHelper(
                 () -> this.messages[this.line],
                 (str) -> this.messages[this.line] = str,
@@ -69,7 +72,7 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public void removed() {
-        this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
+        //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
         int last = this.messages.length - 1;
         for (; last >= 0; last--) {
             if (this.messages[last] != null && !this.messages[last].isEmpty()) {
@@ -162,12 +165,12 @@ public class HolographicSignEditingScreen extends Screen {
                     text = this.font.bidirectionalShaping(text);
                 }
                 float xStart = (float)(-this.minecraft.font.width(text) / 2);
-                this.minecraft.font.drawInBatch(text, xStart, (float)(line * 10 - this.messages.length * 5), line, false, transformMat, bufferSource, false, 0, LightTexture.FULL_BRIGHT, false);
+                this.minecraft.font.drawInBatch(text, xStart, (float)(line * 10 - this.messages.length * 5), line, false, transformMat, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT, false);
                 if (line == this.line && cursorPos >= 0 && showCursor) {
                     int j1 = this.minecraft.font.width(text.substring(0, Math.min(cursorPos, text.length())));
                     int cursorX = j1 - this.minecraft.font.width(text) / 2;
                     if (cursorPos >= text.length()) {
-                        this.minecraft.font.drawInBatch("_", cursorX, cursorY, line, false, transformMat, bufferSource, false, 0, LightTexture.FULL_BRIGHT, false);
+                        this.minecraft.font.drawInBatch("_", cursorX, cursorY, line, false, transformMat, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT, false);
                     }
                 }
             }
@@ -191,21 +194,11 @@ public class HolographicSignEditingScreen extends Screen {
                     int j2 = this.minecraft.font.width(text.substring(0, l1)) - this.minecraft.font.width(text) / 2;
                     int k2 = Math.min(i2, j2);
                     int l2 = Math.max(i2, j2);
-                    Tesselator tesselator = Tesselator.getInstance();
-                    BufferBuilder builder = tesselator.getBuilder();
-                    RenderSystem.setShader(GameRenderer::getPositionColorShader);
-                    RenderSystem.disableTexture();
+                    // TODO Check that everything renders just fine
                     RenderSystem.enableColorLogicOp();
                     RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
-                    builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-                    builder.vertex(transformMat, (float)k2, (float)(cursorY + 9), 0.0F).color(0, 0, 255, 255).endVertex();
-                    builder.vertex(transformMat, (float)l2, (float)(cursorY + 9), 0.0F).color(0, 0, 255, 255).endVertex();
-                    builder.vertex(transformMat, (float)l2, (float)cursorY, 0.0F).color(0, 0, 255, 255).endVertex();
-                    builder.vertex(transformMat, (float)k2, (float)cursorY, 0.0F).color(0, 0, 255, 255).endVertex();
-                    builder.end();
-                    BufferUploader.end(builder);
+                    fill(transform, k2, cursorY, l2, cursorY + 10, -16776961);
                     RenderSystem.disableColorLogicOp();
-                    RenderSystem.enableTexture();
                 }
             }
         }

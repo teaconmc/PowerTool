@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/campfire",
+  "render_type": "cutout"
+}

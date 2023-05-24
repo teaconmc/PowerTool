@@ -5,8 +5,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.BaseCommandBlock;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.network.PowerToolNetwork;
@@ -17,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
 
-    private static final Component PERIOD = new TranslatableComponent("powertool.gui.period");
+    private static final Component PERIOD = Component.translatable("powertool.gui.period");
 
     private EditBox periodBox;
 
@@ -29,7 +27,7 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
     protected void init() {
         super.init();
         this.periodBox = this.addRenderableWidget(
-            new EditBox(this.font, this.width / 2 - 150 + (300 - 40), 105, 40, 20, new TextComponent(""))
+            new EditBox(this.font, this.width / 2 - 150 + (300 - 40), 105, 40, 20, Component.empty())
         );
         this.periodBox.setValue("10");
     }
@@ -51,8 +49,9 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
         super.populateAndSendPacket(baseCommandBlock);
         try {
             var period = Integer.parseInt(this.periodBox.getValue());
+            var pos = baseCommandBlock.getPosition();
             PowerToolNetwork.channel().sendToServer(new SetCommandBlockPacket(
-                new BlockPos(baseCommandBlock.getPosition()), period
+                new BlockPos((int) pos.x, (int) pos.y, (int) pos.z), period
             ));
         } catch (NumberFormatException ignored) {
         }

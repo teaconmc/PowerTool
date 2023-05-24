@@ -1,11 +1,11 @@
 package org.teacon.powertool.menu;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import org.teacon.powertool.block.PowerSupplyBlock;
 
 public class PowerSupplyMenu extends AbstractContainerMenu {
@@ -18,6 +18,11 @@ public class PowerSupplyMenu extends AbstractContainerMenu {
     }
 
     @Override
+    public ItemStack quickMoveStack(Player p, int slot) { // TODO How?
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public boolean stillValid(Player player) {
         return true;
     }
@@ -26,7 +31,7 @@ public class PowerSupplyMenu extends AbstractContainerMenu {
 
         @Override
         public Component getDisplayName() {
-            return TextComponent.EMPTY;
+            return Component.empty();
         }
 
         @Override

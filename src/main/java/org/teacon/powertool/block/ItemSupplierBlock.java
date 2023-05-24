@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -50,7 +49,7 @@ public class ItemSupplierBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(new TranslatableComponent("block.powertool.item_supplier.tooltip").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("block.powertool.item_supplier.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.network.PacketDistributor;
@@ -47,14 +46,22 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
     protected void init() {
         super.init();
         // The minus button
-        this.minus = this.addRenderableWidget(new ButtonWithHighlight(this.leftPos + 9, this.topPos + 44, 16, 16, TextComponent.EMPTY,
-                btn -> this.input.setValue(Integer.toString(--this.power)), btn -> updatePowerOutput(), BG_LOCATION, 256, 256, 170, 44, 170, 60, 170, 76));
+        this.minus = this.addRenderableWidget(new ButtonWithHighlight(new Button.Builder(Component.empty(), btn -> this.input.setValue(Integer.toString(--this.power)))
+                .pos(this.leftPos + 9, this.topPos + 44)
+                .size( 16, 16),
+                btn -> updatePowerOutput(), BG_LOCATION, 256, 256, 170, 44, 170, 60, 170, 76));
         // The plus button
-        this.plus = this.addRenderableWidget(new ButtonWithHighlight(this.leftPos + 145, this.topPos + 44, 16, 16, TextComponent.EMPTY,
-                btn -> this.input.setValue(Integer.toString(++this.power)), btn -> updatePowerOutput(), BG_LOCATION, 256, 256, 186, 44, 186, 60, 186, 76));
-        this.addRenderableWidget(new InvisibleButton(this.leftPos + 125, this.topPos + 20, 32, 13, TextComponent.EMPTY, this::onToggled));
+        this.plus = this.addRenderableWidget(new ButtonWithHighlight(new Button.Builder(Component.empty(), btn -> this.input.setValue(Integer.toString(++this.power)))
+                .pos(this.leftPos + 145, this.topPos + 44)
+                .size(16, 16),
+                btn -> updatePowerOutput(), BG_LOCATION, 256, 256, 186, 44, 186, 60, 186, 76));
+        this.addRenderableWidget(new InvisibleButton(
+                new Button.Builder(Component.empty(), this::onToggled)
+                        .pos(this.leftPos + 125, this.topPos + 20)
+                        .size(32, 13)
+        ));
         // The input field
-        this.input = new EditBox(this.font, this.leftPos + 32, this.topPos + 48, 100, 16, TextComponent.EMPTY);
+        this.input = new EditBox(this.font, this.leftPos + 32, this.topPos + 48, 100, 16, Component.empty());
         this.input.setCanLoseFocus(false);
         this.input.setTextColor(-1);
         this.input.setTextColorUneditable(-1);

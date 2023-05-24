@@ -20,10 +20,10 @@ public class ButtonWithHighlight extends Button {
 
     private final OnPress onReleaseMoment;
 
-    public ButtonWithHighlight(int pX, int pY, int pWidth, int pHeight, Component pMessage, OnPress pOnPress, OnPress onRelease,
+    public ButtonWithHighlight(Builder builder, OnPress onRelease,
                                ResourceLocation texture, int texWidth, int texHeight,
                                int normalU, int normalV, int highlightU, int highlightV, int pressedU, int pressedV) {
-        super(pX, pY, pWidth, pHeight, pMessage, pOnPress);
+        super(builder);
         this.texWidth = texWidth;
         this.texHeight = texHeight;
         this.texture = texture;
@@ -59,16 +59,16 @@ public class ButtonWithHighlight extends Button {
     }
 
     @Override
-    public void renderButton(PoseStack transform, int mouseX, int mouseY, float pPartialTick) {
+    public void renderWidget(PoseStack transform, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, this.texture);
         RenderSystem.enableDepthTest();
         if (this.isBeingPressed) {
-            blit(transform, this.x, this.y, this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
+            blit(transform, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
         } else if (this.isHovered) {
-            blit(transform, this.x, this.y, this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
+            blit(transform, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
         } else {
-            blit(transform, this.x, this.y, this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
+            blit(transform, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
         }
     }
 }

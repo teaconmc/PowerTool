@@ -1,5 +1,6 @@
 {
 	"credit": "Made by XeKr with Blockbench",
+	"render_type": "cutout",
 	"parent": "block/block",
 	"textures": {
 		"0": "powertool:block/item_supplier",

@@ -5,9 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -36,10 +36,10 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Random;
 
 public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlock {
 
@@ -60,9 +60,9 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter pLevel, List<Component> tooltip, TooltipFlag flag) {
-        var regName = stack.getItem().getRegistryName();
+        var regName = ForgeRegistries.ITEMS.getKey(stack.getItem());
         if (regName != null) {
-            tooltip.add(new TranslatableComponent("block." + regName.getNamespace() + "." + regName.getPath() + ".tooltip").withStyle(ChatFormatting.DARK_GRAY));
+            tooltip.add(Component.translatable("block." + regName.getNamespace() + "." + regName.getPath() + ".tooltip").withStyle(ChatFormatting.DARK_GRAY));
         }
     }
 
@@ -99,7 +99,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
     }
 
     @Override
-    public void animateTick(BlockState pState, Level level, BlockPos pos, Random rng) {
+    public void animateTick(BlockState pState, Level level, BlockPos pos, RandomSource rng) {
         if (pState.getValue(LIT)) {
             if (rng.nextInt(10) == 0) {
                 level.playLocalSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS, 0.5F + rng.nextFloat(), rng.nextFloat() * 0.7F + 0.6F, false);

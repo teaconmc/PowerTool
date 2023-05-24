@@ -11,7 +11,7 @@ import org.teacon.powertool.block.PowerSupplyBlock;
 
 public class PowerToolMenus {
 
-    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.CONTAINERS, PowerTool.MODID);
+    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, PowerTool.MODID);
 
     public static RegistryObject<MenuType<PowerSupplyMenu>> POWER_SUPPLY_MENU;
 

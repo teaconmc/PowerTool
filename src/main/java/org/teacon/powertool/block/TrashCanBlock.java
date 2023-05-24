@@ -3,6 +3,7 @@ package org.teacon.powertool.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -29,7 +30,7 @@ public class TrashCanBlock extends Block {
     private static final VoxelShape OUTER_SHAPE = Shapes.block();
     private static final VoxelShape SHAPE = Shapes.join(OUTER_SHAPE, Block.box(2, 2, 2, 14, 16, 14), BooleanOp.ONLY_FIRST);
 
-    private static final TagKey<EntityType<?>> ITEM_TYPE = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(PowerTool.MODID, "item"));
+    private static final TagKey<EntityType<?>> ITEM_TYPE = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(PowerTool.MODID, "item"));
 
     private static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 

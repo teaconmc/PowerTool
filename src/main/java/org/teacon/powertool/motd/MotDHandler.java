@@ -14,7 +14,7 @@ public class MotDHandler {
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (motd != null) {
-            event.getPlayer().displayClientMessage(motd, false);
+            event.getEntity().displayClientMessage(motd, false);
         }
     }
 }

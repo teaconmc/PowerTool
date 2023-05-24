@@ -32,7 +32,7 @@ public class PowerSupplyBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         } else {
             if (level.getBlockEntity(pos) instanceof PowerSupplyBlockEntity be) {
-                NetworkHooks.openGui((ServerPlayer) p, new PowerSupplyMenu.Provider(be.data),
+                NetworkHooks.openScreen((ServerPlayer) p, new PowerSupplyMenu.Provider(be.data),
                         buf -> buf.writeVarInt(be.data.status).writeVarInt(be.data.power));
             }
             return InteractionResult.CONSUME;

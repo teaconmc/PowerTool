@@ -4,7 +4,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -61,7 +60,7 @@ public class CosmeticHopper extends Block {
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable BlockGetter pLevel, List<Component> tooltip, TooltipFlag pFlag) {
-        tooltip.add(new TranslatableComponent("block.powertool.cosmetic_hopper.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.add(Component.translatable("block.powertool.cosmetic_hopper.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override

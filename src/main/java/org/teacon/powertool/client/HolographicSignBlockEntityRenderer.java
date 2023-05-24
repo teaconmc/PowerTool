@@ -1,13 +1,13 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import org.joml.Matrix4f;
 import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
 
 public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<HolographicSignBlockEntity> {
@@ -30,9 +30,9 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
         int bgColor = (int)(opacity * 255.0F) << 24;
         int yOffset = -theSign.contents.size() / 2 * this.font.lineHeight;
         for (var text : theSign.contents) {
-            if (text != null && !text.getContents().isEmpty()) {
+            if (text != null && !text.getContents().toString().isEmpty()) {
                 float xOffset = (float) (-this.font.width(text) / 2);
-                this.font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrix4f, bufferSource, false, bgColor, packedLight);
+                this.font.drawInBatch(text, xOffset, yOffset, 0xFFFFFFFF, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight);
             }
             yOffset += this.font.lineHeight + 2;
         }

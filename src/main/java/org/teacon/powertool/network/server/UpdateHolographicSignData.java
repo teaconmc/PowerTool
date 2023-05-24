@@ -3,7 +3,6 @@ package org.teacon.powertool.network.server;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.network.NetworkEvent;
 import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
@@ -56,9 +55,9 @@ public class UpdateHolographicSignData {
                         var task = sender.getTextFilter().processMessageBundle(Arrays.asList(this.messages));
                         task.thenAcceptAsync(filtered -> {
                             if (sender.isTextFilteringEnabled()) {
-                                theSign.contents = filtered.stream().map(t -> (Component) new TextComponent(t.getFiltered())).toList();
+                                theSign.contents = filtered.stream().map(t -> Component.literal(t.filtered())).toList();
                             } else {
-                                theSign.contents = filtered.stream().map(t -> (Component) new TextComponent(t.getRaw())).toList();
+                                theSign.contents = filtered.stream().map(t -> Component.literal(t.raw())).toList();
                             }
                             theSign.setChanged();
                             level.sendBlockUpdated(this.location, state, state, Block.UPDATE_CLIENTS);

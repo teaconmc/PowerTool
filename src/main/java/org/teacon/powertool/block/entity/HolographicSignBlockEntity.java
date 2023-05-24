@@ -21,7 +21,7 @@ import java.util.List;
 
 public class HolographicSignBlockEntity extends BlockEntity {
 
-    public List<Component> contents = Collections.emptyList();
+    public List<? extends Component> contents = Collections.emptyList();
 
     public HolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);

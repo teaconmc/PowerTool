@@ -3,12 +3,11 @@ package org.teacon.powertool.client;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ScreenOpenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,10 +34,10 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void on(ScreenOpenEvent event) {
+    public static void on(ScreenEvent.Opening event) {
         if (event.getScreen() instanceof CommandBlockEditScreen screen
             && screen.autoCommandBlock instanceof PeriodicCommandBlockEntity blockEntity) {
-            event.setScreen(new PeriodicCommandBlockEditScreen(blockEntity));
+            event.setNewScreen(new PeriodicCommandBlockEditScreen(blockEntity));
         }
     }
 
@@ -56,9 +55,9 @@ public class ClientEvents {
             event.enqueueWork(() -> {
                 MenuScreens.register(PowerToolMenus.POWER_SUPPLY_MENU.get(), PowerSupplyScreen::new);
                 Predicate<RenderType> cutout = RenderType.cutout()::equals;
-                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.ITEM_SUPPLIER.get(), cutout);
-                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_CAMPFIRE.get(), cutout);
-                ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_SOUL_CAMPFIRE.get(), cutout);
+                // FIXME
+                //ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_CAMPFIRE.get(), cutout);
+                //ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_SOUL_CAMPFIRE.get(), cutout);
             });
         }
         @SubscribeEvent

@@ -281,9 +281,11 @@ gradle.afterProject { Project current ->
             System.env.GITHUB_ACTIONS
         }
         it.doLast {
-            println "::set-output name=artifact_name::${publishJarTask.archiveFileName.get()}"
-            println "::set-output name=artifact_publish_name::${jarArchiveBaseName}-${artifactVersion}.jar"
-            println "::set-output name=artifact_path::${publishJarTask.archiveFile.get().asFile.absolutePath}"
+            def outputFile = new File(System.env.GITHUB_OUTPUT)
+            def newLine = System.getProperty('line.separator')
+            outputFile << newLine << "artifact_name=${publishJarTask.archiveFileName.get()}"
+                    << newLine << "artifact_publish_name=${jarArchiveBaseName}-${artifactVersion}.jar"
+                    << newLine << "artifact_path=${publishJarTask.archiveFile.get().asFile.absolutePath}"
         }
     }
 

@@ -29,6 +29,7 @@ public class PowerToolItems {
                 return true;
             }
         });
+        ITEMS.register("clap", () -> new ClapItem(new Item.Properties()));
     }
 
     @SubscribeEvent

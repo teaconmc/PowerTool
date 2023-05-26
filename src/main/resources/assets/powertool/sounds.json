@@ -1,0 +1,14 @@
+{
+  "item.powertool.clap": {
+    "replace": false,
+    "subtitle": "sound.powertool.clap.title",
+    "sounds": [
+      {
+        "name": "powertool:item/clap",
+        "volume": 1.0,
+        "pitch": 0.5,
+        "attenuation_distance": 16
+      }
+    ]
+  }
+}

@@ -17,3 +17,8 @@ Gadgets that online convention organizers may find useful when holding conventio
   - 看起来没用的木棍：没有任何功能的物品，外观和原版木棍一致，但有附魔的特效。
   - MoTD：玩家进入游戏后会收到一条聊天消息，消息内容可自定义。
   - 未完待续 To be continued
+
+## 鸣谢
+
+  - `src/main/resources/assets/powertool/sound/item/clap.ogg`
+    出自 [https://freesound.org/people/Kyanite_/sounds/432910/](https://freesound.org/people/Kyanite_/sounds/432910/)，在 CC0 许可证下发布

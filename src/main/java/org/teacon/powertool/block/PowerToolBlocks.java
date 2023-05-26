@@ -60,7 +60,7 @@ public class PowerToolBlocks {
                 PowerSupplyBlockEntity::new, POWER_SUPPLY.get()
         ).build(DSL.remainderType()));
         ITEM_SUPPLIER_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_supplier", () -> BlockEntityType.Builder.of(
-                ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get(), ITEM_DISPLAY.get()
+                ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get()
         ).build(DSL.remainderType()));
         HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("holographic_sign", () -> BlockEntityType.Builder.of(
                 HolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()

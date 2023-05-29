@@ -49,9 +49,8 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
         super.populateAndSendPacket(baseCommandBlock);
         try {
             var period = Integer.parseInt(this.periodBox.getValue());
-            var pos = baseCommandBlock.getPosition();
             PowerToolNetwork.channel().sendToServer(new SetCommandBlockPacket(
-                new BlockPos((int) pos.x, (int) pos.y, (int) pos.z), period
+                BlockPos.containing(baseCommandBlock.getPosition()), period
             ));
         } catch (NumberFormatException ignored) {
         }

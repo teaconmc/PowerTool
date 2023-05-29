@@ -6,7 +6,7 @@
       {
         "name": "powertool:item/clap",
         "volume": 1.0,
-        "pitch": 0.5,
+        "pitch": 1.0,
         "attenuation_distance": 16
       }
     ]

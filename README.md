@@ -21,4 +21,5 @@ Gadgets that online convention organizers may find useful when holding conventio
 ## 鸣谢
 
   - `src/main/resources/assets/powertool/sound/item/clap.ogg`
-    出自 [https://freesound.org/people/Kyanite_/sounds/432910/](https://freesound.org/people/Kyanite_/sounds/432910/)，在 CC0 许可证下发布
+    出自 [https://freesound.org/people/mikaelfernstrom/sounds/68727/](https://freesound.org/people/mikaelfernstrom/sounds/68727/)，
+    在 CC-BY 4.0 许可证下发布，有修改。

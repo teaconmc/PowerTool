@@ -15,6 +15,8 @@
   "block.powertool.holographic_sign": "全息投影告示牌",
   "item.powertool.useless_stick": "看起来没用的木棍儿",
   "item.powertool.clap": "鼓掌",
+  "item.powertool.clap_but_sad": "伤心的鼓掌",
+  "item.powertool.clap_but_angry": "生气的鼓掌",
 
   "itemGroup.powertool": "PowerTool",
 

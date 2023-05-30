@@ -30,6 +30,8 @@ public class PowerToolItems {
             }
         });
         ITEMS.register("clap", () -> new ClapItem(new Item.Properties()));
+        ITEMS.register("clap_but_sad", () -> new ClapItem(new Item.Properties()));
+        ITEMS.register("clap_but_angry", () -> new ClapItem(new Item.Properties()));
     }
 
     @SubscribeEvent

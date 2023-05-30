@@ -2,6 +2,8 @@
   "block.powertool.command_block": "Period Repeating Command Block",
   "block.powertool.power_supply": "Power Supply",
   "block.powertool.trash_can": "Trash Can",
+  "block.powertool.item_display": "Item Display",
+  "block.powertool.item_display.tooltip": "Block version of vanilla Item Frame. A bit tough to break.",
   "block.powertool.item_supplier": "Item Supplier",
   "block.powertool.item_supplier.tooltip": "In creative mode, right-click to permanently put held items in. After that, left-click or right-click to get unlimited items out.",
   "block.powertool.cosmetic_hopper": "Hopper (Cosmetic)",

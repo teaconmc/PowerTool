@@ -2,6 +2,8 @@
   "block.powertool.command_block": "周期循环命令方块儿",
   "block.powertool.power_supply": "电源",
   "block.powertool.trash_can": "垃圾桶",
+  "block.powertool.item_display": "物品展示框",
+  "block.powertool.item_display.tooltip": "方块儿版的原版物品展示框，不太容易打得掉",
   "block.powertool.item_supplier": "供货箱",
   "block.powertool.item_supplier.tooltip": "创造模式下右击永久放入物品，此后不论左击右击都可以取出不限量物品。",
   "block.powertool.cosmetic_hopper": "漏斗（装饰品）",

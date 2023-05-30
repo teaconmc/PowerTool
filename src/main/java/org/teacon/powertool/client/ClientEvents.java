@@ -54,14 +54,11 @@ public class ClientEvents {
         public static void setup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
                 MenuScreens.register(PowerToolMenus.POWER_SUPPLY_MENU.get(), PowerSupplyScreen::new);
-                Predicate<RenderType> cutout = RenderType.cutout()::equals;
-                // FIXME
-                //ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_CAMPFIRE.get(), cutout);
-                //ItemBlockRenderTypes.setRenderLayer(PowerToolBlocks.COSMETIC_SOUL_CAMPFIRE.get(), cutout);
             });
         }
         @SubscribeEvent
         public static void ber(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(), ItemDisplayBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), ItemSupplierBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), HolographicSignBlockEntityRenderer::new);
         }

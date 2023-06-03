@@ -6,6 +6,7 @@
   "block.powertool.item_display.tooltip": "方块儿版的原版物品展示框，不太容易打得掉",
   "block.powertool.item_supplier": "供货箱",
   "block.powertool.item_supplier.tooltip": "创造模式下右击永久放入物品，此后不论左击右击都可以取出不限量物品。",
+  "block.powertool.slim_item_supplier": "供货箱",
   "block.powertool.cosmetic_hopper": "漏斗（装饰品）",
   "block.powertool.cosmetic_hopper.tooltip": "没有实际功能，可放心在建筑中使用",
   "block.powertool.cosmetic_campfire": "营火（装饰品）",

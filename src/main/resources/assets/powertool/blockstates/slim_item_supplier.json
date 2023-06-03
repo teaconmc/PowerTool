@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "powertool:block/slim_item_supplier",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "powertool:block/slim_item_supplier",
+      "x": 270
+    },
+    "facing=east": {
+      "model": "powertool:block/slim_item_supplier",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "powertool:block/slim_item_supplier"
+    },
+    "facing=south": {
+      "model": "powertool:block/slim_item_supplier",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "powertool:block/slim_item_supplier",
+      "y": 270
+    }
+  }
+}

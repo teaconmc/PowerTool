@@ -32,6 +32,7 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
             case SOUTH -> transform.mulPose(Axis.YP.rotationDegrees(180));
             case WEST -> transform.mulPose(Axis.YP.rotationDegrees(90));
         }
+        transform.mulPose(Axis.ZP.rotationDegrees(theBE.rotation));
         this.itemRenderer.renderStatic(theBE.itemToDisplay, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY,
                 transform, bufferSource, theBE.getLevel(), 0);
         transform.popPose();

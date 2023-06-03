@@ -92,19 +92,35 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
-            if (theBE.itemToDisplay.isEmpty() && player.getAbilities().instabuild) {
-                theBE.itemToDisplay = player.getItemInHand(hand).copy();
-                if (!level.isClientSide) {
+            if (player.getAbilities().instabuild) {
+                if (theBE.itemToDisplay.isEmpty()) {
+                    theBE.itemToDisplay = player.getItemInHand(hand).copy();
+                    if (!level.isClientSide) {
+                        theBE.setChanged();
+                        level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                    }
+                } else {
+                    theBE.rotation = (theBE.rotation + 45) % 360;
                     theBE.setChanged();
                     level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
                 }
-            } else {
-                ItemStack toGive = theBE.itemToDisplay.copy();
-                toGive.setCount(player.isCrouching() ? toGive.getMaxStackSize() : 1);
-                player.getInventory().add(toGive);
             }
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
+            return theBE.itemToDisplay.isEmpty() ? 0 : theBE.rotation / 45 + 1;
+        } else {
+            return 0;
+        }
     }
 }

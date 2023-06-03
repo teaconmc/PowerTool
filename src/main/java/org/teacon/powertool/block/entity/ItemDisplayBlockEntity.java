@@ -15,6 +15,7 @@ import org.teacon.powertool.block.PowerToolBlocks;
 public class ItemDisplayBlockEntity extends BlockEntity {
 
     public ItemStack itemToDisplay = ItemStack.EMPTY;
+    public int rotation = 0;
 
     public ItemDisplayBlockEntity(BlockPos pos, BlockState state) {
         super(PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(), pos, state);
@@ -23,6 +24,7 @@ public class ItemDisplayBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag) {
         tag.put("item", this.itemToDisplay.save(new CompoundTag()));
+        tag.putInt("rotation", this.rotation);
         super.saveAdditional(tag);
     }
 
@@ -30,18 +32,21 @@ public class ItemDisplayBlockEntity extends BlockEntity {
     public void load(CompoundTag tag) {
         super.load(tag);
         this.itemToDisplay = ItemStack.of(tag.getCompound("item"));
+        this.rotation = tag.getInt("rotation");
     }
 
     @Override
     public CompoundTag getUpdateTag() {
         var tag = new CompoundTag();
         tag.put("item", this.itemToDisplay.save(new CompoundTag()));
+        tag.putInt("rotation", this.rotation);
         return tag;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         this.itemToDisplay = ItemStack.of(tag.getCompound("item"));
+        this.rotation = tag.getInt("rotation");
     }
 
     @Nullable

@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/cherry_trapdoor_top",
+  "render_type": "cutout"
+}

@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/mangrove_trapdoor_open",
+  "render_type": "cutout"
+}

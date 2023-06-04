@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "powertool:block/cosmetic_bamboo_trapdoor_bottom",
+      "y": 90
+    },
+    "facing=down": {
+      "model": "powertool:block/cosmetic_bamboo_trapdoor_top",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "powertool:block/cosmetic_bamboo_trapdoor_open",
+      "x": 180,
+      "y": 180
+    },
+    "facing=south": {
+      "model": "powertool:block/cosmetic_bamboo_trapdoor_open",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "powertool:block/cosmetic_bamboo_trapdoor_open",
+      "x": 180,
+      "y": 270
+    },
+    "facing=west": {
+      "model": "powertool:block/cosmetic_bamboo_trapdoor_open",
+      "x": 180,
+      "y": 90
+    }
+  }
+}

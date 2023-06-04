@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/bamboo_trapdoor_open",
+  "render_type": "cutout"
+}

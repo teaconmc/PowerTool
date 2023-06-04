@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.util.ForgeSoundType;
@@ -22,6 +23,8 @@ import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
+
+import java.util.Map;
 
 import static org.teacon.powertool.item.PowerToolItems.ITEMS;
 
@@ -88,6 +91,23 @@ public class PowerToolBlocks {
                 HolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()
         ).build(DSL.remainderType()));
 
+        regTrapDoors(Map.of(
+                BlockSetType.OAK, Blocks.OAK_TRAPDOOR,
+                BlockSetType.BIRCH, Blocks.BIRCH_TRAPDOOR,
+                BlockSetType.SPRUCE, Blocks.SPRUCE_TRAPDOOR,
+                BlockSetType.JUNGLE, Blocks.JUNGLE_TRAPDOOR,
+                BlockSetType.ACACIA, Blocks.ACACIA_TRAPDOOR,
+                BlockSetType.DARK_OAK, Blocks.DARK_OAK_TRAPDOOR,
+                BlockSetType.CRIMSON, Blocks.CRIMSON_TRAPDOOR,
+                BlockSetType.WARPED, Blocks.WARPED_TRAPDOOR,
+                BlockSetType.BAMBOO, Blocks.BAMBOO_TRAPDOOR,
+                BlockSetType.MANGROVE, Blocks.MANGROVE_TRAPDOOR
+        ));
+        regTrapDoors(Map.of(
+                BlockSetType.CHERRY, Blocks.CHERRY_TRAPDOOR,
+                BlockSetType.IRON, Blocks.IRON_TRAPDOOR
+        ));
+
         ITEMS.register("command_block", () -> new BlockItem(COMMAND_BLOCK.get(), new Item.Properties()));
         ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties()));
         ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties()));
@@ -98,5 +118,13 @@ public class PowerToolBlocks {
         ITEMS.register("cosmetic_campfire", () -> new BlockItem(COSMETIC_CAMPFIRE.get(), new Item.Properties()));
         ITEMS.register("cosmetic_soul_campfire", () -> new BlockItem(COSMETIC_SOUL_CAMPFIRE.get(), new Item.Properties()));
         ITEMS.register("holographic_sign", () -> new BlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+    }
+
+    private static void regTrapDoors(Map<BlockSetType, Block> existing) {
+        for (var type : existing.entrySet()) {
+            var name = "cosmetic_" + type.getKey().name() + "_trapdoor";
+            var block = BLOCKS.register(name, () -> new CosmeticTrapdoor(BlockBehaviour.Properties.copy(type.getValue())));
+            ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        }
     }
 }

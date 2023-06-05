@@ -16,8 +16,8 @@ public class SlimItemSupplierBlock extends ItemSupplierBlock {
 
     protected static final VoxelShape DOWN_AABB = Block.box(0, 12, 0, 16, 16, 16);
     protected static final VoxelShape UP_AABB = Block.box(0, 0, 0, 16, 4, 16);
-    protected static final VoxelShape SOUTH_AABB = Block.box(0, 0, 0, 16, 16, 3);
-    protected static final VoxelShape WEST_AABB = Block.box(12, 0, 0, 16, 16, 14);
+    protected static final VoxelShape SOUTH_AABB = Block.box(0, 0, 0, 16, 16, 4);
+    protected static final VoxelShape WEST_AABB = Block.box(12, 0, 0, 16, 16, 16);
     protected static final VoxelShape NORTH_AABB = Block.box(0, 0, 12, 16, 16, 16);
     protected static final VoxelShape EAST_AABB = Block.box(0, 0, 0, 4, 16, 16);
 

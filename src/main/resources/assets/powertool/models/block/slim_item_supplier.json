@@ -1,19 +1,38 @@
 {
   "parent": "block/block",
   "textures": {
-    "all": "minecraft:block/glass"
+    "side": "powertool:block/item_supplier_side_slim",
+    "front": "powertool:block/item_supplier",
+    "top": "powertool:block/item_supplier_top_slim",
+    "overlay": "powertool:block/item_supplier_tag"
   },
   "elements": [
     {
       "from": [ 0, 0, 12 ],
       "to": [ 16, 16, 16 ],
       "faces": {
-        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "down" },
-        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#all" },
-        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "north" },
-        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "south" },
-        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "west" },
-        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#all", "cullface": "east" }
+        "down":  { "uv": [ 0, 0, 16, 4 ], "texture": "#top", "cullface": "down" },
+        "up":    { "uv": [ 0, 0, 16, 4 ], "texture": "#top", "cullface": "up" },
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#front", "cullface": "north" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#front", "cullface": "south" },
+        "west":  { "uv": [ 0, 0, 4, 16 ], "texture": "#side", "cullface": "west" },
+        "east":  { "uv": [ 0, 0, 4, 16 ], "texture": "#side", "cullface": "east" }
+      }
+    },
+    {
+      "from": [1, 1, 11.9],
+      "to": [9, 3, 11.9],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "faces": {
+        "north": {"uv": [0, 0, 16, 4], "texture": "#overlay", "cullface": "north"}
+      }
+    },
+    {
+      "from": [7, 1, 16.1],
+      "to": [15, 3, 16.1],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "faces": {
+        "south": {"uv": [0, 0, 16, 4], "texture": "#overlay", "cullface": "south"}
       }
     }
   ],

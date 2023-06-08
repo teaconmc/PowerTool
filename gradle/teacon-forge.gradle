@@ -159,7 +159,7 @@ gradle.afterProject { Project current ->
     def identifier = System.env.VERSION_IDENTIFIER
 
     def publishJarTask = teacon.publishTask.getOrElse(current.tasks.jar)
-    def jarArchiveBaseName = "${repoName}-Forge-${gameVersions[0]}.${gameVersions[1]}" as String
+    def jarArchiveBaseName = "${repoName}-Forge-${gameVersion}" as String
 
     // configure jar and re-obf
     publishJarTask.configure { Jar it ->

@@ -21,7 +21,7 @@ public record SetCommandBlockPacket(BlockPos pos, int period) {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         var context = ctx.get();
         context.enqueueWork(() -> {
-            var level = context.getSender().getLevel();
+            var level = context.getSender().level();
             if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof PeriodicCommandBlockEntity blockEntity) {
                 blockEntity.setPeriod(period);
             }

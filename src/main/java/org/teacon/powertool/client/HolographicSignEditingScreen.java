@@ -1,16 +1,15 @@
 package org.teacon.powertool.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -126,10 +125,11 @@ public class HolographicSignEditingScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack transform, int mouseX, int mouseY, float partialTick) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Lighting.setupForFlatItems();
-        this.renderBackground(transform);
-        drawCenteredString(transform, this.font, this.title, this.width / 2, 40, 0xFFFFFF);
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 40, 0xFFFFFF);
+        var transform = guiGraphics.pose();
         transform.pushPose();
         transform.translate(this.width / 2.0, 0.0D, 50.0D);
         transform.scale(93.75F, -93.75F, 93.75F);
@@ -178,7 +178,7 @@ public class HolographicSignEditingScreen extends Screen {
                 int j3 = this.minecraft.font.width(text.substring(0, Math.min(cursorPos, text.length())));
                 int k3 = j3 - this.minecraft.font.width(text) / 2;
                 if (showCursor && cursorPos < text.length()) {
-                    fill(transform, k3, cursorY - 1, k3 + 1, cursorY + 9, 0xFFFFFFFF);
+                    guiGraphics.fill(k3, cursorY - 1, k3 + 1, cursorY + 9, 0xFFFFFFFF);
                 }
 
                 if (selectionPos != cursorPos) {
@@ -189,16 +189,13 @@ public class HolographicSignEditingScreen extends Screen {
                     int k2 = Math.min(i2, j2);
                     int l2 = Math.max(i2, j2);
                     // TODO Check that everything renders just fine
-                    RenderSystem.enableColorLogicOp();
-                    RenderSystem.logicOp(GlStateManager.LogicOp.OR_REVERSE);
-                    fill(transform, k2, cursorY, l2, cursorY + 10, -16776961);
-                    RenderSystem.disableColorLogicOp();
+                    guiGraphics.fill(RenderType.guiTextHighlight(), k2, cursorY, l2, cursorY + 10, -16776961);
                 }
             }
         }
 
         transform.popPose();
         Lighting.setupFor3DItems();
-        super.render(transform, mouseX, mouseY, partialTick);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 }

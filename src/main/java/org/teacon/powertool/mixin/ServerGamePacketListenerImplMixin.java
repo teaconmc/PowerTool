@@ -19,7 +19,7 @@ public class ServerGamePacketListenerImplMixin {
 
     @Redirect(method = "handleSetCommandBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/Blocks;REPEATING_COMMAND_BLOCK:Lnet/minecraft/world/level/block/Block;"))
     private Block usePowerToolBlock(ServerboundSetCommandBlockPacket packet) {
-        var blockEntity = this.player.level.getBlockEntity(packet.getPos());
+        var blockEntity = this.player.level().getBlockEntity(packet.getPos());
         if (blockEntity instanceof PeriodicCommandBlockEntity) {
             return PowerToolBlocks.COMMAND_BLOCK.get();
         } else {

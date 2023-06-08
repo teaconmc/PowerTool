@@ -1,7 +1,7 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -58,16 +58,16 @@ public class ButtonWithHighlight extends Button {
     }
 
     @Override
-    public void renderWidget(PoseStack transform, int mouseX, int mouseY, float pPartialTick) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, this.texture);
         RenderSystem.enableDepthTest();
+        // TODO Check if this is still correct
         if (this.isBeingPressed) {
-            blit(transform, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
+            guiGraphics.blit(this.texture, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
         } else if (this.isHovered) {
-            blit(transform, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
+            guiGraphics.blit(this.texture, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
         } else {
-            blit(transform, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
+            guiGraphics.blit(this.texture, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
         }
     }
 }

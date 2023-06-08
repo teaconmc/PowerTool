@@ -48,7 +48,7 @@ public class UpdateHolographicSignData {
         context.enqueueWork(() -> {
             var sender = context.getSender();
             if (sender != null && sender.getAbilities().instabuild) {
-                var level = sender.level;
+                var level = sender.level();
                 if (level.isLoaded(this.location)) {
                     if (level.getBlockEntity(this.location) instanceof HolographicSignBlockEntity theSign) {
                         var state = level.getBlockState(this.location);

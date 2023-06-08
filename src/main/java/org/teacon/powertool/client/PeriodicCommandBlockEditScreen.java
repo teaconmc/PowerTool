@@ -1,6 +1,6 @@
 package org.teacon.powertool.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.core.BlockPos;
@@ -39,9 +39,9 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-        drawString(pPoseStack, this.font, PERIOD, this.width / 2 - 150 + (300 - 40), 95, 10526880);
+    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+        guiGraphics.drawString(this.font, PERIOD, this.width / 2 - 150 + (300 - 40), 95, 10526880);
     }
 
     @Override

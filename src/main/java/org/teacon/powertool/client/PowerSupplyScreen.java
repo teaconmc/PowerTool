@@ -1,8 +1,8 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -112,24 +112,23 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
     }
 
     @Override
-    public void render(PoseStack transform, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(transform);
-        super.render(transform, mouseX, mouseY, partialTick);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         RenderSystem.disableBlend();
-        this.input.render(transform, mouseX, mouseY, partialTick);
-        this.renderTooltip(transform, mouseX, mouseY);
+        this.input.render(guiGraphics, mouseX, mouseY, partialTick);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override
-    protected void renderLabels(PoseStack transform, int mouseX, int mouseY) {
-        this.blit(transform, 125, 0, this.status == 0 ? 202 : 170, 0, 32, 44);
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        guiGraphics.blit(BG_LOCATION, 125, 0, this.status == 0 ? 202 : 170, 0, 32, 44);
     }
 
     @Override
-    protected void renderBg(PoseStack transform, float partialTick, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, BG_LOCATION);
-        this.blit(transform, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 }

@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "powertool:block/glow_item_display",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "powertool:block/glow_item_display",
+      "x": 270
+    },
+    "facing=east": {
+      "model": "powertool:block/glow_item_display",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "powertool:block/glow_item_display"
+    },
+    "facing=south": {
+      "model": "powertool:block/glow_item_display",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "powertool:block/glow_item_display",
+      "y": 270
+    }
+  }
+}

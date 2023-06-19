@@ -37,6 +37,13 @@ public class PowerToolBlocks {
             () -> SoundEvents.MOSS_CARPET_FALL
             );
 
+    public static final SoundType GLOW_ITEM_DISPLAY_SOUND_TYPE = new ForgeSoundType(1.0F, 1.0F,
+            () -> SoundEvents.GLOW_ITEM_FRAME_BREAK,
+            () -> SoundEvents.MOSS_CARPET_STEP,
+            () -> SoundEvents.GLOW_ITEM_FRAME_PLACE,
+            () -> SoundEvents.GLOW_ITEM_FRAME_REMOVE_ITEM,
+            () -> SoundEvents.MOSS_CARPET_FALL);
+
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, PowerTool.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, PowerTool.MODID);
 
@@ -44,6 +51,8 @@ public class PowerToolBlocks {
     public static RegistryObject<Block> TRASH_CAN;
     public static RegistryObject<Block> POWER_SUPPLY;
     public static RegistryObject<Block> ITEM_DISPLAY;
+
+    public static RegistryObject<Block> GLOW_ITEM_DISPLAY;
     public static RegistryObject<Block> ITEM_SUPPLIER;
 
     public static RegistryObject<Block> SLIM_ITEM_SUPPLIER;
@@ -68,6 +77,7 @@ public class PowerToolBlocks {
         TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanBlock(BlockBehaviour.Properties.of().strength(1000)));
         POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).strength(1000)));
         ITEM_DISPLAY = BLOCKS.register("item_display", () -> new ItemDisplayBlock(BlockBehaviour.Properties.copy(Blocks.LADDER).sound(ITEM_DISPLAY_SOUND_TYPE).noOcclusion().strength(10000)));
+        GLOW_ITEM_DISPLAY = BLOCKS.register("glow_item_display", () -> new ItemDisplayBlock(BlockBehaviour.Properties.copy(Blocks.LADDER).sound(GLOW_ITEM_DISPLAY_SOUND_TYPE).noOcclusion().strength(10000)));
         ITEM_SUPPLIER = BLOCKS.register("item_supplier", () -> new ItemSupplierBlock(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
         SLIM_ITEM_SUPPLIER = BLOCKS.register("slim_item_supplier", () -> new SlimItemSupplierBlock(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
         COSMETIC_HOPPER = BLOCKS.register("cosmetic_hopper", () -> new CosmeticHopper(BlockBehaviour.Properties.copy(Blocks.HOPPER)));
@@ -111,6 +121,7 @@ public class PowerToolBlocks {
         ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties()));
         ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties()));
         ITEMS.register("item_display", () -> new BlockItem(ITEM_DISPLAY.get(), new Item.Properties()));
+        ITEMS.register("glow_item_display", () -> new BlockItem(GLOW_ITEM_DISPLAY.get(), new Item.Properties()));
         ITEMS.register("slim_item_supplier", () -> new BlockItem(SLIM_ITEM_SUPPLIER.get(), new Item.Properties()));
         ITEMS.register("item_supplier", () -> new BlockItem(ITEM_SUPPLIER.get(), new Item.Properties()));
         ITEMS.register("cosmetic_hopper", () -> new BlockItem(COSMETIC_HOPPER.get(), new Item.Properties()));

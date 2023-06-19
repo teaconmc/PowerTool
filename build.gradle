@@ -63,5 +63,5 @@ repositories {
 
 dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    compileOnly fg.deobf("curse.maven:the-one-probe-245211:4442439")
+    implementation fg.deobf("curse.maven:the-one-probe-245211:4579432")
 }

@@ -7,6 +7,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -68,6 +70,19 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        var held = player.getItemInHand(hand);
+        if (held.is(ItemTags.SHOVELS) && state.getValue(LIT)) {
+            if (level.isClientSide()) {
+                for(int i = 0; i < 20; ++i) {
+                    CampfireBlock.makeParticles(level, pos, false, true);
+                }
+            }
+            var newState = state.setValue(LIT, Boolean.FALSE);
+            level.setBlock(pos, newState, Block.UPDATE_ALL_IMMEDIATE);
+            level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, newState));
+            held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            return InteractionResult.sidedSuccess(level.isClientSide());
+        }
         return InteractionResult.PASS;
     }
 

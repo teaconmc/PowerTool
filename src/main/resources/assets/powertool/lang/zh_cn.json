@@ -32,6 +32,9 @@
   "item.powertool.clap_but_sad": "伤心的鼓掌",
   "item.powertool.clap_but_angry": "生气的鼓掌",
 
+  "entity.powertool.fence_knot": "拴栅栏上的结",
+  "entity.powertool.fence_knot.tooltip": "跟原版拴绳儿一样，但是是连着俩栅栏儿的",
+
   "itemGroup.powertool": "PowerTool",
 
   "powertool.gui.period": "周期"

@@ -4,6 +4,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.teacon.powertool.block.PowerToolBlocks;
+import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.item.PowerToolItems;
 import org.teacon.powertool.menu.PowerToolMenus;
 import org.teacon.powertool.network.PowerToolNetwork;
@@ -18,7 +19,9 @@ public class PowerTool {
         PowerToolItems.register();
         PowerToolNetwork.register();
         PowerToolMenus.register();
-        PowerToolSoundEvents.register(FMLJavaModLoadingContext.get().getModEventBus());
+        var bus = FMLJavaModLoadingContext.get().getModEventBus();
+        PowerToolSoundEvents.register(bus);
+        PowerToolEntities.register(bus);
         PowerToolConfig.init(ModLoadingContext.get());
     }
 }

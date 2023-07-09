@@ -38,5 +38,17 @@
 
   "itemGroup.powertool": "PowerTool",
 
-  "powertool.gui.period": "Period"
+  "powertool.gui.period": "Period",
+  "powertool.gui.holographic_sign.align_left": "Left-align",
+  "powertool.gui.holographic_sign.align_center": "Centered",
+  "powertool.gui.holographic_sign.align_right": "Right-aligned",
+  "powertool.gui.holographic_sign.shadow_none": "No Shadow",
+  "powertool.gui.holographic_sign.shadow_drop": "Drop Shadow",
+  "powertool.gui.holographic_sign.shadow_plate": "Plate Shadow",
+  "powertool.gui.holographic_sign.arrange_front": "Bring to front",
+  "powertool.gui.holographic_sign.arrange_center": "At the same layer",
+  "powertool.gui.holographic_sign.arrange_back": "Send to back",
+  "powertool.gui.holographic_sign.scale": "Scale: %s",
+  "powertool.gui.holographic_sign.narration.text_align": "Text Alignment: %s",
+  "powertool.gui.holographic_sign.narration.shadow": "Shadow: %s"
 }

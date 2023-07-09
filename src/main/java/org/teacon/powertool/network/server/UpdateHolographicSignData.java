@@ -12,27 +12,47 @@ import java.util.function.Supplier;
 
 public class UpdateHolographicSignData {
 
+    public static final int MAXIMUM_LINE_COUNT = 10;
+
     private BlockPos location;
     private String[] messages;
+    private int color;
+    private float scale;
+    private HolographicSignBlockEntity.Align align;
+    private HolographicSignBlockEntity.Shadow shadow;
+    private HolographicSignBlockEntity.LayerArrange layerArrange;
 
-    public UpdateHolographicSignData(BlockPos location, String[] messages) {
+    public UpdateHolographicSignData(BlockPos location, String[] messages, int color, float scale,
+                                     HolographicSignBlockEntity.Align align,
+                                     HolographicSignBlockEntity.Shadow shadow,
+                                     HolographicSignBlockEntity.LayerArrange layerArrange) {
         this.location = location;
         this.messages = messages;
-        if (messages.length > 4) {
-            this.messages = Arrays.copyOfRange(messages, 0, 4);
+        if (messages.length > MAXIMUM_LINE_COUNT) {
+            this.messages = Arrays.copyOfRange(messages, 0, MAXIMUM_LINE_COUNT);
         }
+        this.color = color;
+        this.scale = scale;
+        this.align = align;
+        this.shadow = shadow;
+        this.layerArrange = layerArrange;
     }
 
     public UpdateHolographicSignData(FriendlyByteBuf buf) {
         this.location = buf.readBlockPos();
         var len = buf.readVarInt();
-        if (len > 4) {
-            len = 4;
+        if (len > MAXIMUM_LINE_COUNT) {
+            len = MAXIMUM_LINE_COUNT;
         }
         this.messages = new String[len];
         for (int i = 0; i < len; i++) {
             this.messages[i] = buf.readUtf();
         }
+        this.color = buf.readVarInt();
+        this.scale = buf.readFloat();
+        this.align = buf.readEnum(HolographicSignBlockEntity.Align.class);
+        this.shadow = buf.readEnum(HolographicSignBlockEntity.Shadow.class);
+        this.layerArrange = buf.readEnum(HolographicSignBlockEntity.LayerArrange.class);
     }
 
     public void write(FriendlyByteBuf buf) {
@@ -41,6 +61,11 @@ public class UpdateHolographicSignData {
         for (var text : this.messages) {
             buf.writeUtf(text);
         }
+        buf.writeVarInt(this.color);
+        buf.writeFloat(this.scale);
+        buf.writeEnum(this.align);
+        buf.writeEnum(this.shadow);
+        buf.writeEnum(this.layerArrange);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
@@ -51,7 +76,14 @@ public class UpdateHolographicSignData {
                 var level = sender.level();
                 if (level.isLoaded(this.location)) {
                     if (level.getBlockEntity(this.location) instanceof HolographicSignBlockEntity theSign) {
+                        theSign.colorInARGB = this.color;
+                        theSign.scale = this.scale;
+                        theSign.align = this.align;
+                        theSign.shadow = this.shadow;
+                        theSign.arrange = this.layerArrange;
                         var state = level.getBlockState(this.location);
+                        theSign.setChanged();
+                        level.sendBlockUpdated(this.location, state, state, Block.UPDATE_CLIENTS);
                         var task = sender.getTextFilter().processMessageBundle(Arrays.asList(this.messages));
                         task.thenAcceptAsync(filtered -> {
                             if (sender.isTextFilteringEnabled()) {

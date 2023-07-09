@@ -1,53 +1,68 @@
+/*
+ * Parts of this Java source file are from GlowCase project, maintained by ModFest team,
+ * licensed under CC0-1.0 per its repository.
+ * You may find the original code at https://github.com/ModFest/glowcase
+ */
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.network.chat.TextColor;
 import net.minecraftforge.network.PacketDistributor;
-import org.joml.Matrix4f;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
 import org.teacon.powertool.network.PowerToolNetwork;
 import org.teacon.powertool.network.server.UpdateHolographicSignData;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 public class HolographicSignEditingScreen extends Screen {
     private final HolographicSignBlockEntity sign;
     private int frame;
     private int line;
     private TextFieldHelper signField;
-    private final WoodType woodType = WoodType.BIRCH;
-    private SignRenderer.SignModel signModel;
     private final String[] messages;
 
-    public HolographicSignEditingScreen(HolographicSignBlockEntity theSign, boolean pIsTextFilteringEnabled) {
+    private float scale;
+    private int colorInARGB; // White by default
+    private HolographicSignBlockEntity.Align textAlign;
+    private HolographicSignBlockEntity.Shadow shadowType;
+    private HolographicSignBlockEntity.LayerArrange layerArrange;
+
+    private Button changeAlignment;
+    private EditBox colorInput;
+    private Button zOffsetToggle;
+    private Button shadowToggle;
+
+    public HolographicSignEditingScreen(HolographicSignBlockEntity theSign) {
         super(Component.translatable("sign.edit"));
         var size = theSign.contents.size();
-        this.messages = new String[Math.max(size, 4)];
+        this.messages = new String[Math.max(size, UpdateHolographicSignData.MAXIMUM_LINE_COUNT)];
         Arrays.fill(this.messages, "");
         for (int i = 0; i < size; i++) {
             this.messages[i] = theSign.contents.get(i).getString();
         }
+        this.colorInARGB = theSign.colorInARGB;
+        this.scale = theSign.scale;
+        this.textAlign = theSign.align;
+        this.shadowType = theSign.shadow;
+        this.layerArrange = theSign.arrange;
         this.sign = theSign;
     }
 
     @Override
     protected void init() {
+        var mc = Objects.requireNonNull(this.minecraft, "Minecraft instance is missing while Screen is initializing!");
         //this.minecraft.keyboardHandler.setSendRepeatsToGui(true); // TODO Check if this is still needed?o
         this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
                 .pos(this.width / 2 - 100, this.height / 4 + 120)
@@ -55,12 +70,74 @@ public class HolographicSignEditingScreen extends Screen {
         this.signField = new TextFieldHelper(
                 () -> this.messages[this.line],
                 (str) -> this.messages[this.line] = str,
-                TextFieldHelper.createClipboardGetter(this.minecraft),
-                TextFieldHelper.createClipboardSetter(this.minecraft),
+                TextFieldHelper.createClipboardGetter(mc),
+                TextFieldHelper.createClipboardSetter(mc),
                 str -> true
         );
-        this.signModel = SignRenderer.createSignModel(this.minecraft.getEntityModels(), this.woodType);
-        this.signModel.stick.visible = false;
+
+        int innerPadding = width / 100;
+
+        Button scaleDown = new Button.Builder(Component.literal("-"), btn -> this.scale = Math.max(0, this.scale - 0.125F))
+                .pos(80, 0)
+                .size(20, 20)
+                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.scale", displayed.get()))
+                .build();
+
+        Button scaleUp = new Button.Builder(Component.literal("+"), btn -> this.scale += 0.125)
+                .pos(100, 0)
+                .size(20, 20)
+                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.scale", displayed.get()))
+                .build();
+
+        this.changeAlignment = new Button.Builder(this.textAlign.displayName, btn -> {
+            this.textAlign = switch (this.textAlign) {
+                case LEFT -> HolographicSignBlockEntity.Align.CENTER;
+                case CENTER -> HolographicSignBlockEntity.Align.RIGHT;
+                case RIGHT -> HolographicSignBlockEntity.Align.LEFT;
+            };
+            this.changeAlignment.setMessage(this.textAlign.displayName);
+        }).pos(120 + innerPadding, 0)
+                .size(160, 20)
+                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.text_align", displayed.get()))
+                .build();
+
+        this.shadowToggle = new Button.Builder(this.shadowType.displayName, btn -> {
+            this.shadowType = switch (this.shadowType) {
+                case NONE -> HolographicSignBlockEntity.Shadow.DROP;
+                case DROP -> HolographicSignBlockEntity.Shadow.PLATE;
+                case PLATE -> HolographicSignBlockEntity.Shadow.NONE;
+            };
+            this.shadowToggle.setMessage(this.shadowType.displayName);
+        }).pos(120 + innerPadding, 20 + innerPadding)
+                .size(160, 20)
+                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.shadow", displayed.get()))
+                .build();
+
+        this.colorInput = new EditBox(this.minecraft.font, 280 + innerPadding * 2, 0, 50, 20, Component.empty());
+        this.colorInput.setValue("#" + Integer.toHexString(0x00FFFFFF));
+        this.colorInput.setResponder(string -> {
+            TextColor color = TextColor.parseColor(this.colorInput.getValue());
+            this.colorInARGB = color == null ? 0xFFFFFFFF : color.getValue() | 0xFF000000;
+        });
+
+        this.zOffsetToggle = new Button.Builder(this.layerArrange.displayName, btn -> {
+            this.layerArrange = switch (this.layerArrange) {
+                case FRONT -> HolographicSignBlockEntity.LayerArrange.CENTER;
+                case CENTER -> HolographicSignBlockEntity.LayerArrange.BACK;
+                case BACK -> HolographicSignBlockEntity.LayerArrange.FRONT;
+            };
+            this.zOffsetToggle.setMessage(this.layerArrange.displayName);
+        }).pos(330 + innerPadding * 3, 0)
+                .size(80, 20)
+                .createNarration(Supplier::get)
+                .build();
+
+        this.addRenderableWidget(scaleUp);
+        this.addRenderableWidget(scaleDown);
+        this.addRenderableWidget(this.changeAlignment);
+        this.addRenderableWidget(this.shadowToggle);
+        this.addRenderableWidget(this.zOffsetToggle);
+        this.addRenderableWidget(this.colorInput);
     }
 
     @Override
@@ -73,7 +150,9 @@ public class HolographicSignEditingScreen extends Screen {
             }
         }
         var toSend = Arrays.copyOfRange(this.messages, 0, last + 1);
-        PowerToolNetwork.channel().send(PacketDistributor.SERVER.with(() -> null), new UpdateHolographicSignData(this.sign.getBlockPos(), toSend));
+        PowerToolNetwork.channel().send(PacketDistributor.SERVER.with(() -> null),
+                new UpdateHolographicSignData(this.sign.getBlockPos(), toSend, this.colorInARGB, this.scale,
+                        this.textAlign, this.shadowType, this.layerArrange));
     }
 
     @Override
@@ -91,6 +170,9 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
+        if (this.colorInput.isActive()) {
+            return this.colorInput.charTyped(pCodePoint, pModifiers);
+        }
         this.signField.charTyped(pCodePoint);
         return true;
     }
@@ -102,6 +184,10 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (this.colorInput.isActive()) {
+            // If color input box is active, let that input box handle it
+            return this.colorInput.keyPressed(keyCode, scanCode, modifiers);
+        }
         if (keyCode == GLFW.GLFW_KEY_UP) {
             // Move up one line
             this.line = (this.line - 1) % this.messages.length;
@@ -125,24 +211,24 @@ public class HolographicSignEditingScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!this.colorInput.mouseClicked(mouseX, mouseX, button)) {
+            this.colorInput.setFocused(false);
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Lighting.setupForFlatItems();
         this.renderBackground(guiGraphics);
-        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 40, 0xFFFFFF);
+        guiGraphics.drawString(this.font, Component.translatable("powertool.gui.holographic_sign.scale", this.scale), 7, 7, 0xFFFFFF, true);
+        // I don't know, someone please explain why these transforms are necessary???
         var transform = guiGraphics.pose();
         transform.pushPose();
-        transform.translate(this.width / 2.0, 0.0D, 50.0D);
+        transform.translate(0.0F, 0.0F, 50.0F);
         transform.scale(93.75F, -93.75F, 93.75F);
         transform.translate(0.0, -1.625, 0.0);
-
-        // Render the background
-        transform.pushPose();
-        transform.scale(2F / 3F, -2F / 3F, -2F / 3F);
-        MultiBufferSource.BufferSource bufferSource = this.minecraft.renderBuffers().bufferSource();
-        Material material = Sheets.getSignMaterial(this.woodType);
-        VertexConsumer vertexconsumer = material.buffer(bufferSource, this.signModel::renderType);
-        this.signModel.root.render(transform, vertexconsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
-        transform.popPose();
 
         // Render the text and cursor
         boolean showCursor = this.frame / 6 % 2 == 0;
@@ -151,32 +237,38 @@ public class HolographicSignEditingScreen extends Screen {
         int cursorPos = this.signField.getCursorPos();
         int selectionPos = this.signField.getSelectionPos();
         int cursorY = this.line * 10 - this.messages.length * 5;
-        Matrix4f transformMat = transform.last().pose();
         for(int line = 0; line < this.messages.length; ++line) {
             String text = this.messages[line];
             if (text != null) {
                 if (this.font.isBidirectional()) {
                     text = this.font.bidirectionalShaping(text);
                 }
-                float xStart = (float)(-this.minecraft.font.width(text) / 2);
-                this.minecraft.font.drawInBatch(text, xStart, (float)(line * 10 - this.messages.length * 5), line, false, transformMat, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT, false);
+                int xStart = (int)switch (this.textAlign) {
+                    case LEFT -> this.width / 10.0;
+                    case CENTER -> this.width / 2.0 - this.font.width(text) / 2.0;
+                    case RIGHT -> this.width * 0.9 - this.font.width(text);
+                };
+                guiGraphics.drawString(this.font, text, xStart, line * 10 - this.messages.length * 5, 0xFFFFFF, false);
                 if (line == this.line && cursorPos >= 0 && showCursor) {
-                    int j1 = this.minecraft.font.width(text.substring(0, Math.min(cursorPos, text.length())));
-                    int cursorX = j1 - this.minecraft.font.width(text) / 2;
-                    if (cursorPos >= text.length()) {
-                        this.minecraft.font.drawInBatch("_", cursorX, cursorY, line, false, transformMat, bufferSource, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT, false);
+                    int j1 = this.font.width(text.substring(0, Math.min(cursorPos, text.length())));
+                    int cursorX = (int) switch (this.textAlign) {
+                        case LEFT -> this.width / 10.0 + j1;
+                        case CENTER -> this.width / 2.0 + j1 - this.font.width(text) / 2.0;
+                        case RIGHT -> this.width * 0.9F;
+                    };
+                    if (cursorPos >= text.length() && !this.colorInput.active) {
+                        guiGraphics.drawString(this.font, "_", cursorX, cursorY, 0xFFFFFF, false);
                     }
                 }
             }
         }
-        bufferSource.endBatch();
 
         // Render selection highlights
         for(int i = 0; i < this.messages.length; ++i) {
             String text = this.messages[i];
             if (text != null && i == this.line && cursorPos >= 0) {
-                int j3 = this.minecraft.font.width(text.substring(0, Math.min(cursorPos, text.length())));
-                int k3 = j3 - this.minecraft.font.width(text) / 2;
+                int j3 = this.font.width(text.substring(0, Math.min(cursorPos, text.length())));
+                int k3 = j3 - this.font.width(text) / 2;
                 if (showCursor && cursorPos < text.length()) {
                     guiGraphics.fill(k3, cursorY - 1, k3 + 1, cursorY + 9, 0xFFFFFFFF);
                 }
@@ -184,8 +276,8 @@ public class HolographicSignEditingScreen extends Screen {
                 if (selectionPos != cursorPos) {
                     int l3 = Math.min(cursorPos, selectionPos);
                     int l1 = Math.max(cursorPos, selectionPos);
-                    int i2 = this.minecraft.font.width(text.substring(0, l3)) - this.minecraft.font.width(text) / 2;
-                    int j2 = this.minecraft.font.width(text.substring(0, l1)) - this.minecraft.font.width(text) / 2;
+                    int i2 = this.font.width(text.substring(0, l3)) - this.font.width(text) / 2;
+                    int j2 = this.font.width(text.substring(0, l1)) - this.font.width(text) / 2;
                     int k2 = Math.min(i2, j2);
                     int l2 = Math.max(i2, j2);
                     // TODO Check that everything renders just fine

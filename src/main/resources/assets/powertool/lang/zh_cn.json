@@ -37,5 +37,17 @@
 
   "itemGroup.powertool": "PowerTool",
 
-  "powertool.gui.period": "周期"
+  "powertool.gui.period": "周期",
+  "powertool.gui.holographic_sign.align_left": "左对齐",
+  "powertool.gui.holographic_sign.align_center": "居中",
+  "powertool.gui.holographic_sign.align_right": "右对齐",
+  "powertool.gui.holographic_sign.shadow_none": "无阴影",
+  "powertool.gui.holographic_sign.shadow_drop": "文字阴影",
+  "powertool.gui.holographic_sign.shadow_plate": "背景阴影",
+  "powertool.gui.holographic_sign.arrange_front": "前移",
+  "powertool.gui.holographic_sign.arrange_center": "无偏移",
+  "powertool.gui.holographic_sign.arrange_back": "后移",
+  "powertool.gui.holographic_sign.scale": "缩放比例：%s",
+  "powertool.gui.holographic_sign.narration.text_align": "文字对齐：%s",
+  "powertool.gui.holographic_sign.narration.shadow": "阴影：%s"
 }

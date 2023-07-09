@@ -16,6 +16,7 @@ Gadgets that online convention organizers may find useful when holding conventio
   - 全息投影告示牌：和空气类似的方块，但能像告示牌一样显示文字，且一定会朝向玩家。创造模式下右击可打开编辑界面。
   - 看起来没用的木棍：没有任何功能的物品，外观和原版木棍一致，但有附魔的特效。
   - MoTD：玩家进入游戏后会收到一条聊天消息，消息内容可自定义。
+  - 栅栏绳结：原版拴绳现在可以将两根栅栏拴在一起。
   - 未完待续 To be continued
 
 ## 鸣谢
@@ -23,3 +24,4 @@ Gadgets that online convention organizers may find useful when holding conventio
   - `src/main/resources/assets/powertool/sound/item/clap.ogg`
     出自 [https://freesound.org/people/mikaelfernstrom/sounds/68727/](https://freesound.org/people/mikaelfernstrom/sounds/68727/)，
     在 CC-BY 4.0 许可证下发布，有修改。
+  - 全息投影告示牌的部分代码改编自 [ModFest 团队维护的 GlowCase 模组](https://github.com/ModFest/glowcase)，该模组代码在 CC-1.0 许可证下发布。

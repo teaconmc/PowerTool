@@ -37,7 +37,7 @@ public class OpenHolographicSignEditor {
             var mc = Minecraft.getInstance();
             var level = mc.level;
             if (level != null && level.getBlockEntity(OpenHolographicSignEditor.this.location) instanceof HolographicSignBlockEntity theSign) {
-                mc.setScreen(new HolographicSignEditingScreen(theSign, mc.isTextFilteringEnabled()));
+                mc.setScreen(new HolographicSignEditingScreen(theSign));
             }
         }
     }

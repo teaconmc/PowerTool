@@ -170,9 +170,10 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
-        if (this.colorInput.isActive()) {
+        // FIXME Color input box handling
+        /*if (this.colorInput.isActive()) {
             return this.colorInput.charTyped(pCodePoint, pModifiers);
-        }
+        }*/
         this.signField.charTyped(pCodePoint);
         return true;
     }
@@ -184,10 +185,11 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.colorInput.isActive()) {
+        // FIXME Color input box handling
+        /*if (this.colorInput.isActive()) {
             // If color input box is active, let that input box handle it
             return this.colorInput.keyPressed(keyCode, scanCode, modifiers);
-        }
+        }*/
         if (keyCode == GLFW.GLFW_KEY_UP) {
             // Move up one line
             this.line = (this.line - 1) % this.messages.length;
@@ -256,7 +258,7 @@ public class HolographicSignEditingScreen extends Screen {
                         case CENTER -> this.width / 2.0 + j1 - this.font.width(text) / 2.0;
                         case RIGHT -> this.width * 0.9F;
                     };
-                    if (cursorPos >= text.length() && !this.colorInput.active) {
+                    if (cursorPos >= text.length()/* && !this.colorInput.active*/) { // FIXME Do not show cursor when colorInput is focused
                         guiGraphics.drawString(this.font, "_", cursorX, cursorY, 0xFFFFFF, false);
                     }
                 }

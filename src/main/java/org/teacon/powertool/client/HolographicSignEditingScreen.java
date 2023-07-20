@@ -63,7 +63,6 @@ public class HolographicSignEditingScreen extends Screen {
     @Override
     protected void init() {
         var mc = Objects.requireNonNull(this.minecraft, "Minecraft instance is missing while Screen is initializing!");
-        //this.minecraft.keyboardHandler.setSendRepeatsToGui(true); // TODO Check if this is still needed?o
         this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
                 .pos(this.width / 2 - 100, this.height / 4 + 120)
                 .size(200, 20).build());
@@ -114,11 +113,13 @@ public class HolographicSignEditingScreen extends Screen {
                 .build();
 
         this.colorInput = new EditBox(this.minecraft.font, 280 + innerPadding * 2, 0, 50, 20, Component.empty());
-        this.colorInput.setValue("#" + Integer.toHexString(0x00FFFFFF));
+        this.colorInput.setValue("#" + Integer.toHexString(this.colorInARGB));
         this.colorInput.setResponder(string -> {
             TextColor color = TextColor.parseColor(this.colorInput.getValue());
             this.colorInARGB = color == null ? 0xFFFFFFFF : color.getValue() | 0xFF000000;
         });
+        this.colorInput.setFocused(false);
+        this.colorInput.setCanLoseFocus(true);
 
         this.zOffsetToggle = new Button.Builder(this.layerArrange.displayName, btn -> {
             this.layerArrange = switch (this.layerArrange) {
@@ -170,10 +171,9 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean charTyped(char pCodePoint, int pModifiers) {
-        // FIXME Color input box handling
-        /*if (this.colorInput.isActive()) {
-            return this.colorInput.charTyped(pCodePoint, pModifiers);
-        }*/
+        if (this.colorInput.charTyped(pCodePoint, pModifiers)) {
+            return true;
+        }
         this.signField.charTyped(pCodePoint);
         return true;
     }
@@ -185,11 +185,10 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        // FIXME Color input box handling
-        /*if (this.colorInput.isActive()) {
+        if (this.colorInput.keyPressed(keyCode, scanCode, modifiers)) {
             // If color input box is active, let that input box handle it
-            return this.colorInput.keyPressed(keyCode, scanCode, modifiers);
-        }*/
+            return true;
+        }
         if (keyCode == GLFW.GLFW_KEY_UP) {
             // Move up one line
             this.line = (this.line - 1) % this.messages.length;
@@ -217,6 +216,7 @@ public class HolographicSignEditingScreen extends Screen {
         if (!this.colorInput.mouseClicked(mouseX, mouseX, button)) {
             this.colorInput.setFocused(false);
         }
+        this.setFocused(null);
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -258,7 +258,7 @@ public class HolographicSignEditingScreen extends Screen {
                         case CENTER -> this.width / 2.0 + j1 - this.font.width(text) / 2.0;
                         case RIGHT -> this.width * 0.9F;
                     };
-                    if (cursorPos >= text.length()/* && !this.colorInput.active*/) { // FIXME Do not show cursor when colorInput is focused
+                    if (cursorPos >= text.length() && !this.colorInput.isFocused()) {
                         guiGraphics.drawString(this.font, "_", cursorX, cursorY, 0xFFFFFF, false);
                     }
                 }
@@ -282,7 +282,6 @@ public class HolographicSignEditingScreen extends Screen {
                     int j2 = this.font.width(text.substring(0, l1)) - this.font.width(text) / 2;
                     int k2 = Math.min(i2, j2);
                     int l2 = Math.max(i2, j2);
-                    // TODO Check that everything renders just fine
                     guiGraphics.fill(RenderType.guiTextHighlight(), k2, cursorY, l2, cursorY + 10, -16776961);
                 }
             }

@@ -115,7 +115,7 @@ public class FenceKnotEntity extends HangingEntity {
                 p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connecting", this.pos.toShortString()));
             } else {
                 var fromPos = NbtUtils.readBlockPos(itemNbt);
-                var knots = this.level().getEntitiesOfClass(FenceKnotEntity.class, new AABB(fromPos.getX() - 1, fromPos.getY() - 1, fromPos.getZ() - 1, fromPos.getX() + 1, fromPos.getY() + 1, fromPos.getZ() + 1));
+                var knots = this.level().getEntitiesOfClass(FenceKnotEntity.class, new AABB(fromPos.getX(), fromPos.getY(), fromPos.getZ(), fromPos.getX() + 1, fromPos.getY() + 1, fromPos.getZ() + 1));
                 if (!knots.isEmpty()) {
                     var fromKnot = knots.get(0);
                     var thisConnectTo = this.getEntityData().get(CONNECT_TO);

@@ -48,8 +48,9 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         for (var fromPos : e.getConnectTo()) {
             this.renderLeash(e, partialTick, transform, buffers, fromPos);
         }
-        var hitResult = Minecraft.getInstance().hitResult;
-        if (hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() == e) {
+        var mc = Minecraft.getInstance();
+        var hitResult = mc.hitResult;
+        if (mc.player != null && mc.player.getAbilities().instabuild && hitResult instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() == e) {
             transform.pushPose();
             transform.mulPose(this.entityRenderDispatcher.cameraOrientation());
             transform.scale(-0.025F, -0.025F, 0.025F);

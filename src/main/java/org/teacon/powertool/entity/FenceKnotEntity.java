@@ -103,7 +103,6 @@ public class FenceKnotEntity extends HangingEntity {
     @Override
     public InteractionResult interact(Player p, InteractionHand hand) {
         if (this.level().isClientSide()) {
-            p.sendSystemMessage(Component.literal("Hello there"));
             return InteractionResult.SUCCESS;
         }
 
@@ -113,6 +112,7 @@ public class FenceKnotEntity extends HangingEntity {
             if (itemNbt == null) {
                 // Connection start.
                 held.getOrCreateTag().put("PowerToolKnot", NbtUtils.writeBlockPos(this.pos));
+                p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connecting", this.pos.toShortString()));
             } else {
                 var fromPos = NbtUtils.readBlockPos(itemNbt);
                 var knots = this.level().getEntitiesOfClass(FenceKnotEntity.class, new AABB(fromPos.getX() - 1, fromPos.getY() - 1, fromPos.getZ() - 1, fromPos.getX() + 1, fromPos.getY() + 1, fromPos.getZ() + 1));
@@ -125,16 +125,19 @@ public class FenceKnotEntity extends HangingEntity {
                         otherConnectTo.remove(this.pos);
                         // Update 1 (fromKnot)
                         fromKnot.getEntityData().set(CONNECT_TO, otherConnectTo, true);
+                        p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.disconnected", fromKnot.pos.toShortString(), this.pos.toShortString()));
                     } else if (thisConnectTo.contains(fromPos)) {
                         // Link exists as 1 <- 2, remove link
                         thisConnectTo.remove(fromPos);
                         // Update 2 (this knot)
                         this.getEntityData().set(CONNECT_TO, thisConnectTo, true);
+                        p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.disconnected", this.pos.toShortString(), fromKnot.pos.toShortString()));
                     } else {
                         // Link does not exist, add link as 1 -> 2
                         otherConnectTo.add(this.pos);
                         // Update 1 (fromKnot)
                         fromKnot.getEntityData().set(CONNECT_TO, otherConnectTo, true);
+                        p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connected", fromKnot.pos.toShortString(), this.pos.toShortString()));
                     }
                 }
                 var mainTag = held.getTag();

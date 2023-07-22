@@ -30,6 +30,10 @@ public class ItemEventHandler {
                     return;
                 }
             }
+            range = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+            if (!level.getEntitiesOfClass(FenceKnotEntity.class, range).isEmpty()) {
+                return;
+            }
             event.setCanceled(true);
             var knot = new FenceKnotEntity(level, pos);
             level.addFreshEntity(knot);

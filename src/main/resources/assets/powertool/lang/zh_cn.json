@@ -34,6 +34,9 @@
 
   "entity.powertool.fence_knot": "拴栅栏上的结",
   "entity.powertool.fence_knot.tooltip": "跟原版拴绳儿一样，但是是连着俩栅栏儿的",
+  "entity.powertool.fence_knot.connecting": "连接开始，起点：%s",
+  "entity.powertool.fence_knot.connected": "已连接 %1$s 和 %2$s",
+  "entity.powertool.fence_knot.disconnected": "已断开 %1$s 和 %2$s 之间的拴绳",
 
   "itemGroup.powertool": "PowerTool",
 

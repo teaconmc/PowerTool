@@ -35,6 +35,9 @@
 
   "entity.powertool.fence_knot": "Knot On Fence",
   "entity.powertool.fence_knot.tooltip": "Like vanilla leash, but between fences",
+  "entity.powertool.fence_knot.connecting": "Start connection from %s",
+  "entity.powertool.fence_knot.connected": "Connected %1$s and %2$s",
+  "entity.powertool.fence_knot.disconnected": "Disconnected leashes between %1$s and %2$s",
 
   "itemGroup.powertool": "PowerTool",
 

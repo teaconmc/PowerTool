@@ -27,7 +27,7 @@ java {
 
 teacon {
     modId = 'powertool'
-    modVersion = '1.3.2'
+    modVersion = '1.3.3'
     modLicense = 'GPL-3.0'
     modGitHubRepo = 'teaconmc/PowerTool'
     modAuthors = ['IzzelAliz']

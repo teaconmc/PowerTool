@@ -19,13 +19,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
-import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 
 import java.util.List;
 
@@ -40,8 +40,11 @@ public class ItemDisplayBlock extends BaseEntityBlock {
 
     private static final DirectionProperty FACING = BlockStateProperties.FACING;
 
+    private static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
+
     public ItemDisplayBlock(Properties prop) {
         super(prop);
+        this.registerDefaultState(this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE));
     }
 
     @Override
@@ -68,13 +71,13 @@ public class ItemDisplayBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, INVISIBLE);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getClickedFace();
-        return this.defaultBlockState().setValue(FACING, direction);
+        return this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(FACING, direction);
     }
 
     @Override

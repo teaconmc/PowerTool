@@ -1,25 +1,28 @@
 {
   "variants": {
-    "facing=down": {
+    "invisible=true": {
+      "model": "powertool:block/empty"
+    },
+    "facing=down,invisible=false": {
       "model": "powertool:block/item_display",
       "x": 90
     },
-    "facing=up": {
+    "facing=up,invisible=false": {
       "model": "powertool:block/item_display",
       "x": 270
     },
-    "facing=east": {
+    "facing=east,invisible=false": {
       "model": "powertool:block/item_display",
       "y": 90
     },
-    "facing=north": {
+    "facing=north,invisible=false": {
       "model": "powertool:block/item_display"
     },
-    "facing=south": {
+    "facing=south,invisible=false": {
       "model": "powertool:block/item_display",
       "y": 180
     },
-    "facing=west": {
+    "facing=west,invisible=false": {
       "model": "powertool:block/item_display",
       "y": 270
     }

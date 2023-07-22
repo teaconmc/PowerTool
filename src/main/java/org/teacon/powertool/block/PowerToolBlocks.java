@@ -91,7 +91,7 @@ public class PowerToolBlocks {
                 PowerSupplyBlockEntity::new, POWER_SUPPLY.get()
         ).build(DSL.remainderType()));
         ITEM_DISPLAY_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_display", () -> BlockEntityType.Builder.of(
-                ItemDisplayBlockEntity::new, ITEM_DISPLAY.get()
+                ItemDisplayBlockEntity::new, ITEM_DISPLAY.get(), GLOW_ITEM_DISPLAY.get()
         ).build(DSL.remainderType()));
         ITEM_SUPPLIER_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_supplier", () -> BlockEntityType.Builder.of(
                 ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get(), SLIM_ITEM_SUPPLIER.get()

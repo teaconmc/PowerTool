@@ -19,6 +19,9 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
     }
     @Override
     public void render(ItemDisplayBlockEntity theBE, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        if (theBE.itemToDisplay.isEmpty()) {
+            return;
+        }
         transform.pushPose();
         transform.translate(0.5F, 0.5F, 0.5F);
         var state = theBE.getBlockState();

@@ -6,7 +6,6 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -38,8 +37,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
             case BACK -> transform.translate(0.0, 0.0, -0.4D);
         }
         Matrix4f matrix4f = transform.last().pose();
-        float opacity = Minecraft.getInstance().options.getBackgroundOpacity(0.25F);
-        int bgColor = (int)(opacity * 255.0F) << 24;
+        int bgColor = theSign.bgColorInARGB;
         int yOffset = -theSign.contents.size() / 2 * this.font.lineHeight;
         int fontColor = theSign.colorInARGB;
         int maxWidth = 0;

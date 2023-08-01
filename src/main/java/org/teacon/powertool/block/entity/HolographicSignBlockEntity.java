@@ -82,6 +82,8 @@ public class HolographicSignBlockEntity extends BlockEntity {
 
     public List<? extends Component> contents = Collections.emptyList();
     public int colorInARGB = 0xFFFFFFFF;
+
+    public int bgColorInARGB = 0x40000000;
     public float scale = 1.0F;
     public Align align = Align.CENTER;
     public Shadow shadow = Shadow.DROP;
@@ -98,6 +100,7 @@ public class HolographicSignBlockEntity extends BlockEntity {
         }
         tag.put("content", list);
         tag.putInt("color", this.colorInARGB);
+        tag.putInt("backgroundColor", this.bgColorInARGB);
         tag.putFloat("scale", this.scale);
         tag.putInt("align", this.align.ordinal());
         tag.putInt("shadow", this.shadow.ordinal());
@@ -112,6 +115,9 @@ public class HolographicSignBlockEntity extends BlockEntity {
         this.contents = loaded;
         if (tag.contains("color", Tag.TAG_INT)) {
             this.colorInARGB = tag.getInt("color");
+        }
+        if (tag.contains("backgroundColor", Tag.TAG_INT)) {
+            this.bgColorInARGB = tag.getInt("backgroundColor");
         }
         if (tag.contains("scale", Tag.TAG_FLOAT)) {
             this.scale = tag.getFloat("scale");

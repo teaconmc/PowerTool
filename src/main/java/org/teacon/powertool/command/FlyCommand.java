@@ -10,7 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 
 public class FlyCommand {
     public static void reg(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("fly").executes(FlyCommand::fly0));
+        dispatcher.register(Commands.literal("fly").requires(p -> p.hasPermission(2)).executes(FlyCommand::fly0));
     }
 
     private static int fly0(CommandContext<CommandSourceStack> sourceStack) {

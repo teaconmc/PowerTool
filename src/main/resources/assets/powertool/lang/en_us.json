@@ -53,5 +53,10 @@
   "powertool.gui.holographic_sign.arrange_back": "Send to back",
   "powertool.gui.holographic_sign.scale": "Scale: %s",
   "powertool.gui.holographic_sign.narration.text_align": "Text Alignment: %s",
-  "powertool.gui.holographic_sign.narration.shadow": "Shadow: %s"
+  "powertool.gui.holographic_sign.narration.shadow": "Shadow: %s",
+
+  "powertool.command.fly.enabled": "Flying enabled",
+  "powertool.command.fly.disabled": "Flying disabled",
+  "powertool.command.fly.not_changed": "You are in creative/spectator mode; flying is always enabled in these modes.",
+  "powertool.command.fly.must_be_player": "This command can only be executed by a player."
 }

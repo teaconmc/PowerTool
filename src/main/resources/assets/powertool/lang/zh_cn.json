@@ -52,5 +52,10 @@
   "powertool.gui.holographic_sign.arrange_back": "后移",
   "powertool.gui.holographic_sign.scale": "缩放比例：%s",
   "powertool.gui.holographic_sign.narration.text_align": "文字对齐：%s",
-  "powertool.gui.holographic_sign.narration.shadow": "阴影：%s"
+  "powertool.gui.holographic_sign.narration.shadow": "阴影：%s",
+
+  "powertool.command.fly.enabled": "创造飞行已开启。",
+  "powertool.command.fly.disabled": "创造飞行已关闭",
+  "powertool.command.fly.not_changed": "你现在在创造/观察者模式，飞行在这些模式下会永久启用。",
+  "powertool.command.fly.must_be_player": "只有玩家可以执行此命令。"
 }

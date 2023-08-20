@@ -56,7 +56,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
                     case RIGHT -> maxWidth / 2 - this.font.width(text);
                 };
                 // FIXME Implement all 3 different shadow types
-                this.font.drawInBatch(text, xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.SEE_THROUGH, bgColor, packedLight);
+                this.font.drawInBatch(text, xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight);
             }
             yOffset += this.font.lineHeight + 2;
         }

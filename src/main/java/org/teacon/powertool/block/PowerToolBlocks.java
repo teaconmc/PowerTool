@@ -23,6 +23,7 @@ import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.teacon.powertool.item.PowerToolItems.ITEMS;
@@ -44,6 +45,8 @@ public class PowerToolBlocks {
             () -> SoundEvents.GLOW_ITEM_FRAME_REMOVE_ITEM,
             () -> SoundEvents.MOSS_CARPET_FALL);
 
+    public static final List<Block> SIMPLE_BLOCKS = List.of(Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL, Blocks.TUBE_CORAL_BLOCK, Blocks.BRAIN_CORAL_BLOCK, Blocks.BUBBLE_CORAL_BLOCK, Blocks.FIRE_CORAL_BLOCK, Blocks.HORN_CORAL_BLOCK, Blocks.REDSTONE_BLOCK);
+
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, PowerTool.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, PowerTool.MODID);
 
@@ -59,6 +62,11 @@ public class PowerToolBlocks {
     public static RegistryObject<Block> COSMETIC_HOPPER;
     public static RegistryObject<Block> COSMETIC_CAMPFIRE;
     public static RegistryObject<Block> COSMETIC_SOUL_CAMPFIRE;
+    public static RegistryObject<Block> COSMETIC_BEEHIVE;
+    public static RegistryObject<Block> COSMETIC_FURNACE;
+    public static RegistryObject<Block> COSMETIC_BLAST_FURNACE;
+    public static RegistryObject<Block> COSMETIC_BARREL;
+
     public static RegistryObject<Block> HOLOGRAPHIC_SIGN;
     public static RegistryObject<BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static RegistryObject<BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
@@ -117,6 +125,17 @@ public class PowerToolBlocks {
                 BlockSetType.IRON, Blocks.IRON_TRAPDOOR
         ));
 
+        regSimpleCosmetic(SIMPLE_BLOCKS);
+        COSMETIC_BEEHIVE = BLOCKS.register("cosmetic_beehive", () -> new CosmeticBeehive(BlockBehaviour.Properties.copy(Blocks.BEEHIVE)));
+        COSMETIC_FURNACE = BLOCKS.register("cosmetic_furnace", () -> new CosmeticFurnace(BlockBehaviour.Properties.copy(Blocks.FURNACE)));
+        COSMETIC_BLAST_FURNACE = BLOCKS.register("cosmetic_blast_furnace", () -> new CosmeticFurnace(BlockBehaviour.Properties.copy(Blocks.BLAST_FURNACE)));
+        COSMETIC_BARREL = BLOCKS.register("cosmetic_barrel", () -> new CosmeticBarrel(BlockBehaviour.Properties.copy(Blocks.BARREL)));
+
+        ITEMS.register("cosmetic_beehive", () -> new BlockItem(COSMETIC_BEEHIVE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_furnace", () -> new BlockItem(COSMETIC_FURNACE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_blast_furnace", () -> new BlockItem(COSMETIC_BLAST_FURNACE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_barrel", () -> new BlockItem(COSMETIC_BARREL.get(), new Item.Properties()));
+
         ITEMS.register("command_block", () -> new BlockItem(COMMAND_BLOCK.get(), new Item.Properties()));
         ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties()));
         ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties()));
@@ -134,6 +153,14 @@ public class PowerToolBlocks {
         for (var type : existing.entrySet()) {
             var name = "cosmetic_" + type.getKey().name() + "_trapdoor";
             var block = BLOCKS.register(name, () -> new CosmeticTrapdoor(BlockBehaviour.Properties.copy(type.getValue())));
+            ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+        }
+    }
+
+    private static void regSimpleCosmetic(List<Block> existing) {
+        for (var existingBlock : existing) {
+            var name = "cosmetic_" + ForgeRegistries.BLOCKS.getKey(existingBlock).getPath();
+            var block = BLOCKS.register(name, () -> new CosmeticSimpleBlock(BlockBehaviour.Properties.copy(existingBlock)));
             ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
         }
     }

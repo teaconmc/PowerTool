@@ -48,6 +48,7 @@
   "item.powertool.clap": "鼓掌",
   "item.powertool.clap_but_sad": "伤心的鼓掌",
   "item.powertool.clap_but_angry": "生气的鼓掌",
+  "item.powertool.transparent_brush":"透明刷",
 
   "entity.powertool.fence_knot": "拴栅栏上的结",
   "entity.powertool.fence_knot.tooltip": "跟原版拴绳儿一样，但是是连着俩栅栏儿的",
@@ -78,5 +79,7 @@
   "powertool.command.fly.enabled": "创造飞行已开启。",
   "powertool.command.fly.disabled": "创造飞行已关闭",
   "powertool.command.fly.not_changed": "你现在在创造/观察者模式，飞行在这些模式下会永久启用。",
-  "powertool.command.fly.must_be_player": "只有玩家可以执行此命令。"
+  "powertool.command.fly.must_be_player": "只有玩家可以执行此命令。",
+
+  "tooltip.powertool.transparent_brush": "右击将方块物品展示框设置为透明"
 }

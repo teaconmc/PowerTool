@@ -6,6 +6,7 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -14,6 +15,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import org.joml.Matrix4f;
 import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<HolographicSignBlockEntity> {
 
     private final BlockEntityRenderDispatcher dispatcher;
@@ -26,9 +30,21 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
 
     @Override
     public void render(HolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+        renderInternal(theSign,transform,bufferSource,packedLight,theSign.rotate);
+        if(theSign.bidirectional){
+            renderInternal(theSign,transform,bufferSource,packedLight,(theSign.rotate+180)%360);
+        }
+    }
+    
+    public void renderInternal(HolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight,int rotatedDegree){
         transform.pushPose();
         transform.translate(0.5, 0.5, 0.5);
-        transform.mulPose(this.dispatcher.camera.rotation());
+        if(theSign.lock){
+            transform.mulPose(Axis.YP.rotationDegrees(rotatedDegree));
+        }
+        else {
+            transform.mulPose(this.dispatcher.camera.rotation());
+        }
         transform.scale(-0.025F, -0.025F, 0.025F);
         // FIXME Scaling does not work as expected
         transform.scale(theSign.scale, theSign.scale, 1);
@@ -56,7 +72,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
                     case RIGHT -> maxWidth / 2 - this.font.width(text);
                 };
                 // FIXME Implement all 3 different shadow types
-                this.font.drawInBatch(text, xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight);
+                this.font.drawInBatch(text.getString(), xOffset, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight, false);
             }
             yOffset += this.font.lineHeight + 2;
         }

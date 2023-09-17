@@ -70,6 +70,10 @@
   "powertool.gui.holographic_sign.scale": "缩放比例：%s",
   "powertool.gui.holographic_sign.narration.text_align": "文字对齐：%s",
   "powertool.gui.holographic_sign.narration.shadow": "阴影：%s",
+  "powertool.gui.holographic_sign.bidirectional.true": "双面渲染:开启",
+  "powertool.gui.holographic_sign.bidirectional.false": "双面渲染:关闭",
+  "powertool.gui.holographic_sign.lock.true": "方向锁定:开启",
+  "powertool.gui.holographic_sign.lock.false": "方向锁定:关闭",
 
   "powertool.command.fly.enabled": "创造飞行已开启。",
   "powertool.command.fly.disabled": "创造飞行已关闭",

@@ -1,6 +1,7 @@
 package org.teacon.powertool.block;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -27,8 +28,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemDisplayBlock extends BaseEntityBlock {
 
     protected static final VoxelShape DOWN_AABB = Block.box(2, 15, 2, 14, 16, 14);
@@ -41,10 +45,11 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     private static final DirectionProperty FACING = BlockStateProperties.FACING;
 
     private static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
+    private static final BooleanProperty SURVIVAL_AVAILABLE = BooleanProperty.create("survival_available");
 
     public ItemDisplayBlock(Properties prop) {
         super(prop);
-        this.registerDefaultState(this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE));
+        this.registerDefaultState(this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(SURVIVAL_AVAILABLE,Boolean.FALSE));
     }
 
     @Override
@@ -56,8 +61,9 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
-
+    
     @Override
+    @SuppressWarnings("deprecation")
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_AABB;
@@ -71,13 +77,13 @@ public class ItemDisplayBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, INVISIBLE);
+        builder.add(FACING, INVISIBLE, SURVIVAL_AVAILABLE);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getClickedFace();
-        return this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(FACING, direction);
+        return this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(FACING, direction).setValue(SURVIVAL_AVAILABLE,Boolean.FALSE);
     }
 
     @Override
@@ -85,6 +91,7 @@ public class ItemDisplayBlock extends BaseEntityBlock {
         return new ItemDisplayBlockEntity(pos, state);
     }
     @Override
+    @SuppressWarnings("deprecation")
     public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (!level.isClientSide() && player.getAbilities().instabuild && level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             theBE.itemToDisplay = ItemStack.EMPTY;
@@ -93,9 +100,10 @@ public class ItemDisplayBlock extends BaseEntityBlock {
         }
     }
     @Override
+    @SuppressWarnings("deprecation")
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
-            if (player.getAbilities().instabuild) {
+            if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)) {
                 if (theBE.itemToDisplay.isEmpty()) {
                     theBE.itemToDisplay = player.getItemInHand(hand).copy();
                     if (!level.isClientSide) {
@@ -114,11 +122,13 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             return theBE.itemToDisplay.isEmpty() ? 0 : theBE.rotation / 45 + 1;

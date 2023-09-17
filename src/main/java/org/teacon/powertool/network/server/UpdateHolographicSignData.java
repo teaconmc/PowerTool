@@ -21,11 +21,16 @@ public class UpdateHolographicSignData {
     private HolographicSignBlockEntity.Align align;
     private HolographicSignBlockEntity.Shadow shadow;
     private HolographicSignBlockEntity.LayerArrange layerArrange;
-
+    
+    private boolean locked;
+    private int rotation;
+    private boolean bidirectional;
+    
     public UpdateHolographicSignData(BlockPos location, String[] messages, int color, float scale,
                                      HolographicSignBlockEntity.Align align,
                                      HolographicSignBlockEntity.Shadow shadow,
-                                     HolographicSignBlockEntity.LayerArrange layerArrange) {
+                                     HolographicSignBlockEntity.LayerArrange layerArrange,
+                                     boolean locked,int rotation,boolean bidirectional) {
         this.location = location;
         this.messages = messages;
         if (messages.length > MAXIMUM_LINE_COUNT) {
@@ -36,6 +41,9 @@ public class UpdateHolographicSignData {
         this.align = align;
         this.shadow = shadow;
         this.layerArrange = layerArrange;
+        this.locked = locked;
+        this.rotation = rotation;
+        this.bidirectional = bidirectional;
     }
 
     public UpdateHolographicSignData(FriendlyByteBuf buf) {
@@ -53,6 +61,9 @@ public class UpdateHolographicSignData {
         this.align = buf.readEnum(HolographicSignBlockEntity.Align.class);
         this.shadow = buf.readEnum(HolographicSignBlockEntity.Shadow.class);
         this.layerArrange = buf.readEnum(HolographicSignBlockEntity.LayerArrange.class);
+        this.locked = buf.readBoolean();
+        this.rotation = buf.readInt();
+        this.bidirectional = buf.readBoolean();
     }
 
     public void write(FriendlyByteBuf buf) {
@@ -66,6 +77,9 @@ public class UpdateHolographicSignData {
         buf.writeEnum(this.align);
         buf.writeEnum(this.shadow);
         buf.writeEnum(this.layerArrange);
+        buf.writeBoolean(locked);
+        buf.writeInt(rotation);
+        buf.writeBoolean(bidirectional);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
@@ -81,6 +95,9 @@ public class UpdateHolographicSignData {
                         theSign.align = this.align;
                         theSign.shadow = this.shadow;
                         theSign.arrange = this.layerArrange;
+                        theSign.lock = this.locked;
+                        theSign.rotate = this.rotation;
+                        theSign.bidirectional = this.bidirectional;
                         var state = level.getBlockState(this.location);
                         theSign.setChanged();
                         level.sendBlockUpdated(this.location, state, state, Block.UPDATE_CLIENTS);

@@ -5,6 +5,7 @@
  */
 package org.teacon.powertool.block.entity;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -20,10 +21,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class HolographicSignBlockEntity extends BlockEntity {
 
     /** Controls how text are aligned: left-align, centered, or right-align. */
@@ -88,6 +92,11 @@ public class HolographicSignBlockEntity extends BlockEntity {
     public Align align = Align.CENTER;
     public Shadow shadow = Shadow.DROP;
     public LayerArrange arrange = LayerArrange.CENTER;
+    
+    public boolean lock = false;
+    public int rotate = 0;
+    
+    public boolean bidirectional = false;
 
     public HolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -105,6 +114,9 @@ public class HolographicSignBlockEntity extends BlockEntity {
         tag.putInt("align", this.align.ordinal());
         tag.putInt("shadow", this.shadow.ordinal());
         tag.putInt("arrange", this.arrange.ordinal());
+        tag.putBoolean("lock",lock);
+        tag.putInt("rotate",rotate);
+        tag.putBoolean("bidirectional",bidirectional);
     }
 
     private void readFrom(CompoundTag tag) {
@@ -130,6 +142,16 @@ public class HolographicSignBlockEntity extends BlockEntity {
         }
         if (tag.contains("arrange", Tag.TAG_INT)) {
             this.arrange = LayerArrange.byOrdinal(tag.getInt("arrange"));
+        }
+        //Tag.TAG_BOOLEAN does not exist. I don’t know what to fill in the latter parameter.
+        if(tag.contains("lock")){
+            this.lock = tag.getBoolean("lock");
+        }
+        if(tag.contains("rotate",Tag.TAG_INT)){
+            this.rotate = tag.getInt("rotate");
+        }
+        if(tag.contains("bidirectional")){
+            this.bidirectional = tag.getBoolean("bidirectional");
         }
     }
 

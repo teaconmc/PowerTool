@@ -17,6 +17,8 @@ Gadgets that online convention organizers may find useful when holding conventio
   - 看起来没用的木棍：没有任何功能的物品，外观和原版木棍一致，但有附魔的特效。
   - MoTD：玩家进入游戏后会收到一条聊天消息，消息内容可自定义。
   - 栅栏绳结：原版拴绳现在可以将两根栅栏拴在一起。
+  - 更多没有方块实体的“装饰”方块
+  - 物品展示框和荧光物品展示框（但是方块版本）：可以旋转其中物品，支持红石比较器检测，支持隐藏框体。极难破坏。
   - 未完待续 To be continued
 
 ## 鸣谢

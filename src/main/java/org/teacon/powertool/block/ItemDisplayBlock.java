@@ -44,7 +44,7 @@ public class ItemDisplayBlock extends BaseEntityBlock {
 
     private static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-    private static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
+    public static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
     private static final BooleanProperty SURVIVAL_AVAILABLE = BooleanProperty.create("survival_available");
 
     public ItemDisplayBlock(Properties prop) {

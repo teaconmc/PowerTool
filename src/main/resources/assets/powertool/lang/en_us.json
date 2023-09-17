@@ -49,6 +49,7 @@
   "item.powertool.clap": "Clap",
   "item.powertool.clap_but_sad": "Sad Clap",
   "item.powertool.clap_but_angry": "Angry Clap",
+  "item.powertool.transparent_brush":"Transparent Brush",
 
   "entity.powertool.fence_knot": "Knot On Fence",
   "entity.powertool.fence_knot.tooltip": "Like vanilla leash, but between fences",
@@ -79,5 +80,7 @@
   "powertool.command.fly.enabled": "Flying enabled",
   "powertool.command.fly.disabled": "Flying disabled",
   "powertool.command.fly.not_changed": "You are in creative/spectator mode; flying is always enabled in these modes.",
-  "powertool.command.fly.must_be_player": "This command can only be executed by a player."
+  "powertool.command.fly.must_be_player": "This command can only be executed by a player.",
+
+  "tooltip.powertool.transparent_brush": "Make block display block transparent"
 }

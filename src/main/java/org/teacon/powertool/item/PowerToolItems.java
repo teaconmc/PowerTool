@@ -17,7 +17,10 @@ import net.minecraftforge.registries.RegistryObject;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 @MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)
 public class PowerToolItems {
 
@@ -43,6 +46,7 @@ public class PowerToolItems {
         ITEMS.register("clap", () -> new ClapItem(new Item.Properties()));
         ITEMS.register("clap_but_sad", () -> new ClapItem(new Item.Properties()));
         ITEMS.register("clap_but_angry", () -> new ClapItem(new Item.Properties()));
+        ITEMS.register("transparent_brush",TransparentBrushItem::new);
         CREATIVE_MODE_TABS.register(bus);
     }
 

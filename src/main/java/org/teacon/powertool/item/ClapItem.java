@@ -1,5 +1,6 @@
 package org.teacon.powertool.item;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -9,6 +10,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.teacon.powertool.PowerToolSoundEvents;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ClapItem extends Item {
     public ClapItem(Properties prop) {
         super(prop);

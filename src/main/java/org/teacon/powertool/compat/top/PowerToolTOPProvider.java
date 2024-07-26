@@ -11,15 +11,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.function.Function;
 
 public final class PowerToolTOPProvider implements IProbeInfoProvider, Function<ITheOneProbe, Void> {
     @Override
     public ResourceLocation getID() {
-        return new ResourceLocation(PowerTool.MODID, "the_one_probe");
+        return VanillaUtils.modResourceLocation( "the_one_probe");
     }
 
     @Override

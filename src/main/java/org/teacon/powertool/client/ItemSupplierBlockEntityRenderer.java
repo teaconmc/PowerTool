@@ -11,6 +11,9 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class ItemSupplierBlockEntityRenderer implements BlockEntityRenderer<ItemSupplierBlockEntity> {
 
     public ItemSupplierBlockEntityRenderer(BlockEntityRendererProvider.Context context) {

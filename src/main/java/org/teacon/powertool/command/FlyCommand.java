@@ -19,8 +19,12 @@ public class FlyCommand {
             var abilities = p.getAbilities();
             var gameMode = p.gameMode;
             if (gameMode.isSurvival()) {
+                //todo 使用attribute去控制飞行
+                //p.getAttribute(NeoForgeMod.CREATIVE_FLIGHT).getValue();
+                //noinspection deprecation
                 abilities.mayfly = !abilities.mayfly;
                 p.connection.send(new ClientboundPlayerAbilitiesPacket(p.getAbilities()));
+                //noinspection deprecation
                 if (abilities.mayfly) {
                     sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.enabled"), true);
                 } else {

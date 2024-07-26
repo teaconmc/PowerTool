@@ -9,7 +9,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.teacon.powertool.network.capability.Permission;
+import org.teacon.powertool.attachment.PowerToolAttachments;
+import org.teacon.powertool.network.attachment.Permission;
+
+import java.util.Optional;
 
 @Mixin(Player.class)
 public class PlayerMixin {
@@ -20,8 +23,10 @@ public class PlayerMixin {
     private void usePermission(CallbackInfoReturnable<Boolean> cir) {
         // noinspection ConstantConditions
         if ((Object) this instanceof AbstractClientPlayer player) {
-            cir.setReturnValue(this.abilities.instabuild && player.getCapability(Permission.CAPABILITY)
-                .resolve().flatMap(Permission::isCanUseGameMasterBlock).orElse(player.hasPermissions(2)));
+            cir.setReturnValue(this.abilities.instabuild &&
+                    Optional.of(player.getData(PowerToolAttachments.PERMISSION))
+                            .flatMap(Permission::isCanUseGameMasterBlock)
+                            .orElse(player.hasPermissions(2)));
         }
     }
 }

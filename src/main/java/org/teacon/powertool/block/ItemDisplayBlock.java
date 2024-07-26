@@ -1,5 +1,6 @@
 package org.teacon.powertool.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -25,7 +28,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -33,7 +35,10 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+//todo 中键选取内容物
 public class ItemDisplayBlock extends BaseEntityBlock {
+    
+    public static final MapCodec<ItemDisplayBlock> CODEC = simpleCodec(ItemDisplayBlock::new);
 
     protected static final VoxelShape DOWN_AABB = Block.box(2, 15, 2, 14, 16, 14);
     protected static final VoxelShape UP_AABB = Block.box(2, 0, 2, 14, 1, 14);
@@ -51,19 +56,25 @@ public class ItemDisplayBlock extends BaseEntityBlock {
         super(prop);
         this.registerDefaultState(this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(SURVIVAL_AVAILABLE,Boolean.FALSE));
     }
-
+    
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("block.powertool.item_display.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+    
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.translatable("block.powertool.item_display.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
     }
     
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("DuplicatedCode") //The "duplicated code" in switch cannot actually extract methods.
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_AABB;
@@ -90,8 +101,8 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ItemDisplayBlockEntity(pos, state);
     }
+    
     @Override
-    @SuppressWarnings("deprecation")
     public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (!level.isClientSide() && player.getAbilities().instabuild && level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             theBE.itemToDisplay = ItemStack.EMPTY;
@@ -99,26 +110,33 @@ public class ItemDisplayBlock extends BaseEntityBlock {
             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
         }
     }
+    
     @Override
-    @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)) {
-                if (theBE.itemToDisplay.isEmpty()) {
-                    theBE.itemToDisplay = player.getItemInHand(hand).copy();
-                    if (!level.isClientSide) {
-                        theBE.setChanged();
-                        level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
-                    }
-                } else {
-                    theBE.rotation = (theBE.rotation + 45) % 360;
+                theBE.rotation = (theBE.rotation + 45) % 360;
+                theBE.setChanged();
+                level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                return InteractionResult.SUCCESS;
+            }
+        }
+        return InteractionResult.PASS;
+    }
+    
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
+            if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)){
+                theBE.itemToDisplay = stack.copy();
+                if (!level.isClientSide) {
                     theBE.setChanged();
                     level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
                 }
+                return ItemInteractionResult.SUCCESS;
             }
-            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

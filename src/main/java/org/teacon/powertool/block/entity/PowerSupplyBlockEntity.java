@@ -1,21 +1,22 @@
 package org.teacon.powertool.block.entity;
 
+
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.teacon.powertool.block.PowerSupplyBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public final class PowerSupplyBlockEntity extends BlockEntity {
 
-    private final LazyOptional<IEnergyStorage> energyStore = LazyOptional.of(() -> new IEnergyStorage() {
+    private final Lazy<IEnergyStorage> energyStore = Lazy.of(() -> new IEnergyStorage() {
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
             return 0;
@@ -53,30 +54,22 @@ public final class PowerSupplyBlockEntity extends BlockEntity {
         super(PowerToolBlocks.POWER_SUPPLY_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
         this.data.markDirty = this::setChanged;
     }
-
+    
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        tag.putInt("status", this.data.status);
-        tag.putInt("power", this.data.power);
-        super.saveAdditional(tag);
-    }
-
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         this.data.status = tag.getInt("status");
         this.data.power = tag.getInt("power");
     }
-
-    @NotNull
+    
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction d) {
-        return cap == ForgeCapabilities.ENERGY ? this.energyStore.cast() : super.getCapability(cap, d);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putInt("status", this.data.status);
+        tag.putInt("power", this.data.power);
+        super.saveAdditional(tag, registries);
     }
-
-    @Override
-    public void invalidateCaps() {
-        this.energyStore.invalidate();
-        super.invalidateCaps();
+    
+    public IEnergyStorage getEnergyStore() {
+        return energyStore.get();
     }
 }

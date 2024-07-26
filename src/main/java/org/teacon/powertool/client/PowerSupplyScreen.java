@@ -10,16 +10,18 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
-import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.menu.PowerSupplyMenu;
-import org.teacon.powertool.network.PowerToolNetwork;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
+import org.teacon.powertool.utils.VanillaUtils;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupplyMenu> {
 
-    private static final ResourceLocation BG_LOCATION = new ResourceLocation(PowerTool.MODID, "textures/gui/power_supply.png");
+    private static final ResourceLocation BG_LOCATION = VanillaUtils.modResourceLocation("textures/gui/power_supply.png");
 
     private EditBox input;
     private ButtonWithHighlight minus, plus;
@@ -35,11 +37,11 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
 
     public void onToggled(Button toggle) {
         this.status = this.status == 0 ? 1 : 0;
-        PowerToolNetwork.channel().send(PacketDistributor.SERVER.with(null), new UpdatePowerSupplyData(0, this.status));
+        PacketDistributor.sendToServer(new UpdatePowerSupplyData(0, this.status));
     }
 
     public void updatePowerOutput() {
-        PowerToolNetwork.channel().send(PacketDistributor.SERVER.with(null), new UpdatePowerSupplyData(1, this.power));
+        PacketDistributor.sendToServer(new UpdatePowerSupplyData(1, this.power));
     }
 
     @Override
@@ -83,7 +85,6 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
     @Override
     protected void containerTick() {
         super.containerTick();
-        this.input.tick();
         this.minus.tick();
         this.plus.tick();
     }
@@ -113,7 +114,7 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics,mouseX,mouseY,partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         RenderSystem.disableBlend();
         this.input.render(guiGraphics, mouseX, mouseY, partialTick);

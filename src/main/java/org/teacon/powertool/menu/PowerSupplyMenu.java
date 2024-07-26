@@ -1,5 +1,6 @@
 package org.teacon.powertool.menu;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -8,6 +9,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import org.teacon.powertool.block.PowerSupplyBlock;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class PowerSupplyMenu extends AbstractContainerMenu {
 
     public PowerSupplyBlock.Data dataHolder;

@@ -5,5 +5,5 @@ import net.minecraft.server.level.ServerLevel;
 
 public interface PeriodCommandBlockBridge {
 
-    int powerToolPeriod(ServerLevel level, BlockPos pos);
+    int powerTool$Period(ServerLevel level, BlockPos pos);
 }

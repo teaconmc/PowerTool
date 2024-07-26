@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class PeriodicCommandBlock extends CommandBlock implements PeriodCommandBlockBridge {
 
     public PeriodicCommandBlock(Properties properties, boolean auto) {
-        super(properties, auto);
+        super(auto, properties);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class PeriodicCommandBlock extends CommandBlock implements PeriodCommandB
     }
 
     @Override
-    public int powerToolPeriod(ServerLevel level, BlockPos pos) {
+    public int powerTool$Period(ServerLevel level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof PeriodicCommandBlockEntity entity ? entity.getPeriod() : 1;
     }
 }

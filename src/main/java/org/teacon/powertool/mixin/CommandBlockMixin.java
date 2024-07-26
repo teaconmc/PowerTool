@@ -14,11 +14,11 @@ public class CommandBlockMixin implements PeriodCommandBlockBridge {
 
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;scheduleTick(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/Block;I)V"))
     private void usePowerToolPeriod(ServerLevel level, BlockPos pos, Block block, int i) {
-        level.scheduleTick(pos, block, powerToolPeriod(level, pos));
+        level.scheduleTick(pos, block, powerTool$Period(level, pos));
     }
 
     @Override
-    public int powerToolPeriod(ServerLevel level, BlockPos pos) {
+    public int powerTool$Period(ServerLevel level, BlockPos pos) {
         return 1;
     }
 }

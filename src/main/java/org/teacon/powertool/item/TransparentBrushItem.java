@@ -8,8 +8,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.ItemDisplayBlock;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -35,9 +33,10 @@ public class TransparentBrushItem extends Item {
         return super.useOn(context);
     }
     
+    
     @Override
-    public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> components, TooltipFlag p_41424_) {
-        super.appendHoverText(p_41421_, p_41422_, components, p_41424_);
-        components.add(Component.translatable("tooltip.powertool.transparent_brush").withStyle(ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.translatable("tooltip.powertool.transparent_brush").withStyle(ChatFormatting.GRAY));
     }
 }

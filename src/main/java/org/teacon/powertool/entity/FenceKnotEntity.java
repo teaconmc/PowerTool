@@ -1,16 +1,23 @@
 package org.teacon.powertool.entity;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
@@ -24,13 +31,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.teacon.powertool.item.PowerToolItems;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class FenceKnotEntity extends HangingEntity {
 
-    private static final EntityDataAccessor<Set<BlockPos>> CONNECT_TO = SynchedEntityData.defineId(FenceKnotEntity.class, PowerToolEntities.BLOCK_POS_LIST.get());
+    private static final EntityDataAccessor<Set<BlockPos>> CONNECT_TO = SynchedEntityData.defineId(FenceKnotEntity.class, PowerToolEntities.BLOCK_POS_LIST);
 
     public FenceKnotEntity(Level level, BlockPos pos) {
         super(PowerToolEntities.FENCE_KNOT.get(), level, pos);
@@ -45,23 +56,8 @@ public class FenceKnotEntity extends HangingEntity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.getEntityData().define(CONNECT_TO, new LinkedHashSet<>());
-    }
-
-    @Override
     protected Vec3 getLeashOffset() {
         return Vec3.ZERO;
-    }
-
-    @Override
-    public int getWidth() {
-        return 9;
-    }
-
-    @Override
-    public int getHeight() {
-        return 9;
     }
 
     @Override
@@ -80,7 +76,7 @@ public class FenceKnotEntity extends HangingEntity {
         if (!toPos.isEmpty()) {
             var list = new LinkedHashSet<BlockPos>();
             for (var tag : toPos) {
-                list.add(NbtUtils.readBlockPos((CompoundTag) tag));
+                NbtUtils.readBlockPos((CompoundTag) tag, "pos").ifPresent(list::add);
             }
             this.getEntityData().set(CONNECT_TO, list);
         }
@@ -90,13 +86,16 @@ public class FenceKnotEntity extends HangingEntity {
     public void addAdditionalSaveData(CompoundTag data) {
         var toPos = new ListTag();
         for (var pos : this.getEntityData().get(CONNECT_TO)) {
-            toPos.add(NbtUtils.writeBlockPos(pos));
+            var tag = new CompoundTag();
+            tag.put("pos", NbtUtils.writeBlockPos(pos));
+            toPos.add(tag);
         }
         data.put("ConnectTo", toPos);
     }
-
+    
+    
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entity) {
         return new ClientboundAddEntityPacket(this, 0, this.getPos());
     }
 
@@ -108,16 +107,16 @@ public class FenceKnotEntity extends HangingEntity {
 
         var held = p.getItemInHand(hand);
         if (held.getItem() == Items.LEAD) {
-            var itemNbt = held.getTagElement("PowerToolKnot");
-            if (itemNbt == null) {
+            var data = held.get(PowerToolItems.KNOT_DATA);
+            if (data == null) {
                 // Connection start.
-                held.getOrCreateTag().put("PowerToolKnot", NbtUtils.writeBlockPos(this.pos));
+                held.set(PowerToolItems.KNOT_DATA,new PowerToolKnotData(this.pos));
                 p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connecting", this.pos.toShortString()));
             } else {
-                var fromPos = NbtUtils.readBlockPos(itemNbt);
+                var fromPos = data.pos;
                 var knots = this.level().getEntitiesOfClass(FenceKnotEntity.class, new AABB(fromPos.getX(), fromPos.getY(), fromPos.getZ(), fromPos.getX() + 1, fromPos.getY() + 1, fromPos.getZ() + 1));
                 if (!knots.isEmpty()) {
-                    var fromKnot = knots.get(0);
+                    var fromKnot = knots.getFirst();
                     var thisConnectTo = this.getEntityData().get(CONNECT_TO);
                     var otherConnectTo = fromKnot.getEntityData().get(CONNECT_TO);
                     if (otherConnectTo.contains(this.pos)) {
@@ -140,13 +139,7 @@ public class FenceKnotEntity extends HangingEntity {
                         p.sendSystemMessage(Component.translatable("entity.powertool.fence_knot.connected", fromKnot.pos.toShortString(), this.pos.toShortString()));
                     }
                 }
-                var mainTag = held.getTag();
-                if (mainTag != null) {
-                    mainTag.remove("PowerToolKnot");
-                    if (mainTag.isEmpty()) {
-                        held.setTag(null);
-                    }
-                }
+                held.set(PowerToolItems.KNOT_DATA,null);
             }
         }
         return InteractionResult.CONSUME;
@@ -156,21 +149,42 @@ public class FenceKnotEntity extends HangingEntity {
     public boolean survives() {
         return this.level().getBlockState(this.pos).is(BlockTags.FENCES);
     }
-
+    
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(CONNECT_TO,new LinkedHashSet<>());
+    }
+    
     @Override
     public boolean shouldRenderAtSqrDistance(double distanceSq) {
         return distanceSq < 1024.0;
     }
-
+    
     @Override
-    protected void recalculateBoundingBox() {
-        this.setPosRaw((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.375D, (double)this.pos.getZ() + 0.5D);
+    protected AABB calculateBoundingBox(BlockPos pos, Direction direction) {
+        var x_ = pos.getX() + 0.5D;
+        var y_ = pos.getY() + 0.375D;
+        var z_ = pos.getZ() + 0.5D;
         double width = (double)this.getType().getWidth() / 2.0D;
         double height = this.getType().getHeight();
-        this.setBoundingBox(new AABB(this.getX() - width, this.getY(), this.getZ() - width, this.getX() + width, this.getY() + height, this.getZ() + width));
+        return new AABB(x_ - width, y_, z_ - width, x_ + width, y_ + height, z_ + width);
     }
-
+    
     public Set<BlockPos> getConnectTo() {
         return this.entityData.get(CONNECT_TO);
+    }
+    
+    public record PowerToolKnotData(BlockPos pos) {
+        
+        public static final Codec<PowerToolKnotData> CODEC = RecordCodecBuilder.create(
+                ins -> ins.group(
+                BlockPos.CODEC.fieldOf("pos").forGetter(PowerToolKnotData::pos)
+        ).apply(ins, PowerToolKnotData::new));
+        
+        public static final StreamCodec<ByteBuf, PowerToolKnotData> STREAM_CODEC = StreamCodec.composite(
+                BlockPos.STREAM_CODEC,
+                PowerToolKnotData::pos,
+                PowerToolKnotData::new
+        );
     }
 }

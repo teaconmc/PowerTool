@@ -35,6 +35,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
+//todo 中键选取内容物
 public class ItemDisplayBlock extends BaseEntityBlock {
     
     public static final MapCodec<ItemDisplayBlock> CODEC = simpleCodec(ItemDisplayBlock::new);

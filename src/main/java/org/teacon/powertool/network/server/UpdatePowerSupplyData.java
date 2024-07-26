@@ -1,51 +1,49 @@
 package org.teacon.powertool.network.server;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.teacon.powertool.menu.PowerSupplyMenu;
+import org.teacon.powertool.utils.VanillaUtils;
 
-import java.util.function.Supplier;
-
-public class UpdatePowerSupplyData {
-
-    private int type, data;
-
-    public UpdatePowerSupplyData(int type, int data) {
-        this.type = type;
-        this.data = data;
-    }
-
-    public UpdatePowerSupplyData(FriendlyByteBuf buf) {
-        this.type = buf.readVarInt();
-        this.data = buf.readVarInt();
-    }
-
-    public void write(FriendlyByteBuf buf) {
-        buf.writeVarInt(this.type).writeVarInt(this.data);
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
-        var context = contextSupplier.get();
+@MethodsReturnNonnullByDefault
+public record UpdatePowerSupplyData(int type_, int data) implements CustomPacketPayload {
+    
+    public static final Type<UpdatePowerSupplyData> TYPE = new Type<>(VanillaUtils.modResourceLocation("update_power_supply"));
+    
+    public static final StreamCodec<ByteBuf,UpdatePowerSupplyData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,UpdatePowerSupplyData::type_,
+            ByteBufCodecs.INT,UpdatePowerSupplyData::data,
+            UpdatePowerSupplyData::new
+    );
+    
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
-            var player = context.getSender();
-            if (player != null) {
-                if (player.containerMenu instanceof PowerSupplyMenu theMenu) {
-                    if (this.type == 0) {
-                        theMenu.dataHolder.status = this.data;
-                        var callback = theMenu.dataHolder.markDirty;
-                        if (callback != null) {
-                            callback.run();
-                        }
-                    } else if (this.type == 1) {
-                        theMenu.dataHolder.power = this.data;
-                        var callback = theMenu.dataHolder.markDirty;
-                        if (callback != null) {
-                            callback.run();
-                        }
+            var player = context.player();
+            if (player.containerMenu instanceof PowerSupplyMenu theMenu) {
+                if (this.type_ == 0) {
+                    theMenu.dataHolder.status = this.data;
+                    var callback = theMenu.dataHolder.markDirty;
+                    if (callback != null) {
+                        callback.run();
+                    }
+                } else if (this.type_ == 1) {
+                    theMenu.dataHolder.power = this.data;
+                    var callback = theMenu.dataHolder.markDirty;
+                    if (callback != null) {
+                        callback.run();
                     }
                 }
             }
         });
-        context.setPacketHandled(true);
+        
+    }
+    
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

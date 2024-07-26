@@ -1,12 +1,12 @@
 package org.teacon.powertool.motd;
 
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.teacon.powertool.PowerTool;
 
-@Mod.EventBusSubscriber(modid = PowerTool.MODID)
+@EventBusSubscriber(modid = PowerTool.MODID)
 public class MotDHandler {
 
     public static Component motd = null;

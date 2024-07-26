@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.teacon.powertool.network.capability.Permission;
+import org.teacon.powertool.network.attachment.Permission;
 
 @Mixin(Commands.class)
 public class CommandsMixin {

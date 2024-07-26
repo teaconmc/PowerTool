@@ -1,32 +1,23 @@
-package org.teacon.powertool.network.capability;
+package org.teacon.powertool.network.attachment;
 
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
-import net.minecraftforge.server.permission.nodes.PermissionTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.server.permission.PermissionAPI;
+import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
+import net.neoforged.neoforge.server.permission.nodes.PermissionNode;
+import net.neoforged.neoforge.server.permission.nodes.PermissionTypes;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.network.PowerToolNetwork;
 import org.teacon.powertool.network.client.UpdatePermissionPacket;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.Optional;
 
 public class Permission {
-
-    public static final Capability<Permission> CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
-    public static final ResourceLocation KEY = new ResourceLocation(PowerTool.MODID, "permission");
+    
+    public static final ResourceLocation KEY = VanillaUtils.resourceLocationOf(PowerTool.MODID, "permission");
 
     private Boolean canUseGameMasterBlock;
     private Boolean canSwitchGameMode;
@@ -56,18 +47,9 @@ public class Permission {
         this.canUseSelector = canUseSelector;
     }
 
-    @Mod.EventBusSubscriber
-    public static class Provider implements ICapabilityProvider {
-
-        private final Permission permission = new Permission();
-        private final LazyOptional<Permission> provider = LazyOptional.of(() -> permission);
-
-        @NotNull
-        @Override
-        public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            return CAPABILITY.orEmpty(cap, this.provider);
-        }
-
+    @EventBusSubscriber
+    public static class Provider  {
+        
         private static final PermissionNode<Boolean> GAMEMODE = new PermissionNode<>(
             "minecraft", "command.gamemode", PermissionTypes.BOOLEAN,
             (player, uuid, context) -> player != null && player.hasPermissions(2)
@@ -88,8 +70,7 @@ public class Permission {
     }
 
     public static void updatePermission(ServerPlayer player) {
-        PowerToolNetwork.channel().send(
-            PacketDistributor.PLAYER.with(() -> player),
+        PacketDistributor.sendToPlayer(player,
             new UpdatePermissionPacket(
                 PermissionAPI.getPermission(player, Provider.COMMAND_BLOCK),
                 PermissionAPI.getPermission(player, Provider.GAMEMODE),

@@ -15,11 +15,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
-import org.teacon.powertool.network.PowerToolNetwork;
 import org.teacon.powertool.network.server.UpdateHolographicSignData;
 
 import java.util.Arrays;
@@ -99,7 +98,7 @@ public class HolographicSignEditingScreen extends Screen {
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.scale", displayed.get()))
                 .build();
 
-        Button scaleUp = new Button.Builder(Component.literal("+"), btn -> this.scale += 0.125)
+        Button scaleUp = new Button.Builder(Component.literal("+"), btn -> this.scale += 0.125f)
                 .pos(100, 0)
                 .size(20, 20)
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.scale", displayed.get()))
@@ -132,7 +131,7 @@ public class HolographicSignEditingScreen extends Screen {
         this.colorInput = new EditBox(this.minecraft.font, 280 + innerPadding * 2, 0, 50, 20, Component.empty());
         this.colorInput.setValue("#" + Integer.toHexString(this.colorInARGB));
         this.colorInput.setResponder(string -> {
-            TextColor color = TextColor.parseColor(this.colorInput.getValue());
+            TextColor color = TextColor.parseColor(this.colorInput.getValue()).result().orElse(null);
             this.colorInARGB = color == null ? 0xFFFFFFFF : color.getValue() | 0xFF000000;
         });
         this.colorInput.setFocused(false);
@@ -243,9 +242,10 @@ public class HolographicSignEditingScreen extends Screen {
             }
         }
         var toSend = Arrays.copyOfRange(this.messages, 0, last + 1);
-        PowerToolNetwork.channel().send(PacketDistributor.SERVER.with(() -> null),
-                new UpdateHolographicSignData(this.sign.getBlockPos(), toSend, this.colorInARGB, this.scale,
-                        this.textAlign, this.shadowType, this.layerArrange,this.locked,this.rotation,this.bidirectional));
+        PacketDistributor.sendToServer(UpdateHolographicSignData.create(this.sign.getBlockPos(),
+                Arrays.asList(toSend), this.colorInARGB, this.scale,
+                this.textAlign, this.shadowType, this.layerArrange,
+                this.locked,this.rotation,this.bidirectional));
     }
 
     @Override
@@ -305,10 +305,10 @@ public class HolographicSignEditingScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!this.colorInput.mouseClicked(mouseX, mouseX, button)) {
+        if (!this.colorInput.mouseClicked(mouseX, mouseY, button)) {
             this.colorInput.setFocused(false);
         }
-        if (!this.rotationInput.mouseClicked(mouseX, mouseX, button)) {
+        if (!this.rotationInput.mouseClicked(mouseX, mouseY, button)) {
             this.rotationInput.setFocused(false);
         }
         this.setFocused(null);
@@ -318,7 +318,7 @@ public class HolographicSignEditingScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Lighting.setupForFlatItems();
-        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawString(this.font, Component.translatable("powertool.gui.holographic_sign.scale", this.scale), 7, 7, 0xFFFFFF, true);
         // I don't know, someone please explain why these transforms are necessary???
         var transform = guiGraphics.pose();
@@ -384,6 +384,6 @@ public class HolographicSignEditingScreen extends Screen {
 
         transform.popPose();
         Lighting.setupFor3DItems();
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        
     }
 }

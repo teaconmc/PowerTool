@@ -5,19 +5,26 @@
  */
 package org.teacon.powertool.block.entity;
 
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 
@@ -31,11 +38,15 @@ import java.util.List;
 public class HolographicSignBlockEntity extends BlockEntity {
 
     /** Controls how text are aligned: left-align, centered, or right-align. */
-    public enum Align {
+    public enum Align  implements StringRepresentable {
         LEFT(Component.translatable("powertool.gui.holographic_sign.align_left")),
         CENTER(Component.translatable("powertool.gui.holographic_sign.align_center")),
         RIGHT(Component.translatable("powertool.gui.holographic_sign.align_right"));
-
+        
+        
+        public static final Codec<Align> CODEC = StringRepresentable.fromEnum(Align::values);
+        public static final StreamCodec<ByteBuf,Align> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        
         private static final Align[] VALUES = Align.values();
         public final Component displayName;
 
@@ -46,14 +57,24 @@ public class HolographicSignBlockEntity extends BlockEntity {
         public static Align byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : CENTER;
         }
+        
+        @Override
+        @NotNull
+        public String getSerializedName() {
+            return name();
+        }
+        
     }
 
     /** Represents the text shadow. */
-    public enum Shadow {
+    public enum Shadow implements StringRepresentable  {
         NONE(Component.translatable("powertool.gui.holographic_sign.shadow_none")),
         DROP(Component.translatable("powertool.gui.holographic_sign.shadow_drop")),
         PLATE(Component.translatable("powertool.gui.holographic_sign.shadow_plate"));
-
+        
+        public static final Codec<Shadow> CODEC = StringRepresentable.fromEnum(Shadow::values);
+        public static final StreamCodec<ByteBuf,Shadow> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        
         private static final Shadow[] VALUES = Shadow.values();
         public final Component displayName;
 
@@ -64,14 +85,22 @@ public class HolographicSignBlockEntity extends BlockEntity {
         public static Shadow byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : PLATE;
         }
-    }
+        
+        @Override
+        @NotNull
+        public String getSerializedName() {
+    return name();
+}}
 
     /** Represents the Z-offset of the text: above things, same layer or below things. */
-    public enum LayerArrange {
+    public enum LayerArrange implements StringRepresentable  {
         FRONT(Component.translatable("powertool.gui.holographic_sign.arrange_front")),
         CENTER(Component.translatable("powertool.gui.holographic_sign.arrange_center")),
         BACK(Component.translatable("powertool.gui.holographic_sign.arrange_back"));
-
+        
+        public static final Codec<LayerArrange> CODEC = StringRepresentable.fromEnum(LayerArrange::values);
+        public static final StreamCodec<ByteBuf, LayerArrange> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        
         private static final LayerArrange[] VALUES = LayerArrange.values();
         public final Component displayName;
 
@@ -82,7 +111,12 @@ public class HolographicSignBlockEntity extends BlockEntity {
         public static LayerArrange byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : CENTER;
         }
-    }
+        
+        @Override
+        @NotNull
+        public String getSerializedName() {
+    return name();
+}}
 
     public List<? extends Component> contents = Collections.emptyList();
     public int colorInARGB = 0xFFFFFFFF;
@@ -102,10 +136,10 @@ public class HolographicSignBlockEntity extends BlockEntity {
         super(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
-    private void writeTo(CompoundTag tag) {
+    private void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
         var list = new ListTag();
         for (var text : this.contents) {
-            list.add(StringTag.valueOf(Component.Serializer.toJson(text)));
+            list.add(StringTag.valueOf(Component.Serializer.toJson(text,registries)));
         }
         tag.put("content", list);
         tag.putInt("color", this.colorInARGB);
@@ -119,10 +153,10 @@ public class HolographicSignBlockEntity extends BlockEntity {
         tag.putBoolean("bidirectional",bidirectional);
     }
 
-    private void readFrom(CompoundTag tag) {
+    private void readFrom(CompoundTag tag,HolderLookup.Provider registries) {
         var loaded = new ArrayList<Component>();
         for (var entry : tag.getList("content", Tag.TAG_STRING)) {
-            loaded.add(Component.Serializer.fromJson(entry.getAsString()));
+            loaded.add(Component.Serializer.fromJson(entry.getAsString(),registries));
         }
         this.contents = loaded;
         if (tag.contains("color", Tag.TAG_INT)) {
@@ -154,29 +188,30 @@ public class HolographicSignBlockEntity extends BlockEntity {
             this.bidirectional = tag.getBoolean("bidirectional");
         }
     }
-
+    
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        this.writeTo(tag);
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        this.writeTo(tag,registries);
+        super.saveAdditional(tag, registries);
     }
-
+    
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        this.readFrom(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        this.readFrom(tag,registries);
     }
-
+    
     @Override
-    public CompoundTag getUpdateTag() {
-        var tag = new CompoundTag();
-        this.writeTo(tag);
-        return tag;
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        var result = super.getUpdateTag(registries);
+        this.writeTo(result,registries);
+        return result;
     }
-
+    
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        this.readFrom(tag);
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+        this.readFrom(tag,lookupProvider);
+        super.handleUpdateTag(tag, lookupProvider);
     }
 
     @Nullable
@@ -184,10 +219,11 @@ public class HolographicSignBlockEntity extends BlockEntity {
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
-
+    
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        super.onDataPacket(net, pkt);
-        this.handleUpdateTag(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
+        this.handleUpdateTag(pkt.getTag(),lookupProvider);
     }
+    
 }

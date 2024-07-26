@@ -2,6 +2,7 @@ package org.teacon.powertool.block.entity;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
@@ -38,17 +39,17 @@ public class PeriodicCommandBlockEntity extends CommandBlockEntity {
             return super.getMode();
         }
     }
-
+    
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         tag.putInt("period", period);
     }
-
+    
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         period = tag.getInt("period");
+        super.loadAdditional(tag, registries);
     }
 
     @Override

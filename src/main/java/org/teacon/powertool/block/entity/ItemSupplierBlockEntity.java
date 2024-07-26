@@ -1,7 +1,8 @@
 package org.teacon.powertool.block.entity;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -10,36 +11,38 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-public class ItemSupplierBlockEntity extends BlockEntity {
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
+public class ItemSupplierBlockEntity extends BlockEntity{
 
     public ItemStack theItem = ItemStack.EMPTY;
-
-    final LazyOptional<IItemHandler> fakeInv = LazyOptional.of(() -> new IItemHandler() {
+    
+    private final Lazy<IItemHandler> iItemHandlerLazy = Lazy.of(() -> new IItemHandler() {
         @Override
         public int getSlots() {
             return 1;
         }
-
+        
         @NotNull
         @Override
         public ItemStack getStackInSlot(int slot) {
             return theItem;
         }
-
+        
         @NotNull
         @Override
         public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
             return stack;
         }
-
+        
         @NotNull
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
@@ -47,44 +50,45 @@ public class ItemSupplierBlockEntity extends BlockEntity {
             copy.setCount(amount);
             return copy;
         }
-
+        
         @Override
         public int getSlotLimit(int slot) {
             return 1;
         }
-
+        
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return false;
         }
     });
-
+    
     public ItemSupplierBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
-
+    
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        tag.put("item", this.theItem.save(new CompoundTag()));
-        super.saveAdditional(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        this.theItem = ItemStack.parseOptional(registries,tag.getCompound("item"));
+        super.loadAdditional(tag, registries);
     }
-
+    
     @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        this.theItem = ItemStack.of(tag.getCompound("item"));
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put("item", this.theItem.saveOptional(registries));
     }
-
+    
     @Override
-    public CompoundTag getUpdateTag() {
-        var tag = new CompoundTag();
-        tag.put("item", this.theItem.save(new CompoundTag()));
-        return tag;
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        var result = super.getUpdateTag(registries);
+        result.put("item", this.theItem.saveOptional(registries));
+        return result;
     }
-
+    
     @Override
-    public void handleUpdateTag(CompoundTag tag) {
-        this.theItem = ItemStack.of(tag.getCompound("item"));
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
+        this.theItem = ItemStack.parseOptional(registries,tag.getCompound("item"));
+        super.handleUpdateTag(tag, registries);
     }
 
     @Nullable
@@ -92,22 +96,16 @@ public class ItemSupplierBlockEntity extends BlockEntity {
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
-
+    
+    
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        super.onDataPacket(net, pkt);
-        this.handleUpdateTag(pkt.getTag());
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
+        this.handleUpdateTag(pkt.getTag(),lookupProvider);
     }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction dir) {
-        return cap == ForgeCapabilities.ITEM_HANDLER ? this.fakeInv.cast() : super.getCapability(cap, dir);
+    
+    public IItemHandler getItemHandler() {
+        return iItemHandlerLazy.get();
     }
-
-    @Override
-    public void invalidateCaps() {
-        this.fakeInv.invalidate();
-        super.invalidateCaps();
-    }
+    
 }

@@ -1,15 +1,15 @@
 package org.teacon.powertool.block;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -22,14 +22,15 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.teacon.powertool.PowerTool;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class TrashCanBlock extends Block {
 
     private static final VoxelShape OUTER_SHAPE = Shapes.block();
     private static final VoxelShape SHAPE = Shapes.join(OUTER_SHAPE, Block.box(2, 2, 2, 14, 16, 14), BooleanOp.ONLY_FIRST);
-
-    private static final TagKey<EntityType<?>> ITEM_TYPE = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(PowerTool.MODID, "item"));
 
     private static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -52,14 +53,21 @@ public class TrashCanBlock extends Block {
     public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
     }
-
-    @Override
+    
+    //xkball: What does this method for?
     public Object getRenderPropertiesInternal() {
         return OUTER_SHAPE;
     }
-
+    
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+    
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!player.getAbilities().instabuild) {
             player.getItemInHand(hand).shrink(1);
         }
@@ -68,12 +76,14 @@ public class TrashCanBlock extends Block {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (entity.getType().is(ITEM_TYPE)) {
+        //noinspection deprecation
+        if (entity.getType().builtInRegistryHolder().is(EntityType.ITEM.builtInRegistryHolder().key())) {
             entity.discard();
         }
     }
-
+    
     @Override
+    @SuppressWarnings("deprecation")
     public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         return direction == Direction.DOWN && state.getValue(POWERED) ? 1 : 0;
     }

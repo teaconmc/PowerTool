@@ -1,11 +1,11 @@
 package org.teacon.powertool.command;
 
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.teacon.powertool.PowerTool;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, modid = PowerTool.MODID)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = PowerTool.MODID)
 public class PowerToolCommands {
 
     @SubscribeEvent

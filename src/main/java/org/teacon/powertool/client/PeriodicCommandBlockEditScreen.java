@@ -6,8 +6,8 @@ import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BaseCommandBlock;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
-import org.teacon.powertool.network.PowerToolNetwork;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -44,12 +44,13 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
         guiGraphics.drawString(this.font, PERIOD, this.width / 2 - 150 + (300 - 40), 95, 10526880);
     }
 
+    //todo 修复命令方块使其正常工作
     @Override
     protected void populateAndSendPacket(BaseCommandBlock baseCommandBlock) {
         super.populateAndSendPacket(baseCommandBlock);
         try {
             var period = Integer.parseInt(this.periodBox.getValue());
-            PowerToolNetwork.channel().sendToServer(new SetCommandBlockPacket(
+            PacketDistributor.sendToServer(new SetCommandBlockPacket(
                 BlockPos.containing(baseCommandBlock.getPosition()), period
             ));
         } catch (NumberFormatException ignored) {

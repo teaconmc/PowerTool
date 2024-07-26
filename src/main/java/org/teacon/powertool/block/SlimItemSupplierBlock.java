@@ -1,5 +1,6 @@
 package org.teacon.powertool.block;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -12,6 +13,10 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class SlimItemSupplierBlock extends ItemSupplierBlock {
 
     protected static final VoxelShape DOWN_AABB = Block.box(0, 12, 0, 16, 16, 16);
@@ -27,6 +32,7 @@ public class SlimItemSupplierBlock extends ItemSupplierBlock {
     }
 
     @Override
+    @SuppressWarnings("DuplicatedCode") //The "duplicated code" in switch cannot actually extract methods.
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return switch (state.getValue(FACING)) {
             case NORTH -> NORTH_AABB;

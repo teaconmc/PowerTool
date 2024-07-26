@@ -2,6 +2,7 @@ package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.LeashKnotModel;
@@ -21,9 +22,14 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.teacon.powertool.entity.FenceKnotEntity;
+import org.teacon.powertool.utils.VanillaUtils;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
-    private static final ResourceLocation KNOT_LOCATION = new ResourceLocation("textures/entity/lead_knot.png");
+    private static final ResourceLocation KNOT_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/lead_knot.png");
     private final LeashKnotModel<FenceKnotEntity> model;
 
     public FenceKnotRenderer(EntityRendererProvider.Context context) {
@@ -43,7 +49,7 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         transform.scale(-1.0F, -1.0F, 1.0F);
         this.model.setupAnim(e, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
         VertexConsumer vertexconsumer = buffers.getBuffer(this.model.renderType(KNOT_LOCATION));
-        this.model.renderToBuffer(transform, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(transform, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, VanillaUtils.getColor(255,255,255,255));
         transform.popPose();
         for (var fromPos : e.getConnectTo()) {
             this.renderLeash(e, partialTick, transform, buffers, fromPos);
@@ -115,8 +121,8 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         float f5 = p_174310_ * f;
         float f6 = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
         float f7 = p_174312_ * f;
-        vertexes.vertex(transform, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).color(f2, f3, f4, 1.0F).uv2(k).endVertex();
-        vertexes.vertex(transform, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).color(f2, f3, f4, 1.0F).uv2(k).endVertex();
+        vertexes.addVertex(transform, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setLight(k);
+        vertexes.addVertex(transform, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F).setLight(k);
     }
 
 }

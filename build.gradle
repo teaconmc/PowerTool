@@ -211,3 +211,16 @@ idea {
         downloadJavadoc = true
     }
 }
+
+tasks.register("githubActionOutput") {
+    onlyIf {
+        System.env.GITHUB_ACTIONS
+    }
+    doLast {
+        def outputFile = new File(System.env.GITHUB_OUTPUT)
+        def newLine = System.getProperty('line.separator')
+        outputFile << newLine << "artifact_name=${mod_id}"
+                << newLine << "artifact_publish_name=${mod_id}-${mod_version}.jar"
+                << newLine << "artifact_path=${tasks.jar.archiveFile.get().asFile.absolutePath}"
+    }
+}

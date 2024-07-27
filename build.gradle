@@ -217,10 +217,7 @@ idea {
 }
 
 tasks.register("githubActionOutput") {
-    onlyIf {
-        System.env.GITHUB_ACTIONS
-    }
-    doLast {
+    if(System.env.GITHUB_ACTIONS != null){
         def p = new Properties()
         p.load(new FileInputStream("gradle.properties"))
         def jarArchiveBaseName = "${p.mod_id}-NeoForge-${p.minecraft_version}" as String
@@ -229,5 +226,6 @@ tasks.register("githubActionOutput") {
         outputFile << newLine << "artifact_name=${p.mod_id}"
                 << newLine << "artifact_publish_name=${jarArchiveBaseName}-${p.mod_version}.jar"
                 << newLine << "artifact_path=${tasks.jar.archiveFile.get().asFile.absolutePath}"
+
     }
 }

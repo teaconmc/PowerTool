@@ -44,6 +44,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
         }
         else {
             transform.mulPose(this.dispatcher.camera.rotation());
+            transform.mulPose(Axis.YP.rotationDegrees(180));
         }
         transform.scale(-0.025F, -0.025F, 0.025F);
         // FIXME Scaling does not work as expected

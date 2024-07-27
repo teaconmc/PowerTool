@@ -28,4 +28,6 @@ public class PeriodicCommandBlock extends CommandBlock implements PeriodCommandB
     public int powerTool$Period(ServerLevel level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof PeriodicCommandBlockEntity entity ? entity.getPeriod() : 1;
     }
+    
+    
 }

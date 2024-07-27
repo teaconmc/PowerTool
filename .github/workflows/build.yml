@@ -1,9 +1,11 @@
 name: test-build
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'src/**'
       - 'build.gradle'
+
 jobs:
   build:
     runs-on: ubuntu-22.04

@@ -6,6 +6,28 @@ plugins {
     id 'net.neoforged.moddev' version '1.0.15'
 }
 
+abstract class TeaConDumpPathToGitHub extends DefaultTask {
+    @Input
+    abstract Property<String> getPublishName()
+    @InputFile
+    abstract RegularFileProperty getTargetFile()
+    @TaskAction
+    void dump() {
+        if (System.env.GITHUB_ACTIONS) {
+            File theFile = targetFile.getAsFile().get()
+
+            def outputFile = new File(System.env.GITHUB_OUTPUT)
+            // Use the env-specific line separator for maximally possible compatibility
+            def newLine = System.getProperty('line.separator')
+
+            // Write out new env variable for later usage
+            outputFile << newLine << "artifact_name=${theFile.getName()}"
+            outputFile << newLine << "artifact_publish_name=${publishName.get()}"
+            outputFile << newLine << "artifact_path=${theFile.absolutePath}"
+        }
+    }
+}
+
 tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
@@ -173,4 +195,90 @@ idea {
         downloadSources = true
         downloadJavadoc = true
     }
+}
+
+publishing { PublishingExtension it ->
+    publications {
+        // noinspection GroovyAssignabilityCheck
+        release(MavenPublication) {
+            // noinspection GroovyAssignabilityCheck
+            from components.java
+            // noinspection GroovyAssignabilityCheck
+            groupId = "org.teacon"
+            // noinspection GroovyAssignabilityCheck
+            artifactId = 'PowerTool-1.21-NeoForge'
+            // noinspection GroovyAssignabilityCheck
+            version = mod_version
+            pom {
+                // noinspection GroovyAssignabilityCheck
+                name = 'PowerTool'
+                // noinspection GroovyAssignabilityCheck
+                url = "https://github.com/teaconmc/PowerTool"
+                licenses {
+                    license {
+                        // noinspection GroovyAssignabilityCheck
+                        name = 'GPLv3'
+                        // noinspection GroovyAssignabilityCheck
+                        url = "https://github.com/teaconmc/PowerTool/blob/1.21-neoforge/LICENSE"
+                    }
+                }
+                organization {
+                    // noinspection GroovyAssignabilityCheck
+                    name = 'TeaConMC'
+                    // noinspection GroovyAssignabilityCheck
+                    url = 'https://github.com/teaconmc'
+                }
+                developers {
+                    developer {
+                        id = '3TUSK'
+                        name = '3TUSK'
+                    }
+                    developer {
+                        id = 'xkball'
+                        name = 'xkball'
+                    }
+                }
+                issueManagement {
+                    // noinspection GroovyAssignabilityCheck
+                    system = 'GitHub Issues'
+                    // noinspection GroovyAssignabilityCheck
+                    url = "https://github.com/teaconmc/PowerTool/issues"
+                }
+                scm {
+                    // noinspection GroovyAssignabilityCheck
+                    url = "https://github.com/teaconmc/PowerTool"
+                    // noinspection GroovyAssignabilityCheck
+                    connection = "scm:git:git://github.com/teaconmc/PowerTool.git"
+                    // noinspection GroovyAssignabilityCheck
+                    developerConnection = "scm:git:git@github.com:teaconmc/PowerTool.git"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "teacon"
+            url = "s3://maven/"
+            credentials(AwsCredentials) {
+                accessKey = System.env.ARCHIVE_ACCESS_KEY
+                secretKey = System.env.ARCHIVE_SECRET_KEY
+            }
+        }
+    }
+}
+
+tasks.withType(PublishToMavenRepository).configureEach {
+    if (repository && repository.name == "archive") {
+        it.onlyIf {
+            System.env.MAVEN_USERNAME && System.env.MAVEN_PASSWORD
+        }
+    }
+}
+
+tasks.register("githubActionOutput", TeaConDumpPathToGitHub) { task ->
+    task.onlyIf {
+        System.env.GITHUB_ACTIONS
+    }
+    task.getPublishName().set("${jar.archiveBaseName.get()}-${version}.jar")
+    task.getTargetFile().set(jar.archiveFile)
 }

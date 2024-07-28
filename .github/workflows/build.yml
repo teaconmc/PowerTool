@@ -23,7 +23,7 @@ jobs:
             ~/.gradle/wrapper
           key: $${{ runner.os }}-gradle
       - name: Get Short Identifier
-        uses: benjlevesque/short-sha@v1.2
+        uses: benjlevesque/short-sha@v3.0
         id: short-sha
       - name: Build
         id: build

@@ -206,7 +206,7 @@ publishing { PublishingExtension it ->
             // noinspection GroovyAssignabilityCheck
             groupId = "org.teacon"
             // noinspection GroovyAssignabilityCheck
-            artifactId = 'PowerTool-1.21-NeoForge'
+            artifactId = 'PowerTool-NeoForge-1.21'
             // noinspection GroovyAssignabilityCheck
             version = mod_version
             pom {

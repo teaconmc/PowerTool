@@ -1,31 +1,29 @@
 name: test-build
 on:
-  workflow_dispatch:
   push:
     paths:
       - 'src/**'
       - 'build.gradle'
-
 jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Java 21
-        uses: actions/setup-java@v2
+        uses: actions/checkout@v4
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
       - name: Apply Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: $${{ runner.os }}-gradle
       - name: Get Short Identifier
-        uses: benjlevesque/short-sha@v1.2
+        uses: benjlevesque/short-sha@v3.0
         id: short-sha
       - name: Build
         id: build
@@ -33,7 +31,7 @@ jobs:
           VERSION_IDENTIFIER: SNAPSHOT+${{ steps.short-sha.outputs.sha }}
         run: ./gradlew :build :githubActionOutput --stacktrace
       - name: GitHub Action Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build.outputs.artifact_name }}
           path: ${{ steps.build.outputs.artifact_path }}

@@ -6,12 +6,29 @@ plugins {
     id 'net.neoforged.moddev' version '1.0.15'
 }
 
+abstract class TeaConDumpPathToGitHub extends DefaultTask {
+    @Input
+    abstract Property<String> getPublishName()
+    @InputFile
+    abstract RegularFileProperty getTargetFile()
+    @TaskAction
+    void dump() {
+        if (System.env.GITHUB_ACTIONS) {
+            File theFile = targetFile.getAsFile().get()
+
+            def outputFile = new File(System.env.GITHUB_OUTPUT)
+            // Use the env-specific line separator for maximally possible compatibility
+            def newLine = System.getProperty('line.separator')
+
+            // Write out new env variable for later usage
+            outputFile << newLine << "artifact_name=${theFile.getName()}"
+            outputFile << newLine << "artifact_publish_name=${publishName.get()}"
+            outputFile << newLine << "artifact_path=${theFile.absolutePath}"
+        }
+    }
+}
+
 tasks.named('wrapper', Wrapper).configure {
-    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
-    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
-    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
-    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
-    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
     distributionType = Wrapper.DistributionType.BIN
 }
 
@@ -138,30 +155,11 @@ repositories {
 }
 
 dependencies {
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
     localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
-    // Example mod dependency using a mod jar from ./libs with a flat dir repository
-    // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
-    // The group id is ignored when searching -- in this case, it is "blank"
-    // implementation "blank:coolmod-${mc_version}:${coolmod_version}"
     implementation "curse.maven:the-one-probe-245211:5502323"
-    // Example mod dependency using a file as dependency
-    // implementation files("libs/coolmod-${mc_version}-${coolmod_version}.jar")
-
-    // Example project dependency using a sister or child project:
-    // implementation project(":myproject")
-
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
 }
-def mod_id_
-def mod_name_
+
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
 // When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
@@ -185,23 +183,6 @@ tasks.withType(ProcessResources).configureEach {
     filesMatching(['META-INF/neoforge.mods.toml']) {
         expand replaceProperties
     }
-
-    mod_id_ = mod_id
-    mod_name_ = mod_name
-}
-
-// Example configuration to allow publishing using the maven-publish plugin
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
-    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -216,16 +197,88 @@ idea {
     }
 }
 
-tasks.register("githubActionOutput") {
-    if(System.env.GITHUB_ACTIONS != null){
-        def p = new Properties()
-        p.load(new FileInputStream("gradle.properties"))
-        def jarArchiveBaseName = "${p.mod_id}-NeoForge-${p.minecraft_version}" as String
-        def outputFile = new File(System.env.GITHUB_OUTPUT)
-        def newLine = System.getProperty('line.separator')
-        outputFile << newLine << "artifact_name=${p.mod_id}"
-                << newLine << "artifact_publish_name=${jarArchiveBaseName}-${p.mod_version}.jar"
-                << newLine << "artifact_path=${tasks.jar.archiveFile.get().asFile.absolutePath}"
-
+publishing { PublishingExtension it ->
+    publications {
+        // noinspection GroovyAssignabilityCheck
+        release(MavenPublication) {
+            // noinspection GroovyAssignabilityCheck
+            from components.java
+            // noinspection GroovyAssignabilityCheck
+            groupId = "org.teacon"
+            // noinspection GroovyAssignabilityCheck
+            artifactId = 'PowerTool-NeoForge-1.21'
+            // noinspection GroovyAssignabilityCheck
+            version = mod_version
+            pom {
+                // noinspection GroovyAssignabilityCheck
+                name = 'PowerTool'
+                // noinspection GroovyAssignabilityCheck
+                url = "https://github.com/teaconmc/PowerTool"
+                licenses {
+                    license {
+                        // noinspection GroovyAssignabilityCheck
+                        name = 'GPLv3'
+                        // noinspection GroovyAssignabilityCheck
+                        url = "https://github.com/teaconmc/PowerTool/blob/1.21-neoforge/LICENSE"
+                    }
+                }
+                organization {
+                    // noinspection GroovyAssignabilityCheck
+                    name = 'TeaConMC'
+                    // noinspection GroovyAssignabilityCheck
+                    url = 'https://github.com/teaconmc'
+                }
+                developers {
+                    developer {
+                        id = '3TUSK'
+                        name = '3TUSK'
+                    }
+                    developer {
+                        id = 'xkball'
+                        name = 'xkball'
+                    }
+                }
+                issueManagement {
+                    // noinspection GroovyAssignabilityCheck
+                    system = 'GitHub Issues'
+                    // noinspection GroovyAssignabilityCheck
+                    url = "https://github.com/teaconmc/PowerTool/issues"
+                }
+                scm {
+                    // noinspection GroovyAssignabilityCheck
+                    url = "https://github.com/teaconmc/PowerTool"
+                    // noinspection GroovyAssignabilityCheck
+                    connection = "scm:git:git://github.com/teaconmc/PowerTool.git"
+                    // noinspection GroovyAssignabilityCheck
+                    developerConnection = "scm:git:git@github.com:teaconmc/PowerTool.git"
+                }
+            }
+        }
     }
+    repositories {
+        maven {
+            name = "teacon"
+            url = "s3://maven/"
+            credentials(AwsCredentials) {
+                accessKey = System.env.ARCHIVE_ACCESS_KEY
+                secretKey = System.env.ARCHIVE_SECRET_KEY
+            }
+        }
+    }
+}
+
+tasks.withType(PublishToMavenRepository).configureEach {
+    if (repository && repository.name == "archive") {
+        it.onlyIf {
+            System.env.MAVEN_USERNAME && System.env.MAVEN_PASSWORD
+        }
+    }
+}
+
+tasks.register("githubActionOutput", TeaConDumpPathToGitHub) { task ->
+    task.onlyIf {
+        System.env.GITHUB_ACTIONS
+    }
+    task.getPublishName().set("${jar.archiveBaseName.get()}-${version}.jar")
+    task.getTargetFile().set(jar.archiveFile)
 }

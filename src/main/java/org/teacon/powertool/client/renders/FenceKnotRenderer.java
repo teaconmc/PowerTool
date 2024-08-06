@@ -1,4 +1,4 @@
-package org.teacon.powertool.client;
+package org.teacon.powertool.client.renders;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

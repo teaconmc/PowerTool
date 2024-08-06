@@ -1,4 +1,4 @@
-package org.teacon.powertool.client;
+package org.teacon.powertool.client.gui.widget;
 
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarratedElementType;

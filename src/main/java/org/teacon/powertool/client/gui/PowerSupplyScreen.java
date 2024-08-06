@@ -1,4 +1,4 @@
-package org.teacon.powertool.client;
+package org.teacon.powertool.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
+import org.teacon.powertool.client.gui.widget.ButtonWithHighlight;
+import org.teacon.powertool.client.gui.widget.InvisibleButton;
 import org.teacon.powertool.menu.PowerSupplyMenu;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 import org.teacon.powertool.utils.VanillaUtils;

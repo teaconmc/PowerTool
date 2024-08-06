@@ -3,7 +3,7 @@
  * licensed under CC0-1.0 per its repository.
  * You may find the original code at https://github.com/ModFest/glowcase
  */
-package org.teacon.powertool.client;
+package org.teacon.powertool.client.renders;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -13,12 +13,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import org.joml.Matrix4f;
-import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<HolographicSignBlockEntity> {
+public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<CommonHolographicSignBlockEntity> {
 
     private final BlockEntityRenderDispatcher dispatcher;
     private final Font font;
@@ -29,30 +30,16 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
     }
 
     @Override
-    public void render(HolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(CommonHolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         renderInternal(theSign,transform,bufferSource,packedLight,theSign.rotate);
         if(theSign.bidirectional){
             renderInternal(theSign,transform,bufferSource,packedLight,(theSign.rotate+180)%360);
         }
     }
     
-    public void renderInternal(HolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight,int rotatedDegree){
+    public void renderInternal(CommonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int rotatedDegree){
         transform.pushPose();
-        transform.translate(0.5, 0.5, 0.5);
-        if(theSign.lock){
-            transform.mulPose(Axis.YP.rotationDegrees(rotatedDegree));
-        }
-        else {
-            transform.mulPose(this.dispatcher.camera.rotation());
-            transform.mulPose(Axis.YP.rotationDegrees(180));
-        }
-        transform.scale(-0.025F, -0.025F, 0.025F);
-        // FIXME Scaling does not work as expected
-        transform.scale(theSign.scale, theSign.scale, 1);
-        switch (theSign.arrange) {
-            case FRONT -> transform.translate(0.0, 0.0, 0.4D);
-            case BACK -> transform.translate(0.0, 0.0, -0.4D);
-        }
+        beforeRender(theSign,transform,dispatcher,rotatedDegree);
         Matrix4f matrix4f = transform.last().pose();
         int bgColor = theSign.bgColorInARGB;
         int yOffset = -theSign.contents.size() / 2 * this.font.lineHeight;
@@ -78,5 +65,23 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<H
             yOffset += this.font.lineHeight + 2;
         }
         transform.popPose();
+    }
+    
+    public static void beforeRender(BaseHolographicSignBlockEntity theSign, PoseStack transform, BlockEntityRenderDispatcher dispatcher,int rotatedDegree){
+        transform.translate(0.5, 0.5, 0.5);
+        if(theSign.lock){
+            transform.mulPose(Axis.YP.rotationDegrees(rotatedDegree));
+        }
+        else {
+            transform.mulPose(dispatcher.camera.rotation());
+            transform.mulPose(Axis.YP.rotationDegrees(180));
+        }
+        transform.scale(-0.025F, -0.025F, 0.025F);
+        // FIXME Scaling does not work as expected
+        transform.scale(theSign.scale, theSign.scale, 1);
+        switch (theSign.arrange) {
+            case FRONT -> transform.translate(0.0, 0.0, 0.4D);
+            case BACK -> transform.translate(0.0, 0.0, -0.4D);
+        }
     }
 }

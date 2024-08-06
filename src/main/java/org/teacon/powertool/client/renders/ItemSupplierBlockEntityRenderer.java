@@ -1,4 +1,4 @@
-package org.teacon.powertool.client;
+package org.teacon.powertool.client.renders;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
+import org.teacon.powertool.client.ClientEvents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

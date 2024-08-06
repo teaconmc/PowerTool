@@ -1,4 +1,4 @@
-package org.teacon.powertool.client;
+package org.teacon.powertool.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;

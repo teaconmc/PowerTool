@@ -22,11 +22,14 @@ import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
+import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
+import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
+import org.teacon.powertool.block.holo_sign.SignType;
 
 import java.util.List;
 import java.util.Map;
@@ -72,13 +75,16 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block,CosmeticFurnace> COSMETIC_BLAST_FURNACE;
     public static DeferredHolder<Block,CosmeticBarrel> COSMETIC_BARREL;
 
-    public static DeferredHolder<Block,HolographicSignBlock> HOLOGRAPHIC_SIGN;
+    public static DeferredHolder<Block, HolographicSignBlock> HOLOGRAPHIC_SIGN;
+    public static DeferredHolder<Block, HolographicSignBlock> LINK_HOLOGRAPHIC_SIGN;
+    public static DeferredHolder<Block, HolographicSignBlock> RAW_JSON_HOLOGRAPHIC_SIGN;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
 
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<ItemDisplayBlockEntity>> ITEM_DISPLAY_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<ItemSupplierBlockEntity>> ITEM_SUPPLIER_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<HolographicSignBlockEntity>> HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<CommonHolographicSignBlockEntity>> HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<LinkHolographicSignBlockEntity>> LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
@@ -90,14 +96,24 @@ public class PowerToolBlocks {
         TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanBlock(BlockBehaviour.Properties.of().strength(1000)));
         POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(1000)));
         ITEM_DISPLAY = BLOCKS.register("item_display", () -> new ItemDisplayBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER).sound(ITEM_DISPLAY_SOUND_TYPE).noOcclusion().strength(10000)));
-        //todo 这玩意是紫黑块
         GLOW_ITEM_DISPLAY = BLOCKS.register("glow_item_display", () -> new ItemDisplayBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER).sound(GLOW_ITEM_DISPLAY_SOUND_TYPE).noOcclusion().strength(10000)));
         ITEM_SUPPLIER = BLOCKS.register("item_supplier", () -> new ItemSupplierBlock(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
         SLIM_ITEM_SUPPLIER = BLOCKS.register("slim_item_supplier", () -> new SlimItemSupplierBlock(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
         COSMETIC_HOPPER = BLOCKS.register("cosmetic_hopper", () -> new CosmeticHopper(BlockBehaviour.Properties.ofFullCopy(Blocks.HOPPER)));
         COSMETIC_CAMPFIRE = BLOCKS.register("cosmetic_campfire", () -> new CosmeticCampfireBlock(true, BlockBehaviour.Properties.ofFullCopy(Blocks.CAMPFIRE)));
         COSMETIC_SOUL_CAMPFIRE = BLOCKS.register("cosmetic_soul_campfire", () -> new CosmeticCampfireBlock(false, BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_CAMPFIRE)));
-        HOLOGRAPHIC_SIGN = BLOCKS.register("holographic_sign", () -> new HolographicSignBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable()));
+        HOLOGRAPHIC_SIGN = BLOCKS.register("holographic_sign",
+                () -> new HolographicSignBlock(
+                        BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable(),
+                        SignType.COMMON));
+        LINK_HOLOGRAPHIC_SIGN = BLOCKS.register("link_holographic_sign",
+                () -> new HolographicSignBlock(
+                        BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable(),
+                        SignType.URL));
+        RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.register("raw_json_holographic_sign",
+                () -> new HolographicSignBlock(
+                        BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT).lightLevel(state -> 15).noCollission().noLootTable(),
+                        SignType.RAW_JSON));
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ).build(DSL.remainderType()));
@@ -111,7 +127,10 @@ public class PowerToolBlocks {
                 ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get(), SLIM_ITEM_SUPPLIER.get()
         ).build(DSL.remainderType()));
         HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("holographic_sign", () -> BlockEntityType.Builder.of(
-                HolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()
+                CommonHolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()
+        ).build(DSL.remainderType()));
+        LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("link_holographic_sign",() -> BlockEntityType.Builder.of(
+                LinkHolographicSignBlockEntity::new,LINK_HOLOGRAPHIC_SIGN.get()
         ).build(DSL.remainderType()));
 
         regTrapDoors(Map.of(
@@ -153,6 +172,8 @@ public class PowerToolBlocks {
         ITEMS.register("cosmetic_campfire", () -> new BlockItem(COSMETIC_CAMPFIRE.get(), new Item.Properties()));
         ITEMS.register("cosmetic_soul_campfire", () -> new BlockItem(COSMETIC_SOUL_CAMPFIRE.get(), new Item.Properties()));
         ITEMS.register("holographic_sign", () -> new BlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("link_holographic_sign",() -> new BlockItem(LINK_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("raw_json_holographic_sign",() -> new BlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
     }
 
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {

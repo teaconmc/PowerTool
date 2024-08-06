@@ -1,7 +1,10 @@
-package org.teacon.powertool.block;
+package org.teacon.powertool.block.holo_sign;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,28 +29,32 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
-    
-    public static final MapCodec<HolographicSignBlock> CODEC = simpleCodec(HolographicSignBlock::new);
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    
+    public final SignType type;
 
-    public HolographicSignBlock(Properties prop) {
+    public HolographicSignBlock(Properties prop, SignType type) {
         super(prop);
+        this.type = type;
         this.registerDefaultState(this.stateDefinition.any().setValue(WATERLOGGED, Boolean.FALSE));
     }
     
     @Override
+    //todo 返回一个可用的MapCodec
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
+        return null;
     }
     
     @Override
@@ -64,7 +71,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new HolographicSignBlockEntity(pos, state);
+        return type.newBlockEntity(pos, state);
     }
     
     @Override
@@ -78,13 +85,42 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     }
     
     public InteractionResult use(Level level, BlockPos pos, Player player) {
-        if (player.isCrouching()) {
-            return InteractionResult.PASS;
+        if (!level.isClientSide() && player instanceof ServerPlayer sp && sp.getAbilities().instabuild && !player.isCrouching()) {
+            PacketDistributor.sendToPlayer(sp,new OpenHolographicSignEditor(pos,type));
         }
-        if (!level.isClientSide() && player instanceof ServerPlayer sp && sp.getAbilities().instabuild) {
-            PacketDistributor.sendToPlayer(sp,new OpenHolographicSignEditor(pos));
+        else if(!player.getAbilities().instabuild || player.isCrouching()){
+            return tryOpenLink(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
         return InteractionResult.SUCCESS;
+    }
+    
+    public boolean tryOpenLink(Level level, BlockPos pos) {
+        if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
+            try {
+                URI uri;
+                try {
+                    uri = Util.parseAndValidateUntrustedUri(be.url);
+                }catch (URISyntaxException e) {
+                    uri = Util.parseAndValidateUntrustedUri("https://" + be.url);
+                }
+                var mc = Minecraft.getInstance();
+                if (mc.options.chatLinksPrompt().get()) {
+                    URI finalUri = uri;
+                    mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
+                        if (p_351659_) {
+                            Util.getPlatform().openUri(finalUri);
+                        }
+                        mc.setScreen(null);
+                    }, be.url, false));
+                } else {
+                    Util.getPlatform().openUri(uri);
+                }
+                return true;
+            } catch (URISyntaxException e) {
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override

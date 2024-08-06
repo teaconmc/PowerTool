@@ -11,8 +11,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -21,21 +19,20 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.teacon.powertool.block.PowerToolBlocks;
+import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class HolographicSignBlockEntity extends BlockEntity {
+public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloSignBEFlag {
 
     /** Controls how text are aligned: left-align, centered, or right-align. */
     public enum Align  implements StringRepresentable {
@@ -117,8 +114,7 @@ public class HolographicSignBlockEntity extends BlockEntity {
         public String getSerializedName() {
     return name();
 }}
-
-    public List<? extends Component> contents = Collections.emptyList();
+    
     public int colorInARGB = 0xFFFFFFFF;
 
     public int bgColorInARGB = 0x40000000;
@@ -132,16 +128,12 @@ public class HolographicSignBlockEntity extends BlockEntity {
     
     public boolean bidirectional = false;
 
-    public HolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        super(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
+    public BaseHolographicSignBlockEntity(BlockEntityType<?> type, BlockPos pPos, BlockState pBlockState) {
+        super(type, pPos, pBlockState);
     }
 
-    private void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-        var list = new ListTag();
-        for (var text : this.contents) {
-            list.add(StringTag.valueOf(Component.Serializer.toJson(text,registries)));
-        }
-        tag.put("content", list);
+    public void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
+       
         tag.putInt("color", this.colorInARGB);
         tag.putInt("backgroundColor", this.bgColorInARGB);
         tag.putFloat("scale", this.scale);
@@ -153,12 +145,8 @@ public class HolographicSignBlockEntity extends BlockEntity {
         tag.putBoolean("bidirectional",bidirectional);
     }
 
-    private void readFrom(CompoundTag tag,HolderLookup.Provider registries) {
-        var loaded = new ArrayList<Component>();
-        for (var entry : tag.getList("content", Tag.TAG_STRING)) {
-            loaded.add(Component.Serializer.fromJson(entry.getAsString(),registries));
-        }
-        this.contents = loaded;
+    public void readFrom(CompoundTag tag,HolderLookup.Provider registries) {
+     
         if (tag.contains("color", Tag.TAG_INT)) {
             this.colorInARGB = tag.getInt("color");
         }
@@ -226,4 +214,7 @@ public class HolographicSignBlockEntity extends BlockEntity {
         this.handleUpdateTag(pkt.getTag(),lookupProvider);
     }
     
+    public void filterMessage(ServerPlayer player){
+    
+    }
 }

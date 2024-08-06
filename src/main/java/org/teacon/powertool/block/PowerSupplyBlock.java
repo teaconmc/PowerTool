@@ -26,6 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class PowerSupplyBlock extends BaseEntityBlock {
     
     private static final MapCodec<PowerSupplyBlock> CODEC = simpleCodec(PowerSupplyBlock::new);
+    
     public PowerSupplyBlock(Properties prop) {
         super(prop);
     }

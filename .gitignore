@@ -24,3 +24,5 @@ runs
 run-data
 
 repo
+src/main/resources/assets/powertool/textures/item/holographics.psd
+src/main/resources/assets/powertool/textures/gui/item_supplier.psd

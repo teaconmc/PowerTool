@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/acacia_trapdoor_open",
+  "render_type": "cutout"
+}

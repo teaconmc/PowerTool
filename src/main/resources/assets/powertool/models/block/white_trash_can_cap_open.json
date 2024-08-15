@@ -1,4 +1,6 @@
 {
   "parent": "minecraft:block/acacia_trapdoor_open",
-  "render_type": "cutout"
+  "render_type": "cutout",
+  "textures": {
+    "texture": "powertool:block/white_trash_can_cap"}
 }

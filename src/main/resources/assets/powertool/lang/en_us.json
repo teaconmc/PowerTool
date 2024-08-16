@@ -82,6 +82,7 @@
   "powertool.command.fly.disabled": "Flying disabled",
   "powertool.command.fly.not_changed": "You are in creative/spectator mode; flying is always enabled in these modes.",
   "powertool.command.fly.must_be_player": "This command can only be executed by a player.",
+  "powertool.command.fly.unavailable": "Player does not have creative flying attribute - this is impossible. Please report this issue.",
 
   "tooltip.powertool.transparent_brush": "Make block display block transparent"
 }

@@ -30,13 +30,17 @@ public class FlyCommand {
             // Attributes are also automatically synced to client, so less hassle on our side.
             var flyAttribute = p.getAttribute(NeoForgeMod.CREATIVE_FLIGHT);
             var gameMode = p.gameMode;
-            if (gameMode.isSurvival() && flyAttribute != null) {
-                if (flyAttribute.hasModifier(POWER_TOOL_FLY_MODIFIER)) {
-                    flyAttribute.removeModifier(POWER_TOOL_FLY_MODIFIER);
-                    sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.disabled"), true);
+            if (gameMode.isSurvival()) {
+                if (flyAttribute != null) {
+                    if (flyAttribute.hasModifier(POWER_TOOL_FLY_MODIFIER)) {
+                        flyAttribute.removeModifier(POWER_TOOL_FLY_MODIFIER);
+                        sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.disabled"), true);
+                    } else {
+                        flyAttribute.addPermanentModifier(new AttributeModifier(POWER_TOOL_FLY_MODIFIER, 943, AttributeModifier.Operation.ADD_VALUE));
+                        sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.enabled"), true);
+                    }
                 } else {
-                    flyAttribute.addPermanentModifier(new AttributeModifier(POWER_TOOL_FLY_MODIFIER, 943, AttributeModifier.Operation.ADD_VALUE));
-                    sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.enabled"), true);
+                    sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.unavailable"), true);
                 }
             } else {
                 sourceStack.getSource().sendSuccess(() -> Component.translatable("powertool.command.fly.not_changed"), true);

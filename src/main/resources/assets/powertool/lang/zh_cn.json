@@ -81,6 +81,7 @@
   "powertool.command.fly.disabled": "创造飞行已关闭",
   "powertool.command.fly.not_changed": "你现在在创造/观察者模式，飞行在这些模式下会永久启用。",
   "powertool.command.fly.must_be_player": "只有玩家可以执行此命令。",
+  "powertool.command.fly.unavailable": "玩家缺失创造飞行属性。理论上这不可能，请反馈给本 Mod 作者。",
 
   "tooltip.powertool.transparent_brush": "右击将方块物品展示框设置为透明"
 }

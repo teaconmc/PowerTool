@@ -33,7 +33,6 @@ public class TransparentBrushItem extends Item {
         return super.useOn(context);
     }
     
-    
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,powered=false,waterlogged=false": {
+      "model": "powertool:block/green_trash_can",
+      "y": 90
+    },
+    "facing=east,powered=false,waterlogged=true": {
+      "model": "powertool:block/green_trash_can",
+      "y": 90
+    },
+    "facing=east,powered=true,waterlogged=false": {
+      "model": "powertool:block/green_trash_can",
+      "y": 90
+    },
+    "facing=east,powered=true,waterlogged=true": {
+      "model": "powertool:block/green_trash_can",
+      "y": 90
+    },
+    "facing=north,powered=false,waterlogged=false": {
+      "model": "powertool:block/green_trash_can"
+    },
+    "facing=north,powered=false,waterlogged=true": {
+      "model": "powertool:block/green_trash_can"
+    },
+    "facing=north,powered=true,waterlogged=false": {
+      "model": "powertool:block/green_trash_can"
+    },
+    "facing=north,powered=true,waterlogged=true": {
+      "model": "powertool:block/green_trash_can"
+    },
+    "facing=south,powered=false,waterlogged=false": {
+      "model": "powertool:block/green_trash_can",
+      "y": 180
+    },
+    "facing=south,powered=false,waterlogged=true": {
+      "model": "powertool:block/green_trash_can",
+      "y": 180
+    },
+    "facing=south,powered=true,waterlogged=false": {
+      "model": "powertool:block/green_trash_can",
+      "y": 180
+    },
+    "facing=south,powered=true,waterlogged=true": {
+      "model": "powertool:block/green_trash_can",
+      "y": 180
+    },
+    "facing=west,powered=false,waterlogged=false": {
+      "model": "powertool:block/green_trash_can",
+      "y": 270
+    },
+    "facing=west,powered=false,waterlogged=true": {
+      "model": "powertool:block/green_trash_can",
+      "y": 270
+    },
+    "facing=west,powered=true,waterlogged=false": {
+      "model": "powertool:block/green_trash_can",
+      "y": 270
+    },
+    "facing=west,powered=true,waterlogged=true": {
+      "model": "powertool:block/green_trash_can",
+      "y": 270
+    }
+  }
+}

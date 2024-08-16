@@ -4,11 +4,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import org.teacon.powertool.block.CosmeticFurnace;
+import org.teacon.powertool.block.cosmetical.CosmeticFurnace;
 import org.teacon.powertool.block.PowerToolBlocks;
 
 import java.util.Objects;
@@ -27,6 +28,20 @@ public class ModBlockModelProvider extends BlockStateProvider {
         cosmeticFurnaceBlockWithItem(Blocks.FURNACE);
         cosmeticFurnaceBlockWithItem(Blocks.BLAST_FURNACE);
         cosmeticDirectionalBlockWithItem(Blocks.BARREL);
+        horizontalBlockWithItem(PowerToolBlocks.WHITE_TRASH_CAN.get());
+        horizontalBlockWithItem(PowerToolBlocks.GRAY_TRASH_CAN.get());
+        horizontalBlockWithItem(PowerToolBlocks.GREEN_TRASH_CAN.get());
+        trashCanCap(PowerToolBlocks.WHITE_TRASH_CAN_CAP.get());
+        //trashCanCap(PowerToolBlocks.GRAY_TRASH_CAN_CAP.get());
+        trashCanCap(PowerToolBlocks.GREEN_TRASH_CAN_CAP.get());
+    }
+    
+    private void trashCanCap(TrapDoorBlock block) {
+        var name = name(block);
+        trapdoorBlock(block,models().getExistingFile(modLoc(name+"_bottom")),
+                        models().getExistingFile(modLoc(name+"_top")),
+                        models().getExistingFile(modLoc(name+"_open")),true);
+        simpleBlockItem(block,models().getExistingFile(modLoc(name+"_bottom")));
     }
 
     private Block cosmeticBlock(Block block){
@@ -35,6 +50,12 @@ public class ModBlockModelProvider extends BlockStateProvider {
 
     private static String name(Block block){
         return Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block)).getPath();
+    }
+    
+    private void horizontalBlockWithItem(Block block){
+        var model = models().getExistingFile(modLoc(name(block)));
+        horizontalBlock(block, model);
+        simpleBlockItem(block, model);
     }
 
     @SuppressWarnings("SameParameterValue")

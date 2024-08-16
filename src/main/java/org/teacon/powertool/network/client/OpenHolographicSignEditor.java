@@ -7,22 +7,27 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.teacon.powertool.block.entity.HolographicSignBlockEntity;
-import org.teacon.powertool.client.HolographicSignEditingScreen;
+import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
+import org.teacon.powertool.block.holo_sign.SignType;
+import org.teacon.powertool.client.gui.holo_sign.BaseHolographicSignEditingScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
-public record OpenHolographicSignEditor(BlockPos location) implements CustomPacketPayload {
+public record OpenHolographicSignEditor(BlockPos location, SignType signType) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<OpenHolographicSignEditor> TYPE = new Type<>(VanillaUtils.modResourceLocation("open_holographic_sign_editor"));
     
-    public static final StreamCodec<ByteBuf,OpenHolographicSignEditor> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,OpenHolographicSignEditor::location,
+    public static final StreamCodec<ByteBuf, OpenHolographicSignEditor> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC,
+            OpenHolographicSignEditor::location,
+            SignType.STREAM_CODEC,
+            OpenHolographicSignEditor::signType,
             OpenHolographicSignEditor::new
     );
     
+    
     public void handle(IPayloadContext context) {
-        context.enqueueWork(new Handler());
+        context.enqueueWork(new Handler(signType));
     }
     
     @Override
@@ -31,12 +36,20 @@ public record OpenHolographicSignEditor(BlockPos location) implements CustomPack
     }
     
     public class Handler implements Runnable {
+        private final SignType type;
+        
+        public Handler(SignType type) {
+            this.type = type;
+        }
+        
         @Override
         public void run() {
             var mc = Minecraft.getInstance();
             var level = mc.level;
-            if (level != null && level.getBlockEntity(OpenHolographicSignEditor.this.location) instanceof HolographicSignBlockEntity theSign) {
-                mc.setScreen(new HolographicSignEditingScreen(theSign));
+            if (level == null) return;
+            var te = level.getBlockEntity(OpenHolographicSignEditor.this.location);
+            if (te instanceof HoloSignBEFlag) {
+                mc.setScreen(BaseHolographicSignEditingScreen.creatHoloSignScreen(te,type));
             }
         }
     }

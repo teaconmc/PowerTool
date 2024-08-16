@@ -7,13 +7,15 @@
   "mixins": [
     "CommandBlockMixin",
     "CommandsMixin",
+    "MixinArmorStand",
+    "MixinItemFrame",
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
+    "client.EntityArgumentMixin",
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
-    "client.PlayerMixin",
-    "client.EntityArgumentMixin"
+    "client.PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

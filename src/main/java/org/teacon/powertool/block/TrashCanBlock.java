@@ -29,8 +29,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class TrashCanBlock extends Block {
 
-    private static final VoxelShape OUTER_SHAPE = Shapes.block();
-    private static final VoxelShape SHAPE = Shapes.join(OUTER_SHAPE, Block.box(2, 2, 2, 14, 16, 14), BooleanOp.ONLY_FIRST);
+    private static final VoxelShape OUTER_SHAPE = box(1,0,1,15,16,15);
+    protected static final VoxelShape SHAPE = Shapes.join(OUTER_SHAPE, Block.box(2, 2, 2, 14, 16, 14), BooleanOp.ONLY_FIRST);
 
     private static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
@@ -38,6 +38,8 @@ public class TrashCanBlock extends Block {
         super(prop);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, Boolean.FALSE));
     }
+    
+    
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

@@ -1,5 +1,6 @@
 package org.teacon.powertool.item;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponentType;
@@ -78,7 +79,10 @@ public class PowerToolItems {
                     .networkSynchronized(ExamineHoloGlass.BlockComponents.STREAM_CODEC)
                     .build()
     );
-    
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> COMMAND = DATA_COMPONENTS.register(
+            "command", () -> DataComponentType.<String>builder().persistent(Codec.STRING).build()
+    );
     
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
@@ -93,6 +97,7 @@ public class PowerToolItems {
         ITEMS.register("clap_but_angry", () -> new ClapItem(new Item.Properties()));
         ITEMS.register("transparent_brush",TransparentBrushItem::new);
         ITEMS.register("examine_holo_glass",ExamineHoloGlass::new);
+        ITEMS.register("command_wand", () -> new CommandWand(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);

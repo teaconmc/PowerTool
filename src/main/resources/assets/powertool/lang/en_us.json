@@ -50,6 +50,7 @@
   "item.powertool.clap_but_sad": "Sad Clap",
   "item.powertool.clap_but_angry": "Angry Clap",
   "item.powertool.transparent_brush":"Transparent Brush",
+  "item.powertool.command_wand": "Command Wand",
 
   "entity.powertool.fence_knot": "Knot On Fence",
   "entity.powertool.fence_knot.tooltip": "Like vanilla leash, but between fences",

@@ -1,7 +1,7 @@
 package org.teacon.powertool;
 
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.block.PowerToolBlocks;
@@ -14,13 +14,13 @@ public class PowerTool {
 
     public static final String MODID = "powertool";
 
-    public PowerTool(IEventBus bus) {
+    public PowerTool(ModContainer modContainer, IEventBus bus) {
         PowerToolBlocks.register(bus);
         PowerToolItems.register(bus);
         PowerToolMenus.register(bus);
         PowerToolSoundEvents.register(bus);
         PowerToolEntities.register(bus);
         PowerToolAttachments.register(bus);
-        PowerToolConfig.init(ModLoadingContext.get().getActiveContainer());
+        PowerToolConfig.init(modContainer);
     }
 }

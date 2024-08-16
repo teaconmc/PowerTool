@@ -4,10 +4,13 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -30,10 +33,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -89,35 +94,64 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
             PacketDistributor.sendToPlayer(sp,new OpenHolographicSignEditor(pos,type));
         }
         else if(!player.getAbilities().instabuild || player.isCrouching()){
-            return tryOpenLink(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            return tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
         return InteractionResult.SUCCESS;
     }
     
-    public boolean tryOpenLink(Level level, BlockPos pos) {
-        if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
+    public boolean tryOpenURL(String url){
+        try {
+            URI uri;
             try {
-                URI uri;
-                try {
-                    uri = Util.parseAndValidateUntrustedUri(be.url);
-                }catch (URISyntaxException e) {
-                    uri = Util.parseAndValidateUntrustedUri("https://" + be.url);
-                }
-                var mc = Minecraft.getInstance();
-                if (mc.options.chatLinksPrompt().get()) {
-                    URI finalUri = uri;
-                    mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
-                        if (p_351659_) {
-                            Util.getPlatform().openUri(finalUri);
-                        }
-                        mc.setScreen(null);
-                    }, be.url, false));
-                } else {
-                    Util.getPlatform().openUri(uri);
-                }
+                uri = Util.parseAndValidateUntrustedUri(url);
+            }catch (URISyntaxException e) {
+                uri = Util.parseAndValidateUntrustedUri("https://" + url);
+            }
+            var mc = Minecraft.getInstance();
+            if (mc.options.chatLinksPrompt().get()) {
+                URI finalUri = uri;
+                mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
+                    if (p_351659_) {
+                        Util.getPlatform().openUri(finalUri);
+                    }
+                    mc.setScreen(null);
+                }, url, false));
+            } else {
+                Util.getPlatform().openUri(uri);
+            }
+            return true;
+        } catch (URISyntaxException e) {
+            return false;
+        }
+    }
+    
+    public boolean tryUseAdditional(Level level, BlockPos pos) {
+        if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
+            return tryOpenURL(be.url);
+        }
+        if(level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
+            var clickEvent = be.forRender.getStyle().getClickEvent();
+            if(clickEvent == null) return false;
+            var action = clickEvent.getAction();
+            if(action == ClickEvent.Action.OPEN_URL) return tryOpenURL(clickEvent.getValue());
+            if(action == ClickEvent.Action.OPEN_FILE){
+                Util.getPlatform().openFile(new File(clickEvent.getValue()));
                 return true;
-            } catch (URISyntaxException e) {
-                return false;
+            }
+            if(action == ClickEvent.Action.COPY_TO_CLIPBOARD){
+                Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
+                return true;
+            }
+            if(action == ClickEvent.Action.RUN_COMMAND){
+                String s = StringUtil.filterText(clickEvent.getValue());
+                if(s.startsWith("/")) s = s.substring(1);
+                return Minecraft.getInstance().player == null || Minecraft.getInstance().player.connection.sendUnsignedCommand(s);
+            }
+            if(action == ClickEvent.Action.SUGGEST_COMMAND){
+                var screen = new ChatScreen("");
+                screen.handleComponentClicked(be.forRender.getStyle());
+                Minecraft.getInstance().setScreen(screen);
+                return true;
             }
         }
         return false;

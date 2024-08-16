@@ -1,4 +1,4 @@
-package org.teacon.powertool.client.renders;
+package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
@@ -52,9 +52,6 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
 //        };
         // FIXME Implement all 3 different shadow types
         this.font.drawInBatch(Component.literal(text).withStyle(LINK_STYLE), (float) -w / 2, yOffset, fontColor, false, matrix4f, bufferSource, Font.DisplayMode.NORMAL, bgColor, packedLight);
-    
-        
-        
         transform.popPose();
     }
 }

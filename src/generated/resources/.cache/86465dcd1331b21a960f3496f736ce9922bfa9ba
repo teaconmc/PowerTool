@@ -1,4 +1,4 @@
-// 1.21	2024-07-26T20:43:32.1114678	Block States: powertool
+// 1.21	2024-08-15T23:49:29.7314496	Block States: powertool
 ae6ddabd13bd84907c7fc7fdb01186954fc13502 assets/powertool/blockstates/cosmetic_barrel.json
 05b788f1ac0190925f20bbc680cb68c445d80223 assets/powertool/blockstates/cosmetic_beehive.json
 e771ba4339b87af1e3d3af179b69b99b0221f4f6 assets/powertool/blockstates/cosmetic_blast_furnace.json
@@ -12,6 +12,11 @@ f37e3dfe4acc540146d7d4ce599fb508ef16650e assets/powertool/blockstates/cosmetic_g
 59eb8dd5b7ffb922c678282ad4a98e1e5ae23f67 assets/powertool/blockstates/cosmetic_red_sand.json
 49a234a2bae6b4887904b3149f03838c3b488928 assets/powertool/blockstates/cosmetic_sand.json
 7d416e6e49bae0cf46ac11c9b2a85bca567c4ef0 assets/powertool/blockstates/cosmetic_tube_coral_block.json
+38eb9c4431dd893f9b6a19659bf14c7dacf8a47d assets/powertool/blockstates/gray_trash_can.json
+a8239321f2713befc6b352461dd0ddfc0731ae04 assets/powertool/blockstates/green_trash_can.json
+3d258da627707754ef6244ae11a0bce62bcba95f assets/powertool/blockstates/green_trash_can_cap.json
+72358d0b2db425861fdcbe0e22e92b9405895c88 assets/powertool/blockstates/white_trash_can.json
+cd29f633a654dfdb0c65433112a02d9269f7a24e assets/powertool/blockstates/white_trash_can_cap.json
 3a87aba93140e66ff5772eb5fb355054be7f5236 assets/powertool/models/item/cosmetic_barrel.json
 db77b806b2be1fcdb0081b214fd264d048911a43 assets/powertool/models/item/cosmetic_beehive.json
 9db8ff6b8f62a90066f9ec6f113f30579ef147b4 assets/powertool/models/item/cosmetic_blast_furnace.json
@@ -25,3 +30,8 @@ cd46fb64b9fa15c031746f3b79df8c7d386d4eb9 assets/powertool/models/item/cosmetic_h
 45fccb0be21da6968a6c93247b969b22df5895c5 assets/powertool/models/item/cosmetic_red_sand.json
 976371ded304bf028cd5462a3568320aedc8085c assets/powertool/models/item/cosmetic_sand.json
 b0141832911b272755538b29b60e23038bf58a6f assets/powertool/models/item/cosmetic_tube_coral_block.json
+6b3d3a1333f9b9ec7176e51af29476ccf52002f2 assets/powertool/models/item/gray_trash_can.json
+1fe5241a345d5d17219bb128a8246aed214d0ee2 assets/powertool/models/item/green_trash_can.json
+6742bcec064d900fa2a90fd419b13489d6f06051 assets/powertool/models/item/green_trash_can_cap.json
+21f2d0dc5ed923815242fbff529fd0813d335a16 assets/powertool/models/item/white_trash_can.json
+555a301f11a12b8062d9c0088a9e0c42a7ffd514 assets/powertool/models/item/white_trash_can_cap.json

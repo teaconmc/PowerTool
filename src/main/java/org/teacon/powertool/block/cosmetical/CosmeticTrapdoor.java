@@ -1,4 +1,4 @@
-package org.teacon.powertool.block;
+package org.teacon.powertool.block.cosmetical;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
@@ -41,7 +41,7 @@ public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterlog
     protected static final VoxelShape TOP_AABB = Block.box(0.0D, 13.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
 
-    protected CosmeticTrapdoor(Properties prop) {
+    public CosmeticTrapdoor(Properties prop) {
         super(prop);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.UP).setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE));
     }

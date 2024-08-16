@@ -1,4 +1,4 @@
-package org.teacon.powertool.block;
+package org.teacon.powertool.block.cosmetical;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -10,15 +10,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class CosmeticBarrel extends CosmeticDirectionalBlock{
+public class CosmeticBeehive extends CosmeticHorizontalDirectionalBlock{
 
-    public CosmeticBarrel(Properties p) {
+    public CosmeticBeehive(Properties p) {
         super(p);
     }
     
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("block.powertool.cosmetic_barrel.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+        tooltipComponents.add(Component.translatable("block.powertool.cosmetic_beehive.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
     
 

@@ -12,13 +12,14 @@ import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 
 import java.util.function.BiFunction;
 
 public enum SignType implements StringRepresentable  {
     COMMON(CommonHolographicSignBlockEntity::new),
     URL(LinkHolographicSignBlockEntity::new),
-    RAW_JSON(CommonHolographicSignBlockEntity::new),
+    RAW_JSON(RawJsonHolographicSignBlockEntity::new),
     ;
     
     private final BiFunction<BlockPos, BlockState, ? extends BaseHolographicSignBlockEntity> blockEntitySupplier;

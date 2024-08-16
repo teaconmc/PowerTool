@@ -3,7 +3,7 @@
  * licensed under CC0-1.0 per its repository.
  * You may find the original code at https://github.com/ModFest/glowcase
  */
-package org.teacon.powertool.client.renders;
+package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

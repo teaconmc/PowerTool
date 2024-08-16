@@ -1,5 +1,5 @@
 {
   "variants": {
-    "": { "model": "minecraft:block/composter" }
+    "": { "model": "powertool:block/black_trash_can" }
   }
 }

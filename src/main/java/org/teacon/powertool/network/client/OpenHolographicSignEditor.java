@@ -9,7 +9,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
 import org.teacon.powertool.block.holo_sign.SignType;
-import org.teacon.powertool.client.gui.BaseHolographicSignEditingScreen;
+import org.teacon.powertool.client.gui.holo_sign.BaseHolographicSignEditingScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault

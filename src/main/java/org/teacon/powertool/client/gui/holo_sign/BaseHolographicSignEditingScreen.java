@@ -3,7 +3,7 @@
  * licensed under CC0-1.0 per its repository.
  * You may find the original code at https://github.com/ModFest/glowcase
  */
-package org.teacon.powertool.client.gui;
+package org.teacon.powertool.client.gui.holo_sign;
 
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.holo_sign.SignType;
 import org.teacon.powertool.network.server.UpdateHolographicSignData;
 
@@ -46,17 +47,13 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected EditBox rotationInput;
     protected Button lockToggle;
     
-    protected Button rotate90n;
-    protected Button rotate45n;
-    protected  Button rotate45p;
-    protected Button rotate90p;
     protected Button bidButton;
 
     public static Screen creatHoloSignScreen(BlockEntity sign, SignType type) {
         return switch (type) {
             case COMMON -> sign instanceof CommonHolographicSignBlockEntity be? new CommonHolographicSignEditingScreen(be) : null;
             case URL -> sign instanceof LinkHolographicSignBlockEntity be ? new LinkHolographicSignEditingScreen(be) : null;
-            case RAW_JSON -> null;
+            case RAW_JSON -> sign instanceof RawJsonHolographicSignBlockEntity be ? new RawJsonHolographicSignEditingScreen(be) : null;
         };
     }
     public BaseHolographicSignEditingScreen(Component title,T theSign) {
@@ -101,7 +98,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
             };
             this.changeAlignment.setMessage(this.textAlign.displayName);
         }).pos(120 + innerPadding, 0)
-                .size(160, 20)
+                .size(80, 20)
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.text_align", displayed.get()))
                 .build();
 
@@ -113,11 +110,11 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
             };
             this.shadowToggle.setMessage(this.shadowType.displayName);
         }).pos(120 + innerPadding, 20 + innerPadding)
-                .size(160, 20)
+                .size(80, 20)
                 .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.shadow", displayed.get()))
                 .build();
 
-        this.colorInput = new EditBox(this.minecraft.font, 280 + innerPadding * 2, 0, 50, 20, Component.empty());
+        this.colorInput = new EditBox(this.minecraft.font, 200 + innerPadding * 2, 0, 50, 20, Component.empty());
         this.colorInput.setValue("#" + Integer.toHexString(this.colorInARGB));
         this.colorInput.setResponder(string -> {
             TextColor color = TextColor.parseColor(this.colorInput.getValue()).result().orElse(null);
@@ -133,12 +130,12 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 case BACK -> BaseHolographicSignBlockEntity.LayerArrange.FRONT;
             };
             this.zOffsetToggle.setMessage(this.layerArrange.displayName);
-        }).pos(330 + innerPadding * 3, 0)
+        }).pos(250 + innerPadding * 3, 0)
                 .size(80, 20)
                 .createNarration(Supplier::get)
                 .build();
         
-        this.rotationInput = new EditBox(this.minecraft.font,280 + innerPadding * 2, 20 + innerPadding, 50, 20,Component.empty());
+        this.rotationInput = new EditBox(this.minecraft.font,200 + innerPadding * 2, 20 + innerPadding, 50, 20,Component.empty());
         this.rotationInput.setValue(Integer.toString(this.rotation));
         this.rotationInput.setResponder((string) -> {
             try {
@@ -154,36 +151,36 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.lockToggle = new Button.Builder(Component.translatable("powertool.gui.holographic_sign.lock."+this.locked),(btn) -> {
             this.locked = !this.locked;
             this.lockToggle.setMessage(Component.translatable("powertool.gui.holographic_sign.lock."+this.locked));
-        }).pos(330 + innerPadding * 3, 20 + innerPadding)
+        }).pos(250 + innerPadding * 3, 20 + innerPadding)
                 .size(80,20)
                 .createNarration(Supplier::get)
                 .build();
         
-        this.rotate90n = new Button.Builder(Component.literal("-90"),(btn) -> {
+        var rotateY90n = new Button.Builder(Component.literal("-90"),(btn) -> {
             rotate(-90);
             this.rotationInput.setValue(Integer.toString(this.rotation));
-        }).pos(410 + innerPadding * 4, 20 + innerPadding)
+        }).pos(330 + innerPadding * 4, 20 + innerPadding)
                 .size(20,20)
                 .createNarration(Supplier::get)
                 .build();
-        this.rotate45n = new Button.Builder(Component.literal("-45"),(btn) -> {
+        var rotateY45n = new Button.Builder(Component.literal("-45"),(btn) -> {
             rotate(-45);
             this.rotationInput.setValue(Integer.toString(this.rotation));
-        }).pos(430 + innerPadding * 5, 20 + innerPadding)
+        }).pos(350 + innerPadding * 5, 20 + innerPadding)
                 .size(20,20)
                 .createNarration(Supplier::get)
                 .build();
-        this.rotate45p = new Button.Builder(Component.literal("+45"),(btn) -> {
+        var rotateY45p = new Button.Builder(Component.literal("+45"),(btn) -> {
             rotate(45);
             this.rotationInput.setValue(Integer.toString(this.rotation));
-        }).pos(450 + innerPadding * 6, 20 + innerPadding)
+        }).pos(370 + innerPadding * 6, 20 + innerPadding)
                 .size(20,20)
                 .createNarration(Supplier::get)
                 .build();
-        this.rotate90p = new Button.Builder(Component.literal("+90"),(btn) -> {
+        var rotateY90p = new Button.Builder(Component.literal("+90"),(btn) -> {
             rotate(90);
             this.rotationInput.setValue(Integer.toString(this.rotation));
-        }).pos(470 + innerPadding * 7, 20 + innerPadding)
+        }).pos(390 + innerPadding * 7, 20 + innerPadding)
                 .size(20,20)
                 .createNarration(Supplier::get)
                 .build();
@@ -191,7 +188,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.bidButton = new Button.Builder(Component.translatable("powertool.gui.holographic_sign.bidirectional."+bidirectional),(btn) -> {
             this.bidirectional = !this.bidirectional;
             this.bidButton.setMessage(Component.translatable("powertool.gui.holographic_sign.bidirectional."+bidirectional));
-        }).pos(410 + innerPadding * 4, 0)
+        }).pos(330 + innerPadding * 4, 0)
                 .size(80,20)
                 .createNarration(Supplier::get)
                 .build();
@@ -204,10 +201,10 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.addRenderableWidget(this.colorInput);
         this.addRenderableWidget(this.rotationInput);
         this.addRenderableWidget(this.lockToggle);
-        this.addRenderableWidget(this.rotate90n);
-        this.addRenderableWidget(this.rotate45n);
-        this.addRenderableWidget(this.rotate45p);
-        this.addRenderableWidget(this.rotate90p);
+        this.addRenderableWidget(rotateY90n);
+        this.addRenderableWidget(rotateY45n);
+        this.addRenderableWidget(rotateY45p);
+        this.addRenderableWidget(rotateY90p);
         this.addRenderableWidget(this.bidButton);
     }
     

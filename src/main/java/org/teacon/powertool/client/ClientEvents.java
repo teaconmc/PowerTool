@@ -11,13 +11,15 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
+import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
 import org.teacon.powertool.client.renders.FenceKnotRenderer;
-import org.teacon.powertool.client.renders.HolographicSignBlockEntityRenderer;
+import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
 import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
 import org.teacon.powertool.client.gui.PowerSupplyScreen;
-import org.teacon.powertool.client.renders.LinkHolographicSignBlockEntityRenderer;
+import org.teacon.powertool.client.renders.holo_sign.LinkHolographicSignBlockEntityRenderer;
+import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlockEntityRenderer;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
 
@@ -44,6 +46,7 @@ public class ClientEvents {
         @SubscribeEvent
         public static void setup(final RegisterMenuScreensEvent event) {
             event.register(PowerToolMenus.POWER_SUPPLY_MENU.get(), PowerSupplyScreen::new);
+            event.register(PowerToolMenus.TRASH_CAN_MENU.get(), TrashCanWithContainerScreen::new);
         }
         @SubscribeEvent
         public static void ber(EntityRenderersEvent.RegisterRenderers event) {
@@ -53,6 +56,7 @@ public class ClientEvents {
             event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), ItemSupplierBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), HolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), LinkHolographicSignBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
         }
     }
 }

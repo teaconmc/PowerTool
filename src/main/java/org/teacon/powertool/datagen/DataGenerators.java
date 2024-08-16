@@ -19,7 +19,9 @@ public class DataGenerators {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
         ExistingFileHelper fh = event.getExistingFileHelper();
+        var lookupProvider = event.getLookupProvider();
         generator.addProvider(event.includeClient(), new ModBlockModelProvider(output, fh));
+        generator.addProvider(event.includeClient(), new PowerToolBlockTagsProvider(output,lookupProvider,fh));
     }
 
 }

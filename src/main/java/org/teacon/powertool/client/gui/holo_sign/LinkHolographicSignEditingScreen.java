@@ -1,4 +1,4 @@
-package org.teacon.powertool.client.gui;
+package org.teacon.powertool.client.gui.holo_sign;
 
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -25,12 +25,14 @@ public class LinkHolographicSignEditingScreen extends BaseHolographicSignEditing
         super.init();
         var mc = Objects.requireNonNull(this.minecraft, "Minecraft instance is missing while Screen is initializing!");
         this.displayInput = new EditBox(mc.font,width/2-150,height/2-60,300,20,Component.empty());
+        this.displayInput.setMaxLength(114514);
         this.displayInput.setValue(display);
         this.displayInput.setResponder( string -> display = string);
         this.displayInput.setFocused(false);
         this.displayInput.setCanLoseFocus(true);
         
         this.urlInput = new EditBox(mc.font,width/2-150,height/2-35,300,20,Component.empty());
+        this.urlInput.setMaxLength(114514);
         this.urlInput.setValue(url);
         this.urlInput.setResponder( string -> url = string);
         this.urlInput.setFocused(false);
@@ -55,8 +57,7 @@ public class LinkHolographicSignEditingScreen extends BaseHolographicSignEditing
         if(this.displayInput.charTyped(pCodePoint, pModifiers)){
             return true;
         }
-        this.urlInput.charTyped(pCodePoint, pModifiers);
-        return true;
+        return this.urlInput.charTyped(pCodePoint, pModifiers);
     }
     
     @Override

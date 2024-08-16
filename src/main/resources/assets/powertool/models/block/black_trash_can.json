@@ -1,8 +1,10 @@
 {
 	"credit": "Made with Blockbench",
+	"render_type": "cutout",
 	"texture_size": [64, 64],
 	"textures": {
-		"2": "powertool:block/black_trash_can"
+		"2": "powertool:block/black_trash_can",
+		"particle": "powertool:block/black_trash_can"
 	},
 	"elements": [
 		{

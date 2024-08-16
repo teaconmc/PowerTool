@@ -1,4 +1,4 @@
-package org.teacon.powertool.block;
+package org.teacon.powertool.block.cosmetical;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;

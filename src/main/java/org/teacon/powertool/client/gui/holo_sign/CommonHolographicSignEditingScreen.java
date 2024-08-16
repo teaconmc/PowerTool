@@ -3,7 +3,7 @@
  * licensed under CC0-1.0 per its repository.
  * You may find the original code at https://github.com/ModFest/glowcase
  */
-package org.teacon.powertool.client.gui;
+package org.teacon.powertool.client.gui.holo_sign;
 
 import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.gui.GuiGraphics;

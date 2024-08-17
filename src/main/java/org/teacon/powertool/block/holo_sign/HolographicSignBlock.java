@@ -1,6 +1,7 @@
 package org.teacon.powertool.block.holo_sign;
 
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -47,6 +48,11 @@ import java.net.URISyntaxException;
 public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+
+    public static final MapCodec<HolographicSignBlock> CODEC = RecordCodecBuilder.mapCodec(
+            instance -> instance.group(propertiesCodec(), SignType.CODEC.fieldOf("type").forGetter(block -> block.type))
+                    .apply(instance, HolographicSignBlock::new)
+    );
     
     public final SignType type;
 
@@ -57,9 +63,8 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     }
     
     @Override
-    //todo 返回一个可用的MapCodec
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return null;
+        return CODEC;
     }
     
     @Override

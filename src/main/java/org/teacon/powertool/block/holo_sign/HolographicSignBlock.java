@@ -95,71 +95,15 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     }
     
     public InteractionResult use(Level level, BlockPos pos, Player player) {
-        if (!level.isClientSide() && player instanceof ServerPlayer sp && sp.getAbilities().instabuild && !player.isCrouching()) {
-            PacketDistributor.sendToPlayer(sp,new OpenHolographicSignEditor(pos,type));
+        if (!level.isClientSide() && player instanceof ServerPlayer sp) {
+            if (sp.getAbilities().instabuild && !player.isCrouching()) {
+                PacketDistributor.sendToPlayer(sp, new OpenHolographicSignEditor(pos, type));
+            }
         }
         else if(!player.getAbilities().instabuild || player.isCrouching()){
-            return tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            return ClientLogicHolder.tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
         }
         return InteractionResult.SUCCESS;
-    }
-    
-    public boolean tryOpenURL(String url){
-        try {
-            URI uri;
-            try {
-                uri = Util.parseAndValidateUntrustedUri(url);
-            }catch (URISyntaxException e) {
-                uri = Util.parseAndValidateUntrustedUri("https://" + url);
-            }
-            var mc = Minecraft.getInstance();
-            if (mc.options.chatLinksPrompt().get()) {
-                URI finalUri = uri;
-                mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
-                    if (p_351659_) {
-                        Util.getPlatform().openUri(finalUri);
-                    }
-                    mc.setScreen(null);
-                }, url, false));
-            } else {
-                Util.getPlatform().openUri(uri);
-            }
-            return true;
-        } catch (URISyntaxException e) {
-            return false;
-        }
-    }
-    
-    public boolean tryUseAdditional(Level level, BlockPos pos) {
-        if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
-            return tryOpenURL(be.url);
-        }
-        if(level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
-            var clickEvent = be.forRender.getStyle().getClickEvent();
-            if(clickEvent == null) return false;
-            var action = clickEvent.getAction();
-            if(action == ClickEvent.Action.OPEN_URL) return tryOpenURL(clickEvent.getValue());
-            if(action == ClickEvent.Action.OPEN_FILE){
-                Util.getPlatform().openFile(new File(clickEvent.getValue()));
-                return true;
-            }
-            if(action == ClickEvent.Action.COPY_TO_CLIPBOARD){
-                Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
-                return true;
-            }
-            if(action == ClickEvent.Action.RUN_COMMAND){
-                String s = StringUtil.filterText(clickEvent.getValue());
-                if(s.startsWith("/")) s = s.substring(1);
-                return Minecraft.getInstance().player == null || Minecraft.getInstance().player.connection.sendUnsignedCommand(s);
-            }
-            if(action == ClickEvent.Action.SUGGEST_COMMAND){
-                var screen = new ChatScreen("");
-                screen.handleComponentClicked(be.forRender.getStyle());
-                Minecraft.getInstance().setScreen(screen);
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -173,5 +117,65 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     @Override
     public FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    private static final class ClientLogicHolder {
+        public static boolean tryOpenURL(String url){
+            try {
+                URI uri;
+                try {
+                    uri = Util.parseAndValidateUntrustedUri(url);
+                }catch (URISyntaxException e) {
+                    uri = Util.parseAndValidateUntrustedUri("https://" + url);
+                }
+                var mc = Minecraft.getInstance();
+                if (mc.options.chatLinksPrompt().get()) {
+                    URI finalUri = uri;
+                    mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
+                        if (p_351659_) {
+                            Util.getPlatform().openUri(finalUri);
+                        }
+                        mc.setScreen(null);
+                    }, url, false));
+                } else {
+                    Util.getPlatform().openUri(uri);
+                }
+                return true;
+            } catch (URISyntaxException e) {
+                return false;
+            }
+        }
+
+        public static boolean tryUseAdditional(Level level, BlockPos pos) {
+            if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
+                return tryOpenURL(be.url);
+            }
+            if(level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
+                var clickEvent = be.forRender.getStyle().getClickEvent();
+                if(clickEvent == null) return false;
+                var action = clickEvent.getAction();
+                if(action == ClickEvent.Action.OPEN_URL) return tryOpenURL(clickEvent.getValue());
+                if(action == ClickEvent.Action.OPEN_FILE){
+                    Util.getPlatform().openFile(new File(clickEvent.getValue()));
+                    return true;
+                }
+                if(action == ClickEvent.Action.COPY_TO_CLIPBOARD){
+                    Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
+                    return true;
+                }
+                if(action == ClickEvent.Action.RUN_COMMAND){
+                    String s = StringUtil.filterText(clickEvent.getValue());
+                    if(s.startsWith("/")) s = s.substring(1);
+                    return Minecraft.getInstance().player == null || Minecraft.getInstance().player.connection.sendUnsignedCommand(s);
+                }
+                if(action == ClickEvent.Action.SUGGEST_COMMAND){
+                    var screen = new ChatScreen("");
+                    screen.handleComponentClicked(be.forRender.getStyle());
+                    Minecraft.getInstance().setScreen(screen);
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

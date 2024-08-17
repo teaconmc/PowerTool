@@ -9,13 +9,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.item.ExamineHoloGlass;
 
-@EventBusSubscriber
+@EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class OutLineRender {
     
     @SubscribeEvent

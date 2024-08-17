@@ -64,7 +64,6 @@ public class ButtonWithHighlight extends Button {
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.enableDepthTest();
-        // TODO Check if this is still correct
         if (this.isBeingPressed) {
             guiGraphics.blit(this.texture, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
         } else if (this.isHovered) {

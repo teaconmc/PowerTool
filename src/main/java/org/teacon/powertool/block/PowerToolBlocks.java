@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -37,6 +38,7 @@ import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
@@ -94,6 +96,8 @@ public class PowerToolBlocks {
     //public static DeferredHolder<Block, TrapDoorBlock> GRAY_TRASH_CAN_CAP;
     public static DeferredHolder<Block, TrashCanWithContainer> GREEN_TRASH_CAN;
     public static DeferredHolder<Block, TrapDoorBlock> GREEN_TRASH_CAN_CAP;
+
+    public static DeferredHolder<Block, RegisterBlock> REGISTER;
     
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
@@ -104,7 +108,8 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<LinkHolographicSignBlockEntity>> LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RawJsonHolographicSignBlockEntity>> RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TrashCanWithContainerBlockEntity>> TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY;
-    
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RegisterBlockEntity>> REGISTER_BLOCK_ENTITY;
+
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
         BLOCK_ENTITIES.register(bus);
@@ -139,7 +144,9 @@ public class PowerToolBlocks {
         //GRAY_TRASH_CAN_CAP = BLOCKS.register("gray_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
         GREEN_TRASH_CAN = BLOCKS.register("green_trash_can",() -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
         GREEN_TRASH_CAN_CAP = BLOCKS.register("green_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
-        
+
+        REGISTER = BLOCKS.register("register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
+
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ).build(DSL.remainderType()));
@@ -163,6 +170,9 @@ public class PowerToolBlocks {
         ).build(DSL.remainderType()));
         TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container",() -> BlockEntityType.Builder.of(
                 TrashCanWithContainerBlockEntity::new,WHITE_TRASH_CAN.get(),GRAY_TRASH_CAN.get(),GREEN_TRASH_CAN.get()
+        ).build(DSL.remainderType()));
+        REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> BlockEntityType.Builder.of(
+                RegisterBlockEntity::new, REGISTER.get()
         ).build(DSL.remainderType()));
 
         regTrapDoors(Map.of(

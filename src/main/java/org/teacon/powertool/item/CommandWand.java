@@ -3,6 +3,7 @@ package org.teacon.powertool.item;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -47,6 +48,11 @@ public class CommandWand extends Item {
                 if (server != null) {
                     server.getCommands().performPrefixedCommand(cmdSrc, command);
                 }
+                // Yes, you can make it consumable
+                // Viva la data component!
+                EquipmentSlot slot = stack.equals(livingEntity.getItemBySlot(EquipmentSlot.OFFHAND))
+                        ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+                stack.hurtAndBreak(1, livingEntity, slot);
             }
         }
         return stack;

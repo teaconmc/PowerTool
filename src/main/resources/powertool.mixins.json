@@ -12,7 +12,6 @@
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
-    "client.EntityArgumentMixin",
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
     "client.PlayerMixin"

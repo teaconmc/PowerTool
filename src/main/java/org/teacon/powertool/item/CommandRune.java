@@ -11,8 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
-public class CommandWand extends Item {
-    public CommandWand(Properties properties) {
+public class CommandRune extends Item {
+    public CommandRune(Properties properties) {
         super(properties);
     }
 

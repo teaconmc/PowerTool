@@ -101,7 +101,7 @@ public class PowerToolItems {
         ITEMS.register("clap_but_angry", () -> new ClapItem(new Item.Properties()));
         ITEMS.register("transparent_brush",TransparentBrushItem::new);
         ITEMS.register("examine_holo_glass",ExamineHoloGlass::new);
-        ITEMS.register("command_wand", () -> new CommandWand(new Item.Properties()));
+        ITEMS.register("command_rune", () -> new CommandRune(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);

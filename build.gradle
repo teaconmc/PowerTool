@@ -270,7 +270,7 @@ publishing { PublishingExtension it ->
 tasks.withType(PublishToMavenRepository).configureEach {
     if (repository && repository.name == "teacon") {
         it.onlyIf {
-            System.env.MAVEN_USERNAME && System.env.MAVEN_PASSWORD
+            System.env.ARCHIVE_ACCESS_KEY && System.env.ARCHIVE_SECRET_KEY
         }
     }
 }

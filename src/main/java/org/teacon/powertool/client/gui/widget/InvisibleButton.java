@@ -13,7 +13,6 @@ public class InvisibleButton extends Button {
 
     @Override
     public void updateWidgetNarration(NarrationElementOutput output) {
-        // FIXME Proper narration when button toggled
-        output.add(NarratedElementType.HINT, Component.literal("Button toggled"));
+        output.add(NarratedElementType.USAGE, Component.translatable("narration.button.usage.hovered"));
     }
 }

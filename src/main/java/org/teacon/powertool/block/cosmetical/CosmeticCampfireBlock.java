@@ -5,7 +5,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -68,10 +67,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
     
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        var regName = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        if (regName != null) {
-            tooltipComponents.add(Component.translatable("block." + regName.getNamespace() + "." + regName.getPath() + ".tooltip").withStyle(ChatFormatting.DARK_GRAY));
-        }
+        tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.DARK_GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
     

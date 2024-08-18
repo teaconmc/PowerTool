@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "powertool:block/tech_token_acceptor" },
+    "facing=south": { "model": "powertool:block/tech_token_acceptor", "y": 180 },
+    "facing=west": { "model": "powertool:block/tech_token_acceptor", "y": 270 },
+    "facing=east": { "model": "powertool:block/tech_token_acceptor", "y": 90 }
+  }
+}

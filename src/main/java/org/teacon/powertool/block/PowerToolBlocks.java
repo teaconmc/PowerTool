@@ -98,7 +98,10 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, TrapDoorBlock> GREEN_TRASH_CAN_CAP;
 
     public static DeferredHolder<Block, RegisterBlock> REGISTER;
-    
+    public static DeferredHolder<Block, RegisterBlock> GORGEOUS_REGISTER;
+    public static DeferredHolder<Block, RegisterBlock> MECHANICAL_REGISTER;
+    public static DeferredHolder<Block, RegisterBlock> TECH_REGISTER;
+
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
 
@@ -146,6 +149,9 @@ public class PowerToolBlocks {
         GREEN_TRASH_CAN_CAP = BLOCKS.register("green_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
 
         REGISTER = BLOCKS.register("register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        GORGEOUS_REGISTER = BLOCKS.register("gorgeous_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        MECHANICAL_REGISTER = BLOCKS.register("mechanical_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        TECH_REGISTER = BLOCKS.register("tech_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
@@ -172,7 +178,7 @@ public class PowerToolBlocks {
                 TrashCanWithContainerBlockEntity::new,WHITE_TRASH_CAN.get(),GRAY_TRASH_CAN.get(),GREEN_TRASH_CAN.get()
         ).build(DSL.remainderType()));
         REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> BlockEntityType.Builder.of(
-                RegisterBlockEntity::new, REGISTER.get()
+                RegisterBlockEntity::new, REGISTER.get(), GORGEOUS_REGISTER.get(), MECHANICAL_REGISTER.get(), TECH_REGISTER.get()
         ).build(DSL.remainderType()));
 
         regTrapDoors(Map.of(
@@ -222,7 +228,12 @@ public class PowerToolBlocks {
         //ITEMS.register("gray_trash_can_cap",() -> new BlockItem(GRAY_TRASH_CAN_CAP.get(),new Item.Properties()));
         ITEMS.register("green_trash_can",() -> new BlockItem(GREEN_TRASH_CAN.get(),new Item.Properties()));
         ITEMS.register("green_trash_can_cap",() -> new BlockItem(GREEN_TRASH_CAN_CAP.get(),new Item.Properties()));
-    
+
+        ITEMS.register("register", () -> new BlockItem(REGISTER.get(), new Item.Properties()));
+        ITEMS.register("gorgeous_register", () -> new BlockItem(GORGEOUS_REGISTER.get(), new Item.Properties()));
+        ITEMS.register("mechanical_register", () -> new BlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
+        ITEMS.register("tech_register", () -> new BlockItem(TECH_REGISTER.get(), new Item.Properties()));
+
     }
 
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {

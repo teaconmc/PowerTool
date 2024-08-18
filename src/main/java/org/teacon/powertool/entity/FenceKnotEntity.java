@@ -41,7 +41,7 @@ import java.util.Set;
 @MethodsReturnNonnullByDefault
 public class FenceKnotEntity extends HangingEntity {
 
-    private static final EntityDataAccessor<Set<BlockPos>> CONNECT_TO = SynchedEntityData.defineId(FenceKnotEntity.class, PowerToolEntities.BLOCK_POS_LIST);
+    private static final EntityDataAccessor<Set<BlockPos>> CONNECT_TO = SynchedEntityData.defineId(FenceKnotEntity.class, PowerToolEntities.BLOCK_POS_LIST.get());
 
     public FenceKnotEntity(Level level, BlockPos pos) {
         super(PowerToolEntities.FENCE_KNOT.get(), level, pos);

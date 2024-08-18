@@ -47,6 +47,7 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         super.render(e, yRot, partialTick, transform, buffers, packedLight);
         transform.pushPose();
         transform.scale(-1.0F, -1.0F, 1.0F);
+        transform.translate(0,0.25f,0);
         this.model.setupAnim(e, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
         VertexConsumer vertexconsumer = buffers.getBuffer(this.model.renderType(KNOT_LOCATION));
         this.model.renderToBuffer(transform, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, VanillaUtils.getColor(255,255,255,255));

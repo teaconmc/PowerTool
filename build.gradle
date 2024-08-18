@@ -155,7 +155,7 @@ repositories {
 }
 
 dependencies {
-    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
 
     implementation "curse.maven:the-one-probe-245211:5502323"
 }

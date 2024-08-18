@@ -1,6 +1,6 @@
 package org.teacon.powertool.item;
 
-import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,7 +10,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import org.teacon.powertool.utils.VanillaUtils;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class CommandRune extends Item {
     public CommandRune(Properties properties) {
         super(properties);
@@ -42,12 +47,7 @@ public class CommandRune extends Item {
         if (!level.isClientSide) {
             String command = stack.get(PowerToolItems.COMMAND); // get(Supplier<DataComponentType<T>>) is from NeoForge
             if (command != null) {
-                // Raise permission level to 2, akin to what vanilla sign does
-                CommandSourceStack cmdSrc = livingEntity.createCommandSourceStack().withPermission(2);
-                var server = level.getServer();
-                if (server != null) {
-                    server.getCommands().performPrefixedCommand(cmdSrc, command);
-                }
+                VanillaUtils.runCommand(command, livingEntity);
                 // Yes, you can make it consumable
                 // Viva la data component!
                 EquipmentSlot slot = stack.equals(livingEntity.getItemBySlot(EquipmentSlot.OFFHAND))

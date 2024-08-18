@@ -35,13 +35,13 @@ import org.teacon.powertool.block.entity.RegisterBlockEntity;
 public class RegisterBlock extends BaseEntityBlock {
 
     public static final MapCodec<RegisterBlock> CODEC = simpleCodec(RegisterBlock::new);
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     private static final Direction[] ALL_DIRECTIONS = Direction.values();
 
     public RegisterBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.SOUTH).setValue(POWERED, Boolean.FALSE));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(POWERED, Boolean.FALSE));
     }
 
     @Override

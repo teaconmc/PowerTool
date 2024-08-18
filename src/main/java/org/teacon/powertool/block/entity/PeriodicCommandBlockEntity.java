@@ -17,8 +17,10 @@ public class PeriodicCommandBlockEntity extends CommandBlockEntity {
 
     private int period = 10;
 
+    @SuppressWarnings("deprecation")
     public PeriodicCommandBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
+        this.type = PowerToolBlocks.COMMAND_BLOCK_ENTITY.get();
     }
 
     public void setPeriod(int period) {

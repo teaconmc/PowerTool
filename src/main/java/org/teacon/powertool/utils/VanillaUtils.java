@@ -1,10 +1,12 @@
 package org.teacon.powertool.utils;
 
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import org.teacon.powertool.PowerTool;
 
 public class VanillaUtils {
@@ -29,6 +31,15 @@ public class VanillaUtils {
             case PASS -> ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             case FAIL -> ItemInteractionResult.FAIL;
         };
+    }
+    
+    public static void runCommand(String command, LivingEntity livingEntity) {
+        // Raise permission level to 2, akin to what vanilla sign does
+        CommandSourceStack cmdSrc = livingEntity.createCommandSourceStack().withPermission(2);
+        var server = livingEntity.level().getServer();
+        if (server != null) {
+            server.getCommands().performPrefixedCommand(cmdSrc, command);
+        }
     }
     
     //irrelevant vanilla(笑)

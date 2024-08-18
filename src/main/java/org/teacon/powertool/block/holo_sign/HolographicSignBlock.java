@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -85,23 +84,30 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     }
     
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return use(level, pos, player);
-    }
-    
-    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return VanillaUtils.itemInteractionFrom(use(level,pos,player));
+        if(hand == InteractionHand.MAIN_HAND){
+            return VanillaUtils.itemInteractionFrom(use(level,pos,player));
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     
     public InteractionResult use(Level level, BlockPos pos, Player player) {
-        if (!level.isClientSide() && player instanceof ServerPlayer sp) {
-            if (sp.getAbilities().instabuild && !player.isCrouching()) {
-                PacketDistributor.sendToPlayer(sp, new OpenHolographicSignEditor(pos, type));
-            }
+        if (!level.isClientSide() && player instanceof ServerPlayer sp
+                && sp.getAbilities().instabuild && !player.isCrouching()) {
+            PacketDistributor.sendToPlayer(sp, new OpenHolographicSignEditor(pos, type));
         }
         else if(!player.getAbilities().instabuild || player.isCrouching()){
-            return ClientLogicHolder.tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            if(level.isClientSide()){
+                return ClientLogicHolder.tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            }
+            else if(level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be){
+                var clickEvent = be.forRender.getStyle().getClickEvent();
+                if(clickEvent == null) return InteractionResult.PASS;
+                var action = clickEvent.getAction();
+                if(action == ClickEvent.Action.RUN_COMMAND){
+                    VanillaUtils.runCommand(clickEvent.getValue(),player);
+                }
+            }
         }
         return InteractionResult.SUCCESS;
     }
@@ -163,11 +169,8 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
                     Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
                     return true;
                 }
-                if(action == ClickEvent.Action.RUN_COMMAND){
-                    String s = StringUtil.filterText(clickEvent.getValue());
-                    if(s.startsWith("/")) s = s.substring(1);
-                    return Minecraft.getInstance().player == null || Minecraft.getInstance().player.connection.sendUnsignedCommand(s);
-                }
+                //交给服务端
+                //if(action == ClickEvent.Action.RUN_COMMAND)
                 if(action == ClickEvent.Action.SUGGEST_COMMAND){
                     var screen = new ChatScreen("");
                     screen.handleComponentClicked(be.forRender.getStyle());

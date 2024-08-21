@@ -83,9 +83,9 @@ public class RegisterBlock extends BaseEntityBlock {
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (state.getValue(POWERED)) {
-            level.setBlock(pos, state.setValue(POWERED, Boolean.FALSE), 2);
+            level.setBlock(pos, state.setValue(POWERED, Boolean.FALSE), UPDATE_CLIENTS);
         } else {
-            level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), 2);
+            level.setBlock(pos, state.setValue(POWERED, Boolean.TRUE), UPDATE_CLIENTS);
             level.scheduleTick(pos, this, 2);
         }
 

@@ -11,14 +11,13 @@ import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
-public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canSwitchGameMode, boolean canUseSelector) implements CustomPacketPayload {
+public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canSwitchGameMode) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<UpdatePermissionPacket> TYPE = new Type<>(VanillaUtils.modResourceLocation("update_permission"));
 
     public static final StreamCodec<ByteBuf,UpdatePermissionPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL,UpdatePermissionPacket::canUseGameMasterBlock,
             ByteBufCodecs.BOOL,UpdatePermissionPacket::canSwitchGameMode,
-            ByteBufCodecs.BOOL,UpdatePermissionPacket::canUseSelector,
             UpdatePermissionPacket::new
     );
     
@@ -29,7 +28,6 @@ public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canS
                 var permission = minecraft.player.getData(PowerToolAttachments.PERMISSION);
                 permission.setCanSwitchGameMode(canSwitchGameMode);
                 permission.setCanUseGameMasterBlock(canUseGameMasterBlock);
-                permission.setCanUseSelector(canUseSelector);
             }
         });
     }

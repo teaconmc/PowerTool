@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "powertool:block/tech_safe" },
+    "facing=south": { "model": "powertool:block/tech_safe", "y": 180 },
+    "facing=west": { "model": "powertool:block/tech_safe", "y": 270 },
+    "facing=east": { "model": "powertool:block/tech_safe", "y": 90 }
+  }
+}

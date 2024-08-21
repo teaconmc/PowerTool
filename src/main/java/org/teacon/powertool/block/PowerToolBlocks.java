@@ -38,9 +38,11 @@ import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
+import org.teacon.powertool.block.entity.SafeBlockEntity;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
+import org.teacon.powertool.item.PowerToolItems;
 
 import java.util.List;
 import java.util.Map;
@@ -101,6 +103,11 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, RegisterBlock> MECHANICAL_REGISTER;
     public static DeferredHolder<Block, RegisterBlock> TECH_REGISTER;
 
+    public static DeferredHolder<Block, SafeBlock> SAFE;
+    public static DeferredHolder<Block, SafeBlock> GORGEOUS_SAFE;
+    public static DeferredHolder<Block, SafeBlock> MECHANICAL_SAFE;
+    public static DeferredHolder<Block, SafeBlock> TECH_SAFE;
+
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
 
@@ -111,6 +118,7 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RawJsonHolographicSignBlockEntity>> RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TrashCanWithContainerBlockEntity>> TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RegisterBlockEntity>> REGISTER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<SafeBlockEntity>> SAFE_BLOCK_ENTITY;
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
@@ -152,6 +160,11 @@ public class PowerToolBlocks {
         MECHANICAL_REGISTER = BLOCKS.register("mechanical_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
         TECH_REGISTER = BLOCKS.register("tech_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
+        SAFE = BLOCKS.register("safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
+        GORGEOUS_SAFE = BLOCKS.register("gorgeous_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
+        MECHANICAL_SAFE = BLOCKS.register("mechanical_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
+        TECH_SAFE = BLOCKS.register("tech_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
+
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ).build(DSL.remainderType()));
@@ -178,6 +191,9 @@ public class PowerToolBlocks {
         ).build(DSL.remainderType()));
         REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> BlockEntityType.Builder.of(
                 RegisterBlockEntity::new, REGISTER.get(), GORGEOUS_REGISTER.get(), MECHANICAL_REGISTER.get(), TECH_REGISTER.get()
+        ).build(DSL.remainderType()));
+        SAFE_BLOCK_ENTITY = BLOCK_ENTITIES.register("safe", () -> BlockEntityType.Builder.of(
+                SafeBlockEntity::new, SAFE.get(), GORGEOUS_SAFE.get(), MECHANICAL_SAFE.get(), TECH_SAFE.get()
         ).build(DSL.remainderType()));
 
         regTrapDoors(Map.of(
@@ -233,6 +249,10 @@ public class PowerToolBlocks {
         ITEMS.register("mechanical_register", () -> new BlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
         ITEMS.register("tech_register", () -> new BlockItem(TECH_REGISTER.get(), new Item.Properties()));
 
+        ITEMS.register("safe", () -> new BlockItem(SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
+        ITEMS.register("gorgeous_safe", () -> new BlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
+        ITEMS.register("mechanical_safe", () -> new BlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
+        ITEMS.register("tech_safe", () -> new BlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
     }
 
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {

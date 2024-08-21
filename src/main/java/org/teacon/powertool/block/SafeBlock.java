@@ -1,7 +1,6 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;

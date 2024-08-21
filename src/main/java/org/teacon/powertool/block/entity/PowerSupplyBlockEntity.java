@@ -1,12 +1,10 @@
 package org.teacon.powertool.block.entity;
 
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.teacon.powertool.block.PowerSupplyBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
@@ -16,7 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class PowerSupplyBlockEntity extends BlockEntity {
 
-    private final Lazy<IEnergyStorage> energyStore = Lazy.of(() -> new IEnergyStorage() {
+    private final IEnergyStorage energyStore = new IEnergyStorage() {
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
             return 0;
@@ -46,7 +44,7 @@ public final class PowerSupplyBlockEntity extends BlockEntity {
         public boolean canReceive() {
             return false;
         }
-    });
+    };
 
     public final PowerSupplyBlock.Data data = new PowerSupplyBlock.Data();
 
@@ -70,6 +68,6 @@ public final class PowerSupplyBlockEntity extends BlockEntity {
     }
     
     public IEnergyStorage getEnergyStore() {
-        return energyStore.get();
+        return this.energyStore;
     }
 }

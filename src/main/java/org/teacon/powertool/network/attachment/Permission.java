@@ -21,7 +21,7 @@ public class Permission {
 
     private Boolean canUseGameMasterBlock;
     private Boolean canSwitchGameMode;
-    private Boolean canUseSelector;
+    // canUseSelector is superseded by NeoForgeMod.USE_SELECTORS_PERMISSION
 
     public Optional<Boolean> isCanUseGameMasterBlock() {
         return Optional.ofNullable(canUseGameMasterBlock);
@@ -39,14 +39,6 @@ public class Permission {
         this.canSwitchGameMode = canSwitchGameMode;
     }
 
-    public Optional<Boolean> isCanUseSelector() {
-        return Optional.ofNullable(canUseSelector);
-    }
-
-    public void setCanUseSelector(Boolean canUseSelector) {
-        this.canUseSelector = canUseSelector;
-    }
-
     @EventBusSubscriber
     public static class Provider  {
         
@@ -58,14 +50,11 @@ public class Permission {
             "minecraft", "use_gamemaster_block", PermissionTypes.BOOLEAN,
             (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.hasPermissions(2)
         );
-        private static final PermissionNode<Boolean> ENTITY_SELECTOR = new PermissionNode<>(
-            "minecraft", "command.selector", PermissionTypes.BOOLEAN,
-            (player, uuid, context) -> player != null && player.hasPermissions(2)
-        );
+        // ENTITY_SELECTOR is replaced by NeoForgeMod.USE_SELECTORS_PERMISSION
 
         @SubscribeEvent
         public static void on(PermissionGatherEvent.Nodes event) {
-            event.addNodes(GAMEMODE, COMMAND_BLOCK, ENTITY_SELECTOR);
+            event.addNodes(GAMEMODE, COMMAND_BLOCK);
         }
     }
 
@@ -73,8 +62,7 @@ public class Permission {
         PacketDistributor.sendToPlayer(player,
             new UpdatePermissionPacket(
                 PermissionAPI.getPermission(player, Provider.COMMAND_BLOCK),
-                PermissionAPI.getPermission(player, Provider.GAMEMODE),
-                PermissionAPI.getPermission(player, Provider.ENTITY_SELECTOR)
+                PermissionAPI.getPermission(player, Provider.GAMEMODE)
             )
         );
     }

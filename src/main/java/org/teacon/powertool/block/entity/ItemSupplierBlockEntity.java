@@ -11,7 +11,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +24,7 @@ public class ItemSupplierBlockEntity extends BlockEntity{
 
     public ItemStack theItem = ItemStack.EMPTY;
     
-    private final Lazy<IItemHandler> iItemHandlerLazy = Lazy.of(() -> new IItemHandler() {
+    private final IItemHandler itemHandler = new IItemHandler() {
         @Override
         public int getSlots() {
             return 1;
@@ -60,7 +59,7 @@ public class ItemSupplierBlockEntity extends BlockEntity{
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             return false;
         }
-    });
+    };
     
     public ItemSupplierBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -105,7 +104,7 @@ public class ItemSupplierBlockEntity extends BlockEntity{
     }
     
     public IItemHandler getItemHandler() {
-        return iItemHandlerLazy.get();
+        return this.itemHandler;
     }
     
 }

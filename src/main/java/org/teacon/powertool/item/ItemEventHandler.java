@@ -35,12 +35,14 @@ public class ItemEventHandler {
                 return;
             }
             event.setCanceled(true);
-            var knot = new FenceKnotEntity(level, pos);
-            level.addFreshEntity(knot);
-            knot.playPlacementSound();
-            level.gameEvent(GameEvent.BLOCK_ATTACH, pos, GameEvent.Context.of(player));
-            if (!player.getAbilities().instabuild) {
+            if(event.getLevel().getBlockState(pos).is(BlockTags.FENCES)) {
+                var knot = new FenceKnotEntity(level, pos);
+                level.addFreshEntity(knot);
+                knot.playPlacementSound();
+                level.gameEvent(GameEvent.BLOCK_ATTACH, pos, GameEvent.Context.of(player));
+                if (!player.getAbilities().instabuild) {
                 held.shrink(1);
+                }
             }
         }
     }

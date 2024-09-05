@@ -1,40 +1,45 @@
 package org.teacon.powertool.item;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.FenceKnotEntity;
 
-@EventBusSubscriber(modid = PowerTool.MODID, bus = EventBusSubscriber.Bus.GAME)
-public class ItemEventHandler {
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    @SubscribeEvent
-    public static void on(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getSide() == LogicalSide.SERVER) {
-            var player = event.getEntity();
-            var held = player.getItemInHand(event.getHand());
-            if (held.getItem() != Items.LEAD) {
-                return;
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
+public class TonkItem extends Item {
+    
+    public TonkItem(Properties properties) {
+        super(properties);
+    }
+    
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        if (!context.getLevel().isClientSide() && context.getPlayer() != null) {
+            var player = context.getPlayer();
+            var held = context.getItemInHand();
+            var level = context.getLevel();
+            var pos = context.getClickedPos();
+            if(!level.getBlockState(pos).is(BlockTags.FENCES)){
+                return InteractionResult.PASS;
             }
-            var level = event.getLevel();
-            var pos = event.getPos();
             var range = new AABB(pos.getX() - 7, pos.getY() - 7, pos.getZ() - 7, pos.getX() + 7, pos.getY() + 7, pos.getZ() + 7);
             for (var mob : level.getEntitiesOfClass(Mob.class, range)) {
                 if (mob.getLeashHolder() == player) {
-                    return;
+                    return InteractionResult.PASS;
                 }
             }
             range = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
             if (!level.getEntitiesOfClass(FenceKnotEntity.class, range).isEmpty()) {
-                return;
+                return InteractionResult.PASS;
             }
-            event.setCanceled(true);
             var knot = new FenceKnotEntity(level, pos);
             level.addFreshEntity(knot);
             knot.playPlacementSound();
@@ -43,5 +48,6 @@ public class ItemEventHandler {
                 held.shrink(1);
             }
         }
+        return InteractionResult.SUCCESS;
     }
 }

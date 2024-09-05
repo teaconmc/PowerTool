@@ -26,7 +26,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -106,7 +105,7 @@ public class FenceKnotEntity extends HangingEntity {
         }
 
         var held = p.getItemInHand(hand);
-        if (held.getItem() == Items.LEAD) {
+        if (held.getItem() == PowerToolItems.TONK.get()) {
             var data = held.get(PowerToolItems.KNOT_DATA);
             if (data == null) {
                 // Connection start.

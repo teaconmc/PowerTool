@@ -88,6 +88,8 @@ public class PowerToolItems {
             "cycle", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
     
+    public static DeferredHolder<Item,TonkItem> TONK;
+    
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
         ITEMS.register("useless_stick", () -> new Item(new Item.Properties()) {
@@ -102,6 +104,7 @@ public class PowerToolItems {
         ITEMS.register("transparent_brush",TransparentBrushItem::new);
         ITEMS.register("examine_holo_glass",ExamineHoloGlass::new);
         ITEMS.register("command_rune", () -> new CommandRune(new Item.Properties()));
+        TONK = ITEMS.register("tonk", () -> new TonkItem(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);

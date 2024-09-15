@@ -14,7 +14,8 @@
   "client": [
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
-    "client.PlayerMixin"
+    "client.PlayerMixin",
+    "client.SectionRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1

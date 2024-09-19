@@ -3,7 +3,6 @@
   "minVersion": "0.8",
   "package": "org.teacon.powertool.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "powertool.refmap.json",
   "mixins": [
     "CommandBlockMixin",
     "CommandsMixin",

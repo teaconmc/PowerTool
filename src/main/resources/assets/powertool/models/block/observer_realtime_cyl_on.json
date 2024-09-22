@@ -1,0 +1,6 @@
+{
+    "parent": "block/observer",
+    "textures": {
+        "bottom": "block/observer_realtime_back_on"
+    }
+}

@@ -31,3 +31,8 @@ src/main/resources/assets/powertool/textures/gui/trash_can.psd
 src/main/resources/assets/powertool/textures/item/command_shard.psd
 src/main/resources/assets/powertool/textures/item/tonk.psd
 src/main/resources/assets/powertool/textures/item/examine_holo_glass.psd
+src/main/resources/assets/powertool/textures/block/observer_time_back.psd
+src/main/resources/assets/powertool/textures/block/observer_time_back_on.psd
+src/main/resources/assets/powertool/textures/block/observer_time_front.psd
+src/main/resources/assets/powertool/textures/block/observer_time_side.psd
+src/main/resources/assets/powertool/textures/block/observer_time_top.psd

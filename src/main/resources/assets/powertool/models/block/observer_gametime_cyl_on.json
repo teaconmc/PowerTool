@@ -1,0 +1,6 @@
+{
+    "parent": "block/observer",
+    "textures": {
+        "bottom": "block/observer_gametime_cyl_back_on"
+    }
+}

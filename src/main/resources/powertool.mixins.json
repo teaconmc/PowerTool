@@ -11,6 +11,7 @@
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
+    "client.ClientRecipeBookMixin",
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
     "client.PlayerMixin",

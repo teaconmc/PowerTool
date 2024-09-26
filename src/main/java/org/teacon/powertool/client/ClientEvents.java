@@ -24,6 +24,7 @@ import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
+import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
 import org.teacon.powertool.client.renders.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
@@ -102,6 +103,7 @@ public class ClientEvents {
         public static void setup(final RegisterMenuScreensEvent event) {
             event.register(PowerToolMenus.POWER_SUPPLY_MENU.get(), PowerSupplyScreen::new);
             event.register(PowerToolMenus.TRASH_CAN_MENU.get(), TrashCanWithContainerScreen::new);
+            event.register(PowerToolMenus.REGISTER_MENU.get(), RegisterScreen::new);
         }
         @SubscribeEvent
         public static void ber(EntityRenderersEvent.RegisterRenderers event) {

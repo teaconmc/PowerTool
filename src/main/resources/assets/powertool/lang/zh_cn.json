@@ -87,6 +87,7 @@
   "powertool.gui.holographic_sign.bidirectional.false": "双面渲染:关闭",
   "powertool.gui.holographic_sign.lock.true": "方向锁定:开启",
   "powertool.gui.holographic_sign.lock.false": "方向锁定:关闭",
+  "powertool.gui.register.match_data": "精确匹配物品数据",
 
   "powertool.command.fly.enabled": "创造飞行已开启。",
   "powertool.command.fly.disabled": "创造飞行已关闭",

@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
+import org.teacon.powertool.menu.RegisterMenu;
 
 /**
  * 收银台（Register）可接受指定物品并输出红石信号脉冲。
@@ -97,7 +98,14 @@ public class RegisterBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof RegisterBlockEntity theBE && !theBE.itemToAccept.isEmpty()){
+        if (level.getBlockEntity(pos) instanceof RegisterBlockEntity theBE) {
+            if (player.getAbilities().instabuild) {
+                player.openMenu(new RegisterMenu.Provider(theBE.menuView));
+                return ItemInteractionResult.SUCCESS;
+            }
+            if (theBE.itemToAccept.isEmpty()) {
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            }
             boolean accept;
             if (theBE.matchDataComponents) {
                 accept = ItemStack.isSameItemSameComponents(stack, theBE.itemToAccept);

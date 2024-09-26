@@ -88,7 +88,7 @@
   "powertool.gui.holographic_sign.bidirectional.false": "Bidirectional render disabled",
   "powertool.gui.holographic_sign.lock.true": "render direction locked",
   "powertool.gui.holographic_sign.lock.false": "render direction follows player",
-  "powertool.gui.register.match_data": "Match Data",
+  "powertool.gui.register.match_data": "Match Data (WIP)",
 
   "powertool.command.fly.enabled": "Flying enabled",
   "powertool.command.fly.disabled": "Flying disabled",

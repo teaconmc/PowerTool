@@ -39,6 +39,8 @@ import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.block.entity.SafeBlockEntity;
+import org.teacon.powertool.block.entity.TempleBlockEntity;
+import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
@@ -107,6 +109,10 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, SafeBlock> GORGEOUS_SAFE;
     public static DeferredHolder<Block, SafeBlock> MECHANICAL_SAFE;
     public static DeferredHolder<Block, SafeBlock> TECH_SAFE;
+    public static DeferredHolder<Block, TempleBlock> TEMPLE;
+    public static DeferredHolder<Block,TimeObserverBlock> REAL_TIME_OBSERVER;
+    public static DeferredHolder<Block, TimeObserverBlock> REAL_TIME_CYCLE_OBSERVER;
+    public static DeferredHolder<Block, TimeObserverBlock> GAME_TIME_CYCLE_OBSERVER;
 
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
@@ -119,6 +125,8 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TrashCanWithContainerBlockEntity>> TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RegisterBlockEntity>> REGISTER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<SafeBlockEntity>> SAFE_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TempleBlockEntity>> TEMPLE_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TimeObserverBlockEntity>> TIME_OBSERVER_BLOCK_ENTITY;
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
@@ -164,7 +172,12 @@ public class PowerToolBlocks {
         GORGEOUS_SAFE = BLOCKS.register("gorgeous_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         MECHANICAL_SAFE = BLOCKS.register("mechanical_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         TECH_SAFE = BLOCKS.register("tech_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
-
+        TEMPLE = BLOCKS.register("temple",() -> new TempleBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        
+        REAL_TIME_OBSERVER = BLOCKS.register("observer_realtime",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_TIME));
+        REAL_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_realtime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
+        GAME_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_gametime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
+        
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ).build(DSL.remainderType()));
@@ -195,7 +208,13 @@ public class PowerToolBlocks {
         SAFE_BLOCK_ENTITY = BLOCK_ENTITIES.register("safe", () -> BlockEntityType.Builder.of(
                 SafeBlockEntity::new, SAFE.get(), GORGEOUS_SAFE.get(), MECHANICAL_SAFE.get(), TECH_SAFE.get()
         ).build(DSL.remainderType()));
-
+        TEMPLE_BLOCK_ENTITY = BLOCK_ENTITIES.register("temple",() -> BlockEntityType.Builder.of(
+                TempleBlockEntity::new,TEMPLE.get()
+        ).build(DSL.remainderType()));
+        TIME_OBSERVER_BLOCK_ENTITY = BLOCK_ENTITIES.register("time_observer",() -> BlockEntityType.Builder.of(
+                TimeObserverBlockEntity::new,REAL_TIME_OBSERVER.get(),REAL_TIME_CYCLE_OBSERVER.get(),GAME_TIME_CYCLE_OBSERVER.get()
+        ).build(DSL.remainderType()));
+        
         regTrapDoors(Map.of(
                 BlockSetType.OAK, Blocks.OAK_TRAPDOOR,
                 BlockSetType.BIRCH, Blocks.BIRCH_TRAPDOOR,
@@ -248,11 +267,15 @@ public class PowerToolBlocks {
         ITEMS.register("gorgeous_register", () -> new BlockItem(GORGEOUS_REGISTER.get(), new Item.Properties()));
         ITEMS.register("mechanical_register", () -> new BlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
         ITEMS.register("tech_register", () -> new BlockItem(TECH_REGISTER.get(), new Item.Properties()));
-
+        ITEMS.register("temple", () -> new BlockItem(TEMPLE.get(), new Item.Properties()));
         ITEMS.register("safe", () -> new BlockItem(SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
         ITEMS.register("gorgeous_safe", () -> new BlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
         ITEMS.register("mechanical_safe", () -> new BlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
         ITEMS.register("tech_safe", () -> new BlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolItems.COMMAND, "/ac safe")));
+        ITEMS.register("observer_realtime",() -> new BlockItem(REAL_TIME_OBSERVER.get(), new Item.Properties()));
+        ITEMS.register("observer_realtime_cyl",() -> new BlockItem(REAL_TIME_CYCLE_OBSERVER.get(),new Item.Properties()));
+        ITEMS.register("observer_gametime_cyl",() -> new BlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
+    
     }
 
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {

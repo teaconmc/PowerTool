@@ -19,8 +19,8 @@ import java.util.concurrent.CompletableFuture;
 @ParametersAreNonnullByDefault
 public class PowerToolBlockTagsProvider extends BlockTagsProvider {
     
-    public static final TagKey<Block> COMMAND_BLOCK_TAG = BlockTags.create(VanillaUtils.modResourceLocation("command_block"));
-    public static final TagKey<Block> REPEATING_COMMAND_BLOCK_TAG = BlockTags.create(VanillaUtils.modResourceLocation("repeating_command_block"));
+    public static final TagKey<Block> COMMAND_BLOCK_TAG = BlockTags.create(VanillaUtils.modRL("command_block"));
+    public static final TagKey<Block> REPEATING_COMMAND_BLOCK_TAG = BlockTags.create(VanillaUtils.modRL("repeating_command_block"));
     
     public PowerToolBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, PowerTool.MODID, existingFileHelper);

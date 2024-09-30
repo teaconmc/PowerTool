@@ -70,6 +70,7 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
             transform.popPose();
         }
     }
+    
     private void renderLeash(FenceKnotEntity to, float partialTick, PoseStack transform, MultiBufferSource buffers, BlockPos fromPos) {
         // Copied from MobRenderer::renderLeash TODO: Explain what it does, and what we can simplify
         transform.pushPose();
@@ -97,33 +98,38 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         int j = i;//this.entityRenderDispatcher.getRenderer(to).getBlockLightLevel(to, blockpos1);
         int k = to.level().getBrightness(LightLayer.SKY, blockpos);
         int l = to.level().getBrightness(LightLayer.SKY, blockpos1);
-
+        //并不是width 实际上我也不知道这个参数是什么含义 -- xkball
+        var width = to.getTypeForRender().getWidth();
         for(int i1 = 0; i1 <= 24; ++i1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
+            addVertexPair(vertexconsumer, matrix4f, f, f1, f2,
+                    i, j, k, l, width, width,
+                    f5, f6, i1, false);
         }
 
         for(int j1 = 24; j1 >= 0; --j1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
+            addVertexPair(vertexconsumer, matrix4f, f, f1, f2,
+                    i, j, k, l, width, 0.0F,
+                    f5, f6, j1, true);
         }
 
         transform.popPose();
     }
 
-    private static void addVertexPair(VertexConsumer vertexes, Matrix4f transform, float p_174310_, float p_174311_, float p_174312_, int p_174313_, int p_174314_, int p_174315_, int p_174316_, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, boolean p_174322_) {
+    private static void addVertexPair(VertexConsumer vertexes, Matrix4f transform, float p_174310_, float p_174311_, float p_174312_, int blockLight0, int blockLight1, int skyLight0, int skyLight1, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int index, boolean p_174322_) {
         // Copied from MobRenderer::addVertexPair, TODO: Explain what it does, and what we can simplify
-        float f = (float)p_174321_ / 24.0F;
-        int i = (int)Mth.lerp(f, (float)p_174313_, (float)p_174314_);
-        int j = (int)Mth.lerp(f, (float)p_174315_, (float)p_174316_);
-        int k = LightTexture.pack(i, j);
-        float f1 = p_174321_ % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
+        float f = (float)index / 24.0F;
+        int blockLight = (int)Mth.lerp(f, (float)blockLight0, (float)blockLight1);
+        int skyLight = (int)Mth.lerp(f, (float)skyLight0, (float)skyLight1);
+        int light = LightTexture.pack(blockLight, skyLight);
+        float f1 = index % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
         float f2 = 0.5F * f1;
         float f3 = 0.4F * f1;
         float f4 = 0.3F * f1;
         float f5 = p_174310_ * f;
         float f6 = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
         float f7 = p_174312_ * f;
-        vertexes.addVertex(transform, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setLight(k);
-        vertexes.addVertex(transform, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F).setLight(k);
+        vertexes.addVertex(transform, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setLight(light);
+        vertexes.addVertex(transform, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F).setLight(light);
     }
 
 }

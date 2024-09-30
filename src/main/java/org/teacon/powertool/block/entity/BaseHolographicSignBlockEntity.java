@@ -32,8 +32,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloSignBEFlag {
-
+public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloSignBEFlag,IClientUpdateBlockEntity {
+    
     /** Controls how text are aligned: left-align, centered, or right-align. */
     public enum Align  implements StringRepresentable {
         LEFT(Component.translatable("powertool.gui.holographic_sign.align_left")),
@@ -175,6 +175,16 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         if(tag.contains("bidirectional")){
             this.bidirectional = tag.getBoolean("bidirectional");
         }
+    }
+    
+    @Override
+    public void update(CompoundTag tag, HolderLookup.Provider registries) {
+        readFrom(tag, registries);
+    }
+    
+    @Override
+    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
+        writeTo(tag, registries);
     }
     
     @Override

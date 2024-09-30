@@ -1,6 +1,6 @@
 {
-    "parent": "block/observer",
+    "parent": "powertool:block/observer_realtime",
     "textures": {
-        "bottom": "block/observer_realtime_back_on"
+        "bottom": "powertool:block/observer_realtime_back_on"
     }
 }

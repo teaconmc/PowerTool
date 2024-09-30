@@ -13,7 +13,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 @MethodsReturnNonnullByDefault
 public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canSwitchGameMode) implements CustomPacketPayload {
     
-    public static final CustomPacketPayload.Type<UpdatePermissionPacket> TYPE = new Type<>(VanillaUtils.modResourceLocation("update_permission"));
+    public static final CustomPacketPayload.Type<UpdatePermissionPacket> TYPE = new Type<>(VanillaUtils.modRL("update_permission"));
 
     public static final StreamCodec<ByteBuf,UpdatePermissionPacket> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL,UpdatePermissionPacket::canUseGameMasterBlock,

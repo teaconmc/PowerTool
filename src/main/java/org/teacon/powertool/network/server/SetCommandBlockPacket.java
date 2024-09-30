@@ -13,7 +13,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 @MethodsReturnNonnullByDefault
 public record SetCommandBlockPacket(BlockPos pos, int period) implements CustomPacketPayload {
     
-    public static final CustomPacketPayload.Type<SetCommandBlockPacket> TYPE = new Type<>(VanillaUtils.modResourceLocation("set_command_block_packet"));
+    public static final CustomPacketPayload.Type<SetCommandBlockPacket> TYPE = new Type<>(VanillaUtils.modRL("set_command_block_packet"));
     
     public static final StreamCodec<ByteBuf,SetCommandBlockPacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,SetCommandBlockPacket::pos,

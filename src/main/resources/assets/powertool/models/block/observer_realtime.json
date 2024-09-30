@@ -1,11 +1,11 @@
 {
     "parent": "block/block",
     "textures": {
-        "bottom": "block/observer_realtime_back",
-        "side": "block/observer_realtime_side",
-        "top": "block/observer_realtime_top",
-        "front": "block/observer_realtime_front",
-        "particle": "block/observer_realtime_front"
+        "bottom": "powertool:block/observer_realtime_back",
+        "side": "powertool:block/observer_realtime_side",
+        "top": "powertool:block/observer_realtime_top",
+        "front": "powertool:block/observer_realtime_front",
+        "particle": "powertool:block/observer_realtime_front"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

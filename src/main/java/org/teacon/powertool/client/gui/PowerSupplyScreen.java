@@ -23,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupplyMenu> {
 
-    private static final ResourceLocation BG_LOCATION = VanillaUtils.modResourceLocation("textures/gui/power_supply.png");
+    private static final ResourceLocation BG_LOCATION = VanillaUtils.modRL("textures/gui/power_supply.png");
 
     private EditBox input;
     private ButtonWithHighlight minus, plus;
@@ -116,7 +116,7 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics,mouseX,mouseY,partialTick);
+        //this.renderBackground(guiGraphics,mouseX,mouseY,partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         RenderSystem.disableBlend();
         this.input.render(guiGraphics, mouseX, mouseY, partialTick);

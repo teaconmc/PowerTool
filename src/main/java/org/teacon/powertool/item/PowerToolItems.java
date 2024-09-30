@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTab;
@@ -88,7 +89,9 @@ public class PowerToolItems {
             "cycle", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).build()
     );
     
-    public static DeferredHolder<Item,TonkItem> TONK;
+    public static DeferredHolder<Item,TonkItem> TONK,THICK_TONK,EXTRA_THICK_TONK;
+    public static DeferredHolder<Item,AutoVanishBoatItem> AV_OAK_BOAT,AV_SPRUCE_BOAT,AV_BIRCH_BOAT,AV_JUNGLE_BOAT,AV_ACACIA_BOAT,AV_CHERRY_BOAT,AV_DARK_OAK_BOAT,AV_MANGROVE_BOAT,AV_BAMBOO_RAFT;
+    public static DeferredHolder<Item,AutoVanishMinecartItem> AV_MINE_CART;
     
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
@@ -104,7 +107,19 @@ public class PowerToolItems {
         ITEMS.register("transparent_brush",TransparentBrushItem::new);
         ITEMS.register("examine_holo_glass",ExamineHoloGlass::new);
         ITEMS.register("command_rune", () -> new CommandRune(new Item.Properties()));
-        TONK = ITEMS.register("tonk", () -> new TonkItem(new Item.Properties()));
+        TONK = ITEMS.register("tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thin));
+        THICK_TONK = ITEMS.register("thick_tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Normal));
+        EXTRA_THICK_TONK = ITEMS.register("extra_thick_tonk",() -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thick));
+        AV_OAK_BOAT = ITEMS.register("auto_vanish_oak_boat",() -> new AutoVanishBoatItem(Boat.Type.OAK));
+        AV_SPRUCE_BOAT = ITEMS.register("auto_vanish_spruce_boat",() -> new AutoVanishBoatItem(Boat.Type.SPRUCE));
+        AV_BIRCH_BOAT = ITEMS.register("auto_vanish_birch_boat",() -> new AutoVanishBoatItem(Boat.Type.BIRCH));
+        AV_JUNGLE_BOAT = ITEMS.register("auto_vanish_jungle_boat",() -> new AutoVanishBoatItem(Boat.Type.JUNGLE));
+        AV_ACACIA_BOAT = ITEMS.register("auto_vanish_acacia_boat",() -> new AutoVanishBoatItem(Boat.Type.ACACIA));
+        AV_CHERRY_BOAT = ITEMS.register("auto_vanish_cherry_boat",() -> new AutoVanishBoatItem(Boat.Type.CHERRY));
+        AV_DARK_OAK_BOAT = ITEMS.register("auto_vanish_dark_oak_boat",() -> new AutoVanishBoatItem(Boat.Type.DARK_OAK));
+        AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat",() -> new AutoVanishBoatItem(Boat.Type.MANGROVE));
+        AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft",() -> new AutoVanishBoatItem(Boat.Type.BAMBOO));
+        AV_MINE_CART = ITEMS.register("auto_vanish_minecart",() -> new AutoVanishMinecartItem(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         DATA_COMPONENTS.register(bus);
         ARMOR_MATERIAL.register(bus);

@@ -16,8 +16,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class TonkItem extends Item {
     
-    public TonkItem(Properties properties) {
+    protected final FenceKnotEntity.Type type;
+    
+    public TonkItem(Properties properties,FenceKnotEntity.Type type) {
         super(properties);
+        this.type = type;
     }
     
     @Override
@@ -41,6 +44,7 @@ public class TonkItem extends Item {
                 return InteractionResult.PASS;
             }
             var knot = new FenceKnotEntity(level, pos);
+            knot.setType(this.type);
             level.addFreshEntity(knot);
             knot.playPlacementSound();
             level.gameEvent(GameEvent.BLOCK_ATTACH, pos, GameEvent.Context.of(player));

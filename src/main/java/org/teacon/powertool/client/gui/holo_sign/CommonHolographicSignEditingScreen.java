@@ -129,11 +129,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                 if (this.font.isBidirectional()) {
                     text = this.font.bidirectionalShaping(text);
                 }
-                int xStart = (int)switch (this.textAlign) {
-                    case LEFT -> this.width / 10.0;
-                    case CENTER -> this.width / 2.0 - this.font.width(text) / 2.0;
-                    case RIGHT -> this.width * 0.9 - this.font.width(text);
-                };
+                int xStart = this.getLineXStart(text);
                 guiGraphics.drawString(this.font, text, xStart, line * 10 - this.messages.length * 5, 0xFFFFFF, false);
                 if (line == this.line && cursorPos >= 0 && showCursor) {
                     int j1 = this.font.width(text.substring(0, Math.min(cursorPos, text.length())));
@@ -153,8 +149,9 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
         for(int i = 0; i < this.messages.length; ++i) {
             String text = this.messages[i];
             if (text != null && i == this.line && cursorPos >= 0) {
+                int xStart = this.getLineXStart(text);
                 int j3 = this.font.width(text.substring(0, Math.min(cursorPos, text.length())));
-                int k3 = j3 - this.font.width(text) / 2;
+                int k3 = j3 + xStart - 1;
                 if (showCursor && cursorPos < text.length()) {
                     guiGraphics.fill(k3, cursorY - 1, k3 + 1, cursorY + 9, 0xFFFFFFFF);
                 }
@@ -174,5 +171,13 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
         transform.popPose();
         Lighting.setupFor3DItems();
         
+    }
+    
+    protected int getLineXStart(String text){
+        return (int)switch (this.textAlign) {
+            case LEFT -> this.width / 10.0;
+            case CENTER -> this.width / 2.0 - this.font.width(text) / 2.0;
+            case RIGHT -> this.width * 0.9 - this.font.width(text);
+        };
     }
 }

@@ -1,49 +1,49 @@
 {
   "variants": {
     "facing=down,powered=false": {
-      "model": "minecraft:block/observer_realtime",
+      "model": "powertool:block/observer_realtime",
       "x": 90
     },
     "facing=down,powered=true": {
-      "model": "minecraft:block/observer_realtime_on",
+      "model": "powertool:block/observer_realtime_on",
       "x": 90
     },
     "facing=east,powered=false": {
-      "model": "minecraft:block/observer_realtime",
+      "model": "powertool:block/observer_realtime",
       "y": 90
     },
     "facing=east,powered=true": {
-      "model": "minecraft:block/observer_realtime_on",
+      "model": "powertool:block/observer_realtime_on",
       "y": 90
     },
     "facing=north,powered=false": {
-      "model": "minecraft:block/observer_realtime"
+      "model": "powertool:block/observer_realtime"
     },
     "facing=north,powered=true": {
-      "model": "minecraft:block/observer_realtime_on"
+      "model": "powertool:block/observer_realtime_on"
     },
     "facing=south,powered=false": {
-      "model": "minecraft:block/observer_realtime",
+      "model": "powertool:block/observer_realtime",
       "y": 180
     },
     "facing=south,powered=true": {
-      "model": "minecraft:block/observer_realtime_on",
+      "model": "powertool:block/observer_realtime_on",
       "y": 180
     },
     "facing=up,powered=false": {
-      "model": "minecraft:block/observer_realtime",
+      "model": "powertool:block/observer_realtime",
       "x": 270
     },
     "facing=up,powered=true": {
-      "model": "minecraft:block/observer_realtime_on",
+      "model": "powertool:block/observer_realtime_on",
       "x": 270
     },
     "facing=west,powered=false": {
-      "model": "minecraft:block/observer_realtime",
+      "model": "powertool:block/observer_realtime",
       "y": 270
     },
     "facing=west,powered=true": {
-      "model": "minecraft:block/observer_realtime_on",
+      "model": "powertool:block/observer_realtime_on",
       "y": 270
     }
   }

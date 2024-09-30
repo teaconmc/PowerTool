@@ -1,49 +1,49 @@
 {
   "variants": {
     "facing=down,powered=false": {
-      "model": "minecraft:block/observer_gametime_cyl",
+      "model": "powertool:block/observer_gametime_cyl",
       "x": 90
     },
     "facing=down,powered=true": {
-      "model": "minecraft:block/observer_gametime_cyl_on",
+      "model": "powertool:block/observer_gametime_cyl_on",
       "x": 90
     },
     "facing=east,powered=false": {
-      "model": "minecraft:block/observer_gametime_cyl",
+      "model": "powertool:block/observer_gametime_cyl",
       "y": 90
     },
     "facing=east,powered=true": {
-      "model": "minecraft:block/observer_gametime_cyl_on",
+      "model": "powertool:block/observer_gametime_cyl_on",
       "y": 90
     },
     "facing=north,powered=false": {
-      "model": "minecraft:block/observer_gametime_cyl"
+      "model": "powertool:block/observer_gametime_cyl"
     },
     "facing=north,powered=true": {
-      "model": "minecraft:block/observer_gametime_cyl_on"
+      "model": "powertool:block/observer_gametime_cyl_on"
     },
     "facing=south,powered=false": {
-      "model": "minecraft:block/observer_gametime_cyl",
+      "model": "powertool:block/observer_gametime_cyl",
       "y": 180
     },
     "facing=south,powered=true": {
-      "model": "minecraft:block/observer_gametime_cyl_on",
+      "model": "powertool:block/observer_gametime_cyl_on",
       "y": 180
     },
     "facing=up,powered=false": {
-      "model": "minecraft:block/observer_gametime_cyl",
+      "model": "powertool:block/observer_gametime_cyl",
       "x": 270
     },
     "facing=up,powered=true": {
-      "model": "minecraft:block/observer_gametime_cyl_on",
+      "model": "powertool:block/observer_gametime_cyl_on",
       "x": 270
     },
     "facing=west,powered=false": {
-      "model": "minecraft:block/observer_gametime_cyl",
+      "model": "powertool:block/observer_gametime_cyl",
       "y": 270
     },
     "facing=west,powered=true": {
-      "model": "minecraft:block/observer_gametime_cyl_on",
+      "model": "powertool:block/observer_gametime_cyl_on",
       "y": 270
     }
   }

@@ -19,7 +19,7 @@ import java.util.function.Function;
 public final class PowerToolTOPProvider implements IProbeInfoProvider, Function<ITheOneProbe, Void> {
     @Override
     public ResourceLocation getID() {
-        return VanillaUtils.modResourceLocation( "the_one_probe");
+        return VanillaUtils.modRL( "the_one_probe");
     }
 
     @Override

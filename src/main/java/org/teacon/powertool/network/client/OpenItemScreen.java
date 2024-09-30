@@ -15,7 +15,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 @MethodsReturnNonnullByDefault
 public record OpenItemScreen(ItemStack stack, EquipmentSlot slot) implements CustomPacketPayload {
     
-    public static final CustomPacketPayload.Type<OpenItemScreen> TYPE = new Type<>(VanillaUtils.modResourceLocation("open_item_screen"));
+    public static final CustomPacketPayload.Type<OpenItemScreen> TYPE = new Type<>(VanillaUtils.modRL("open_item_screen"));
     
     public static final StreamCodec<RegistryFriendlyByteBuf, OpenItemScreen> STREAM_CODEC = StreamCodec.composite(
             ItemStack.STREAM_CODEC,

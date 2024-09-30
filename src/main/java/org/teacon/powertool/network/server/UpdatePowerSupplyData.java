@@ -12,7 +12,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 @MethodsReturnNonnullByDefault
 public record UpdatePowerSupplyData(int type_, int data) implements CustomPacketPayload {
     
-    public static final Type<UpdatePowerSupplyData> TYPE = new Type<>(VanillaUtils.modResourceLocation("update_power_supply"));
+    public static final Type<UpdatePowerSupplyData> TYPE = new Type<>(VanillaUtils.modRL("update_power_supply"));
     
     public static final StreamCodec<ByteBuf,UpdatePowerSupplyData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,UpdatePowerSupplyData::type_,

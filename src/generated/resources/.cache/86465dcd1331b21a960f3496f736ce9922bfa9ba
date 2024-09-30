@@ -1,4 +1,4 @@
-// 1.21	2024-08-15T23:49:29.7314496	Block States: powertool
+// 1.21.1	2024-09-28T14:16:00.3767043	Block States: powertool
 ae6ddabd13bd84907c7fc7fdb01186954fc13502 assets/powertool/blockstates/cosmetic_barrel.json
 05b788f1ac0190925f20bbc680cb68c445d80223 assets/powertool/blockstates/cosmetic_beehive.json
 e771ba4339b87af1e3d3af179b69b99b0221f4f6 assets/powertool/blockstates/cosmetic_blast_furnace.json
@@ -15,6 +15,7 @@ f37e3dfe4acc540146d7d4ce599fb508ef16650e assets/powertool/blockstates/cosmetic_g
 38eb9c4431dd893f9b6a19659bf14c7dacf8a47d assets/powertool/blockstates/gray_trash_can.json
 a8239321f2713befc6b352461dd0ddfc0731ae04 assets/powertool/blockstates/green_trash_can.json
 3d258da627707754ef6244ae11a0bce62bcba95f assets/powertool/blockstates/green_trash_can_cap.json
+73e34f2417a5c4eef6cecd3fb144d7498e3c0730 assets/powertool/blockstates/temple.json
 72358d0b2db425861fdcbe0e22e92b9405895c88 assets/powertool/blockstates/white_trash_can.json
 cd29f633a654dfdb0c65433112a02d9269f7a24e assets/powertool/blockstates/white_trash_can_cap.json
 3a87aba93140e66ff5772eb5fb355054be7f5236 assets/powertool/models/item/cosmetic_barrel.json
@@ -33,5 +34,6 @@ b0141832911b272755538b29b60e23038bf58a6f assets/powertool/models/item/cosmetic_t
 6b3d3a1333f9b9ec7176e51af29476ccf52002f2 assets/powertool/models/item/gray_trash_can.json
 1fe5241a345d5d17219bb128a8246aed214d0ee2 assets/powertool/models/item/green_trash_can.json
 6742bcec064d900fa2a90fd419b13489d6f06051 assets/powertool/models/item/green_trash_can_cap.json
+7ab8a0f9927120d67eaf4dcb34d031d095656ed9 assets/powertool/models/item/temple.json
 21f2d0dc5ed923815242fbff529fd0813d335a16 assets/powertool/models/item/white_trash_can.json
 555a301f11a12b8062d9c0088a9e0c42a7ffd514 assets/powertool/models/item/white_trash_can_cap.json

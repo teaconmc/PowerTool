@@ -4,11 +4,12 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.network.client.OpenBlockScreen;
 import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.network.client.UpdatePermissionPacket;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
-import org.teacon.powertool.network.server.UpdateHolographicSignData;
+import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.network.server.UpdateItemStackData;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 
@@ -35,6 +36,12 @@ public class PowerToolNetwork {
                 OpenItemScreen.STREAM_CODEC,
                 OpenItemScreen::handle
         );
+        register.playToClient(
+                OpenBlockScreen.TYPE,
+                OpenBlockScreen.STREAM_CODEC,
+                OpenBlockScreen::handle
+        );
+        
     
         register.commonToServer(
                 SetCommandBlockPacket.TYPE,
@@ -47,9 +54,9 @@ public class PowerToolNetwork {
                 UpdatePowerSupplyData::handle
         );
         register.commonToServer(
-                UpdateHolographicSignData.TYPE,
-                UpdateHolographicSignData.STREAM_CODEC,
-                UpdateHolographicSignData::handle
+                UpdateBlockEntityData.TYPE,
+                UpdateBlockEntityData.STREAM_CODEC,
+                UpdateBlockEntityData::handle
         );
         register.playToServer(
                 UpdateItemStackData.TYPE,

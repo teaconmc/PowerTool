@@ -31,6 +31,7 @@ public class ModBlockModelProvider extends BlockStateProvider {
         horizontalBlockWithItem(PowerToolBlocks.WHITE_TRASH_CAN.get());
         horizontalBlockWithItem(PowerToolBlocks.GRAY_TRASH_CAN.get());
         horizontalBlockWithItem(PowerToolBlocks.GREEN_TRASH_CAN.get());
+        horizontalBlockWithItem(PowerToolBlocks.TEMPLE.get());
         trashCanCap(PowerToolBlocks.WHITE_TRASH_CAN_CAP.get());
         //trashCanCap(PowerToolBlocks.GRAY_TRASH_CAN_CAP.get());
         trashCanCap(PowerToolBlocks.GREEN_TRASH_CAN_CAP.get());

@@ -96,5 +96,6 @@
   "powertool.command.fly.must_be_player": "This command can only be executed by a player.",
   "powertool.command.fly.unavailable": "Player does not have creative flying attribute - this is impossible. Please report this issue.",
 
-  "tooltip.powertool.transparent_brush": "Make block display block transparent"
+  "tooltip.powertool.transparent_brush": "Make block display block transparent",
+  "powertool.realtime_observer.gui.current_time": "Current Time: %d"
 }

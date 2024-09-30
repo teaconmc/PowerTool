@@ -15,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class TrashCanWithContainerScreen extends AbstractContainerScreen<TrashCanWithContainerMenu> {
     
-    private static final ResourceLocation BG = VanillaUtils.modResourceLocation("textures/gui/trash_can.png");
+    private static final ResourceLocation BG = VanillaUtils.modRL("textures/gui/trash_can.png");
     
     public TrashCanWithContainerScreen(TrashCanWithContainerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

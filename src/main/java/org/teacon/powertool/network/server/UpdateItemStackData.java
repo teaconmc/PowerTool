@@ -17,7 +17,7 @@ import java.util.Optional;
 @MethodsReturnNonnullByDefault
 public record UpdateItemStackData(EquipmentSlot slot, DataComponentPatch componentPatch) implements CustomPacketPayload {
     
-    public static final Type<UpdateItemStackData> TYPE = new Type<>(VanillaUtils.modResourceLocation("update_item_stack_data"));
+    public static final Type<UpdateItemStackData> TYPE = new Type<>(VanillaUtils.modRL("update_item_stack_data"));
     
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateItemStackData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.fromCodec(EquipmentSlot.CODEC),

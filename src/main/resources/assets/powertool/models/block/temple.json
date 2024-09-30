@@ -1,9 +1,11 @@
 {
 	"credit": "Made with Blockbench",
 	"texture_size": [128, 128],
+	"render_type": "cutout",
+	"parent": "minecraft:block/cube",
 	"textures": {
 		"0": "powertool:block/temple",
-		"particle": "minecraft:block/deepslate_tile"
+		"particle": "minecraft:block/deepslate_tiles"
 	},
 	"elements": [
 		{

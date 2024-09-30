@@ -21,7 +21,7 @@ import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.holo_sign.SignType;
-import org.teacon.powertool.network.server.UpdateHolographicSignData;
+import org.teacon.powertool.network.server.UpdateBlockEntityData;
 
 import java.util.function.Supplier;
 
@@ -234,7 +234,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
 
         this.writeBackToBE();
-        PacketDistributor.sendToServer(UpdateHolographicSignData.create(sign));
+        PacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
     }
 
     @Override

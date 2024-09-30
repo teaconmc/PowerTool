@@ -11,6 +11,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -20,6 +21,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -29,7 +31,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.teacon.powertool.datagen.PowerToolItemTagsProvider;
 import org.teacon.powertool.item.PowerToolItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,7 +45,8 @@ import java.util.Set;
 public class FenceKnotEntity extends HangingEntity {
 
     private static final EntityDataAccessor<Set<BlockPos>> CONNECT_TO = SynchedEntityData.defineId(FenceKnotEntity.class, PowerToolEntities.BLOCK_POS_LIST.get());
-
+    private static final EntityDataAccessor<FenceKnotEntity.Type> TYPE = SynchedEntityData.defineId(FenceKnotEntity.class,PowerToolEntities.FENCE_KNOT_TYPE.get());
+    
     public FenceKnotEntity(Level level, BlockPos pos) {
         super(PowerToolEntities.FENCE_KNOT.get(), level, pos);
         this.pos = BlockPos.containing(pos.getX(), pos.getY(), pos.getZ());
@@ -79,6 +84,9 @@ public class FenceKnotEntity extends HangingEntity {
             }
             this.getEntityData().set(CONNECT_TO, list);
         }
+        if(data.contains("Type",Tag.TAG_STRING)) {
+            this.getEntityData().set(TYPE, FenceKnotEntity.Type.valueOf(data.getString("Type")));
+        }
     }
 
     @Override
@@ -90,6 +98,7 @@ public class FenceKnotEntity extends HangingEntity {
             toPos.add(tag);
         }
         data.put("ConnectTo", toPos);
+        data.putString("Type", this.getEntityData().get(TYPE).name());
     }
     
     
@@ -105,7 +114,7 @@ public class FenceKnotEntity extends HangingEntity {
         }
 
         var held = p.getItemInHand(hand);
-        if (held.getItem() == PowerToolItems.TONK.get()) {
+        if (held.is(PowerToolItemTagsProvider.TONK)) {
             var data = held.get(PowerToolItems.KNOT_DATA);
             if (data == null) {
                 // Connection start.
@@ -152,6 +161,7 @@ public class FenceKnotEntity extends HangingEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(CONNECT_TO,new LinkedHashSet<>());
+        builder.define(TYPE,Type.Normal);
     }
     
     @Override
@@ -173,6 +183,15 @@ public class FenceKnotEntity extends HangingEntity {
         return this.entityData.get(CONNECT_TO);
     }
     
+    public void setType(Type type) {
+        this.entityData.set(TYPE,type);
+    }
+    
+    //entity有getType方法了
+    public Type getTypeForRender(){
+        return this.entityData.get(TYPE);
+    }
+    
     public record PowerToolKnotData(BlockPos pos) {
         
         public static final Codec<PowerToolKnotData> CODEC = RecordCodecBuilder.create(
@@ -185,5 +204,31 @@ public class FenceKnotEntity extends HangingEntity {
                 PowerToolKnotData::pos,
                 PowerToolKnotData::new
         );
+    }
+    
+    public enum Type implements StringRepresentable {
+        Thin(0.025f),
+        Normal(0.05f),
+        Thick(0.08f);
+        
+        private final float width;
+        
+        public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
+        
+        public static final StreamCodec<ByteBuf, Type> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        
+        Type(float width) {
+            this.width = width;
+        }
+        
+        @Override
+        @NotNull
+        public String getSerializedName() {
+            return name();
+        }
+        
+        public float getWidth(){
+            return this.width;
+        }
     }
 }

@@ -1,11 +1,11 @@
 {
     "parent": "block/block",
     "textures": {
-        "bottom": "block/observer_gametime_cyl_back",
-        "side": "block/observer_gametime_cyl_side",
-        "top": "block/observer_gametime_cyl_top",
-        "front": "block/observer_gametime_cyl_front",
-        "particle": "block/observer_gametime_cyl_front"
+        "bottom": "powertool:block/observer_gametime_cyl_back",
+        "side": "powertool:block/observer_gametime_cyl_side",
+        "top": "powertool:block/observer_gametime_cyl_top",
+        "front": "powertool:block/observer_gametime_cyl_front",
+        "particle": "powertool:block/observer_gametime_cyl_front"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],

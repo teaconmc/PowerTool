@@ -1,0 +1,5 @@
+// 1.21.1	2024-09-24T17:13:47.3070451	Tags for minecraft:block mod id powertool
+38dfae216b5dfc4bded03a5ab1d88646866621ef data/minecraft/tags/block/dragon_immune.json
+38dfae216b5dfc4bded03a5ab1d88646866621ef data/minecraft/tags/block/wither_immune.json
+d92293d44806b5026effc3ef39db0c27287b3f2a data/powertool/tags/block/command_block.json
+55c955f4d4074f03345b667c276b8ff9715a24b3 data/powertool/tags/block/repeating_command_block.json

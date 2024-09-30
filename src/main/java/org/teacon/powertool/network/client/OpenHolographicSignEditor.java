@@ -15,7 +15,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 @MethodsReturnNonnullByDefault
 public record OpenHolographicSignEditor(BlockPos location, SignType signType) implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<OpenHolographicSignEditor> TYPE = new Type<>(VanillaUtils.modResourceLocation("open_holographic_sign_editor"));
+    public static final CustomPacketPayload.Type<OpenHolographicSignEditor> TYPE = new Type<>(VanillaUtils.modRL("open_holographic_sign_editor"));
     
     public static final StreamCodec<ByteBuf, OpenHolographicSignEditor> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,

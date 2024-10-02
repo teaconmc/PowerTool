@@ -50,11 +50,15 @@ public class Permission {
             "minecraft", "use_gamemaster_block", PermissionTypes.BOOLEAN,
             (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.hasPermissions(2)
         );
+        public static final PermissionNode<Boolean> SEE_COMMAND_FEEDBACK_FROM_OTHERS = new PermissionNode<>(
+                "powertool", "see_command_feedback_from_others", PermissionTypes.BOOLEAN,
+                ((player, playerUUID, context) -> player != null && player.hasPermissions(4))
+        );
         // ENTITY_SELECTOR is replaced by NeoForgeMod.USE_SELECTORS_PERMISSION
 
         @SubscribeEvent
         public static void on(PermissionGatherEvent.Nodes event) {
-            event.addNodes(GAMEMODE, COMMAND_BLOCK);
+            event.addNodes(GAMEMODE, COMMAND_BLOCK, SEE_COMMAND_FEEDBACK_FROM_OTHERS);
         }
     }
 

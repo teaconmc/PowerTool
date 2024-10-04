@@ -1,6 +1,8 @@
 package org.teacon.powertool.item;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,13 +12,19 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.teacon.powertool.client.gui.SetCommandScreen;
+import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommandRune extends Item {
+public class CommandRune extends Item implements IScreenProviderItem{
     public CommandRune(Properties properties) {
         super(properties);
     }
@@ -32,13 +40,17 @@ public class CommandRune extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        ItemStack held = player.getItemInHand(usedHand);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack held = player.getItemInHand(hand);
         String command = held.get(PowerToolItems.COMMAND);
         if (command == null) {
+             if(player instanceof ServerPlayer serverPlayer){
+                PacketDistributor.sendToPlayer(serverPlayer,
+                        new OpenItemScreen(player.getItemInHand(hand),hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
+            }
             return InteractionResultHolder.pass(held);
         }
-        player.startUsingItem(usedHand);
+        player.startUsingItem(hand);
         return InteractionResultHolder.consume(held);
     }
 
@@ -54,7 +66,14 @@ public class CommandRune extends Item {
                         ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
                 stack.hurtAndBreak(1, livingEntity, slot);
             }
+            
         }
         return stack;
+    }
+    
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
+        return () -> new SetCommandScreen(stack,slot);
     }
 }

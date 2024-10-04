@@ -6,6 +6,7 @@
   "mixins": [
     "CommandBlockMixin",
     "CommandsMixin",
+    "CommandSourceStackMixin",
     "MixinArmorStand",
     "MixinItemFrame",
     "ServerGamePacketListenerImplMixin"

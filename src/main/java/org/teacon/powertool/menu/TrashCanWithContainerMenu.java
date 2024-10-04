@@ -5,6 +5,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -61,5 +62,14 @@ public class TrashCanWithContainerMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return this.container.stillValid(player);
+    }
+    
+    @Override
+    public void clicked(int slotId, int button, ClickType clickType, Player player) {
+        if(slotId == 0 && clickType == ClickType.PICKUP && (button == 0 || button == 1) && !this.getCarried().isEmpty()) {
+            this.slots.getFirst().set(this.getCarried());
+            this.setCarried(ItemStack.EMPTY);
+        }
+        else super.clicked(slotId, button, clickType, player);
     }
 }

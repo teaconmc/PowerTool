@@ -74,7 +74,7 @@ public class PowerToolBlocks {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PowerTool.MODID);
 
     public static DeferredHolder<Block,PeriodicCommandBlock> COMMAND_BLOCK;
-    public static DeferredHolder<Block,TrashCanBlock> TRASH_CAN;
+    public static DeferredHolder<Block,TrashCanWithContainer> TRASH_CAN;
     public static DeferredHolder<Block,PowerSupplyBlock> POWER_SUPPLY;
     public static DeferredHolder<Block,ItemDisplayBlock> ITEM_DISPLAY;
 
@@ -135,7 +135,7 @@ public class PowerToolBlocks {
             BlockBehaviour.Properties.of().mapColor(DyeColor.PURPLE).requiresCorrectToolForDrops().strength(-1.0F, 3600000.0F).noLootTable(),
             false
         ));
-        TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanBlock(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
+        TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
         POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(1000)));
         ITEM_DISPLAY = BLOCKS.register("item_display", () -> new ItemDisplayBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER).sound(ITEM_DISPLAY_SOUND_TYPE).noOcclusion().strength(10000)));
         GLOW_ITEM_DISPLAY = BLOCKS.register("glow_item_display", () -> new ItemDisplayBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER).sound(GLOW_ITEM_DISPLAY_SOUND_TYPE).noOcclusion().strength(10000)));
@@ -200,7 +200,7 @@ public class PowerToolBlocks {
                 RawJsonHolographicSignBlockEntity::new,RAW_JSON_HOLOGRAPHIC_SIGN.get()
         ).build(DSL.remainderType()));
         TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container",() -> BlockEntityType.Builder.of(
-                TrashCanWithContainerBlockEntity::new,WHITE_TRASH_CAN.get(),GRAY_TRASH_CAN.get(),GREEN_TRASH_CAN.get()
+                TrashCanWithContainerBlockEntity::new,TRASH_CAN.get(),WHITE_TRASH_CAN.get(),GRAY_TRASH_CAN.get(),GREEN_TRASH_CAN.get()
         ).build(DSL.remainderType()));
         REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> BlockEntityType.Builder.of(
                 RegisterBlockEntity::new, REGISTER.get(), GORGEOUS_REGISTER.get(), MECHANICAL_REGISTER.get(), TECH_REGISTER.get()
@@ -244,7 +244,6 @@ public class PowerToolBlocks {
         ITEMS.register("cosmetic_barrel", () -> new BlockItem(COSMETIC_BARREL.get(), new Item.Properties()));
 
         ITEMS.register("command_block", () -> new BlockItem(COMMAND_BLOCK.get(), new Item.Properties().rarity(Rarity.EPIC)));
-        ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties()));
         ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties()));
         ITEMS.register("item_display", () -> new BlockItem(ITEM_DISPLAY.get(), new Item.Properties()));
         ITEMS.register("glow_item_display", () -> new BlockItem(GLOW_ITEM_DISPLAY.get(), new Item.Properties()));
@@ -256,6 +255,7 @@ public class PowerToolBlocks {
         ITEMS.register("holographic_sign", () -> new BlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
         ITEMS.register("link_holographic_sign",() -> new BlockItem(LINK_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
         ITEMS.register("raw_json_holographic_sign",() -> new BlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties()));
         ITEMS.register("white_trash_can",() -> new BlockItem(WHITE_TRASH_CAN.get(),new Item.Properties()));
         ITEMS.register("white_trash_can_cap",() -> new BlockItem(WHITE_TRASH_CAN_CAP.get(),new Item.Properties()));
         ITEMS.register("gray_trash_can",() -> new BlockItem(GRAY_TRASH_CAN.get(),new Item.Properties()));

@@ -23,7 +23,7 @@ public class InWorldDailyCycleTimeSection implements ITimeSection{
     @Override
     public boolean inTimeSection(long timeWithMills) {
         var current = levelGetter.get().getTimeOfDay(0f);
-        return start <= current && end >= current;
+        return start <= current && end > current;
     }
     
     @Override

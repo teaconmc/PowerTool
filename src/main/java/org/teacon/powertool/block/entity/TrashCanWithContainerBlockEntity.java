@@ -27,6 +27,11 @@ public class TrashCanWithContainerBlockEntity extends BaseContainerBlockEntity {
         super(PowerToolBlocks.TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY.get(), pos, blockState);
     }
     
+    public void setItem(ItemStack stack) {
+        items.set(0, stack);
+        this.setChanged();
+    }
+    
     @Override
     protected Component getDefaultName() {
         return Component.translatable("powertool.trash_can_with_container.name");

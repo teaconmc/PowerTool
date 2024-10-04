@@ -268,7 +268,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
             // If color input box is active, let that input box handle it
             return true;
         }
-        return false;
+        return super.keyPressed(keyCode,scanCode,modifiers);
     }
 
     @Override

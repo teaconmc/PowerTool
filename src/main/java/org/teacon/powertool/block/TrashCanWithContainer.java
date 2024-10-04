@@ -7,6 +7,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -63,7 +65,6 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     }
     
     @Override
-    @SuppressWarnings("deprecation")
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
@@ -106,9 +107,20 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     }
     
     @Override
-    @SuppressWarnings("deprecation")
     public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         return direction == Direction.DOWN && state.getValue(POWERED) ? 1 : 0;
+    }
+    
+    @Override
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (entity instanceof ItemEntity itemEntity) {
+            var te = level.getBlockEntity(pos);
+            if (te instanceof TrashCanWithContainerBlockEntity be) {
+                be.setItem(itemEntity.getItem());
+                itemEntity.discard();
+            }
+            
+        }
     }
     
     @Override
@@ -136,7 +148,6 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     }
     
     @Override
-    @SuppressWarnings("deprecation")
     protected BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(HORIZONTAL_FACING, rotation.rotate(state.getValue(HORIZONTAL_FACING)));
     }

@@ -36,7 +36,7 @@ public class DailyCycleTimeSection implements ITimeSection {
     @Override
     public boolean inTimeSection(long timeWithMills) {
         var t = LocalDateTime.ofInstant(Instant.ofEpochMilli(timeWithMills), zoneOffset).toLocalTime();
-        return t.isAfter(localStart) && t.isBefore(localEnd);
+        return !t.isBefore(localStart) && t.isBefore(localEnd);
     }
     
     @Override

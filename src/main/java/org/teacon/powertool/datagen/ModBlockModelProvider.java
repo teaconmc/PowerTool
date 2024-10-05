@@ -9,9 +9,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.apache.commons.compress.utils.Lists;
 import org.teacon.powertool.block.cosmetical.CosmeticFurnace;
 import org.teacon.powertool.block.PowerToolBlocks;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -23,11 +25,15 @@ public class ModBlockModelProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        PowerToolBlocks.SIMPLE_BLOCKS.forEach(block -> simpleBlockWithItem(cosmeticBlock(block), models().getExistingFile(mcLoc(name(block)))));
+        var simpleBlocks = Lists.newArrayList(PowerToolBlocks.SIMPLE_BLOCKS.iterator());
+        simpleBlocks.add(Blocks.ENCHANTING_TABLE);
+        simpleBlocks.stream().filter(b -> b != Blocks.BEACON).forEach(block -> simpleBlockWithItem(cosmeticBlock(block), models().getExistingFile(mcLoc(name(block)))));
         cosmeticHorizontalBlockWithItem(Blocks.BEEHIVE);
         cosmeticFurnaceBlockWithItem(Blocks.FURNACE);
         cosmeticFurnaceBlockWithItem(Blocks.BLAST_FURNACE);
+        cosmeticFurnaceBlockWithItem(Blocks.SMOKER);
         cosmeticDirectionalBlockWithItem(Blocks.BARREL);
+        cosmeticHorizontalBlockWithItem(Blocks.STONECUTTER);
         horizontalBlockWithItem(PowerToolBlocks.WHITE_TRASH_CAN.get());
         horizontalBlockWithItem(PowerToolBlocks.GRAY_TRASH_CAN.get());
         horizontalBlockWithItem(PowerToolBlocks.GREEN_TRASH_CAN.get());
@@ -35,6 +41,9 @@ public class ModBlockModelProvider extends BlockStateProvider {
         trashCanCap(PowerToolBlocks.WHITE_TRASH_CAN_CAP.get());
         //trashCanCap(PowerToolBlocks.GRAY_TRASH_CAN_CAP.get());
         trashCanCap(PowerToolBlocks.GREEN_TRASH_CAN_CAP.get());
+        cosmeticBlock(Blocks.BEACON);
+        cosmeticBlock(Blocks.ENCHANTING_TABLE);
+        simpleBlockWithItem(cosmeticBlock(Blocks.BEACON),models().withExistingParent(name(cosmeticBlock(Blocks.BEACON)),mcLoc(name(Blocks.BEACON))).renderType("cutout"));
     }
     
     private void trashCanCap(TrapDoorBlock block) {

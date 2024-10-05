@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 
-public abstract class CosmeticHorizontalDirectionalBlock extends CosmeticSimpleBlock{
+public class CosmeticHorizontalDirectionalBlock extends CosmeticSimpleBlock{
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 

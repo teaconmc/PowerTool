@@ -131,5 +131,6 @@
   "powertool.gui.error_and_close": "An error occurred. Please close the GUI",
   "powertool.realtime_observer.gui": "Realtime Observer",
   "powertool.gui.button.utc_time": "Set time zone to UTC + 0",
-  "powertool.gui.button.local_time": "Set time zone to local time zone"
+  "powertool.gui.button.local_time": "Set time zone to local time zone",
+  "itemGroup.powertool.cosmetic": "PowerTool: CosmeticBlocks"
 }

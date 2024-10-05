@@ -10,11 +10,13 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -22,8 +24,10 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.block.CosmeticBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.entity.FenceKnotEntity;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.EnumMap;
@@ -46,6 +50,12 @@ public class PowerToolItems {
             .title(Component.translatable("itemGroup.powertool"))
             .icon(() -> new ItemStack(PowerToolBlocks.COMMAND_BLOCK.get()))
             .withTabsBefore(CreativeModeTabs.FOOD_AND_DRINKS, CreativeModeTabs.INGREDIENTS, CreativeModeTabs.SPAWN_EGGS)
+            .build());
+    
+    public static final DeferredHolder<CreativeModeTab,CreativeModeTab> COSMETIC_TAB = CREATIVE_MODE_TABS.register("cosmetic_tab",() -> CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.powertool.cosmetic"))
+            .icon(() -> Blocks.BEACON.asItem().getDefaultInstance())
+            .withTabsBefore(VanillaUtils.modRL("tab"))
             .build());
     
     public static final DeferredHolder<ArmorMaterial,ArmorMaterial> HOLO_GLASS_ARMOR_MATERIAL = ARMOR_MATERIAL.register("holo_glass",
@@ -129,7 +139,12 @@ public class PowerToolItems {
     public static void creativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTab() == THE_TAB.get()) {
             for (var regObj : ITEMS.getEntries()) {
-                event.accept(regObj.get());
+                if(!(regObj.get() instanceof BlockItem blockItem) || !(blockItem.getBlock() instanceof CosmeticBlock)) event.accept(regObj.get());
+            }
+        }
+        if (event.getTab() == COSMETIC_TAB.get()){
+            for (var regObj : ITEMS.getEntries()) {
+                if(regObj.get() instanceof BlockItem blockItem && blockItem.getBlock() instanceof CosmeticBlock) event.accept(regObj.get());
             }
         }
     }

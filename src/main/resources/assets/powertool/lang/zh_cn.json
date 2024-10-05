@@ -132,6 +132,7 @@
   "powertool.gui.error_and_close": "发生错误,请关闭GUI",
   "powertool.realtime_observer.gui": "现实时间侦测器",
   "powertool.gui.button.utc_time": "设置时区为 UTC + 0",
-  "powertool.gui.button.local_time": "设置时区为本地时区"
+  "powertool.gui.button.local_time": "设置时区为本地时区",
+  "itemGroup.powertool.cosmetic": "PowerTool: 装饰方块"
 
 }

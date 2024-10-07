@@ -11,5 +11,6 @@ public class PowerToolCommands {
     @SubscribeEvent
     public static void regCommand(RegisterCommandsEvent event) {
         FlyCommand.reg(event.getDispatcher());
+        BatHappyCommand.register(event.getDispatcher());
     }
 }

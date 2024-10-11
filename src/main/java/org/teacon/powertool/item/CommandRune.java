@@ -60,11 +60,15 @@ public class CommandRune extends Item implements IScreenProviderItem{
             String command = stack.get(PowerToolItems.COMMAND); // get(Supplier<DataComponentType<T>>) is from NeoForge
             if (command != null) {
                 VanillaUtils.runCommand(command, livingEntity);
+                if(Boolean.TRUE.equals(stack.get(PowerToolItems.CONSUME)) && ( !(livingEntity instanceof Player player) || !player.getAbilities().instabuild)){
+                    stack.shrink(1);
+                }
                 // Yes, you can make it consumable
                 // Viva la data component!
-                EquipmentSlot slot = stack.equals(livingEntity.getItemBySlot(EquipmentSlot.OFFHAND))
-                        ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-                stack.hurtAndBreak(1, livingEntity, slot);
+                //并不行 如果设置Damage=1,MaxDamage=1,使用后使整组物品都会出现耐久条,而你并不能设置MaxDamage=0 --xkball
+//                EquipmentSlot slot = stack.equals(livingEntity.getItemBySlot(EquipmentSlot.OFFHAND))
+//                        ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+//                stack.hurtAndBreak(1, livingEntity, slot);
             }
             
         }

@@ -94,6 +94,10 @@ public class PowerToolItems {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> COMMAND = DATA_COMPONENTS.register(
             "command", () -> DataComponentType.<String>builder().persistent(Codec.STRING).build()
     );
+    
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CONSUME = DATA_COMPONENTS.register(
+            "consume", () -> DataComponentType.<Boolean>builder().persistent(Codec.BOOL).build()
+    );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CYCLE = DATA_COMPONENTS.register(
             "cycle", () -> DataComponentType.<Integer>builder().persistent(Codec.INT).build()

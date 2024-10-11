@@ -2,7 +2,7 @@ package org.teacon.powertool.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
@@ -21,6 +21,7 @@ public class SetCommandScreen extends Screen {
     protected final EquipmentSlot slot;
     protected ObjectInputBox<String> name;
     protected ObjectInputBox<String> input;
+    protected Checkbox consume;
     
     public SetCommandScreen(ItemStack stack, EquipmentSlot slot) {
         super(Component.translatable("powertool.setcommand.gui"));
@@ -42,7 +43,7 @@ public class SetCommandScreen extends Screen {
         this.input = new ObjectInputBox<>(font,width/2-box_l/2,height/2-35,box_l,20,Component.literal("command"),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
         this.input.setMaxLength(114514);
         this.input.setRenderState(false);
-        
+        this.consume = Checkbox.builder(Component.literal("consumable"),font).pos(width/2-box_l/2,height/2-10).selected(Boolean.TRUE.equals(itemStack.get(PowerToolItems.CONSUME))).build();
         String command = itemStack.get(PowerToolItems.COMMAND);
         if (command != null) {
             this.input.setValue(command);
@@ -51,6 +52,7 @@ public class SetCommandScreen extends Screen {
         
         this.addRenderableWidget(this.name);
         this.addRenderableWidget(this.input);
+        this.addRenderableWidget(this.consume);
         super.init();
     }
     
@@ -62,10 +64,10 @@ public class SetCommandScreen extends Screen {
     
     @Override
     public void removed() {
-        if(input == null || name == null) return;
+        if(input == null || name == null || consume == null) return;
         var patch = DataComponentPatch.builder().set(DataComponents.CUSTOM_NAME,Component.literal(name.getValue()));
         if(!input.getValue().isEmpty()) patch.set(PowerToolItems.COMMAND.get(),input.getValue());
-        
+        patch.set(PowerToolItems.CONSUME.get(),consume.selected());
         PacketDistributor.sendToServer(new UpdateItemStackData(slot,patch.build()));
     }
 }

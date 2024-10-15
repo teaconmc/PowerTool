@@ -112,23 +112,15 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     }
     
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
-            if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)) {
-                theBE.rotation = (theBE.rotation + 45) % 360;
-                theBE.setChanged();
-                level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return InteractionResult.PASS;
-    }
-    
-    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)){
-                theBE.itemToDisplay = stack.copy();
+                if(stack.isEmpty()){
+                    theBE.rotation = (theBE.rotation + 45) % 360;
+                }
+                else{
+                    theBE.itemToDisplay = stack.copy();
+                }
                 if (!level.isClientSide) {
                     theBE.setChanged();
                     level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);

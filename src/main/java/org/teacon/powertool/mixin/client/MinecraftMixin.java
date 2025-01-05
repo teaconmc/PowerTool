@@ -1,4 +1,4 @@
-package org.teacon.powertool.mixin;
+package org.teacon.powertool.mixin.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

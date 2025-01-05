@@ -158,7 +158,8 @@ public class CachedRegion {
         Matrix4f frustumMatrix,
         Matrix4f projectionMatrix,
         Vec3 cameraPosition,
-        Window window) {
+        Window window
+    ) {
         int indexCount = indexCountMap.getInt(renderType);
         if (indexCount <= 0) return;
         renderType.setupRenderState();

@@ -219,6 +219,6 @@
   "powertool.gui.holo_sign.y_rotation": "Y Axis Rotation:",
   "powertool.gui.holo_sign.z_offset": "Z Axis Offset:",
   "powertool.gui.holo_sign.lit_on": "Light Emission: On",
-  "powertool.gui.holo_sign.lit_off": "Light Emission: Off"
-
+  "powertool.gui.holo_sign.lit_off": "Light Emission: Off",
+  "powertool.gui.cache_updated": "Cache for current chunk successfully updated."
 }

@@ -15,14 +15,17 @@
     "ServerPlayerMixin"
   ],
   "client": [
-    "LevelRendererMixin",
-    "MinecraftMixin",
     "client.ClientRecipeBookMixin",
     "client.DebugScreenOverlayMixin",
     "client.GameModeSwitcherScreenMixin",
     "client.KeyboardHandlerMixin",
+    "client.LevelRendererMixin",
+    "client.MinecraftMixin",
     "client.PlayerMixin",
-    "client.SectionRenderDispatcherMixin"
+    "client.SectionRenderDispatcherMixin",
+    "client.compat.EmbeddiumWorldRenderMixin",
+    "client.compat.SodiumWorldRenderMixin",
+    "fixes.PlayerTextureManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

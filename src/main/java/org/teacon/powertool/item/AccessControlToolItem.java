@@ -65,9 +65,8 @@ public class AccessControlToolItem extends Item {
     public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
         if (type.canInteract(level, pos, player)) {
             type.attackBlock(level, pos, player);
-            return false;
         }
-        return super.canAttackBlock(state, level, pos, player);
+        return false;
     }
 
     @Override

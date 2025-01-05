@@ -152,12 +152,33 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
+    maven { // Embeddium, Sodium, Iris
+        name = "Modrinth Maven"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        url "https://maven.su5ed.dev/releases"
+    }
 }
 
 dependencies {
     localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
 
     implementation "curse.maven:the-one-probe-245211:5502323"
+    compileOnly "curse.maven:easy-npc-559312:6009031"
+    runtimeOnly "curse.maven:easy-npc-559312:6009031"
+
+    compileOnly("maven.modrinth:sodium:mc1.21.1-0.6.3-neoforge")
+    compileOnly("maven.modrinth:embeddium:1.0.11+mc1.21.1")
+    compileOnly("maven.modrinth:iris:1.8.1+1.21.1-neoforge")
+
+    compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19")
+    compileOnly("org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a3919")
+    compileOnly("org.sinytra.forgified-fabric-api:fabric-block-view-api-v2:1.0.10+9afaaf8c19")
+    compileOnly("org.sinytra.forgified-fabric-api:fabric-rendering-data-attachment-v1:0.3.48+73761d2e19")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

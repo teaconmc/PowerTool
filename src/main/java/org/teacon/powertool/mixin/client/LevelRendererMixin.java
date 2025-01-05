@@ -1,4 +1,4 @@
-package org.teacon.powertool.mixin;
+package org.teacon.powertool.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -75,7 +75,6 @@ public abstract class LevelRendererMixin {
                 .addIfPossible(blockEntity);
             return;
         }
-//        instance.render(blockEntity, partialTick, poseStack, bufferSource);
         original.call(instance, blockEntity, partialTick, poseStack, bufferSource);
     }
 }

@@ -222,5 +222,6 @@
   "item.powertool.cached_mode_tool": "缓存渲染模式工具",
   "tooltip.powertool.cached_mode_tool": "右键方块以启用缓存渲染模式，左键方块重建此方块所在区块的缓存.",
   "powertool.gui.cached_mode_enabled": "已在%s上启用缓存渲染模式",
-  "powertool.gui.cached_mode_disabled": "已在%s上禁用缓存渲染模式"
+  "powertool.gui.cached_mode_disabled": "已在%s上禁用缓存渲染模式",
+  "powertool.gui.cache_updated": "已更新本区块的缓存"
 }

@@ -37,6 +37,7 @@ public class AccelerateCommand {
             );
 
     public static final LiteralArgumentBuilder<CommandSourceStack> ALIAS_BAT_HAPPY = Commands.literal("bathappy")
+            .requires(p -> p.hasPermission(2))
             .redirect(COMMAND.build());
 
     private static RequiredArgumentBuilder<CommandSourceStack, Double> createXyzArgs(Command<CommandSourceStack> command) {

@@ -24,8 +24,7 @@
     "client.PlayerMixin",
     "client.SectionRenderDispatcherMixin",
     "client.compat.EmbeddiumWorldRenderMixin",
-    "client.compat.SodiumWorldRenderMixin",
-    "fixes.PlayerTextureManagerMixin"
+    "client.compat.SodiumWorldRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

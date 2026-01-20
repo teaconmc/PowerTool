@@ -2,27 +2,36 @@ package org.teacon.powertool.block;
 
 import com.mojang.datafixers.DSL;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.cosmetical.CosmeticBarrel;
 import org.teacon.powertool.block.cosmetical.CosmeticBeehive;
@@ -47,6 +56,7 @@ import org.teacon.powertool.block.entity.SafeBlockEntity;
 import org.teacon.powertool.block.entity.TempleBlockEntity;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
+import org.teacon.powertool.block.fluid.FakeWater;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
 import org.teacon.powertool.item.PowerToolDataComponents;
@@ -82,7 +92,8 @@ public class PowerToolBlocks {
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, PowerTool.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PowerTool.MODID);
-    
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, PowerTool.MODID);
+    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, PowerTool.MODID);
     public static final Map<DyeColor,DeferredHolder<Block,? extends Block>> DH_CHEAT_BLOCKS = new EnumMap<>(DyeColor.class);
 
     public static DeferredHolder<Block,PeriodicCommandBlock> COMMAND_BLOCK;
@@ -144,10 +155,31 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TimeObserverBlockEntity>> TIME_OBSERVER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RedStoneDelayBlockEntity>> DELAYER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>,BlockEntityType<BezierCurveBlockEntity>> BEZIER_CURVE_BLOCK_ENTITY;
-
+    
+    public static DeferredHolder<Fluid, FakeWater> FAKE_WATER = FLUIDS.register("fake_water", FakeWater::new);
+    public static DeferredHolder<Block, LiquidBlock> FAKE_WATER_BLOCK = BLOCKS.register("fake_water_block", () -> new LiquidBlock(
+            FAKE_WATER.get(),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
+    ));
+    public static DeferredHolder<Item, BucketItem> FAKE_WATER_BUCKET = ITEMS.register("fake_water_bucket", () -> new BucketItem(FAKE_WATER.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+    public static DeferredHolder<FluidType, FluidType> FAKE_WATER_TYPE = FLUID_TYPES.register("fake_water", () -> new FluidType(FluidType.Properties.create()
+            .descriptionId("block.powertool.fake_water")
+            .fallDistanceModifier(0F)
+            .canExtinguish(true)
+            .canConvertToSource(true)
+            .supportsBoating(true)
+            .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+            .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+            .sound(SoundActions.FLUID_VAPORIZE, SoundEvents.FIRE_EXTINGUISH)
+            .canHydrate(true)
+            .addDripstoneDripping(PointedDripstoneBlock.WATER_TRANSFER_PROBABILITY_PER_RANDOM_TICK, ParticleTypes.DRIPPING_DRIPSTONE_WATER, Blocks.WATER_CAULDRON, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER_INTO_CAULDRON)
+    ));
+    
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);
         BLOCK_ENTITIES.register(bus);
+        FLUIDS.register(bus);
+        FLUID_TYPES.register(bus);
         COMMAND_BLOCK = BLOCKS.register("command_block", () -> new PeriodicCommandBlock(
             BlockBehaviour.Properties.of().mapColor(DyeColor.PURPLE).requiresCorrectToolForDrops().strength(-1.0F, 3600000.0F).noLootTable(),
             false

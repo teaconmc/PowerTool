@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -17,11 +18,15 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
+import org.teacon.powertool.client.fluid.WrappedClientFluidTypeExtension;
 import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TextureExtractorScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
@@ -103,7 +108,7 @@ public class ClientEvents {
         var ySize = yOffset + 40;
         return new Vector2i(xSize, ySize);
     }
-
+    
     @SubscribeEvent
     static void onMousePress(ScreenEvent.MouseButtonPressed.Pre event) {
         event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
@@ -181,5 +186,11 @@ public class ClientEvents {
                 event.registerLayerDefinition(MartingCarEntityRenderer.getModelLayer(v), MartingCarEntityModel::createBodyLayer);
             }
         }
+        
+        @SubscribeEvent(priority = EventPriority.LOWEST)
+        public static void onRegClientExtensions(RegisterClientExtensionsEvent event) {
+            event.registerFluidType(new WrappedClientFluidTypeExtension(IClientFluidTypeExtensions.of(NeoForgeMod.WATER_TYPE.value())),PowerToolBlocks.FAKE_WATER_TYPE.get());
+        }
+        
     }
 }

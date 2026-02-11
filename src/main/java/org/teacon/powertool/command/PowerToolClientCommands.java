@@ -5,6 +5,7 @@ import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+import net.neoforged.neoforge.server.command.EnumArgument;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.client.PanoramicScreenShotHelper;
 
@@ -18,12 +19,12 @@ public class PowerToolClientCommands {
                         .redirect(event.getDispatcher().register(Commands.literal("pt")
                                         .then(Commands.literal("client")
                                                 .then(Commands.literal("panoramic_screenshot")
-                                                        .then(Commands.argument("height", IntegerArgumentType.integer(1,16384))
-                                                                .then(Commands.argument("fov", IntegerArgumentType.integer(1,180))
-                                                                        .then(Commands.argument("yaw_start", IntegerArgumentType.integer(0,360))
-                                                                                .then(Commands.argument("frame_delay", IntegerArgumentType.integer(0,1000))
-                                                                                        .executes(PanoramicScreenShotHelper.INSTANCE::start)))))
-                                                                                
+                                                        .then(Commands.argument("mode", EnumArgument.enumArgument(PanoramicScreenShotHelper.Mode.class))
+                                                                .then(Commands.argument("height", IntegerArgumentType.integer(1,16384))
+                                                                        .then(Commands.argument("fov", IntegerArgumentType.integer(1,180))
+                                                                                .then(Commands.argument("yaw_start", IntegerArgumentType.integer(0,360))
+                                                                                        .then(Commands.argument("frame_delay", IntegerArgumentType.integer(0,1000))
+                                                                                                .executes(PanoramicScreenShotHelper.INSTANCE::start))))))
                                         )
                                 )
                         

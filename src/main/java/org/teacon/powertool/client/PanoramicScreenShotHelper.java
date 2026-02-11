@@ -28,11 +28,14 @@ public class PanoramicScreenShotHelper {
     public int screenHeight;
     
     private int delay;
-    private int rotation;
+    private float rotation;
     public boolean takeScreenShot;
     private int colWidth;
+    private float fovPerPixel;
+    private int currentX;
     private NativeImage image;
     private State state = State.IDLE;
+    private Mode mode = Mode.PRECISE;
     
     private PanoramicScreenShotHelper(){}
     
@@ -41,12 +44,13 @@ public class PanoramicScreenShotHelper {
 //        var h = screenHeight;
         var h = window.getHeight();
         var w = (int) (h * ((float)window.getWidth()/(float)window.getHeight()));
-        var centerStart = w/2 - colWidth/2;
+        var centerStart = (int)(w/2f - colWidth/2f);
         for(int x = 0; x < colWidth; x++){
             for(var y = 0; y < h; y++){
-                this.image.setPixelRGBA(x + (rotation-1)*colWidth, y, image.getPixelRGBA(centerStart + x, y));
+                this.image.setPixelRGBA(x + this.currentX, y, image.getPixelRGBA(centerStart + x, y));
             }
         }
+        this.currentX += colWidth;
     }
     
     public int start(CommandContext<CommandSourceStack> source){
@@ -54,6 +58,7 @@ public class PanoramicScreenShotHelper {
         this.fov = IntegerArgumentType.getInteger(source,"fov");
         this.yaw_start = IntegerArgumentType.getInteger(source,"yaw_start");
         this.frame_delay = IntegerArgumentType.getInteger(source,"frame_delay");
+        this.mode = source.getArgument("mode", Mode.class);
         this.state = State.PREPARE;
         return 0;
     }
@@ -68,12 +73,23 @@ public class PanoramicScreenShotHelper {
                 var window = Minecraft.getInstance().getWindow();
 //                var h = INSTANCE.screenHeight;
                 var h = window.getHeight();
-                var w = (int) (h * ((float)window.getWidth()/(float)window.getHeight()));
+                var as = ((float)window.getWidth()/(float)window.getHeight());
+                var w = (int) (h * as);
 //                Minecraft.getInstance().getMainRenderTarget().resize(w,h,Minecraft.ON_OSX);
 //                Minecraft.getInstance().gameRenderer.resize(w,h);
-                INSTANCE.colWidth = w/(INSTANCE.fov*2);
-                INSTANCE.image = new NativeImage(INSTANCE.colWidth*360,h,false);
+                if(INSTANCE.mode == Mode.FAST){
+                    //INSTANCE.colWidth = (int) (w/Math.toDegrees(2 * Math.atan(Math.tan(Math.toRadians(INSTANCE.fov)/2f)*as)));
+                    INSTANCE.colWidth = h/INSTANCE.fov;
+                    INSTANCE.fovPerPixel = 1;
+                    INSTANCE.image = new NativeImage(INSTANCE.colWidth*360,h,false);
+                }
+                else{
+                    INSTANCE.colWidth = 1;
+                    INSTANCE.fovPerPixel = (float)INSTANCE.fov/(float)h;
+                    INSTANCE.image = new NativeImage((int)(360/INSTANCE.fovPerPixel)+1,h,false);
+                }
                 INSTANCE.rotation = 0;
+                INSTANCE.currentX = 0;
                 Minecraft.getInstance().setOverlay(new PauseOverlay());
             }
             case CAPTURING -> {
@@ -89,7 +105,7 @@ public class PanoramicScreenShotHelper {
                     }
                     else {
                         INSTANCE.delay = 0;
-                        INSTANCE.rotation += 1;
+                        INSTANCE.rotation += INSTANCE.mode.advanceRotation();
                         INSTANCE.takeScreenShot = true;
                     }
 
@@ -131,5 +147,22 @@ public class PanoramicScreenShotHelper {
         PREPARE,
         CAPTURING,
         FINISHING
+    }
+    
+    public enum Mode{
+        FAST{
+            @Override
+            public float advanceRotation() {
+                return 1;
+            }
+        },
+        PRECISE{
+            @Override
+            public float advanceRotation() {
+                return INSTANCE.fovPerPixel;
+            }
+        };
+        
+        public float advanceRotation(){return 0;}
     }
 }

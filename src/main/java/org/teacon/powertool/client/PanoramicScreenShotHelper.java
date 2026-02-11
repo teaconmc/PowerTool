@@ -51,6 +51,7 @@ public class PanoramicScreenShotHelper {
             }
         }
         this.currentX += colWidth;
+        image.close();
     }
     
     public int start(CommandContext<CommandSourceStack> source){

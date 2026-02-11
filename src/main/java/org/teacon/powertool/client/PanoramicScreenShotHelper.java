@@ -23,14 +23,16 @@ public class PanoramicScreenShotHelper {
     public static final PanoramicScreenShotHelper INSTANCE = new PanoramicScreenShotHelper();
     
     public int fov;
-    public int pitch;
+    public int yaw_start;
+    public int frame_delay;
     public int screenHeight;
     
-    public int rotation;
+    private int delay;
+    private int rotation;
     public boolean takeScreenShot;
-    public int colWidth;
-    public NativeImage image;
-    public State state = State.IDLE;
+    private int colWidth;
+    private NativeImage image;
+    private State state = State.IDLE;
     
     private PanoramicScreenShotHelper(){}
     
@@ -50,7 +52,8 @@ public class PanoramicScreenShotHelper {
     public int start(CommandContext<CommandSourceStack> source){
         this.screenHeight = IntegerArgumentType.getInteger(source,"height");
         this.fov = IntegerArgumentType.getInteger(source,"fov");
-        this.pitch = IntegerArgumentType.getInteger(source,"pitch");
+        this.yaw_start = IntegerArgumentType.getInteger(source,"yaw_start");
+        this.frame_delay = IntegerArgumentType.getInteger(source,"frame_delay");
         this.state = State.PREPARE;
         return 0;
     }
@@ -79,10 +82,17 @@ public class PanoramicScreenShotHelper {
                         INSTANCE.state = State.FINISHING;
                         break;
                     }
-                    event.setYaw(INSTANCE.rotation);
-                    event.setPitch(INSTANCE.pitch);
-                    INSTANCE.rotation += 1;
-                    INSTANCE.takeScreenShot = true;
+                    event.setYaw((INSTANCE.rotation + INSTANCE.yaw_start) % 360);
+                    event.setPitch(0);
+                    if(INSTANCE.delay < INSTANCE.frame_delay){
+                        INSTANCE.delay += 1;
+                    }
+                    else {
+                        INSTANCE.delay = 0;
+                        INSTANCE.rotation += 1;
+                        INSTANCE.takeScreenShot = true;
+                    }
+
                 }
 
             }

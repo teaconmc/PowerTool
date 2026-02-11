@@ -20,8 +20,10 @@ public class PowerToolClientCommands {
                                                 .then(Commands.literal("panoramic_screenshot")
                                                         .then(Commands.argument("height", IntegerArgumentType.integer(1,16384))
                                                                 .then(Commands.argument("fov", IntegerArgumentType.integer(1,180))
-                                                                        .then(Commands.argument("pitch", IntegerArgumentType.integer(-90,90))
-                                                                                .executes(PanoramicScreenShotHelper.INSTANCE::start))))
+                                                                        .then(Commands.argument("yaw_start", IntegerArgumentType.integer(0,360))
+                                                                                .then(Commands.argument("frame_delay", IntegerArgumentType.integer(0,1000))
+                                                                                        .executes(PanoramicScreenShotHelper.INSTANCE::start)))))
+                                                                                
                                         )
                                 )
                         

@@ -7,7 +7,7 @@ package org.teacon.powertool.block.entity;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 
@@ -58,7 +58,7 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         
         @Override
-        @NotNull
+        @NonNull
         public String getSerializedName() {
             return name();
         }
@@ -86,7 +86,7 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         
         @Override
-        @NotNull
+        @NonNull
         public String getSerializedName() {
     return name();
 }}
@@ -124,7 +124,7 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         
         @Override
-        @NotNull
+        @NonNull
         public String getSerializedName() {
     return name();
 }}

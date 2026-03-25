@@ -2,7 +2,7 @@ package org.teacon.powertool.client.renders.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.LeashKnotModel;
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.EntityHitResult;
@@ -29,7 +29,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
-    private static final ResourceLocation KNOT_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/lead_knot.png");
+    private static final Identifier KNOT_LOCATION = Identifier.withDefaultNamespace("textures/entity/lead_knot.png");
     private final LeashKnotModel<FenceKnotEntity> model;
 
     public FenceKnotRenderer(EntityRendererProvider.Context context) {
@@ -38,7 +38,7 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FenceKnotEntity entity) {
+    public Identifier getTextureLocation(FenceKnotEntity entity) {
         return KNOT_LOCATION;
     }
 

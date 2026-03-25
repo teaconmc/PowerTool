@@ -1,6 +1,6 @@
 package org.teacon.powertool.client.gui;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
@@ -32,7 +32,7 @@ public class BezierCurveBlockScreen extends Screen {
     protected ObjectInputBox<Integer> uScaleInput;
     protected ObjectInputBox<Integer> vScaleInput;
     protected ObjectInputBox<Integer> colorInput;
-    protected ObjectInputBox<ResourceLocation> textureInput;
+    protected ObjectInputBox<Identifier> textureInput;
     protected Checkbox useClampMode;
     protected Checkbox useWorldCoordinate;
     

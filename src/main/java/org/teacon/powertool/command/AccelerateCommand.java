@@ -11,6 +11,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.permissions.Permissions;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.network.client.UpdatePlayerMovement;
 
@@ -21,7 +22,7 @@ import org.teacon.powertool.network.client.UpdatePlayerMovement;
 public class AccelerateCommand {
 
     public static final LiteralArgumentBuilder<CommandSourceStack> COMMAND = Commands.literal("accelerate")
-            .requires(p -> p.hasPermission(2))
+            .requires(p -> p.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
             .then(Commands.argument("player", EntityArgument.player())
                     .then(Commands.literal("multiply")
                             .then(Commands.argument("factor", DoubleArgumentType.doubleArg())
@@ -37,7 +38,7 @@ public class AccelerateCommand {
             );
 
     public static final LiteralArgumentBuilder<CommandSourceStack> ALIAS_BAT_HAPPY = Commands.literal("bathappy")
-            .requires(p -> p.hasPermission(2))
+            .requires(p -> p.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
             .redirect(COMMAND.build());
 
     private static RequiredArgumentBuilder<CommandSourceStack, Double> createXyzArgs(Command<CommandSourceStack> command) {

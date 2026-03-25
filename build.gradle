@@ -42,9 +42,19 @@ repositories {
 base {
     archivesName = mod_id
 }
+// Source - https://stackoverflow.com/a/35707023
+// Posted by DallinDyer, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-03-25, License - CC BY-SA 3.0
 
-// Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+allprojects {
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xmaxerrs" << "10000"
+        }
+    }
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
     // Specify the version of NeoForge to use.
@@ -52,11 +62,6 @@ neoForge {
 
     accessTransformers {
         file('src/main/resources/META-INF/accesstransformer.cfg')
-    }
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
     }
 
     // This line is optional. Access Transformers are automatically detected
@@ -87,7 +92,7 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
 
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
             // gameDirectory = project.file('run-data')
@@ -165,18 +170,18 @@ repositories {
 }
 
 dependencies {
-    localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
-
-    implementation "curse.maven:the-one-probe-245211:5502323"
-
-    compileOnly("maven.modrinth:sodium:mc1.21.1-0.6.3-neoforge")
-    compileOnly("maven.modrinth:embeddium:1.0.11+mc1.21.1")
-    compileOnly("maven.modrinth:iris:1.8.1+1.21.1-neoforge")
-
-    compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19")
-    compileOnly("org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a3919")
-    compileOnly("org.sinytra.forgified-fabric-api:fabric-block-view-api-v2:1.0.10+9afaaf8c19")
-    compileOnly("org.sinytra.forgified-fabric-api:fabric-rendering-data-attachment-v1:0.3.48+73761d2e19")
+//    localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
+//
+//    implementation "curse.maven:the-one-probe-245211:5502323"
+//
+//    compileOnly("maven.modrinth:sodium:mc1.21.1-0.6.3-neoforge")
+//    compileOnly("maven.modrinth:embeddium:1.0.11+mc1.21.1")
+//    compileOnly("maven.modrinth:iris:1.8.1+1.21.1-neoforge")
+//
+//    compileOnly("org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19")
+//    compileOnly("org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:3.4.0+acb05a3919")
+//    compileOnly("org.sinytra.forgified-fabric-api:fabric-block-view-api-v2:1.0.10+9afaaf8c19")
+//    compileOnly("org.sinytra.forgified-fabric-api:fabric-rendering-data-attachment-v1:0.3.48+73761d2e19")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

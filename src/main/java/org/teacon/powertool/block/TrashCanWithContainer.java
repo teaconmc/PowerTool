@@ -1,13 +1,13 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,13 +24,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
@@ -43,7 +44,7 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     private static final MapCodec<TrashCanWithContainer> CODEC = simpleCodec(TrashCanWithContainer::new);
     
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     
     protected TrashCanWithContainer(Properties properties) {
@@ -91,7 +92,7 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     }
     
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         return VanillaUtils.itemInteractionFrom(use(level,pos,player));
     }
     
@@ -112,14 +113,13 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     }
     
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (entity instanceof ItemEntity itemEntity) {
             var te = level.getBlockEntity(pos);
             if (te instanceof TrashCanWithContainerBlockEntity be) {
                 be.setItem(itemEntity.getItem());
                 itemEntity.discard();
             }
-            
         }
     }
     
@@ -138,7 +138,7 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     }
     
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         if (!level.isClientSide) {
             boolean nowPowered = state.getValue(POWERED);
             if (nowPowered != level.hasNeighborSignal(pos)) {

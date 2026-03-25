@@ -1,11 +1,11 @@
 package org.teacon.powertool.client.gui;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
@@ -18,7 +18,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     
-    private static final ResourceLocation BG = ResourceLocation.fromNamespaceAndPath("powertool", "textures/gui/register.png");
+    private static final Identifier BG = Identifier.fromNamespaceAndPath("powertool", "textures/gui/register.png");
     private static final int TEXT_COLOR = 16777215;
 
     private RegisterBlockEntity rbe;

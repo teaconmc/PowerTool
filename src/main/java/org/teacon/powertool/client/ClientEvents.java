@@ -3,6 +3,7 @@ package org.teacon.powertool.client;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.BoatRenderer;
@@ -73,35 +74,32 @@ public class ClientEvents {
      * @return The lower right pos of rendered area.
      */
     @SuppressWarnings("SameParameterValue")
-    public static Vector2i drawRegisterInfo(Minecraft mc, GuiGraphics guiGraphics, ItemStack item, int xOffset, int yOffset, Component componentTop, Component componentBottom) {
+    public static Vector2i drawRegisterInfo(Minecraft mc, GuiGraphicsExtractor guiGraphics, ItemStack item, int xOffset, int yOffset, Component componentTop, Component componentBottom) {
         Window window = mc.getWindow();
         int x = window.getGuiScaledWidth() / 2 + xOffset;
         int y = window.getGuiScaledHeight() / 2 + yOffset;
 
         if(!componentTop.getString().isEmpty()){
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(0.75F, 0.75F, 1F);
-            guiGraphics.drawString(mc.font, componentTop, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xB0B0B0, false);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().scale(0.75F, 0.75F);
+            guiGraphics.text(mc.font, componentTop, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xB0B0B0, false);
+            guiGraphics.pose().popMatrix();
         }
         
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 10);
-        guiGraphics.renderItem(item, x + 8, y + 10);
-        guiGraphics.renderItemDecorations(mc.font, item, x + 8, y + 10);
-        guiGraphics.pose().popPose();
+        guiGraphics.item(item, x + 8, y + 10);
+        guiGraphics.itemDecorations(mc.font, item, x + 8, y + 10);
         
         Component itemDisplayName = item.getHoverName()
                 .copy()
                 .withStyle(item.getRarity().getStyleModifier())
                 .append(" × " + item.getCount());
-        guiGraphics.drawString(mc.font, itemDisplayName, x + 28, y + 14, 0xFFFFFF, false);
+        guiGraphics.text(mc.font, itemDisplayName, x + 28, y + 14, 0xFFFFFF, false);
 
         if(!componentBottom.getString().isEmpty()){
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(0.75F, 0.75F, 1F);
-            guiGraphics.drawString(mc.font, componentBottom, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xB0B0B0, false);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().scale(0.75F, 0.75F);
+            guiGraphics.text(mc.font, componentBottom, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xB0B0B0, false);
+            guiGraphics.pose().popMatrix();
         }
 
         var xSize = xOffset + 28 + mc.font.width(itemDisplayName);
@@ -155,7 +153,7 @@ public class ClientEvents {
         if(p1.level().dimension() != p2.level().dimension()) AccessControlClient.INSTANCE.clear();
     }
 
-    @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)
+    @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
     public static final class OnModBus {
         @SubscribeEvent
         public static void setup(final RegisterMenuScreensEvent event) {

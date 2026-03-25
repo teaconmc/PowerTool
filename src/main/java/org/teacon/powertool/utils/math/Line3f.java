@@ -1,7 +1,7 @@
 package org.teacon.powertool.utils.math;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 

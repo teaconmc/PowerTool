@@ -15,7 +15,7 @@ import org.teacon.powertool.menu.PowerToolMenus;
 public class PowerTool {
 
     public static final String MODID = "powertool";
-    public static final ThreadLocal<RandomSource> GLOBAL_RANDOM = ThreadLocal.withInitial(RandomSource::createNewThreadLocalInstance);
+    public static final ThreadLocal<RandomSource> GLOBAL_RANDOM = ThreadLocal.withInitial(RandomSource::createThreadLocalInstance);
 
     public PowerTool(ModContainer modContainer, IEventBus bus) {
         PowerToolBlocks.register(bus);

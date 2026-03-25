@@ -1,7 +1,7 @@
 package org.teacon.powertool.block;
 
 import com.mojang.datafixers.DSL;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -195,15 +195,15 @@ public class PowerToolBlocks {
         COSMETIC_SOUL_CAMPFIRE = BLOCKS.register("cosmetic_soul_campfire", () -> new CosmeticCampfireBlock(false, BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_CAMPFIRE)));
         HOLOGRAPHIC_SIGN = BLOCKS.register("holographic_sign",
                 () -> new HolographicSignBlock(
-                        BlockBehaviour.Properties.of().noCollission().noLootTable(),
+                        BlockBehaviour.Properties.of().noCollision().noLootTable(),
                         SignType.COMMON));
         LINK_HOLOGRAPHIC_SIGN = BLOCKS.register("link_holographic_sign",
                 () -> new HolographicSignBlock(
-                        BlockBehaviour.Properties.of().noCollission().noLootTable(),
+                        BlockBehaviour.Properties.of().noCollision().noLootTable(),
                         SignType.URL));
         RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.register("raw_json_holographic_sign",
                 () -> new HolographicSignBlock(
-                        BlockBehaviour.Properties.of().noCollission().noLootTable(),
+                        BlockBehaviour.Properties.of().noCollision().noLootTable(),
                         SignType.RAW_JSON));
         WHITE_TRASH_CAN = BLOCKS.register("white_trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
         WHITE_TRASH_CAN_CAP = BLOCKS.register("white_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
@@ -236,48 +236,48 @@ public class PowerToolBlocks {
             ITEMS.register(name,() -> new BlockItem(block.get(), new Item.Properties()));
         }
         
-        COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> BlockEntityType.Builder.of(
+        COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> new BlockEntityType<>(
             PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
-        ).build(DSL.remainderType()));
-        POWER_SUPPLY_BLOCK_ENTITY = BLOCK_ENTITIES.register("power_supply", () -> BlockEntityType.Builder.of(
+        ));
+        POWER_SUPPLY_BLOCK_ENTITY = BLOCK_ENTITIES.register("power_supply", () -> new BlockEntityType<>(
                 PowerSupplyBlockEntity::new, POWER_SUPPLY.get()
-        ).build(DSL.remainderType()));
-        ITEM_DISPLAY_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_display", () -> BlockEntityType.Builder.of(
+        ));
+        ITEM_DISPLAY_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_display", () -> new BlockEntityType<>(
                 ItemDisplayBlockEntity::new, ITEM_DISPLAY.get(), GLOW_ITEM_DISPLAY.get()
-        ).build(DSL.remainderType()));
-        ITEM_SUPPLIER_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_supplier", () -> BlockEntityType.Builder.of(
+        ));
+        ITEM_SUPPLIER_BLOCK_ENTITY = BLOCK_ENTITIES.register("item_supplier", () -> new BlockEntityType<>(
                 ItemSupplierBlockEntity::new, ITEM_SUPPLIER.get(), SLIM_ITEM_SUPPLIER.get()
-        ).build(DSL.remainderType()));
-        HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("holographic_sign", () -> BlockEntityType.Builder.of(
+        ));
+        HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("holographic_sign", () -> new BlockEntityType<>(
                 CommonHolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()
-        ).build(DSL.remainderType()));
-        LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("link_holographic_sign",() -> BlockEntityType.Builder.of(
+        ));
+        LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("link_holographic_sign",() -> new BlockEntityType<>(
                 LinkHolographicSignBlockEntity::new,LINK_HOLOGRAPHIC_SIGN.get()
-        ).build(DSL.remainderType()));
-        RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("raw_json_holographic_sign",() -> BlockEntityType.Builder.of(
+        ));
+        RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("raw_json_holographic_sign",() -> new BlockEntityType<>(
                 RawJsonHolographicSignBlockEntity::new,RAW_JSON_HOLOGRAPHIC_SIGN.get()
-        ).build(DSL.remainderType()));
-        TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container",() -> BlockEntityType.Builder.of(
+        ));
+        TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container",() -> new BlockEntityType<>(
                 TrashCanWithContainerBlockEntity::new,TRASH_CAN.get(),WHITE_TRASH_CAN.get(),GRAY_TRASH_CAN.get(),GREEN_TRASH_CAN.get()
-        ).build(DSL.remainderType()));
-        REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> BlockEntityType.Builder.of(
+        ));
+        REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> new BlockEntityType<>(
                 RegisterBlockEntity::new, REGISTER.get(), GORGEOUS_REGISTER.get(), MECHANICAL_REGISTER.get(), TECH_REGISTER.get()
-        ).build(DSL.remainderType()));
-        SAFE_BLOCK_ENTITY = BLOCK_ENTITIES.register("safe", () -> BlockEntityType.Builder.of(
+        ));
+        SAFE_BLOCK_ENTITY = BLOCK_ENTITIES.register("safe", () -> new BlockEntityType<>(
                 SafeBlockEntity::new, SAFE.get(), GORGEOUS_SAFE.get(), MECHANICAL_SAFE.get(), TECH_SAFE.get()
-        ).build(DSL.remainderType()));
-        TEMPLE_BLOCK_ENTITY = BLOCK_ENTITIES.register("temple",() -> BlockEntityType.Builder.of(
+        ));
+        TEMPLE_BLOCK_ENTITY = BLOCK_ENTITIES.register("temple",() -> new BlockEntityType<>(
                 TempleBlockEntity::new,TEMPLE.get()
-        ).build(DSL.remainderType()));
-        TIME_OBSERVER_BLOCK_ENTITY = BLOCK_ENTITIES.register("time_observer",() -> BlockEntityType.Builder.of(
+        ));
+        TIME_OBSERVER_BLOCK_ENTITY = BLOCK_ENTITIES.register("time_observer",() -> new BlockEntityType<>(
                 TimeObserverBlockEntity::new,REAL_TIME_OBSERVER.get(),REAL_TIME_CYCLE_OBSERVER.get(),GAME_TIME_CYCLE_OBSERVER.get()
-        ).build(DSL.remainderType()));
-        DELAYER_BLOCK_ENTITY = BLOCK_ENTITIES.register("delayer",() -> BlockEntityType.Builder.of(
+        ));
+        DELAYER_BLOCK_ENTITY = BLOCK_ENTITIES.register("delayer",() -> new BlockEntityType<>(
                 RedStoneDelayBlockEntity::new,DELAYER.get()
-        ).build(DSL.remainderType()));
-        BEZIER_CURVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("bezier_curve_block",() -> BlockEntityType.Builder.of(
+        ));
+        BEZIER_CURVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("bezier_curve_block",() -> new BlockEntityType<>(
                 BezierCurveBlockEntity::new,BEZIER_CURVE_BLOCK.get()
-        ).build(DSL.remainderType()));
+        ));
         
         regTrapDoors(Map.of(
                 BlockSetType.OAK, Blocks.OAK_TRAPDOOR,
@@ -370,12 +370,12 @@ public class PowerToolBlocks {
     @SubscribeEvent
     public static void regBlockCapabilities(final RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 ITEM_SUPPLIER_BLOCK_ENTITY.get(),
                 (be,context) -> be.getItemHandler()
         );
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 POWER_SUPPLY_BLOCK_ENTITY.get(),
                 (be,context) -> be.getEnergyStore()
         );

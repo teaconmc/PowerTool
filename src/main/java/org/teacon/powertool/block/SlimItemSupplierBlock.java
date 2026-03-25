@@ -1,6 +1,6 @@
 package org.teacon.powertool.block;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -26,7 +26,7 @@ public class SlimItemSupplierBlock extends ItemSupplierBlock {
     protected static final VoxelShape NORTH_AABB = Block.box(0, 0, 12, 16, 16, 16);
     protected static final VoxelShape EAST_AABB = Block.box(0, 0, 0, 4, 16, 16);
 
-    private static final DirectionProperty FACING = BlockStateProperties.FACING;
+    private static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public SlimItemSupplierBlock(Properties prop) {
         super(prop);
     }

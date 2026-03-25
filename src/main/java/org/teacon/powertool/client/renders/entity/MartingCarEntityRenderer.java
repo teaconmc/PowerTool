@@ -8,11 +8,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FastColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
 import org.teacon.powertool.entity.MartingCarEntity;
 
@@ -44,13 +44,13 @@ public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity> {
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull MartingCarEntity entity) {
+    public @NonNull Identifier getTextureLocation(@NonNull MartingCarEntity entity) {
         return entity.getVariant().getTexture();
     }
 
     @Override
-    public void render(@NotNull MartingCarEntity entity, float entityYaw, float partialTick,
-                       @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+    public void render(@NonNull MartingCarEntity entity, float entityYaw, float partialTick,
+                       @NonNull PoseStack poseStack, @NonNull MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 
         var model = getBuffer(entity);

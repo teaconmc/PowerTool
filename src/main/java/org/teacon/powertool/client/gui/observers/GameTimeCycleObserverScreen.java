@@ -1,6 +1,6 @@
 package org.teacon.powertool.client.gui.observers;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.block.TimeObserverBlock;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
@@ -23,8 +23,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class GameTimeCycleObserverScreen extends Screen {
     
-    private static final ResourceLocation SKY_COLOR_IMAGE = VanillaUtils.modRL("sky_color");
-    private static final ResourceLocation SLIDER = VanillaUtils.modRL("slider");
+    private static final Identifier SKY_COLOR_IMAGE = VanillaUtils.modRL("sky_color");
+    private static final Identifier SLIDER = VanillaUtils.modRL("slider");
     
     protected final TimeObserverBlockEntity te;
     protected ObjectInputBox<Float> startInput;

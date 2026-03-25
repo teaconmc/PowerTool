@@ -1,6 +1,6 @@
 package org.teacon.powertool.client.gui;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
@@ -23,10 +23,10 @@ import java.util.Objects;
 @ParametersAreNonnullByDefault
 public class RedStoneDelayerScreen extends Screen {
     
-    private static final ResourceLocation TEXTURE_RISING_EDGE = VanillaUtils.modRL("delayer_button_rising_edge");
-    private static final ResourceLocation TEXTURE_DESCENDING_EDGE = VanillaUtils.modRL("delayer_button_descending_edge");
-    private static final ResourceLocation TEXTURE_IGNORE = VanillaUtils.modRL("delayer_button_ignore");
-    private static final ResourceLocation TEXTURE_RESET = VanillaUtils.modRL("delayer_button_reset");
+    private static final Identifier TEXTURE_RISING_EDGE = VanillaUtils.modRL("delayer_button_rising_edge");
+    private static final Identifier TEXTURE_DESCENDING_EDGE = VanillaUtils.modRL("delayer_button_descending_edge");
+    private static final Identifier TEXTURE_IGNORE = VanillaUtils.modRL("delayer_button_ignore");
+    private static final Identifier TEXTURE_RESET = VanillaUtils.modRL("delayer_button_reset");
     
     protected final RedStoneDelayBlockEntity te;
     protected ObjectInputBox<Integer> delayInput;

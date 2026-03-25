@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.teacon.powertool.menu.TrashCanWithContainerMenu;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -15,7 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class TrashCanWithContainerScreen extends AbstractContainerScreen<TrashCanWithContainerMenu> {
     
-    private static final ResourceLocation BG = VanillaUtils.modRL("textures/gui/trash_can.png");
+    private static final Identifier BG = VanillaUtils.modRL("textures/gui/trash_can.png");
     
     public TrashCanWithContainerScreen(TrashCanWithContainerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

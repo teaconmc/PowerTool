@@ -31,8 +31,6 @@ public class DailyCycleTimeSection implements ITimeSection {
         this.zoneOffset = ZoneOffset.ofHours(hourOffset);
     }
     
-
-    
     @Override
     public boolean inTimeSection(long timeWithMills) {
         var t = LocalDateTime.ofInstant(Instant.ofEpochMilli(timeWithMills), zoneOffset).toLocalTime();
@@ -54,12 +52,9 @@ public class DailyCycleTimeSection implements ITimeSection {
     
     @Override
     public ITimeSection load(CompoundTag tag, HolderLookup.Provider registries) {
-        var _start = 0;
-        var _end = 0;
-        var _offset = 0;
-        if(tag.contains("start", Tag.TAG_INT)) _start = tag.getInt("start");
-        if(tag.contains("end", Tag.TAG_INT)) _end = tag.getInt("end");
-        if(tag.contains("hourOffset", Tag.TAG_INT)) _offset = tag.getInt("hourOffset");
+        var _start = tag.getInt("start").orElse(0);
+        var _end = tag.getInt("end").orElse(0);
+        var _offset = tag.getInt("hourOffset").orElse(0);
         return new DailyCycleTimeSection(_start, _end, _offset);
     }
     

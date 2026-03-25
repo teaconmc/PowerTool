@@ -8,14 +8,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * @author Argon4W
  */
 public record SectionGeometryBlockEntityRenderDispatcher(BlockPos regionOrigin) implements AddSectionGeometryEvent.AdditionalSectionRenderer {
     @Override
-    public void render(@NotNull AddSectionGeometryEvent.SectionRenderingContext context) {
+    public void render(@NonNull AddSectionGeometryEvent.SectionRenderingContext context) {
         BlockPos.betweenClosed(regionOrigin, regionOrigin.offset(15, 15, 15)).forEach(pos -> renderAt(pos, context));
     }
 

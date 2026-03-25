@@ -1,7 +1,7 @@
 package org.teacon.powertool.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -26,7 +26,7 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtractorMenu> {
     
-    private static final ResourceLocation BG_LOCATION = VanillaUtils.modRL("textures/gui/texture_extractor.png");
+    private static final Identifier BG_LOCATION = VanillaUtils.modRL("textures/gui/texture_extractor.png");
     
     protected TextureAtlasSpriteList textureAtlasSpriteList;
     private EditBox searchBar;
@@ -55,8 +55,8 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
         }
     }
     
-    public List<ResourceLocation> getFilteredTextures() {
-        var filteredTexturesSet = new HashSet<ResourceLocation>();
+    public List<Identifier> getFilteredTextures() {
+        var filteredTexturesSet = new HashSet<Identifier>();
         var mc = Minecraft.getInstance();
         var item = menu.targetContainer.getItem(0);
         if(item.isEmpty()){
@@ -74,7 +74,7 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
             var str = searchBar.getValue().toLowerCase();
             if (str.isEmpty()) return true;
             return rl.toString().contains(str);
-        }).sorted(Comparator.comparing(ResourceLocation::toString)).toList();
+        }).sorted(Comparator.comparing(Identifier::toString)).toList();
     }
     
     @Override

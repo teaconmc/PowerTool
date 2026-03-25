@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import net.neoforged.neoforge.client.model.IQuadTransformer;
 import net.neoforged.neoforge.client.model.QuadTransformers;
 import net.neoforged.neoforge.client.model.lighting.QuadLighter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * @author Argon4W
@@ -32,49 +32,49 @@ public class QuadLighterVertexConsumer implements VertexConsumer {
         this.pos = pos;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public VertexConsumer addVertex(float x, float y, float z) {
         return vertexConsumer.addVertex(x, y, z);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public VertexConsumer setColor(int red, int green, int blue, int alpha) {
         return vertexConsumer.setColor(red, green, blue, alpha);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public VertexConsumer setUv(float u, float v) {
         return vertexConsumer.setUv(u, v);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public VertexConsumer setUv1(int u, int v) {
         return vertexConsumer.setUv1(u, v);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public VertexConsumer setUv2(int u, int v) {
         return vertexConsumer.setUv2(u, v);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public VertexConsumer setNormal(float normalX, float normalY, float normalZ) {
         return vertexConsumer.setNormal(normalX, normalY, normalZ);
     }
 
     @Override
-    public void putBulkData(@NotNull PoseStack.Pose pose, @NotNull BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
+    public void putBulkData(@NonNull PoseStack.Pose pose, @NonNull BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
         putBulkData(pose, bakedQuad, red, green, blue, alpha, packedLight, packedOverlay, true);
     }
 
     @Override
-    public void putBulkData(@NotNull PoseStack.Pose pose, @NotNull BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay, boolean readExistingColor) {
+    public void putBulkData(@NonNull PoseStack.Pose pose, @NonNull BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay, boolean readExistingColor) {
         IQuadTransformer transformer = QuadTransformers.applying(new Transformation(pose.pose()));
         QuadLighter lighter = context.getQuadLighter(false);
         BakedQuad quad = transformer.process(bakedQuad);

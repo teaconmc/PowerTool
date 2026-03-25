@@ -1,7 +1,8 @@
 package org.teacon.powertool.network.attachment;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public class Permission {
     
-    public static final ResourceLocation KEY = VanillaUtils.resourceLocationOf(PowerTool.MODID, "permission");
+    public static final Identifier KEY = VanillaUtils.resourceLocationOf(PowerTool.MODID, "permission");
 
     private Boolean canUseGameMasterBlock;
     private Boolean canSwitchGameMode;
@@ -44,15 +45,15 @@ public class Permission {
         
         private static final PermissionNode<Boolean> GAMEMODE = new PermissionNode<>(
             "minecraft", "command.gamemode", PermissionTypes.BOOLEAN,
-            (player, uuid, context) -> player != null && player.hasPermissions(2)
+            (player, uuid, context) -> player != null && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
         );
         private static final PermissionNode<Boolean> COMMAND_BLOCK = new PermissionNode<>(
             "minecraft", "use_gamemaster_block", PermissionTypes.BOOLEAN,
-            (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.hasPermissions(2)
+            (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
         );
         public static final PermissionNode<Boolean> SEE_COMMAND_FEEDBACK_FROM_OTHERS = new PermissionNode<>(
                 "powertool", "see_command_feedback_from_others", PermissionTypes.BOOLEAN,
-                ((player, playerUUID, context) -> player != null && player.hasPermissions(4))
+                ((player, playerUUID, context) -> player != null && player.permissions().hasPermission(Permissions.COMMANDS_OWNER))
         );
         // ENTITY_SELECTOR is replaced by NeoForgeMod.USE_SELECTORS_PERMISSION
 

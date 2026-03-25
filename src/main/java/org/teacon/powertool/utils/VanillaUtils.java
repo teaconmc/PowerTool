@@ -6,13 +6,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,29 +32,23 @@ import java.util.UUID;
 public class VanillaUtils {
     
     public static final Direction[] DIRECTIONS = Direction.values();
-    public static final ResourceLocation MISSING_TEXTURE = ResourceLocation.withDefaultNamespace("missingno");
+    public static final Identifier MISSING_TEXTURE = Identifier.withDefaultNamespace("missingno");
     public static final int TRANSPARENT = VanillaUtils.getColor(255,255,255,0);
     
-    public static ResourceLocation modRL(String path) {
+    public static Identifier modRL(String path) {
         return resourceLocationOf(PowerTool.MODID, path);
     }
     
-    public static ResourceLocation resourceLocationOf(String namespace, String path) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    public static Identifier resourceLocationOf(String namespace, String path) {
+        return Identifier.fromNamespaceAndPath(namespace, path);
+    }
+    
+    public static <T> ResourceKey<T> modResourceKey(ResourceKey< ? extends Registry<T>> key, String value){
+        return ResourceKey.create(key,modRL(value));
     }
     
     public static EquipmentSlot equipmentSlotFromHand(InteractionHand hand) {
         return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-    }
-    
-    public static ItemInteractionResult itemInteractionFrom(InteractionResult result) {
-        return switch (result){
-            case SUCCESS, SUCCESS_NO_ITEM_USED -> ItemInteractionResult.SUCCESS;
-            case CONSUME -> ItemInteractionResult.CONSUME;
-            case CONSUME_PARTIAL -> ItemInteractionResult.CONSUME_PARTIAL;
-            case PASS -> ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-            case FAIL -> ItemInteractionResult.FAIL;
-        };
     }
     
     public static void runCommand(String command, LivingEntity livingEntity) {
@@ -117,7 +111,7 @@ public class VanillaUtils {
     }
 
     public static Component getName(Block block) {
-        ResourceLocation rl = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier rl = BuiltInRegistries.BLOCK.getKey(block);
         return Component.translatable("block." + rl.getNamespace() + "." + rl.getPath());
     }
     

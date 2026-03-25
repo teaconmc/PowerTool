@@ -1,14 +1,14 @@
 package org.teacon.powertool.client.gui.widget;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import org.teacon.powertool.client.gui.ExamineHoloGlassScreen;
@@ -40,7 +40,7 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
             var key = entry.getKey();
             var value = entry.getValue();
             var selected = value.getValidBlocks().stream().map(BuiltInRegistries.BLOCK::getKey).anyMatch(blockData::contains);
-            addEntry(new Entry(id,key.location().toString(),value,selected));
+            addEntry(new Entry(id,key.identifier().toString(),value,selected));
         }
     }
     
@@ -49,7 +49,7 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
         return width-30;
     }
     
-    public Set<ResourceLocation> getResult(){
+    public Set<Identifier> getResult(){
         return entries().stream()
                 .flatMap(entry -> entry.getResult().stream())
                 .map(BuiltInRegistries.BLOCK::getKey)
@@ -97,9 +97,9 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
         }
         
         @Override
-        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             checkbox.setPosition(left,top);
-            checkbox.render(guiGraphics, mouseX, mouseY, partialTick);
+            checkbox.extractContents(graphics, mouseX, mouseY, a);
         }
         
         @Override

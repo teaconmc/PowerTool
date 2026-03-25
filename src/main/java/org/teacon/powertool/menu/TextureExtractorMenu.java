@@ -1,6 +1,6 @@
 package org.teacon.powertool.menu;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -21,12 +21,12 @@ public class TextureExtractorMenu extends AbstractContainerMenu {
     public record Provider() implements MenuProvider {
         
         @Override
-        public @NotNull Component getDisplayName() {
+        public @NonNull Component getDisplayName() {
             return Component.literal("Texture Extractor");
         }
         
         @Override
-        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inv, @NotNull Player player) {
+        public AbstractContainerMenu createMenu(int containerId, @NonNull Inventory inv, @NonNull Player player) {
             return new TextureExtractorMenu(containerId, inv);
         }
     }

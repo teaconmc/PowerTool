@@ -1,13 +1,13 @@
 package org.teacon.powertool.entity;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -28,8 +28,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.item.PowerToolItems;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -99,21 +99,21 @@ public class MartingCarEntity extends LivingEntity {
     // <editor-fold desc="Living entity staff.">
 
     @Override
-    public @NotNull Iterable<ItemStack> getArmorSlots() {
+    public @NonNull Iterable<ItemStack> getArmorSlots() {
         return List.of();
     }
 
     @Override
-    public @NotNull ItemStack getItemBySlot(@NotNull EquipmentSlot equipmentSlot) {
+    public @NonNull ItemStack getItemBySlot(@NonNull EquipmentSlot equipmentSlot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setItemSlot(@NotNull EquipmentSlot equipmentSlot, @NotNull ItemStack itemStack) {
+    public void setItemSlot(@NonNull EquipmentSlot equipmentSlot, @NonNull ItemStack itemStack) {
     }
 
     @Override
-    public @NotNull HumanoidArm getMainArm() {
+    public @NonNull HumanoidArm getMainArm() {
         return HumanoidArm.RIGHT;
     }
 
@@ -145,7 +145,7 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
+    public boolean hurt(@NonNull DamageSource source, float amount) {
         if (!this.level().isClientSide && !this.isRemoved()) {
             if (this.isInvulnerableTo(source)) {
                 return false;
@@ -199,7 +199,7 @@ public class MartingCarEntity extends LivingEntity {
     }
 
     @Override
-    public @NotNull InteractionResult interact(@NotNull Player player, @NotNull InteractionHand hand) {
+    public @NonNull InteractionResult interact(@NonNull Player player, @NonNull InteractionHand hand) {
         var result = super.interact(player, hand);
         if (result != InteractionResult.PASS) {
             return result;
@@ -217,7 +217,7 @@ public class MartingCarEntity extends LivingEntity {
         }
     }
     
-    protected @NotNull Item getDropItem() {
+    protected @NonNull Item getDropItem() {
         return getVariant().getItemSupplier().get();
     }
 
@@ -348,7 +348,7 @@ public class MartingCarEntity extends LivingEntity {
 
 
     @Override
-    public @NotNull AttributeMap getAttributes() {
+    public @NonNull AttributeMap getAttributes() {
         if (attributeMap == null) {
             attributeMap = new AttributeMap(createAttributes());
         }
@@ -535,15 +535,15 @@ public class MartingCarEntity extends LivingEntity {
 
         private final String name;
         private final Supplier<Item> itemSupplier;
-        private final ResourceLocation id;
-        private final ResourceLocation texture;
+        private final Identifier id;
+        private final Identifier texture;
         
 
         Variant(String name, Supplier<Item> itemSupplier) {
             this.name = name;
             this.itemSupplier = itemSupplier;
-            this.id = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, name);
-            this.texture = ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "textures/entity/" + name + ".png");
+            this.id = Identifier.fromNamespaceAndPath(PowerTool.MODID, name);
+            this.texture = Identifier.fromNamespaceAndPath(PowerTool.MODID, "textures/entity/" + name + ".png");
         }
 
         public static Variant from(String name) {
@@ -571,11 +571,11 @@ public class MartingCarEntity extends LivingEntity {
             return itemSupplier;
         }
 
-        public ResourceLocation getId() {
+        public Identifier getId() {
             return id;
         }
 
-        public ResourceLocation getTexture() {
+        public Identifier getTexture() {
             return texture;
         }
     }

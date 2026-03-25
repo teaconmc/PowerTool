@@ -3,22 +3,26 @@ package org.teacon.powertool.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -27,6 +31,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.client.gui.ExamineHoloGlassScreen;
 import org.teacon.powertool.network.client.OpenItemScreen;
+import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -36,19 +41,21 @@ import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class ExamineHoloGlass extends ArmorItem implements IScreenProviderItem{
+public class ExamineHoloGlass extends Item implements IScreenProviderItem{
     
     //TODO 头部模型渲染
     public ExamineHoloGlass() {
-        super(PowerToolItems.HOLO_GLASS_ARMOR_MATERIAL, Type.HELMET, new Properties().stacksTo(1));
+        super(new Properties().stacksTo(1).component(
+                DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.HEAD).setEquipSound(SoundEvents.ARMOR_EQUIP_CHAIN).setAsset(VanillaUtils.modResourceKey(EquipmentAssets.ROOT_ID,"holo_glass")).build()
+        ));
     }
     
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer,
                     new OpenItemScreen(player.getItemInHand(hand),hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
-            return InteractionResultHolder.success(player.getItemInHand(hand));
+            return InteractionResult.SUCCESS;
         }
         return super.use(level, player, hand);
     }
@@ -88,7 +95,10 @@ public class ExamineHoloGlass extends ArmorItem implements IScreenProviderItem{
         if (stack.getItem() instanceof ExamineHoloGlass) {
             var blocks = stack.get(PowerToolDataComponents.BLOCKS_DATA);
             if(blocks != null){
-                blockList.addAll(blocks.blocks.stream().map(BuiltInRegistries.BLOCK::get).filter(b -> b != Blocks.AIR).toList());
+                blockList.addAll(blocks.blocks.stream()
+                        .map(BuiltInRegistries.BLOCK::get).filter(b -> b.isPresent() && b.get().value() != Blocks.AIR)
+                        .map(b -> b.get().value())
+                        .toList());
             }
         }
     }
@@ -111,10 +121,10 @@ public class ExamineHoloGlass extends ArmorItem implements IScreenProviderItem{
         
     }
     
-    public record BlockComponents(List<ResourceLocation> blocks){
+    public record BlockComponents(List<Identifier> blocks){
         
         public static final Codec<BlockComponents> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-                ResourceLocation.CODEC.listOf().fieldOf("blocks").forGetter(o -> o.blocks)
+                Identifier.CODEC.listOf().fieldOf("blocks").forGetter(o -> o.blocks)
         ).apply(ins, BlockComponents::new));
         
         public static final StreamCodec<ByteBuf, BlockComponents> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);

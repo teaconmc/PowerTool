@@ -12,7 +12,7 @@ import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 
@@ -105,7 +105,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NonNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         Lighting.setupForFlatItems();
         // I don't know, someone please explain why these transforms are necessary???

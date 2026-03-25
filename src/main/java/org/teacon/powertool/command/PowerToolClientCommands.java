@@ -9,7 +9,7 @@ import net.neoforged.neoforge.server.command.EnumArgument;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.client.PanoramicScreenShotHelper;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = PowerTool.MODID)
+@EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolClientCommands {
     
     @SubscribeEvent

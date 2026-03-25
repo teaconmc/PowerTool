@@ -2,13 +2,13 @@ package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -47,7 +47,7 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     protected static final VoxelShape NORTH_AABB = Block.box(2, 2, 15, 14, 14, 16);
     protected static final VoxelShape EAST_AABB = Block.box(0, 2, 2, 1, 14, 14);
 
-    private static final DirectionProperty FACING = BlockStateProperties.FACING;
+    private static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
     public static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
     private static final BooleanProperty SURVIVAL_AVAILABLE = BooleanProperty.create("survival_available");
@@ -111,7 +111,7 @@ public class ItemDisplayBlock extends BaseEntityBlock {
     }
     
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
             if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)){
                 if(stack.isEmpty()){
@@ -124,10 +124,10 @@ public class ItemDisplayBlock extends BaseEntityBlock {
                     theBE.setChanged();
                     level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
                 }
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     
     @Override

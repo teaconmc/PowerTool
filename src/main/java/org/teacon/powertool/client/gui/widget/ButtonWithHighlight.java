@@ -4,14 +4,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class ButtonWithHighlight extends Button {
 
-    private final ResourceLocation texture;
+    private final Identifier texture;
     private final int texWidth, texHeight;
     private final int normalU, normalV;
     private final int highlightU, highlightV;
@@ -23,7 +23,7 @@ public class ButtonWithHighlight extends Button {
     private final OnPress onReleaseMoment;
 
     public ButtonWithHighlight(Builder builder, OnPress onRelease,
-                               ResourceLocation texture, int texWidth, int texHeight,
+                               Identifier texture, int texWidth, int texHeight,
                                int normalU, int normalV, int highlightU, int highlightV, int pressedU, int pressedV) {
         super(builder);
         this.texWidth = texWidth;

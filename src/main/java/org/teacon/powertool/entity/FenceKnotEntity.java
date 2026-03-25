@@ -3,7 +3,7 @@ package org.teacon.powertool.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,8 +31,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.datagen.PowerToolItemTagsProvider;
 import org.teacon.powertool.item.PowerToolDataComponents;
 
@@ -222,7 +222,7 @@ public class FenceKnotEntity extends HangingEntity {
         }
         
         @Override
-        @NotNull
+        @NonNull
         public String getSerializedName() {
             return name();
         }

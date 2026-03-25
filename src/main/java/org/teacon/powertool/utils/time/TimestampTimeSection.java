@@ -26,8 +26,8 @@ public record TimestampTimeSection(long start, long end) implements ITimeSection
     
     @Override
     public ITimeSection load(CompoundTag tag, HolderLookup.Provider registries) {
-        var _start = tag.contains("start", Tag.TAG_LONG) ? tag.getLong("start") : 0L;
-        var _end = tag.contains("end", Tag.TAG_LONG) ? tag.getLong("end") : 0L;
+        var _start = tag.getLong("start").orElse(0L);
+        var _end = tag.getLong("end").orElse(0L);
         return new TimestampTimeSection(_start, _end);
     }
 }

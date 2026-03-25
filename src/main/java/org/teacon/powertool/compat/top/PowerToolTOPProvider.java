@@ -7,7 +7,7 @@ import mcjty.theoneprobe.api.IProbeInfoProvider;
 import mcjty.theoneprobe.api.ITheOneProbe;
 import mcjty.theoneprobe.api.ProbeMode;
 import mcjty.theoneprobe.apiimpl.elements.ElementPadding;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public final class PowerToolTOPProvider implements IProbeInfoProvider, Function<ITheOneProbe, Void> {
     @Override
-    public ResourceLocation getID() {
+    public Identifier getID() {
         return VanillaUtils.modRL( "the_one_probe");
     }
 

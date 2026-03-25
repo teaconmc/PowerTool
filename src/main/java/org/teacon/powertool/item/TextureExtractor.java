@@ -1,11 +1,10 @@
 package org.teacon.powertool.item;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.teacon.powertool.menu.TextureExtractorMenu;
 
@@ -20,10 +19,9 @@ public class TextureExtractor extends Item {
     }
     
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-        var itemstack = player.getItemInHand(usedHand);
-        if(level.isClientSide) return InteractionResultHolder.success(itemstack);
+    public InteractionResult use(Level level, Player player, InteractionHand usedHand) {
+        if(level.isClientSide) return InteractionResult.SUCCESS;
         player.openMenu(new TextureExtractorMenu.Provider());
-        return InteractionResultHolder.pass(itemstack);
+        return InteractionResult.PASS;
     }
 }

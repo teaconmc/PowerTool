@@ -1,8 +1,8 @@
 package org.teacon.powertool.entity;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import org.teacon.powertool.item.PowerToolItems;

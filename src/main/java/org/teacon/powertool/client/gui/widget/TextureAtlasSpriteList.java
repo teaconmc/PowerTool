@@ -1,6 +1,6 @@
 package org.teacon.powertool.client.gui.widget;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,7 +11,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.teacon.powertool.client.gui.TextureExtractorScreen;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -37,7 +37,7 @@ public class TextureAtlasSpriteList extends EntryListWidget<TextureExtractorScre
         this.clearEntries();
         var list = screen.getFilteredTextures();
         var columns = (width-25)/25;
-        var buf = new ArrayList<ResourceLocation>();
+        var buf = new ArrayList<Identifier>();
         for(var i = 0; i < list.size()/columns; i++){
             for(var j = 0; j < columns; j++){
                 buf.add(list.get(i*columns+j));
@@ -61,10 +61,10 @@ public class TextureAtlasSpriteList extends EntryListWidget<TextureExtractorScre
     
     public static class Entry extends EntryListWidget.Entry<Entry> {
         public int id;
-        public final List<ResourceLocation> textures = new ArrayList<>();
+        public final List<Identifier> textures = new ArrayList<>();
         protected final List<Button> spriteButtons = new ArrayList<>();
         
-        public Entry(int id, List<ResourceLocation> texture) {
+        public Entry(int id, List<Identifier> texture) {
             this.id = id;
             for(var rl : texture){
                 textures.add(rl);
@@ -111,9 +111,9 @@ public class TextureAtlasSpriteList extends EntryListWidget<TextureExtractorScre
     }
     
     public static class BlockSpriteButton extends Button {
-        public final ResourceLocation texture;
+        public final Identifier texture;
         private final TextureAtlasSprite sprite;
-        protected BlockSpriteButton(ResourceLocation texture,int x, int y, int width, int height, Component message, OnPress onPress) {
+        protected BlockSpriteButton(Identifier texture,int x, int y, int width, int height, Component message, OnPress onPress) {
             super(x, y, width, height, message, onPress, Button.DEFAULT_NARRATION);
             this.texture = texture;
             //noinspection deprecation

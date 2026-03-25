@@ -22,7 +22,7 @@ public class InWorldDailyCycleTimeSection implements ITimeSection{
     
     @Override
     public boolean inTimeSection(long timeWithMills) {
-        var current = levelGetter.get().getTimeOfDay(0f);
+        var current = levelGetter.get().getOverworldClockTime();
         return start <= current && end > current;
     }
     
@@ -39,8 +39,8 @@ public class InWorldDailyCycleTimeSection implements ITimeSection{
     
     @Override
     public ITimeSection load(CompoundTag tag, HolderLookup.Provider registries) {
-        var _start = tag.contains("start", Tag.TAG_FLOAT) ? tag.getFloat("start") : 0;
-        var _end = tag.contains("end", Tag.TAG_FLOAT) ? tag.getFloat("end") : 0;
+        var _start = tag.getFloat("start").orElse(0f);
+        var _end = tag.getFloat("end").orElse(0f);
         return new InWorldDailyCycleTimeSection(levelGetter, _start, _end);
     }
     

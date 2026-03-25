@@ -1,19 +1,18 @@
 package org.teacon.powertool.item;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.Util;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.util.Util;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -35,14 +34,12 @@ import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)
+@EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolItems {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PowerTool.MODID);
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PowerTool.MODID);
-
-    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIAL = DeferredRegister.create(Registries.ARMOR_MATERIAL, PowerTool.MODID);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> THE_TAB = CREATIVE_MODE_TABS.register("tab", () -> CreativeModeTab.builder()
         .title(Component.translatable("itemGroup.powertool"))
@@ -55,18 +52,7 @@ public class PowerToolItems {
         .icon(() -> Blocks.BEACON.asItem().getDefaultInstance())
         .withTabsBefore(VanillaUtils.modRL("tab"))
         .build());
-
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> HOLO_GLASS_ARMOR_MATERIAL = ARMOR_MATERIAL.register("holo_glass",
-        () -> new ArmorMaterial(Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
-            for (var type : ArmorItem.Type.values()) {
-                map.put(type, 0);
-            }
-        }),
-            0,
-            SoundEvents.ARMOR_EQUIP_NETHERITE,
-            () -> Ingredient.EMPTY,
-            List.of(),
-            0f, 0f));
+    
 
     public static DeferredHolder<Item, TonkItem> TONK, THICK_TONK, EXTRA_THICK_TONK;
     public static DeferredHolder<Item, AutoVanishBoatItem> AV_OAK_BOAT, AV_SPRUCE_BOAT, AV_BIRCH_BOAT, AV_JUNGLE_BOAT, AV_ACACIA_BOAT, AV_CHERRY_BOAT, AV_DARK_OAK_BOAT, AV_MANGROVE_BOAT, AV_BAMBOO_RAFT;
@@ -113,7 +99,6 @@ public class PowerToolItems {
         TEXTURE_EXTRACTOR = ITEMS.register("texture_extractor", () -> new TextureExtractor(new Item.Properties()));
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);
-        ARMOR_MATERIAL.register(bus);
     }
 
     @SubscribeEvent

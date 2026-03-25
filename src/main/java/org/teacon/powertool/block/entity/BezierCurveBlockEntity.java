@@ -1,6 +1,6 @@
 package org.teacon.powertool.block.entity;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -8,11 +8,11 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Vector3f;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -36,7 +36,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
     public int color = -1;
     public boolean clampMode = false;
     public boolean worldCoordinate = false;
-    public ResourceLocation texture = VanillaUtils.MISSING_TEXTURE;
+    public Identifier texture = VanillaUtils.MISSING_TEXTURE;
     public List<Vector3f> controlPoints = new ArrayList<>();
     public BezierCurve3f bezierCurve;
     public Line3f line;
@@ -73,7 +73,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         if(tag.contains("radius")) radius = tag.getFloat("radius");
         if(tag.contains("uScale")) uScale = tag.getInt("uScale");
         if(tag.contains("vScale")) vScale = tag.getInt("vScale");
-        if(tag.contains("texture")) texture = Objects.requireNonNullElse(ResourceLocation.tryParse(tag.getString("texture")),VanillaUtils.MISSING_TEXTURE);
+        if(tag.contains("texture")) texture = Objects.requireNonNullElse(Identifier.tryParse(tag.getString("texture")),VanillaUtils.MISSING_TEXTURE);
         if(tag.contains("clampMode")) clampMode = tag.getBoolean("clampMode");
         if(tag.contains("worldCoordinate")) worldCoordinate = tag.getBoolean("worldCoordinate");
         if(tag.contains("controlPointSize")){

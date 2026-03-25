@@ -7,7 +7,7 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Block;
@@ -30,7 +30,7 @@ public class ExamineHoloGlassScreen extends Screen {
     
     protected final EquipmentSlot slot;
     public Set<TagKey<Block>> tagsData;
-    public Set<ResourceLocation> blocksData;
+    public Set<Identifier> blocksData;
     
     protected Checkbox commandBlockTagCheckBox;
     protected Checkbox repeatingCommandBlockTagCheckBox;
@@ -83,7 +83,7 @@ public class ExamineHoloGlassScreen extends Screen {
         };
     }
     
-    protected Checkbox.OnValueChange withBlock(ResourceLocation blockID) {
+    protected Checkbox.OnValueChange withBlock(Identifier blockID) {
         return (self,value) -> {
             if(value) blocksData.add(blockID);
             else blocksData.remove(blockID);

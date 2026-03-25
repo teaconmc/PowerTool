@@ -1,16 +1,17 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,15 +25,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.entity.TempleBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
@@ -44,7 +46,7 @@ public class TempleBlock extends BaseEntityBlock {
     
     public static final MapCodec<TempleBlock> CODEC = simpleCodec(TempleBlock::new);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
     
     public static final VoxelShape[] SHAPE = new VoxelShape[]{
             Block.box(2.5D, 0.0D, 6.5D, 13.5D, 20.0D, 13.5D), //NORTH
@@ -67,20 +69,20 @@ public class TempleBlock extends BaseEntityBlock {
     
     
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if(level.isClientSide()) {
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if(stack.isEmpty()){
             if(player instanceof ServerPlayer sp) {
                 if(player.isCrouching() && player.getAbilities().instabuild) setTheItem(ItemStack.EMPTY,level,pos,state);
-                else sp.setRespawnPosition(level.dimension(),pos.relative(state.getValue(HORIZONTAL_FACING)),player.getYRot(),true,true);
+                else sp.setRespawnPosition(new ServerPlayer.RespawnConfig(new LevelData.RespawnData(new GlobalPos(level.dimension(),pos.relative(state.getValue(HORIZONTAL_FACING))),player.getYRot(),0),true),true);
             }
         }
         else if(player.getAbilities().instabuild){
             setTheItem(stack,level,pos,state);
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
     
     protected void setTheItem(ItemStack stack, Level level, BlockPos pos, BlockState state){
@@ -138,7 +140,7 @@ public class TempleBlock extends BaseEntityBlock {
     }
     
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state) {
         return true;
     }
     

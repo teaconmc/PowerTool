@@ -7,16 +7,16 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.MartingCarEntity;
 
 public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_RED = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_red"), "main");
-    public static final ModelLayerLocation LAYER_BLUE = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_green"), "main");
-    public static final ModelLayerLocation LAYER_GREEN = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(PowerTool.MODID, "marting_car_blue"), "main");
+    public static final ModelLayerLocation LAYER_RED = new ModelLayerLocation(Identifier.fromNamespaceAndPath(PowerTool.MODID, "marting_car_red"), "main");
+    public static final ModelLayerLocation LAYER_BLUE = new ModelLayerLocation(Identifier.fromNamespaceAndPath(PowerTool.MODID, "marting_car_green"), "main");
+    public static final ModelLayerLocation LAYER_GREEN = new ModelLayerLocation(Identifier.fromNamespaceAndPath(PowerTool.MODID, "marting_car_blue"), "main");
 
     private final ModelPart kart;
     private final ModelPart seat;
@@ -147,18 +147,18 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
     }
 
     @Override
-    public void setupAnim(@NotNull MartingCarEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(@NonNull MartingCarEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
     }
 
     @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+    public void renderToBuffer(@NonNull PoseStack poseStack, @NonNull VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         kart.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 
     private float prevSteeringRad = 0;
     private float prevWheelsRad = 0;
 
-    public void updateAnimate(@NotNull MartingCarEntity entity, float partialTicks) {
+    public void updateAnimate(@NonNull MartingCarEntity entity, float partialTicks) {
         var steeringRad = entity.getSteeringRotateRadian();
         inner.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
         // Fixme: rotation vector to euler angles, needs some linear algebra staff.

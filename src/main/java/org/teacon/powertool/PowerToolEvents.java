@@ -1,13 +1,12 @@
 package org.teacon.powertool;
 
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.vehicle.Boat;
-import net.minecraft.world.entity.vehicle.ChestBoat;
-import net.minecraft.world.entity.vehicle.Minecart;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -44,9 +43,9 @@ public class PowerToolEvents {
         var listDisplayModeData = event.getChunk().getData(PowerToolAttachments.DISPLAY_MODE);
         var listStaticModeData = event.getChunk().getData(PowerToolAttachments.STATIC_MODE);
         var listCachedModeData = event.getChunk().getData(PowerToolAttachments.CACHED_MODE);
-        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateDisplayChunkDataPacket(chunkPos.x, chunkPos.z, listDisplayModeData));
-        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateStaticModeChunkDataPacket(chunkPos.x, chunkPos.z, listStaticModeData));
-        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateCachedModeChunkDataPacket(chunkPos.x, chunkPos.z, listCachedModeData));
+        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateDisplayChunkDataPacket(chunkPos.x(), chunkPos.z(), listDisplayModeData));
+        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateStaticModeChunkDataPacket(chunkPos.x(), chunkPos.z(), listStaticModeData));
+        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateCachedModeChunkDataPacket(chunkPos.x(), chunkPos.z(), listCachedModeData));
     }
 
     @SubscribeEvent
@@ -64,14 +63,14 @@ public class PowerToolEvents {
     public static void onExplosion(ExplosionEvent.Detonate event) {
         Map<ChunkPos, List<BlockPos>> map = new HashMap<>();
         for (BlockPos affectedBlock : event.getAffectedBlocks()) {
-            map.computeIfAbsent(new ChunkPos(affectedBlock), it -> new ArrayList<>())
+            map.computeIfAbsent(ChunkPos.containing(affectedBlock), it -> new ArrayList<>())
                 .add(affectedBlock);
         }
         map.entrySet()
             .stream()
             .map(it -> Map.entry(
                 Map.entry(
-                    event.getLevel().getChunk(it.getKey().x, it.getKey().z),
+                    event.getLevel().getChunk(it.getKey().x(), it.getKey().z()),
                     it.getKey()
                 ),
                 it.getValue()
@@ -97,8 +96,8 @@ public class PowerToolEvents {
         var cachedEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.CACHED_MODE));
         cachedEnabledPosList.remove(pos);
         chunk.setData(PowerToolAttachments.CACHED_MODE, cachedEnabledPosList);
-        chunk.setUnsaved(true);
-        var packet = new UpdateCachedModeChunkDataPacket(chunkPos.x, chunkPos.z, cachedEnabledPosList);
+        chunk.markUnsaved();
+        var packet = new UpdateCachedModeChunkDataPacket(chunkPos.x(), chunkPos.z(), cachedEnabledPosList);
         if (player == null) {
             PacketDistributor.sendToPlayersTrackingChunk(level, chunkPos, packet);
             return;
@@ -119,9 +118,9 @@ public class PowerToolEvents {
         staticEnabledPosList.remove(pos);
         chunk.setData(PowerToolAttachments.DISPLAY_MODE, displayEnabledPosList);
         chunk.setData(PowerToolAttachments.STATIC_MODE, staticEnabledPosList);
-        chunk.setUnsaved(true);
-        var displayModePacket = new UpdateDisplayChunkDataPacket(chunkPos.x, chunkPos.z, displayEnabledPosList);
-        var staticModePacket = new UpdateStaticModeChunkDataPacket(chunkPos.x, chunkPos.z, staticEnabledPosList);
+        chunk.markUnsaved();
+        var displayModePacket = new UpdateDisplayChunkDataPacket(chunkPos.x(), chunkPos.z(), displayEnabledPosList);
+        var staticModePacket = new UpdateStaticModeChunkDataPacket(chunkPos.x(), chunkPos.z(), staticEnabledPosList);
         if (player == null) {
             PacketDistributor.sendToPlayersTrackingChunk(level, chunkPos, displayModePacket);
             PacketDistributor.sendToPlayersTrackingChunk(level, chunkPos, staticModePacket);
@@ -136,7 +135,7 @@ public class PowerToolEvents {
         BlockPos pos,
         @Nullable ServerPlayer player
     ) {
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
         ChunkAccess chunk = level.getChunk(pos);
         removeAccessControl(level, chunkPos, chunk, pos, player);
         removeCachedModeControl(level, chunkPos, chunk, pos, player);
@@ -161,7 +160,7 @@ public class PowerToolEvents {
         var entity = event.getEntity();
         var level = event.getLevel();
         if (PowerToolConfig.vehicleAutoVanish.get()) {
-            if (entity instanceof Boat boat && !(entity instanceof ChestBoat) && !(entity instanceof AutoVanishBoat)) {
+            if (entity instanceof Boat boat && !(entity instanceof AutoVanishBoat)) {
                 var newBoat = AutoVanishBoat.fromBoat(boat);
                 DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newBoat));
                 event.setCanceled(true);

@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
@@ -23,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupplyMenu> {
 
-    private static final ResourceLocation BG_LOCATION = VanillaUtils.modRL("textures/gui/power_supply.png");
+    private static final Identifier BG_LOCATION = VanillaUtils.modRL("textures/gui/power_supply.png");
 
     private EditBox input;
     private ButtonWithHighlight minus, plus;

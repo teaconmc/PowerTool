@@ -2,17 +2,17 @@ package org.teacon.powertool.item;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -31,28 +31,29 @@ public class CommandRune extends Item implements IScreenProviderItem{
     public CommandRune(Properties properties) {
         super(properties);
     }
-
+    
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.BOW;
+    public ItemUseAnimation getUseAnimation(ItemStack itemStack) {
+        return ItemUseAnimation.BOW;
     }
-
+    
+    
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return stack.getOrDefault(PowerToolDataComponents.CYCLE, 0); // getOrDefault(Supplier<DataComponentType<T>>, T) is from NeoForge
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
         String command = held.get(PowerToolDataComponents.COMMAND);
         if ((command == null || (player.getAbilities().instabuild && player.isCrouching())) && player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer,
                     new OpenItemScreen(player.getItemInHand(hand),hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
-            return InteractionResultHolder.pass(held);
+            return InteractionResult.PASS;
         }
         player.startUsingItem(hand);
-        return InteractionResultHolder.consume(held);
+        return InteractionResult.CONSUME;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.teacon.powertool.menu;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -21,12 +21,12 @@ public class RegisterMenu extends AbstractContainerMenu {
     public record Provider(Container registerViewInv,BlockPos pos) implements MenuProvider {
 
         @Override
-        public @NotNull Component getDisplayName() {
+        public @NonNull Component getDisplayName() {
             return Component.literal("收银台");
         }
 
         @Override
-        public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inv, @NotNull Player player) {
+        public AbstractContainerMenu createMenu(int containerId, @NonNull Inventory inv, @NonNull Player player) {
             return new RegisterMenu(containerId, inv, this.registerViewInv,pos);
         }
     }
@@ -50,7 +50,7 @@ public class RegisterMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public @NotNull ItemStack quickMoveStack(Player player, int index) {
+    public @NonNull ItemStack quickMoveStack(Player player, int index) {
         return ItemStack.EMPTY;
     }
 

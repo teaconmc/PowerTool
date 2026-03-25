@@ -1,7 +1,7 @@
 package org.teacon.powertool.utils;
 
 import com.mojang.datafixers.util.Function10;
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.network.codec.StreamCodec;
 
 import javax.annotation.ParametersAreNonnullByDefault;

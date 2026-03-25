@@ -1,6 +1,7 @@
 package org.teacon.powertool.mixin.client;
 
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
@@ -26,7 +27,7 @@ public class PlayerMixin {
             cir.setReturnValue(this.abilities.instabuild &&
                     Optional.of(player.getData(PowerToolAttachments.PERMISSION))
                             .flatMap(Permission::isCanUseGameMasterBlock)
-                            .orElse(player.hasPermissions(2)));
+                            .orElse(player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)));
         }
     }
 }

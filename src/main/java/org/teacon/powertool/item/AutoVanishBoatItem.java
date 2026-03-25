@@ -1,10 +1,10 @@
 package org.teacon.powertool.item;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,6 +25,8 @@ public class AutoVanishBoatItem extends BoatItem {
     public AutoVanishBoatItem(Boat.Type type) {
         this(type, new Properties());
     }
+    
+    
     
     @Override
     protected Boat getBoat(Level level, HitResult hitResult, ItemStack stack, Player player) {

@@ -26,7 +26,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.attachment.PowerToolAttachments;
-import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;

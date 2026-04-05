@@ -4,6 +4,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.function.Supplier;
 
@@ -32,17 +34,18 @@ public class InWorldDailyCycleTimeSection implements ITimeSection{
     }
     
     @Override
-    public void save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putFloat("start", start);
-        tag.putFloat("end", end);
+    public void save(ValueOutput output) {
+        output.putFloat("start", start);
+        output.putFloat("end", end);
     }
     
     @Override
-    public ITimeSection load(CompoundTag tag, HolderLookup.Provider registries) {
-        var _start = tag.getFloat("start").orElse(0f);
-        var _end = tag.getFloat("end").orElse(0f);
+    public ITimeSection load(ValueInput input) {
+        var _start = input.getFloatOr("start",0);
+        var _end = input.getFloatOr("end",0);
         return new InWorldDailyCycleTimeSection(levelGetter, _start, _end);
     }
+    
     
     public float getStart() {
         return start;

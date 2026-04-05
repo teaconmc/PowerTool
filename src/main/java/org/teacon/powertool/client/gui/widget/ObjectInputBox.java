@@ -1,17 +1,16 @@
 package org.teacon.powertool.client.gui.widget;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.commands.ParserUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.Identifier;
+import org.teacon.powertool.utils.ParserUtils;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.Nullable;
@@ -93,7 +92,7 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     
     public static final Predicate<String> COMPONENT_VALIDATOR = (str) -> {
         try {
-            ParserUtils.parseJson(Minecraft.getInstance().level.registryAccess(),new StringReader(str), ComponentSerialization.CODEC);
+            ParserUtils.parseJson(Minecraft.getInstance().level.registryAccess(),str, ComponentSerialization.CODEC);
             return true;
         }catch (Exception e){
             return false;
@@ -104,7 +103,7 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     public static final Predicate<String> TEXTURE_VALIDATOR = (str) -> {
         var rl = Identifier.tryParse(str);
         if(rl == null) return false;
-        var texture = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(rl);
+        var texture = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(rl);
         return !VanillaUtils.MISSING_TEXTURE.equals(texture.atlasLocation());
     };
     
@@ -113,7 +112,7 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     public static final Function<String,Long> LONG_RESPONDER = Long::parseLong;
     public static final Function<String,Float> FLOAT_RESPONDER = Float::parseFloat;
     public static final Function<String,Integer> RGB_COLOR_RESPONDER = VanillaUtils::parseColorHEX;
-    public static final Function<String,Component> COMPONENT_RESPONDER = (str) -> ParserUtils.parseJson(Objects.requireNonNull(Minecraft.getInstance().level).registryAccess(),new StringReader(str), ComponentSerialization.CODEC);
+    public static final Function<String,Component> COMPONENT_RESPONDER = (str) -> ParserUtils.parseJson(Objects.requireNonNull(Minecraft.getInstance().level).registryAccess(),str, ComponentSerialization.CODEC);
     public static final Function<String,Identifier> TEXTURE_RESPONDER = (str) -> Objects.requireNonNullElse(Identifier.tryParse(str),VanillaUtils.MISSING_TEXTURE);
     
     protected final Predicate<String> validator;
@@ -137,8 +136,8 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     }
     
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
+        super.extractWidgetRenderState(guiGraphics, mouseX, mouseY, a);
         var font = Minecraft.getInstance().font;
         var rec = guiGraphics.scissorStack.stack.isEmpty() ? null : guiGraphics.scissorStack.stack.peekLast();
         if(rec != null){
@@ -156,7 +155,7 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
             }
             var title = this.getMessage().getString();
             if(!title.isEmpty()){
-                guiGraphics.drawString(font,title,getX()-font.width(title)-(renderState?12:2),getY()+2,0xFFFFFF);
+                guiGraphics.text(font,title,getX()-font.width(title)-(renderState?12:2),getY()+2,0xFFFFFF);
             }
         }
         if(rec != null){

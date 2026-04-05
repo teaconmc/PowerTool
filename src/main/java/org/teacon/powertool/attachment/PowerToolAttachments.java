@@ -22,21 +22,21 @@ public class PowerToolAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> DISPLAY_MODE = ATTACHMENT_TYPE.register(
         "display_mode",
         () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
-            .serialize(BlockPos.CODEC.listOf())
+            .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
             .build()
     );
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> CACHED_MODE = ATTACHMENT_TYPE.register(
         "cached_mode",
         () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
-            .serialize(BlockPos.CODEC.listOf())
+            .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
             .build()
     );
     
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> STATIC_MODE = ATTACHMENT_TYPE.register(
             "static_mode",
             () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
-                    .serialize(BlockPos.CODEC.listOf())
+                    .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
                     .build()
     );
 

@@ -1,13 +1,10 @@
 package org.teacon.powertool.command;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
-import net.neoforged.neoforge.server.command.EnumArgument;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.client.PanoramicScreenShotHelper;
 
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolClientCommands {
@@ -17,17 +14,8 @@ public class PowerToolClientCommands {
         event.getDispatcher().register(
                 Commands.literal("powertool")
                         .redirect(event.getDispatcher().register(Commands.literal("pt")
-                                        .then(Commands.literal("client")
-                                                .then(Commands.literal("panoramic_screenshot")
-                                                        .then(Commands.argument("mode", EnumArgument.enumArgument(PanoramicScreenShotHelper.Mode.class))
-                                                                .then(Commands.argument("height", IntegerArgumentType.integer(1,16384))
-                                                                        .then(Commands.argument("fov", IntegerArgumentType.integer(1,180))
-                                                                                .then(Commands.argument("yaw_start", IntegerArgumentType.integer(0,360))
-                                                                                        .then(Commands.argument("frame_delay", IntegerArgumentType.integer(0,1000))
-                                                                                                .executes(PanoramicScreenShotHelper.INSTANCE::start))))))
-                                        )
+                    
                                 )
-                        
-                        )));
+                        ));
     }
 }

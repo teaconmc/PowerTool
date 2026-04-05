@@ -12,6 +12,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 import org.joml.Vector3f;
 import org.teacon.powertool.block.PowerToolBlocks;
@@ -65,70 +67,72 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         }
     }
     
-    public void read(CompoundTag tag) {
+    public void read(ValueInput input) {
         sideCountOld = sideCount;
         radiusOld = radius;
-        if(tag.contains("steps")) steps = tag.getInt("steps");
-        if(tag.contains("sideCount")) sideCount = tag.getInt("sideCount");
-        if(tag.contains("radius")) radius = tag.getFloat("radius");
-        if(tag.contains("uScale")) uScale = tag.getInt("uScale");
-        if(tag.contains("vScale")) vScale = tag.getInt("vScale");
-        if(tag.contains("texture")) texture = Objects.requireNonNullElse(Identifier.tryParse(tag.getString("texture")),VanillaUtils.MISSING_TEXTURE);
-        if(tag.contains("clampMode")) clampMode = tag.getBoolean("clampMode");
-        if(tag.contains("worldCoordinate")) worldCoordinate = tag.getBoolean("worldCoordinate");
-        if(tag.contains("controlPointSize")){
-            var size = tag.getInt("controlPointSize");
-            controlPoints = new ArrayList<>();
-            for(int i = 0; i < size; i++){
-                var x = tag.getFloat("controlPoint"+i+"x");
-                var y = tag.getFloat("controlPoint"+i+"y");
-                var z = tag.getFloat("controlPoint"+i+"z");
-                controlPoints.add(new Vector3f(x,y,z));
-            }
-            setControlPoints(controlPoints);
+        steps = input.getIntOr("steps",0);
+        sideCount = input.getIntOr("sideCount",3);
+        radius = input.getFloatOr("radius",1);
+        uScale = input.getIntOr("uScale",1);
+        vScale = input.getIntOr("vScale",1);
+        texture = input.read("texture",Identifier.CODEC).orElse(VanillaUtils.MISSING_TEXTURE);
+        clampMode = input.getBooleanOr("clampMode",false);
+        worldCoordinate = input.getBooleanOr("worldCoordinate",false);
+        color = input.getIntOr("color",-1);
+        var size = input.getIntOr("controlPointSize",1);
+        controlPoints = new ArrayList<>();
+        for(int i = 0; i < size; i++){
+            var x = input.getFloatOr("controlPoint"+i+"x",0);
+            var y = input.getFloatOr("controlPoint"+i+"y",0);
+            var z = input.getFloatOr("controlPoint"+i+"z",0);
+            controlPoints.add(new Vector3f(x,y,z));
         }
+        setControlPoints(controlPoints);
     }
     
-    public CompoundTag write(CompoundTag tag) {
-        tag.putInt("steps", steps);
-        tag.putInt("sideCount", sideCount);
-        tag.putFloat("radius", radius);
-        tag.putInt("controlPointSize", controlPoints.size());
-        tag.putInt("uScale", uScale);
-        tag.putInt("vScale", vScale);
-        tag.putString("texture", texture.toString());
-        tag.putBoolean("clampMode", clampMode);
-        tag.putBoolean("worldCoordinate", worldCoordinate);
+    public void write(ValueOutput output) {
+        output.putInt("steps", steps);
+        output.putInt("sideCount", sideCount);
+        output.putFloat("radius", radius);
+        output.putInt("controlPointSize", controlPoints.size());
+        output.putInt("uScale", uScale);
+        output.putInt("vScale", vScale);
+        output.putString("texture", texture.toString());
+        output.putBoolean("clampMode", clampMode);
+        output.putBoolean("worldCoordinate", worldCoordinate);
+        output.putInt("color", color);
         for(int i = 0; i < controlPoints.size(); i++){
-            tag.putFloat("controlPoint"+i+"x", controlPoints.get(i).x());
-            tag.putFloat("controlPoint"+i+"y", controlPoints.get(i).y());
-            tag.putFloat("controlPoint"+i+"z", controlPoints.get(i).z());
+            output.putFloat("controlPoint"+i+"x", controlPoints.get(i).x());
+            output.putFloat("controlPoint"+i+"y", controlPoints.get(i).y());
+            output.putFloat("controlPoint"+i+"z", controlPoints.get(i).z());
         }
-        return tag;
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        read(tag);
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.read(input);
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        write(tag);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        this.write(output);
+    }
+    
+    @Override
+    public void writeFromClient(ValueOutput output) {
+        this.write(output);
+    }
+    
+    @Override
+    public void updateFromClient(ValueInput input) {
+        this.read(input);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var result = super.getUpdateTag(registries);
-        return write(result);
-    }
-    
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        read(tag);
-        super.handleUpdateTag(tag, registries);
+        return this.saveWithoutMetadata(registries);
     }
     
     @Nullable
@@ -137,20 +141,4 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(),lookupProvider);
-    }
-    
-    @Override
-    public void update(CompoundTag tag, HolderLookup.Provider registries) {
-        read(tag);
-    }
-    
-    @Override
-    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
-        write(tag);
-    }
 }

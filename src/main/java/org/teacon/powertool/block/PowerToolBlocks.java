@@ -1,12 +1,10 @@
 package org.teacon.powertool.block;
 
-import com.mojang.datafixers.DSL;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -59,6 +57,7 @@ import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.block.fluid.FakeWater;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
+import org.teacon.powertool.item.PowerToolBlockItem;
 import org.teacon.powertool.item.PowerToolDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -233,7 +232,7 @@ public class PowerToolBlocks {
             var name = dyeColor.getName() + "_distant_horizon_cheating_block";
             var block = BLOCKS.register(name,() -> new DistantHorizonCheatingBlock(BlockBehaviour.Properties.of().forceSolidOn().noOcclusion().mapColor(dyeColor)));
             DH_CHEAT_BLOCKS.put(dyeColor,block);
-            ITEMS.register(name,() -> new BlockItem(block.get(), new Item.Properties()));
+            ITEMS.register(name,() -> new PowerToolBlockItem(block.get(), new Item.Properties()));
         }
         
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> new BlockEntityType<>(
@@ -306,53 +305,53 @@ public class PowerToolBlocks {
         COSMETIC_SMOKER = BLOCKS.register("cosmetic_smoker",() -> new CosmeticFurnace(BlockBehaviour.Properties.ofFullCopy(Blocks.SMOKER)));
         COSMETIC_BARREL = BLOCKS.register("cosmetic_barrel", () -> new CosmeticBarrel(BlockBehaviour.Properties.ofFullCopy(Blocks.BARREL)));
         
-        ITEMS.register("cosmetic_beehive", () -> new BlockItem(COSMETIC_BEEHIVE.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_furnace", () -> new BlockItem(COSMETIC_FURNACE.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_blast_furnace", () -> new BlockItem(COSMETIC_BLAST_FURNACE.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_smoker",() -> new BlockItem(COSMETIC_SMOKER.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_barrel", () -> new BlockItem(COSMETIC_BARREL.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_beehive", () -> new PowerToolBlockItem(COSMETIC_BEEHIVE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_furnace", () -> new PowerToolBlockItem(COSMETIC_FURNACE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_blast_furnace", () -> new PowerToolBlockItem(COSMETIC_BLAST_FURNACE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_smoker",() -> new PowerToolBlockItem(COSMETIC_SMOKER.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_barrel", () -> new PowerToolBlockItem(COSMETIC_BARREL.get(), new Item.Properties()));
         
-        ITEMS.register("command_block", () -> new BlockItem(COMMAND_BLOCK.get(), new Item.Properties().rarity(Rarity.EPIC)));
-        ITEMS.register("power_supply", () -> new BlockItem(POWER_SUPPLY.get(), new Item.Properties()));
-        ITEMS.register("item_display", () -> new BlockItem(ITEM_DISPLAY.get(), new Item.Properties()));
-        ITEMS.register("glow_item_display", () -> new BlockItem(GLOW_ITEM_DISPLAY.get(), new Item.Properties()));
-        ITEMS.register("slim_item_supplier", () -> new BlockItem(SLIM_ITEM_SUPPLIER.get(), new Item.Properties()));
-        ITEMS.register("item_supplier", () -> new BlockItem(ITEM_SUPPLIER.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_hopper", () -> new BlockItem(COSMETIC_HOPPER.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_campfire", () -> new BlockItem(COSMETIC_CAMPFIRE.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_soul_campfire", () -> new BlockItem(COSMETIC_SOUL_CAMPFIRE.get(), new Item.Properties()));
-        ITEMS.register("holographic_sign", () -> new BlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
-        ITEMS.register("link_holographic_sign",() -> new BlockItem(LINK_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
-        ITEMS.register("raw_json_holographic_sign",() -> new BlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
-        ITEMS.register("trash_can", () -> new BlockItem(TRASH_CAN.get(), new Item.Properties()));
-        ITEMS.register("white_trash_can",() -> new BlockItem(WHITE_TRASH_CAN.get(),new Item.Properties()));
-        ITEMS.register("white_trash_can_cap",() -> new BlockItem(WHITE_TRASH_CAN_CAP.get(),new Item.Properties()));
-        ITEMS.register("gray_trash_can",() -> new BlockItem(GRAY_TRASH_CAN.get(),new Item.Properties()));
-        //ITEMS.register("gray_trash_can_cap",() -> new BlockItem(GRAY_TRASH_CAN_CAP.get(),new Item.Properties()));
-        ITEMS.register("green_trash_can",() -> new BlockItem(GREEN_TRASH_CAN.get(),new Item.Properties()));
-        ITEMS.register("green_trash_can_cap",() -> new BlockItem(GREEN_TRASH_CAN_CAP.get(),new Item.Properties()));
+        ITEMS.register("command_block", () -> new PowerToolBlockItem(COMMAND_BLOCK.get(), new Item.Properties().rarity(Rarity.EPIC)));
+        ITEMS.register("power_supply", () -> new PowerToolBlockItem(POWER_SUPPLY.get(), new Item.Properties()));
+        ITEMS.register("item_display", () -> new PowerToolBlockItem(ITEM_DISPLAY.get(), new Item.Properties()));
+        ITEMS.register("glow_item_display", () -> new PowerToolBlockItem(GLOW_ITEM_DISPLAY.get(), new Item.Properties()));
+        ITEMS.register("slim_item_supplier", () -> new PowerToolBlockItem(SLIM_ITEM_SUPPLIER.get(), new Item.Properties()));
+        ITEMS.register("item_supplier", () -> new PowerToolBlockItem(ITEM_SUPPLIER.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_hopper", () -> new PowerToolBlockItem(COSMETIC_HOPPER.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_campfire", () -> new PowerToolBlockItem(COSMETIC_CAMPFIRE.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_soul_campfire", () -> new PowerToolBlockItem(COSMETIC_SOUL_CAMPFIRE.get(), new Item.Properties()));
+        ITEMS.register("holographic_sign", () -> new PowerToolBlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("link_holographic_sign",() -> new PowerToolBlockItem(LINK_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("raw_json_holographic_sign",() -> new PowerToolBlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("trash_can", () -> new PowerToolBlockItem(TRASH_CAN.get(), new Item.Properties()));
+        ITEMS.register("white_trash_can",() -> new PowerToolBlockItem(WHITE_TRASH_CAN.get(),new Item.Properties()));
+        ITEMS.register("white_trash_can_cap",() -> new PowerToolBlockItem(WHITE_TRASH_CAN_CAP.get(),new Item.Properties()));
+        ITEMS.register("gray_trash_can",() -> new PowerToolBlockItem(GRAY_TRASH_CAN.get(),new Item.Properties()));
+        //ITEMS.register("gray_trash_can_cap",() -> new PowerToolBlockItem(GRAY_TRASH_CAN_CAP.get(),new Item.Properties()));
+        ITEMS.register("green_trash_can",() -> new PowerToolBlockItem(GREEN_TRASH_CAN.get(),new Item.Properties()));
+        ITEMS.register("green_trash_can_cap",() -> new PowerToolBlockItem(GREEN_TRASH_CAN_CAP.get(),new Item.Properties()));
 
-        ITEMS.register("register", () -> new BlockItem(REGISTER.get(), new Item.Properties()));
-        ITEMS.register("gorgeous_register", () -> new BlockItem(GORGEOUS_REGISTER.get(), new Item.Properties()));
-        ITEMS.register("mechanical_register", () -> new BlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
-        ITEMS.register("tech_register", () -> new BlockItem(TECH_REGISTER.get(), new Item.Properties()));
-        ITEMS.register("temple", () -> new BlockItem(TEMPLE.get(), new Item.Properties()));
-        ITEMS.register("safe", () -> new BlockItem(SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
-        ITEMS.register("gorgeous_safe", () -> new BlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
-        ITEMS.register("mechanical_safe", () -> new BlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
-        ITEMS.register("tech_safe", () -> new BlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
-        ITEMS.register("observer_realtime",() -> new BlockItem(REAL_TIME_OBSERVER.get(), new Item.Properties()));
-        ITEMS.register("observer_realtime_cyl",() -> new BlockItem(REAL_TIME_CYCLE_OBSERVER.get(),new Item.Properties()));
-        ITEMS.register("observer_gametime_cyl",() -> new BlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
-        ITEMS.register("delayer",() -> new BlockItem(DELAYER.get(), new Item.Properties()));
-        ITEMS.register("bezier_curve_block",() -> new BlockItem(BEZIER_CURVE_BLOCK.get(), new Item.Properties()));
+        ITEMS.register("register", () -> new PowerToolBlockItem(REGISTER.get(), new Item.Properties()));
+        ITEMS.register("gorgeous_register", () -> new PowerToolBlockItem(GORGEOUS_REGISTER.get(), new Item.Properties()));
+        ITEMS.register("mechanical_register", () -> new PowerToolBlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
+        ITEMS.register("tech_register", () -> new PowerToolBlockItem(TECH_REGISTER.get(), new Item.Properties()));
+        ITEMS.register("temple", () -> new PowerToolBlockItem(TEMPLE.get(), new Item.Properties()));
+        ITEMS.register("safe", () -> new PowerToolBlockItem(SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("gorgeous_safe", () -> new PowerToolBlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("mechanical_safe", () -> new PowerToolBlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("tech_safe", () -> new PowerToolBlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
+        ITEMS.register("observer_realtime",() -> new PowerToolBlockItem(REAL_TIME_OBSERVER.get(), new Item.Properties()));
+        ITEMS.register("observer_realtime_cyl",() -> new PowerToolBlockItem(REAL_TIME_CYCLE_OBSERVER.get(),new Item.Properties()));
+        ITEMS.register("observer_gametime_cyl",() -> new PowerToolBlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
+        ITEMS.register("delayer",() -> new PowerToolBlockItem(DELAYER.get(), new Item.Properties()));
+        ITEMS.register("bezier_curve_block",() -> new PowerToolBlockItem(BEZIER_CURVE_BLOCK.get(), new Item.Properties()));
     }
 
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {
         for (var type : existing.entrySet()) {
             var name = "cosmetic_" + type.getKey().name() + "_trapdoor";
             var block = BLOCKS.register(name, () -> new CosmeticTrapdoor(BlockBehaviour.Properties.ofFullCopy(type.getValue())));
-            ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+            ITEMS.register(name, () -> new PowerToolBlockItem(block.get(), new Item.Properties()));
         }
     }
     
@@ -363,7 +362,7 @@ public class PowerToolBlocks {
             var properties = BlockBehaviour.Properties.ofFullCopy(existingBlock);
             if(flag) properties.noOcclusion();
             var block = BLOCKS.register(name, () -> factory.apply(properties));
-            ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
+            ITEMS.register(name, () -> new PowerToolBlockItem(block.get(), new Item.Properties()));
         }
     }
     

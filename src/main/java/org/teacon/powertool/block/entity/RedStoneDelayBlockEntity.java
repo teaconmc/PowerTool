@@ -4,7 +4,6 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -12,6 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.RedStoneDelayBlock;
@@ -63,49 +64,46 @@ public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpda
         
     }
     
-    public void readWithOutState(CompoundTag tag) {
-        if(tag.contains("DelayTicks")) this.delayTicks = tag.getInt("DelayTicks");
-        if(tag.contains("Mode")) this.mode = Mode.fromId(tag.getInt("Mode"));
-        if(tag.contains("checkRisingEdge")) this.checkRisingEdge = tag.getBoolean("checkRisingEdge");
+    public void readWithoutState(ValueInput input) {
+        this.delayTicks = input.getIntOr("DelayTicks", this.delayTicks);
+        this.mode = Mode.fromId(input.getIntOr("Mode", this.mode.ordinal()));
+        this.checkRisingEdge = input.getBooleanOr("checkRisingEdge", this.checkRisingEdge);
     }
     
-    public void read(CompoundTag tag) {
-        readWithOutState(tag);
-        if(tag.contains("DelayedTicks")) this.delayedTicks = tag.getInt("DelayedTicks");
-        if(tag.contains("counting")) this.counting = tag.getBoolean("counting");
+    public void writeWithoutState(ValueOutput output) {
+        output.putInt("DelayTicks", this.delayTicks);
+        output.putInt("Mode", this.mode.ordinal());
+        output.putBoolean("checkRisingEdge", this.checkRisingEdge);
     }
     
-    public CompoundTag write(CompoundTag tag) {
-        tag.putInt("DelayTicks", this.delayTicks);
-        tag.putInt("DelayedTicks", this.delayedTicks);
-        tag.putInt("Mode", this.mode.ordinal());
-        tag.putBoolean("counting", this.counting);
-        tag.putBoolean("checkRisingEdge", this.checkRisingEdge);
-        return tag;
+    public void read(ValueInput input) {
+        this.readWithoutState(input);
+        this.delayedTicks = input.getIntOr("DelayedTicks", this.delayedTicks);
+        this.counting = input.getBooleanOr("counting", this.counting);
+    }
+    
+    public void write(ValueOutput output) {
+        this.writeWithoutState(output);
+        output.putInt("DelayedTicks", this.delayedTicks);
+        output.putBoolean("counting", this.counting);
+        
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        read(tag);
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.read(input);
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        write(tag);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        this.write(output);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var result = super.getUpdateTag(registries);
-        return write(result);
-    }
-    
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        read(tag);
-        super.handleUpdateTag(tag, registries);
+        return this.saveWithoutMetadata(registries);
     }
     
     @Nullable
@@ -116,19 +114,13 @@ public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpda
     
     
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(),lookupProvider);
+    public void updateFromClient(ValueInput input) {
+        this.readWithoutState(input);
     }
     
     @Override
-    public void update(CompoundTag tag, HolderLookup.Provider registries) {
-        readWithOutState(tag);
-    }
-    
-    @Override
-    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
-        write(tag);
+    public void writeFromClient(ValueOutput output) {
+        this.writeWithoutState(output);
     }
     
     public enum Mode{

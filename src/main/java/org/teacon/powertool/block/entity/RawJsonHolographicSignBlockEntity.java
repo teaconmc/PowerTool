@@ -1,18 +1,18 @@
 package org.teacon.powertool.block.entity;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.commands.ParserUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.ResolutionContext;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.block.PowerToolBlocks;
+import org.teacon.powertool.utils.ParserUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -32,50 +32,39 @@ public class RawJsonHolographicSignBlockEntity extends BaseHolographicSignBlockE
     }
     
     @Override
-    public void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("contentSize",content.size());
+    public void writeTo(ValueOutput output) {
+        super.writeTo(output);
+        output.putInt("contentSize",content.size());
         for(int i = 0; i<content.size(); i++){
-            tag.putString("content_"+i,content.get(i));
+            output.putString("content_"+i,content.get(i));
         }
-        tag.putInt("forRenderSize",forRender.size());
+        output.putInt("forRenderSize",forRender.size());
         for(int i = 0; i<forRender.size(); i++){
-            tag.putString("forRender_"+i,Component.Serializer.toJson(forRender.get(i),registries));
+            output.store("forRender_"+i,ComponentSerialization.CODEC,forRender.get(i));
         }
-        super.writeTo(tag, registries);
     }
     
     @Override
-    public void readFrom(CompoundTag tag, HolderLookup.Provider registries) {
-        var contentSize = tag.contains("contentSize") ? tag.getInt("contentSize") : 0;
+    public void readFrom(ValueInput input) {
+        super.readFrom(input);
+        var contentSize = input.getIntOr("contentSize",0);
         content.clear();
         for(int i = 0; i < contentSize; i++){
-            content.add(tag.getString("content_"+i));
+            content.add(input.getStringOr("content_"+i,""));
         }
         
-        var forRenderSize = tag.contains("forRenderSize") ? tag.getInt("forRenderSize") : 0;
+        var forRenderSize = input.getIntOr("forRenderSize",0);
         forRender.clear();
         for(var i = 0; i<forRenderSize; i++){
-            forRender.add(Component.Serializer.fromJson(tag.getString("forRender_"+i),registries));
+            forRender.add(input.read("forRender_"+i,ComponentSerialization.CODEC).orElse(Component.empty()));
         }
-        
+        var registries = this.level.registryAccess();
         forFilter.clear();
         try {
             for(var ct : content){
-                forFilter.add(ParserUtils.parseJson(registries,new StringReader(ct), ComponentSerialization.CODEC));
+                forFilter.add(ParserUtils.parseJson(registries,ct, ComponentSerialization.CODEC));
             }
         }catch (Exception ignore){
-        }
-        super.readFrom(tag, registries);
-        
-        if(tag.contains("content") || tag.contains("forRender")){
-            if (tag.contains("content")) content.add(tag.getString("content"));
-            if (tag.contains("forRender")) forRender.add(Component.Serializer.fromJson(tag.getString("forRender"),registries));
-            
-            this.setChanged();
-            if (level != null) {
-                var state = this.getBlockState();
-                level.sendBlockUpdated(this.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
-            }
         }
     }
     
@@ -95,7 +84,7 @@ public class RawJsonHolographicSignBlockEntity extends BaseHolographicSignBlockE
                     this.forRender.add(finalI,forFilter.get(finalI));
                 }
                 try {
-                    this.forRender.add(finalI,ComponentUtils.updateForEntity(player.createCommandSourceStack(),forRender.remove(finalI),null,0));
+                    this.forRender.add(finalI,ComponentUtils.resolve(ResolutionContext.create(player.createCommandSourceStackForNameResolution(player.level())),forRender.remove(finalI),0));
                 } catch (CommandSyntaxException ignored) {}
                
             });

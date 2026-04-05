@@ -1,21 +1,20 @@
 package org.teacon.powertool.block;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.teacon.powertool.annotation.NonNullByDefault;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import java.util.function.Consumer;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public class DistantHorizonCheatingBlock extends Block implements ICosmeticBlock {
+@NonNullByDefault
+public class DistantHorizonCheatingBlock extends Block implements ICosmeticBlock, WithTooltip {
     
     public DistantHorizonCheatingBlock(Properties properties) {
         super(properties);
@@ -27,8 +26,7 @@ public class DistantHorizonCheatingBlock extends Block implements ICosmeticBlock
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("tooltip.powertool.distant_horizon_cheating_block"));
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("tooltip.powertool.distant_horizon_cheating_block"));
     }
 }

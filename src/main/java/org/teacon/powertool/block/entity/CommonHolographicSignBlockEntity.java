@@ -8,9 +8,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.block.PowerToolBlocks;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -30,27 +33,21 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
     }
     
     @Override
-    public void readFrom(CompoundTag tag, HolderLookup.Provider registries) {
-        var loaded = new ArrayList<Component>();
-        for (var entry : tag.getList("content", Tag.TAG_STRING)) {
-            loaded.add(Component.Serializer.fromJson(entry.getAsString(),registries));
-        }
-        this.contents = loaded;
+    public void readFrom(ValueInput input) {
+        super.readFrom(input);
+        this.contents = input.listOrEmpty("content",ComponentSerialization.CODEC).stream().toList();
         if(getLevel() != null && getLevel().isClientSide()) {
             renderedContents = contents.stream().map(Component::getString).toList();
         }
-        super.readFrom(tag, registries);
-        
     }
     
     @Override
-    public void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-        var list = new ListTag();
-        for (var text : this.contents) {
-            list.add(StringTag.valueOf(Component.Serializer.toJson(text,registries)));
+    public void writeTo(ValueOutput output) {
+        super.writeTo(output);
+        var list = output.list("content", ComponentSerialization.CODEC);
+        for(var c : contents){
+            list.add(c);
         }
-        tag.put("content", list);
-        super.writeTo(tag, registries);
     }
     
     @Override

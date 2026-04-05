@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,9 +17,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.SafeBlockEntity;
 import org.teacon.powertool.item.PowerToolDataComponents;
+import org.teacon.powertool.utils.VanillaUtils;
 
+@NonNullByDefault
 public class SafeBlock extends BaseEntityBlock {
 
     public static final MapCodec<SafeBlock> CODEC = simpleCodec(SafeBlock::new);
@@ -39,11 +41,6 @@ public class SafeBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SafeBlockEntity(pos, state);
-    }
-
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
     }
 
     @Override
@@ -72,8 +69,8 @@ public class SafeBlock extends BaseEntityBlock {
             String cmd = theSafe.components().getOrDefault(PowerToolDataComponents.COMMAND.get(), "/ac safe");
             var server = level.getServer();
             if (server != null) {
-                server.getCommands().performPrefixedCommand(player.createCommandSourceStack(), cmd);
-                return InteractionResult.sidedSuccess(level.isClientSide);
+                VanillaUtils.runCommand(cmd,player);
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.PASS;

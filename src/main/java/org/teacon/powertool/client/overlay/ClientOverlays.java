@@ -17,7 +17,7 @@ import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.client.ClientEvents;
 import org.teacon.powertool.utils.VanillaUtils;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class ClientOverlays {
     @SubscribeEvent
     public static void onRegGuiLayerDef(RegisterGuiLayersEvent event) {

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -20,14 +21,15 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Consumer;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public class ItemSupplierBlock extends BaseEntityBlock {
+@NonNullByDefault
+public class ItemSupplierBlock extends BaseEntityBlock implements WithTooltip {
     
     public static final MapCodec<ItemSupplierBlock> CODEC =  simpleCodec(ItemSupplierBlock::new);
     public ItemSupplierBlock(Properties prop) {
@@ -58,11 +60,6 @@ public class ItemSupplierBlock extends BaseEntityBlock {
     @Override
     protected boolean propagatesSkylightDown(BlockState state) {
         return true;
-    }
-    
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("block.powertool.item_supplier.tooltip").withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -110,5 +107,10 @@ public class ItemSupplierBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
+    }
+    
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("block.powertool.item_supplier.tooltip").withStyle(ChatFormatting.GRAY));
     }
 }

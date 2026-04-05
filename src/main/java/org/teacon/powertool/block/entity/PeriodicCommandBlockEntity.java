@@ -1,18 +1,21 @@
 package org.teacon.powertool.block.entity;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class PeriodicCommandBlockEntity extends CommandBlockEntity {
 
     private int period = 10;
@@ -43,17 +46,28 @@ public class PeriodicCommandBlockEntity extends CommandBlockEntity {
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putInt("period", period);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        input.getIntOr("period", 10);
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        period = tag.getInt("period");
-        super.loadAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("period", period);
     }
-
+    
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
+    }
+    
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+    
     @Override
     public BlockEntityType<?> getType() {
         return PowerToolBlocks.COMMAND_BLOCK_ENTITY.get();

@@ -30,6 +30,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
 import org.teacon.powertool.menu.RegisterMenu;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -39,8 +40,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 /**
  * 收银台（Register）可接受指定物品并输出红石信号脉冲。
  */
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class RegisterBlock extends BaseEntityBlock {
 
     public static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 13, 16);
@@ -103,7 +103,7 @@ public class RegisterBlock extends BaseEntityBlock {
         }
         // Trigger block update oo all 6 faces
         for (Direction direction : ALL_DIRECTIONS) {
-            level.neighborChanged(pos.relative(direction), this, pos);
+            level.neighborChanged(pos.relative(direction), this, null);
         }
     }
 
@@ -115,7 +115,7 @@ public class RegisterBlock extends BaseEntityBlock {
                 return InteractionResult.SUCCESS;
             }
             if (theBE.itemToAccept.isEmpty()) {
-                return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.PASS;
             }
             boolean accept;
             if (theBE.matchDataComponents) {
@@ -130,18 +130,11 @@ public class RegisterBlock extends BaseEntityBlock {
                 level.scheduleTick(pos, state.getBlock(), 2);
                 return InteractionResult.SUCCESS;
             } else if (!player.getAbilities().instabuild){
-                player.displayClientMessage(Component.translatable("block.powertool.register.hud.insufficient"), true);
+                player.sendOverlayMessage(Component.translatable("block.powertool.register.hud.insufficient"));
                 return InteractionResult.FAIL;
             }
         }
-        return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        // TODO[3TUSK]: 打开 GUI
-        // 是不是可以去掉这个todo了[xkball]
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.PASS;
     }
 
     @Override

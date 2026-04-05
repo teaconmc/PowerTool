@@ -13,6 +13,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.TimeObserverBlock;
@@ -40,47 +42,53 @@ public class TimeObserverBlockEntity extends BlockEntity implements IClientUpdat
         return this.type;
     }
     
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        readFrom(tag, registries);
-        super.loadAdditional(tag, registries);
+    protected void writeTo(ValueOutput output) {
+        if (type != null) {
+            output.putInt("type", type.ordinal());
+            if(this.timeSection != null) timeSection.save(output);
+        }
+    }
+    
+    protected void readFrom(ValueInput input) {
+        var index = input.getInt("type");
+        if(index.isPresent()){
+            var i = index.get();
+            if(i >= 0 && i < TimeObserverBlock.Type.values().length) {
+                type = TimeObserverBlock.Type.values()[i];
+                timeSection = type.readFromTE(this,input);
+            }
+        }
+        else {
+            this.type = null;
+        }
+        this.resetDelay();
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        writeTo(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.readFrom(input);
+    }
+    
+    @Override
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        this.writeTo(output);
+    }
+    
+    @Override
+    public void writeFromClient(ValueOutput output) {
+        this.writeTo(output);
+    }
+    
+    @Override
+    public void updateFromClient(ValueInput input) {
+        this.readFrom(input);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var tag = super.getUpdateTag(registries);
-        writeTo(tag, registries);
-        return tag;
-    }
-    
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        readFrom(tag, registries);
-        super.handleUpdateTag(tag, registries);
-    }
-    
-    protected void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-        if (type != null) {
-            tag.putInt("type", type.ordinal());
-            tag.put("timeSection",type.write(timeSection, registries));
-        }
-    }
-    
-    protected void readFrom(CompoundTag tag, HolderLookup.Provider registries) {
-        if(tag.contains("type", Tag.TAG_INT)) {
-            var index = tag.getInt("type");
-            if(index >= 0 && index < TimeObserverBlock.Type.values().length) {
-                type = TimeObserverBlock.Type.values()[index];
-                timeSection = type.readFromTE(this,tag.getCompound("timeSection"), registries);
-            }
-        }
-        this.resetDelay();
+        return this.saveWithoutMetadata(registries);
     }
     
     @Nullable
@@ -89,11 +97,6 @@ public class TimeObserverBlockEntity extends BlockEntity implements IClientUpdat
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(),lookupProvider);
-    }
     
     public static void tick(Level level, BlockPos pos, BlockState state, TimeObserverBlockEntity te) {
         if(te.type == null || te.timeSection == null) return;
@@ -123,15 +126,5 @@ public class TimeObserverBlockEntity extends BlockEntity implements IClientUpdat
     
     public void setTimeSection(ITimeSection section){
         if(type != null && type.checkType(section)) this.timeSection = section;
-    }
-    
-    @Override
-    public void update(CompoundTag tag, HolderLookup.Provider registries) {
-        readFrom(tag, registries);
-    }
-    
-    @Override
-    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
-        writeTo(tag, registries);
     }
 }

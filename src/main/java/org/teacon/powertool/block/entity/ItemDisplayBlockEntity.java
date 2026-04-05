@@ -11,6 +11,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 
@@ -28,32 +30,22 @@ public class ItemDisplayBlockEntity extends BlockEntity {
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put("item", this.itemToDisplay.saveOptional(registries));
-        tag.putInt("rotation", this.rotation);
-        super.saveAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.itemToDisplay = input.read("item",ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.rotation = input.getIntOr("rotation", 0);
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.itemToDisplay = ItemStack.parseOptional(registries,tag.getCompound("item"));
-        this.rotation = tag.getInt("rotation");
+    protected void saveAdditional(ValueOutput output) {
+        output.store("item",ItemStack.CODEC,this.itemToDisplay);
+        output.putInt("rotation",this.rotation);
+        super.saveAdditional(output);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var result = super.getUpdateTag(registries);
-        result.put("item", this.itemToDisplay.saveOptional(registries));
-        result.putInt("rotation", this.rotation);
-        return result;
-    }
-    
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        this.itemToDisplay = ItemStack.parseOptional(registries,tag.getCompound("item"));
-        this.rotation = tag.getInt("rotation");
-        super.handleUpdateTag(tag, registries);
+        return this.saveWithoutMetadata(registries);
     }
 
     @Nullable
@@ -62,9 +54,5 @@ public class ItemDisplayBlockEntity extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(), lookupProvider);
-    }
+
 }

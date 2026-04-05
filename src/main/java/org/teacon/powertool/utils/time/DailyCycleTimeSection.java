@@ -3,6 +3,8 @@ package org.teacon.powertool.utils.time;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -44,17 +46,17 @@ public class DailyCycleTimeSection implements ITimeSection {
     }
     
     @Override
-    public void save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("start", start);
-        tag.putInt("end",end);
-        tag.putInt("hourOffset",hourOffset);
+    public void save(ValueOutput output) {
+        output.putInt("start", start);
+        output.putInt("end",end);
+        output.putInt("hourOffset",hourOffset);
     }
     
     @Override
-    public ITimeSection load(CompoundTag tag, HolderLookup.Provider registries) {
-        var _start = tag.getInt("start").orElse(0);
-        var _end = tag.getInt("end").orElse(0);
-        var _offset = tag.getInt("hourOffset").orElse(0);
+    public ITimeSection load(ValueInput input) {
+        var _start = input.getInt("start").orElse(0);
+        var _end = input.getInt("end").orElse(0);
+        var _offset = input.getInt("hourOffset").orElse(0);
         return new DailyCycleTimeSection(_start, _end, _offset);
     }
     

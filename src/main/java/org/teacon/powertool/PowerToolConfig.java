@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = PowerTool.MODID)
+@EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolConfig {
 
     public static ModConfigSpec.ConfigValue<String> motdContent;

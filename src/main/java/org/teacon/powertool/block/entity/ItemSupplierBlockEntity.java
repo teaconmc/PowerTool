@@ -1,6 +1,5 @@
 package org.teacon.powertool.block.entity;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -16,12 +15,10 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class ItemSupplierBlockEntity extends BlockEntity{
 
     public ItemStack theItem = ItemStack.EMPTY;

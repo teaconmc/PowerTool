@@ -3,49 +3,40 @@ package org.teacon.powertool.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerSupplyBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public final class PowerSupplyBlockEntity extends BlockEntity {
-
-    private final IEnergyStorage energyStore = new IEnergyStorage() {
+    
+    private final EnergyHandler energyHandler = new SimpleEnergyHandler(Integer.MAX_VALUE,Integer.MAX_VALUE,Integer.MAX_VALUE){
         @Override
-        public int receiveEnergy(int maxReceive, boolean simulate) {
+        public int extract(int amount, TransactionContext transaction) {
+            return PowerSupplyBlockEntity.this.data.status == 1 ? Math.min(amount,PowerSupplyBlockEntity.this.data.power) : 0;
+        }
+        
+        @Override
+        public int insert(int amount, TransactionContext transaction) {
             return 0;
         }
-
+        
         @Override
-        public int extractEnergy(int maxExtract, boolean simulate) {
-            return PowerSupplyBlockEntity.this.data.status == 1 ? PowerSupplyBlockEntity.this.data.power : 0;
-        }
-
-        @Override
-        public int getEnergyStored() {
+        public long getAmountAsLong() {
             return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public int getMaxEnergyStored() {
-            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public boolean canExtract() {
-            return true;
-        }
-
-        @Override
-        public boolean canReceive() {
-            return false;
         }
     };
-
+    
     public final PowerSupplyBlock.Data data = new PowerSupplyBlock.Data();
 
     public PowerSupplyBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
@@ -54,20 +45,30 @@ public final class PowerSupplyBlockEntity extends BlockEntity {
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.data.status = tag.getInt("status");
-        this.data.power = tag.getInt("power");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.data.status = input.getIntOr("status",0);
+        this.data.power = input.getIntOr("power",0);
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("status", this.data.status);
-        tag.putInt("power", this.data.power);
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.putInt("status",this.data.status);
+        output.putInt("power",this.data.power);
     }
     
-    public IEnergyStorage getEnergyStore() {
-        return this.energyStore;
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return this.saveWithoutMetadata(registries);
+    }
+    
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+    
+    public EnergyHandler getEnergyStore() {
+        return this.energyHandler;
     }
 }

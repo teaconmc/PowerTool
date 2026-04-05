@@ -7,12 +7,9 @@ package org.teacon.powertool.block.entity;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,15 +22,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloSignBEFlag,IClientUpdateBlockEntity {
     
     /** Controls how text are aligned: left-align, centered, or right-align. */
@@ -149,130 +146,68 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         super(type, pPos, pBlockState);
     }
 
-    public void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putInt("color", this.colorInARGB);
-        tag.putFloat("scale", this.scale);
-        tag.putInt("align", this.align.ordinal());
-        tag.putBoolean("lock",lock);
-        tag.putInt("rotate", yRotate);
-        tag.putBoolean("bidirectional",bidirectional);
-        tag.putBoolean("renderBackground",renderBackground);
-        tag.putBoolean("dropShadow",dropShadow);
-        tag.putInt("xRotate", xRotate);
-        tag.putFloat("zOffset", zOffset);
-        tag.putBoolean("lit", lit);
-    }
-    
-    public void readHistory(CompoundTag tag){
-        if (tag.contains("shadow", Tag.TAG_INT)) {
-            var shadow = Shadow.byOrdinal(tag.getInt("shadow"));
-            if(shadow == Shadow.PLATE){
-                this.renderBackground = true;
-                this.dropShadow = false;
-            }
-            if(shadow == Shadow.DROP){
-                this.renderBackground = false;
-                this.dropShadow = true;
-            }
-            if(shadow == Shadow.NONE){
-                this.renderBackground = false;
-                this.dropShadow = false;
-            }
-        }
-        if (tag.contains("arrange", Tag.TAG_INT)) {
-            var arrange = LayerArrange.byOrdinal(tag.getInt("arrange"));
-            if(arrange == LayerArrange.FRONT) this.zOffset = -0.45f;
-            else if(arrange == LayerArrange.CENTER) this.zOffset = 0f;
-            else if(arrange == LayerArrange.BACK) this.zOffset = 0.45f;
-        }
+    public void writeTo(ValueOutput output) {
+        output.putInt("color", this.colorInARGB);
+        output.putFloat("scale", this.scale);
+        output.putInt("align", this.align.ordinal());
+        output.putBoolean("lock",lock);
+        output.putInt("rotate", yRotate);
+        output.putBoolean("bidirectional",bidirectional);
+        output.putBoolean("renderBackground",renderBackground);
+        output.putBoolean("dropShadow",dropShadow);
+        output.putInt("xRotate", xRotate);
+        output.putFloat("zOffset", zOffset);
+        output.putBoolean("lit", lit);
     }
 
-    public void readFrom(CompoundTag tag,HolderLookup.Provider registries) {
-        this.readHistory(tag);
-        if (tag.contains("color", Tag.TAG_INT)) {
-            this.colorInARGB = tag.getInt("color");
-        }
-        if (tag.contains("scale", Tag.TAG_FLOAT)) {
-            this.scale = tag.getFloat("scale");
-        }
-        if (tag.contains("align", Tag.TAG_INT)) {
-            this.align = Align.byOrdinal(tag.getInt("align"));
-        }
-        //Tag.TAG_BOOLEAN does not exist. I don’t know what to fill in the latter parameter.
-        if(tag.contains("lock")){
-            this.lock = tag.getBoolean("lock");
-        }
-        if(tag.contains("rotate",Tag.TAG_INT)){
-            this.yRotate = tag.getInt("rotate");
-        }
-        if(tag.contains("bidirectional")){
-            this.bidirectional = tag.getBoolean("bidirectional");
-        }
-        if(tag.contains("renderBackground")){
-            this.renderBackground = tag.getBoolean("renderBackground");
-        }
-        if(tag.contains("dropShadow")){
-            this.dropShadow = tag.getBoolean("dropShadow");
-        }
-        if(tag.contains("xRotate",Tag.TAG_INT)){
-            this.xRotate = tag.getInt("xRotate");
-        }
-        if(tag.contains("zOffset",Tag.TAG_FLOAT)){
-            this.zOffset = tag.getFloat("zOffset");
-        }
-        if(tag.contains("lit")){
-            this.lit = tag.getBoolean("lit");
-            if(this.getLevel() != null){
-                this.getLevel().setBlock(getBlockPos(),getBlockState().setValue(HolographicSignBlock.LIT,lit), Block.UPDATE_ALL);
-            }
+    public void readFrom(ValueInput input) {
+        this.colorInARGB = input.getIntOr("color",-1);
+        this.scale = input.getFloatOr("scale",1.0F);
+        this.align = Align.byOrdinal(input.getIntOr("align",0));
+        this.lock = input.getBooleanOr("lock",false);
+        this.yRotate = input.getIntOr("rotate",0);
+        this.bidirectional = input.getBooleanOr("bidirectional",false);
+        this.renderBackground = input.getBooleanOr("renderBackground",false);
+        this.dropShadow = input.getBooleanOr("dropShadow",false);
+        this.xRotate = input.getIntOr("xRotate",0);
+        this.zOffset = input.getFloatOr("zOffset",0F);
+        this.lit = input.getBooleanOr("lit",false);
+        if(this.getLevel() != null){
+            this.getLevel().setBlock(getBlockPos(),getBlockState().setValue(HolographicSignBlock.LIT,lit), Block.UPDATE_ALL);
         }
     }
     
     @Override
-    public void update(CompoundTag tag, HolderLookup.Provider registries) {
-        readFrom(tag, registries);
+    public void updateFromClient(ValueInput input) {
+        this.readFrom(input);
     }
     
     @Override
-    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
-        writeTo(tag, registries);
+    public void writeFromClient(ValueOutput output) {
+        this.writeTo(output);
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        this.writeTo(tag,registries);
-        super.saveAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.readFrom(input);
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.readFrom(tag,registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        this.writeTo(output);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var result = super.getUpdateTag(registries);
-        this.writeTo(result,registries);
-        return result;
+        return this.saveWithoutMetadata(registries);
     }
     
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
-        this.readFrom(tag,lookupProvider);
-        super.handleUpdateTag(tag, lookupProvider);
-    }
-
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-    
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(),lookupProvider);
     }
     
     public void filterMessage(ServerPlayer player){

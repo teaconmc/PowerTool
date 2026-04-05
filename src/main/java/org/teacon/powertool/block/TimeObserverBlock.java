@@ -30,11 +30,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.ExperimentalRedstoneUtils;
 import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.item.IRedStoneStuff;
 import org.teacon.powertool.network.client.OpenBlockScreen;
@@ -45,8 +48,7 @@ import org.teacon.powertool.utils.time.TimestampTimeSection;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff {
     
     public static final MapCodec<TimeObserverBlock> CODEC = RecordCodecBuilder.mapCodec(
@@ -141,9 +143,10 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
     
     public void updateNeighborsInFront(Level level, BlockPos pos, BlockState state) {
         Direction direction = state.getValue(FACING);
-        BlockPos blockpos = pos.relative(direction.getOpposite());
-        level.neighborChanged(blockpos, this, pos);
-        level.updateNeighborsAtExceptFromFacing(blockpos, this, direction);
+        BlockPos oppositePos = pos.relative(direction.getOpposite());
+        Orientation orientation = ExperimentalRedstoneUtils.initialOrientation(level, direction.getOpposite(), null);
+        level.neighborChanged(oppositePos, this, orientation);
+        level.updateNeighborsAtExceptFromFacing(oppositePos, this, direction, orientation);
     }
     
     @Nullable
@@ -157,8 +160,8 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
             private static final TimestampTimeSection BRIDGE = new TimestampTimeSection(0,0);
             
             @Override
-            public ITimeSection readFromTE(TimeObserverBlockEntity te, CompoundTag tag, HolderLookup.Provider registries) {
-                return BRIDGE.load(tag, registries);
+            public ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input) {
+                return BRIDGE.load(input);
             }
             
             @Override
@@ -170,8 +173,8 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
             private static final DailyCycleTimeSection BRIDGE = new DailyCycleTimeSection(0,0,0);
             
             @Override
-            public ITimeSection readFromTE(TimeObserverBlockEntity te, CompoundTag tag, HolderLookup.Provider registries) {
-                return BRIDGE.load(tag, registries);
+            public ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input) {
+                return BRIDGE.load(input);
             }
             
             @Override
@@ -181,8 +184,8 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
         },
         GAME_DAILY_CYCLE(OpenBlockScreen.GAME_TIME_CYCLE_OBSERVER){
             @Override
-            public ITimeSection readFromTE(TimeObserverBlockEntity te, CompoundTag tag, HolderLookup.Provider registries) {
-                 return new InWorldDailyCycleTimeSection(te::getLevel,0,0).load(tag,registries);
+            public ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input) {
+                 return new InWorldDailyCycleTimeSection(te::getLevel,0,0).load(input);
             }
             
             @Override
@@ -205,16 +208,9 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
         
         public abstract boolean checkType(ITimeSection timeSection);
         
-        public abstract ITimeSection readFromTE(TimeObserverBlockEntity te, CompoundTag tag, HolderLookup.Provider registries);
-        
-        public CompoundTag write(@Nullable ITimeSection timeSection, HolderLookup.Provider registries){
-            var tag = new CompoundTag();
-            if(timeSection != null)timeSection.save(tag, registries);
-            return tag;
-        }
+        public abstract ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input);
         
         @Override
-        @NonNull
         public String getSerializedName() {
             return name();
         }

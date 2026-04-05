@@ -1,10 +1,8 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,14 +13,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.PowerSupplyBlockEntity;
 import org.teacon.powertool.menu.PowerSupplyMenu;
-import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class PowerSupplyBlock extends BaseEntityBlock {
     
     private static final MapCodec<PowerSupplyBlock> CODEC = simpleCodec(PowerSupplyBlock::new);
@@ -41,8 +36,6 @@ public class PowerSupplyBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
     
-
-    
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         return use(level, pos, player);
@@ -50,7 +43,7 @@ public class PowerSupplyBlock extends BaseEntityBlock {
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return VanillaUtils.itemInteractionFrom(use(level,pos,player));
+        return use(level, pos, player);
     }
     
     
@@ -59,24 +52,25 @@ public class PowerSupplyBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         } else {
             if (level.getBlockEntity(pos) instanceof PowerSupplyBlockEntity be) {
-                p.openMenu( new PowerSupplyMenu.Provider(be.data),
+                p.openMenu(new PowerSupplyMenu.Provider(be.data),
                         buf -> buf.writeVarInt(be.data.status).writeVarInt(be.data.power));
             }
             return InteractionResult.CONSUME;
         }
     }
-
+    
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new PowerSupplyBlockEntity(pPos, pState);
     }
-
+    
     public static final class Data {
         // Working status flag. 0 represents OFF; 1 represents ON.
         public int status = 1;
         // Amount of energy output per tick
         public int power = 100;
+        @Nullable
         public Runnable markDirty;
     }
 }

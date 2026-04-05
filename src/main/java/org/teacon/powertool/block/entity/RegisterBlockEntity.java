@@ -4,7 +4,6 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -13,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.block.PowerToolBlocks;
 
@@ -86,40 +87,26 @@ public class RegisterBlockEntity extends BlockEntity implements IClientUpdateBlo
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put("item", this.itemToAccept.saveOptional(registries));
-        tag.put("itemSupply", this.itemToSupply.saveOptional(registries));
-        tag.putBoolean("matchDataComponents", this.matchDataComponents);
-        tag.putBoolean("displaySupply", this.displaySupply);
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("item", ItemStack.CODEC, this.itemToAccept);
+        output.store("itemSupply", ItemStack.CODEC, this.itemToSupply);
+        output.putBoolean("matchDataComponents", this.matchDataComponents);
+        output.putBoolean("displaySupply", this.displaySupply);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.itemToAccept = ItemStack.parseOptional(registries,tag.getCompound("item"));
-        this.itemToSupply = ItemStack.parseOptional(registries,tag.getCompound("itemSupply"));
-        this.matchDataComponents = tag.getBoolean("matchDataComponents");
-        this.displaySupply = tag.getBoolean("displaySupply");
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.itemToAccept = input.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.itemToSupply = input.read("itemSupply", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.matchDataComponents = input.getBooleanOr("matchDataComponents", false);
+        this.displaySupply = input.getBooleanOr("displaySupply", true);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var result = super.getUpdateTag(registries);
-        result.put("item", this.itemToAccept.saveOptional(registries));
-        result.put("itemSupply", this.itemToSupply.saveOptional(registries));
-        result.putBoolean("matchDataComponents", this.matchDataComponents);
-        result.putBoolean("displaySupply", this.displaySupply);
-        return result;
-    }
-
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        this.itemToAccept = ItemStack.parseOptional(registries,tag.getCompound("item"));
-        this.itemToSupply = ItemStack.parseOptional(registries,tag.getCompound("itemSupply"));
-        this.matchDataComponents = tag.getBoolean("matchDataComponents");
-        this.displaySupply = tag.getBoolean("displaySupply");
-        super.handleUpdateTag(tag, registries);
+        return this.saveWithoutMetadata(registries);
     }
 
     @Nullable
@@ -129,20 +116,14 @@ public class RegisterBlockEntity extends BlockEntity implements IClientUpdateBlo
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(), lookupProvider);
+    public void updateFromClient(ValueInput input) {
+        this.matchDataComponents = input.getBooleanOr("matchDataComponents", this.matchDataComponents);
+        this.displaySupply = input.getBooleanOr("displaySupply", this.displaySupply);
     }
     
     @Override
-    public void update(CompoundTag tag, HolderLookup.Provider registries) {
-        this.matchDataComponents = tag.getBoolean("matchDataComponents");
-        this.displaySupply = tag.getBoolean("displaySupply");
-    }
-    
-    @Override
-    public void writeToPacket(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putBoolean("matchDataComponents", this.matchDataComponents);
-        tag.putBoolean("displaySupply", this.displaySupply);
+    public void writeFromClient(ValueOutput output) {
+        output.putBoolean("matchDataComponents", this.matchDataComponents);
+        output.putBoolean("displaySupply", this.displaySupply);
     }
 }

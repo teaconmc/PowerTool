@@ -3,6 +3,8 @@ package org.teacon.powertool.utils.time;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 //include start and exclude end
 public record TimestampTimeSection(long start, long end) implements ITimeSection {
@@ -19,15 +21,15 @@ public record TimestampTimeSection(long start, long end) implements ITimeSection
     }
     
     @Override
-    public void save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putLong("start", start);
-        tag.putLong("end", end);
+    public void save(ValueOutput output) {
+        output.putLong("start", start);
+        output.putLong("end", end);
     }
     
     @Override
-    public ITimeSection load(CompoundTag tag, HolderLookup.Provider registries) {
-        var _start = tag.getLong("start").orElse(0L);
-        var _end = tag.getLong("end").orElse(0L);
+    public ITimeSection load(ValueInput input) {
+        var _start = input.getLong("start").orElse(0L);
+        var _end = input.getLong("end").orElse(0L);
         return new TimestampTimeSection(_start, _end);
     }
 }

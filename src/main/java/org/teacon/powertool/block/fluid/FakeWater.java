@@ -3,6 +3,7 @@ package org.teacon.powertool.block.fluid;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -72,7 +73,7 @@ public class FakeWater extends FlowingFluid {
     }
     
     @Override
-    protected boolean canConvertToSource(Level level) {
+    protected boolean canConvertToSource(ServerLevel level) {
         return false;
     }
     
@@ -88,8 +89,8 @@ public class FakeWater extends FlowingFluid {
     }
     
     @Override
-    protected boolean canSpreadTo(BlockGetter level, BlockPos fromPos, BlockState fromBlockState, Direction direction, BlockPos toPos, BlockState toBlockState, FluidState toFluidState, Fluid fluid) {
-        return false;
+    protected void spread(ServerLevel level, BlockPos pos, BlockState state, FluidState fluidState) {
+    
     }
     
     @Override

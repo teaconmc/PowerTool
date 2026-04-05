@@ -35,13 +35,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.TempleBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class TempleBlock extends BaseEntityBlock {
     
     public static final MapCodec<TempleBlock> CODEC = simpleCodec(TempleBlock::new);

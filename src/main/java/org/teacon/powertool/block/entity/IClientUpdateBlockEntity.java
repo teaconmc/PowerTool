@@ -1,11 +1,11 @@
 package org.teacon.powertool.block.entity;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public interface IClientUpdateBlockEntity {
     
-    void update(CompoundTag tag, HolderLookup.Provider registries);
+    void updateFromClient(ValueInput input);
     
-    void writeToPacket(CompoundTag tag, HolderLookup.Provider registries);
+    void writeFromClient(ValueOutput output);
 }

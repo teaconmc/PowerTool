@@ -1,23 +1,21 @@
 package org.teacon.powertool.block.entity;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class TempleBlockEntity extends BlockEntity {
     
     public ItemStack theItem = ItemStack.EMPTY;
@@ -27,28 +25,20 @@ public class TempleBlockEntity extends BlockEntity {
     }
     
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        this.theItem = ItemStack.parseOptional(registries,tag.getCompound("item"));
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.theItem = input.read("item",ItemStack.CODEC).orElse(ItemStack.EMPTY);
     }
     
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("item", this.theItem.saveOptional(registries));
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("item", ItemStack.CODEC, this.theItem);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        var result = super.getUpdateTag(registries);
-        result.put("item", this.theItem.saveOptional(registries));
-        return result;
-    }
-    
-    @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider registries) {
-        this.theItem = ItemStack.parseOptional(registries,tag.getCompound("item"));
-        super.handleUpdateTag(tag, registries);
+        return this.saveWithoutMetadata(registries);
     }
     
     @Nullable
@@ -57,10 +47,4 @@ public class TempleBlockEntity extends BlockEntity {
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
-        this.handleUpdateTag(pkt.getTag(),lookupProvider);
-    }
 }

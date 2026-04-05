@@ -1,7 +1,6 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -15,12 +14,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -29,19 +28,20 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
 import org.teacon.powertool.item.IRedStoneStuff;
 import org.teacon.powertool.network.client.OpenBlockScreen;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Consumer;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuff {
+@NonNullByDefault
+public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuff, WithTooltip {
     
     public static final MapCodec<RedStoneDelayBlock> CODEC = simpleCodec(RedStoneDelayBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
@@ -57,11 +57,6 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
-    }
-    
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
     }
     
     @Override
@@ -86,7 +81,7 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     }
     
     @Override
-    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         var be = level.getBlockEntity(pos);
         if(!(be instanceof RedStoneDelayBlockEntity te)) return 0;
         return (int) Mth.clamp(((te.delayTicks - te.delayedTicks)/(float)te.delayTicks)*15,0f,15f);
@@ -127,8 +122,8 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     }
     
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         var be = level.getBlockEntity(pos);
         if(be instanceof RedStoneDelayBlockEntity te) {
             te.powered = powered(level, pos);
@@ -142,8 +137,7 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("tooltip.powertool.delayer"));
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("tooltip.powertool.delayer"));
     }
 }

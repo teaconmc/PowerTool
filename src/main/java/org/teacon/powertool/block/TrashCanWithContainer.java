@@ -32,13 +32,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class TrashCanWithContainer extends BaseEntityBlock {
     
     private static final MapCodec<TrashCanWithContainer> CODEC = simpleCodec(TrashCanWithContainer::new);
@@ -93,7 +93,7 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return VanillaUtils.itemInteractionFrom(use(level,pos,player));
+        return use(level,pos,player);
     }
     
     protected InteractionResult use(Level level,BlockPos pos,Player p){

@@ -2,7 +2,7 @@ package org.teacon.powertool.client.gui.observers;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.components.StringWidget;
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.TimeObserverBlock;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
@@ -46,7 +46,7 @@ public class RealTimeCycleObserverScreen extends Screen {
                 .pos(this.width / 2 - 100, this.height / 4 + 120)
                 .size(200, 20).build());
         if(te.getBlockType() != TimeObserverBlock.Type.REAL_DAILY_CYCLE){
-            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"),font).alignCenter());
+            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"),font));
         }
         else {
             var box_l = (int)Math.max(100,width*0.2);
@@ -120,12 +120,12 @@ public class RealTimeCycleObserverScreen extends Screen {
         var end = endInput.get();
         if(offset == null || start == null || end == null) return;
         te.setTimeSection(new DailyCycleTimeSection(start,end,offset));
-        PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
+        ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         if(startInput == null || endInput == null) return;
         var start = startInput.get();
         var end = endInput.get();
@@ -133,11 +133,12 @@ public class RealTimeCycleObserverScreen extends Screen {
         var box_l = (int)Math.max(100,width*0.2);
         if(start != null){
             var startTime = DailyCycleTimeSection.fromFormatedInt(start);
-            guiGraphics.drawString(font,startTime.toString(),width/2+box_l/2,height/2-50,textColor);
+            graphics.text(font,startTime.toString(),width/2+box_l/2,height/2-50,textColor);
         }
         if(end != null){
             var endTime = DailyCycleTimeSection.fromFormatedInt(end);
-            guiGraphics.drawString(font,endTime.toString(),width/2+box_l/2,height/2-25,textColor);
+            graphics.text(font,endTime.toString(),width/2+box_l/2,height/2-25,textColor);
         }
     }
+
 }

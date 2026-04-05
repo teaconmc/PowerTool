@@ -10,7 +10,7 @@ import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.network.server.UpdateItemStackData;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 
-@EventBusSubscriber(modid = PowerTool.MODID,bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolNetwork {
 
     @SubscribeEvent

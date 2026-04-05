@@ -2,7 +2,7 @@ package org.teacon.powertool.utils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,8 +54,10 @@ public class VanillaUtils {
     }
     
     public static void runCommand(String command, LivingEntity livingEntity) {
+        if(!(livingEntity instanceof ServerPlayer sp)) return;
         // Raise permission level to 2, akin to what vanilla sign does
-        CommandSourceStack cmdSrc = livingEntity.createCommandSourceStack().withPermission(2);
+        
+        CommandSourceStack cmdSrc = sp.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER);
         var server = livingEntity.level().getServer();
         if (server != null) {
             server.getCommands().performPrefixedCommand(cmdSrc, command);
@@ -63,7 +67,7 @@ public class VanillaUtils {
     public static void runCommand(String command,MinecraftServer server, UUID playerUUID){
         var player = server.getPlayerList().getPlayer(playerUUID);
         if(player != null){
-            server.getCommands().performPrefixedCommand(player.createCommandSourceStack().withPermission(2),command);
+            server.getCommands().performPrefixedCommand(player.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER),command);
         }
     }
     
@@ -116,7 +120,7 @@ public class VanillaUtils {
     }
     
     public static void recordDebugData(String id,long data){
-        if(FMLEnvironment.dist == Dist.DEDICATED_SERVER){
+        if(FMLEnvironment.getDist() == Dist.DEDICATED_SERVER){
             PacketDistributor.sendToAllPlayers(new RecordDebugData(id, data));
         }
         else {
@@ -146,7 +150,7 @@ public class VanillaUtils {
         }
         
         public static void renderAxis(MultiBufferSource bufferSource, PoseStack poseStack) {
-            var buffer = bufferSource.getBuffer(RenderType.lines());
+            var buffer = bufferSource.getBuffer(RenderTypes.LINES);
             var matrix = poseStack.last();
             buffer.addVertex(matrix, 0, 0, 0).setNormal(matrix, 1, 0, 0).setColor(0xFFFF0000);
             buffer.addVertex(matrix, 100, 0, 0).setNormal(matrix, 1, 0, 0).setColor(0xFFFF0000);

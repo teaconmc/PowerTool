@@ -2,7 +2,7 @@ package org.teacon.powertool.block.holo_sign;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
@@ -18,10 +18,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -39,23 +41,24 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.block.WithTooltip;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.function.Consumer;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
+@NonNullByDefault
+public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, WithTooltip {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -97,7 +100,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if(hand == InteractionHand.MAIN_HAND){
-            return VanillaUtils.itemInteractionFrom(use(level,pos,player));
+            return use(level,pos,player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -110,12 +113,6 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         return state.getValue(LIT) ? 15 : 0;
-    }
-    
-    @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
-        
     }
     
     @Override
@@ -159,33 +156,30 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
                 for(var component : be.forRender){
                     var clickEvent = component.getStyle().getClickEvent();
                     if(clickEvent == null) return InteractionResult.PASS;
-                    var action = clickEvent.getAction();
-                    if(action == ClickEvent.Action.RUN_COMMAND){
-                        VanillaUtils.runCommand(clickEvent.getValue(),player);
+                    if(clickEvent instanceof ClickEvent.RunCommand(String command)){
+                        VanillaUtils.runCommand(command,player);
                     }
                 }
-                
             }
         }
         return InteractionResult.SUCCESS;
     }
-
+    
     @Override
-    public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (state.getValue(WATERLOGGED)) {
-            level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        if(this.type == SignType.RAW_JSON && level.isClientSide() && level.getBlockEntity(currentPos) instanceof RawJsonHolographicSignBlockEntity sign){
-            PacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
+        if(this.type == SignType.RAW_JSON && level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity sign){
+            ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
         }
-        return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+        return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
         if(type == SignType.RAW_JSON){
-            tooltipComponents.add(Component.translatable(""));
+            builder.accept(Component.translatable(""));
         }
     }
     
@@ -195,55 +189,43 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     }
 
     private static final class ClientLogicHolder {
-        public static boolean tryOpenURL(String url){
-            try {
-                URI uri;
-                try {
-                    uri = Util.parseAndValidateUntrustedUri(url);
-                }catch (URISyntaxException e) {
-                    uri = Util.parseAndValidateUntrustedUri("https://" + url);
-                }
-                var mc = Minecraft.getInstance();
-                if (mc.options.chatLinksPrompt().get()) {
-                    URI finalUri = uri;
-                    mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
-                        if (p_351659_) {
-                            Util.getPlatform().openUri(finalUri);
-                        }
-                        mc.setScreen(null);
-                    }, url, false));
-                } else {
-                    Util.getPlatform().openUri(uri);
-                }
-                return true;
-            } catch (URISyntaxException e) {
-                return false;
+        public static boolean tryOpenURL(URI uri){
+            var mc = Minecraft.getInstance();
+            if (mc.options.chatLinksPrompt().get()) {
+                mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
+                    if (p_351659_) {
+                        Util.getPlatform().openUri(uri);
+                    }
+                    mc.setScreen(null);
+                }, uri.toString(), false));
+            } else {
+                Util.getPlatform().openUri(uri);
             }
+            return true;
         }
 
         public static boolean tryUseAdditional(Level level, BlockPos pos) {
             if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
-                return tryOpenURL(be.url);
+                return tryOpenURL(URI.create(be.url));
             }
             if(level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
                 for(var component : be.forRender){
                     var clickEvent = component.getStyle().getClickEvent();
                     if(clickEvent == null) return false;
-                    var action = clickEvent.getAction();
-                    if(action == ClickEvent.Action.OPEN_URL) return tryOpenURL(clickEvent.getValue());
-                    if(action == ClickEvent.Action.OPEN_FILE){
-                        Util.getPlatform().openFile(new File(clickEvent.getValue()));
+                    if(clickEvent instanceof ClickEvent.OpenUrl(URI uri)) return tryOpenURL(uri);
+                    if(clickEvent instanceof ClickEvent.OpenFile of){
+                        Util.getPlatform().openFile(of.file());
                         return true;
                     }
-                    if(action == ClickEvent.Action.COPY_TO_CLIPBOARD){
-                        Minecraft.getInstance().keyboardHandler.setClipboard(clickEvent.getValue());
+                    if(clickEvent instanceof ClickEvent.CopyToClipboard(String value)){
+                        Minecraft.getInstance().keyboardHandler.setClipboard(value);
                         return true;
                     }
                     //交给服务端
                     //if(action == ClickEvent.Action.RUN_COMMAND)
-                    if(action == ClickEvent.Action.SUGGEST_COMMAND){
-                        var screen = new ChatScreen("");
-                        screen.handleComponentClicked(component.getStyle());
+                    if(clickEvent instanceof ClickEvent.SuggestCommand(String command)){
+                        var screen = new ChatScreen("",true);
+                        screen.insertText(command,false);
                         Minecraft.getInstance().setScreen(screen);
                         return true;
                     }

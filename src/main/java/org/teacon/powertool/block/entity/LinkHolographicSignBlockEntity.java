@@ -5,9 +5,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.utils.VanillaUtils;
 
@@ -26,17 +29,17 @@ public class LinkHolographicSignBlockEntity extends BaseHolographicSignBlockEnti
     }
     
     @Override
-    public void writeTo(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putString("url", url);
-        tag.putString("content",Component.Serializer.toJson(displayContent,registries));
-        super.writeTo(tag, registries);
+    public void writeTo(ValueOutput output) {
+        super.writeTo(output);
+        output.putString("url", url);
+        output.store("content", ComponentSerialization.CODEC, displayContent);
     }
     
     @Override
-    public void readFrom(CompoundTag tag, HolderLookup.Provider registries) {
-        url = tag.getString("url");
-        displayContent = Component.Serializer.fromJson(tag.getString("content"),registries);
-        super.readFrom(tag, registries);
+    public void readFrom(ValueInput input) {
+        super.readFrom(input);
+        this.url = input.getStringOr("url","");
+        this.displayContent = input.read("content",ComponentSerialization.CODEC).orElse(Component.empty());
     }
     
     @Override

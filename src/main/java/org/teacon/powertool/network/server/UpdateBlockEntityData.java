@@ -1,5 +1,6 @@
 package org.teacon.powertool.network.server;
 
+import com.mojang.logging.LogUtils;
 import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -8,9 +9,13 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.slf4j.Logger;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.IClientUpdateBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -20,8 +25,9 @@ import java.util.Objects;
 @MethodsReturnNonnullByDefault
 public record UpdateBlockEntityData(CompoundTag data, BlockPos location) implements CustomPacketPayload {
     
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final Type<UpdateBlockEntityData> TYPE = new Type<>(VanillaUtils.modRL("update_holographic_sign"));
-    
+    private static final ProblemReporter.PathElement PATH = new ClientPathElement();
     public static final StreamCodec<ByteBuf, UpdateBlockEntityData> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.COMPOUND_TAG,
             UpdateBlockEntityData::data,
@@ -33,7 +39,12 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
     public static UpdateBlockEntityData create(BlockEntity entity) {
         var tag = new CompoundTag();
         if(entity instanceof IClientUpdateBlockEntity theTE) {
-            theTE.writeToPacket(tag, Objects.requireNonNull(entity.getLevel()).registryAccess());
+            var registries = entity.getLevel().registryAccess();
+            try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(PATH, LOGGER)) {
+                TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
+                theTE.writeFromClient(output);
+                tag = output.buildResult();
+            }
         }
         
         return new UpdateBlockEntityData(tag,entity.getBlockPos());
@@ -47,7 +58,11 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
             
             var te = level.getBlockEntity(this.location);
             if (te instanceof IClientUpdateBlockEntity theTE) {
-                theTE.update(this.data,level.registryAccess());
+                var registries = te.getLevel().registryAccess();
+                try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(PATH, LOGGER)) {
+                    var input = TagValueInput.create(reporter,registries,this.data);
+                    theTE.updateFromClient(input);
+                }
                 var state = level.getBlockState(this.location);
                 te.setChanged();
                 level.sendBlockUpdated(this.location, state, state, Block.UPDATE_CLIENTS);
@@ -64,5 +79,12 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
         return TYPE;
     }
     
+    public static class ClientPathElement implements ProblemReporter.PathElement {
+        
+        @Override
+        public String get() {
+            return "powertool:client_update";
+        }
+    }
 
 }

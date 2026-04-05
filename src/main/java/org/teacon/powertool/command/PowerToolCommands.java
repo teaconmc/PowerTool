@@ -5,7 +5,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.teacon.powertool.PowerTool;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = PowerTool.MODID)
+@EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolCommands {
 
     @SubscribeEvent

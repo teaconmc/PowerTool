@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -17,16 +18,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class TrashCanBlock extends Block {
 
     private static final VoxelShape OUTER_SHAPE = box(1,0,1,15,16,15);
@@ -39,8 +42,6 @@ public class TrashCanBlock extends Block {
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, Boolean.FALSE));
     }
     
-    
-
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWERED);
@@ -66,18 +67,18 @@ public class TrashCanBlock extends Block {
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
     
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!player.getAbilities().instabuild) {
             player.getItemInHand(hand).shrink(1);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
-
+    
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         //noinspection deprecation
         if (entity.getType().builtInRegistryHolder().is(EntityType.ITEM.builtInRegistryHolder().key())) {
             entity.discard();
@@ -89,9 +90,9 @@ public class TrashCanBlock extends Block {
     public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
         return direction == Direction.DOWN && state.getValue(POWERED) ? 1 : 0;
     }
-
+    
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         if (!level.isClientSide) {
             boolean nowPowered = state.getValue(POWERED);
             if (nowPowered != level.hasNeighborSignal(pos)) {
@@ -99,4 +100,5 @@ public class TrashCanBlock extends Block {
             }
         }
     }
+    
 }

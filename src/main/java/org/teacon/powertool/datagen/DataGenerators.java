@@ -11,9 +11,9 @@ import org.teacon.powertool.PowerTool;
 
 @EventBusSubscriber(modid = DataGenerators.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGenerators {
-
+    
     public static final String MOD_ID = PowerTool.MODID;
-
+    
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
@@ -21,9 +21,9 @@ public class DataGenerators {
         ExistingFileHelper fh = event.getExistingFileHelper();
         var lookupProvider = event.getLookupProvider();
         generator.addProvider(event.includeClient(), new ModBlockModelProvider(output, fh));
-        var blockTagsProvider = generator.addProvider(event.includeClient(), new PowerToolBlockTagsProvider(output,lookupProvider,fh));
-        generator.addProvider(event.includeClient(), new PowerToolItemTagsProvider(output,lookupProvider,blockTagsProvider.contentsGetter(),fh));
-        generator.addProvider(event.includeClient(), new SpriteProvider(output,lookupProvider,fh));
+        var blockTagsProvider = generator.addProvider(event.includeClient(), new PowerToolBlockTagsProvider(output, lookupProvider, fh));
+        generator.addProvider(event.includeClient(), new PowerToolItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter(), fh));
+        generator.addProvider(event.includeClient(), new SpriteProvider(output, lookupProvider, fh));
     }
-
+    
 }

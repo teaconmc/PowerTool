@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -24,13 +25,15 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.teacon.powertool.block.ICosmeticBlock;
+import org.teacon.powertool.block.WithTooltip;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterloggedBlock, ICosmeticBlock {
+public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterloggedBlock, ICosmeticBlock, WithTooltip {
     
     public static final MapCodec<CosmeticTrapdoor> CODEC = simpleCodec(CosmeticTrapdoor::new);
 
@@ -81,8 +84,8 @@ public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterlog
     }
     
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("block.powertool.cosmetic_trapdoor.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("block.powertool.cosmetic_trapdoor.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override

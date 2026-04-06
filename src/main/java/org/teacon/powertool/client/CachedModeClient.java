@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +15,7 @@ public class CachedModeClient {
     private final Map<ChunkPos, List<BlockPos>> cachedModeData = new HashMap<>();
     
     public boolean isCachedModeEnabledOn(BlockEntity be) {
-        BlockEntityRenderer<?> renderer = Minecraft.getInstance()
+        BlockEntityRenderer<?,?> renderer = Minecraft.getInstance()
                 .getBlockEntityRenderDispatcher()
                 .getRenderer(be);
         if (renderer == null) return false;
@@ -24,13 +23,14 @@ public class CachedModeClient {
     }
     
     public boolean isCachedModeEnabledOn(BlockPos pos) {
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
         if (!cachedModeData.containsKey(chunkPos)) return false;
         return cachedModeData.get(chunkPos).contains(pos);
     }
     
     public void updateCachedModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
         cachedModeData.put(chunkPos, blockPosList);
-        CacheableBERenderingPipeline.getInstance().updateFromNetwork(chunkPos, blockPosList);
+        //todo
+//        CacheableBERenderingPipeline.getInstance().updateFromNetwork(chunkPos, blockPosList);
     }
 }

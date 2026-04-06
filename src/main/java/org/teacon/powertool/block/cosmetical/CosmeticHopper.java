@@ -1,7 +1,7 @@
 package org.teacon.powertool.block.cosmetical;
 
-import net.minecraft.ChatFormatting;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -52,12 +52,12 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
     private static final VoxelShape NORTH_INTERACTION_SHAPE = Shapes.or(HOPPER_INSIDE, Block.box(6.0D, 8.0D, 0.0D, 10.0D, 10.0D, 4.0D));
     private static final VoxelShape SOUTH_INTERACTION_SHAPE = Shapes.or(HOPPER_INSIDE, Block.box(6.0D, 8.0D, 12.0D, 10.0D, 10.0D, 16.0D));
     private static final VoxelShape WEST_INTERACTION_SHAPE = Shapes.or(HOPPER_INSIDE, Block.box(0.0D, 8.0D, 6.0D, 4.0D, 10.0D, 10.0D));
-
+    
     public CosmeticHopper(BlockBehaviour.Properties prop) {
         super(prop);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.DOWN));
     }
-
+    
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
@@ -80,7 +80,7 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
             default -> BASE;
         };
     }
-
+    
     @Override
     @SuppressWarnings("DuplicatedCode") //The "duplicated code" in switch cannot actually extract methods.
     public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
@@ -93,7 +93,7 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
             default -> HOPPER_INSIDE;
         };
     }
-
+    
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction dir = context.getClickedFace().getOpposite();
@@ -104,7 +104,7 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
     public BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
-
+    
     @Override
     @SuppressWarnings("deprecation")
     public BlockState mirror(BlockState state, Mirror mirror) {

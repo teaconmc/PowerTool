@@ -18,19 +18,20 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class SlimItemSupplierBlock extends ItemSupplierBlock {
-
+    
     protected static final VoxelShape DOWN_AABB = Block.box(0, 12, 0, 16, 16, 16);
     protected static final VoxelShape UP_AABB = Block.box(0, 0, 0, 16, 4, 16);
     protected static final VoxelShape SOUTH_AABB = Block.box(0, 0, 0, 16, 16, 4);
     protected static final VoxelShape WEST_AABB = Block.box(12, 0, 0, 16, 16, 16);
     protected static final VoxelShape NORTH_AABB = Block.box(0, 0, 12, 16, 16, 16);
     protected static final VoxelShape EAST_AABB = Block.box(0, 0, 0, 4, 16, 16);
-
+    
     private static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+    
     public SlimItemSupplierBlock(Properties prop) {
         super(prop);
     }
-
+    
     @Override
     @SuppressWarnings("DuplicatedCode") //The "duplicated code" in switch cannot actually extract methods.
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -43,16 +44,16 @@ public class SlimItemSupplierBlock extends ItemSupplierBlock {
             case DOWN -> DOWN_AABB;
         };
     }
-
+    
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
-
+    
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getClickedFace();
         return this.defaultBlockState().setValue(FACING, direction);
     }
-
+    
 }

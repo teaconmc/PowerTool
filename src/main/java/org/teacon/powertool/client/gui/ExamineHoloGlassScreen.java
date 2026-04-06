@@ -37,38 +37,38 @@ public class ExamineHoloGlassScreen extends Screen {
     protected Checkbox bezierCurveBlockCheckBox;
     protected BlockEntityList blockEntityList;
     
-    public ExamineHoloGlassScreen(EquipmentSlot slot,@Nullable ExamineHoloGlass.BlockTagsComponent tagsData,@Nullable ExamineHoloGlass.BlockComponents blocksData) {
+    public ExamineHoloGlassScreen(EquipmentSlot slot, @Nullable ExamineHoloGlass.BlockTagsComponent tagsData, @Nullable ExamineHoloGlass.BlockComponents blocksData) {
         super(Component.translatable("powertool.examine_holo_glass.screen"));
         this.slot = slot;
         this.tagsData = new HashSet<>();
         this.blocksData = new HashSet<>();
-        if(tagsData != null) this.tagsData.addAll(tagsData.tags());
-        if(blocksData != null) this.blocksData.addAll(blocksData.blocks());
+        if (tagsData != null) this.tagsData.addAll(tagsData.tags());
+        if (blocksData != null) this.blocksData.addAll(blocksData.blocks());
     }
     
     @Override
     protected void init() {
         var font = Minecraft.getInstance().font;
-        var wc = this.width/2;
-        commandBlockTagCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.command_block"),font)
-                .pos(wc-160,40)
+        var wc = this.width / 2;
+        commandBlockTagCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.command_block"), font)
+                .pos(wc - 160, 40)
                 .maxWidth(150)
                 .selected(tagsData.contains(PowerToolBlockTagsProvider.COMMAND_BLOCK_TAG))
                 .onValueChange(withTag(PowerToolBlockTagsProvider.COMMAND_BLOCK_TAG))
                 .build();
-        repeatingCommandBlockTagCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.repeating_command_block"),font)
-                .pos(wc-160,65)
+        repeatingCommandBlockTagCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.repeating_command_block"), font)
+                .pos(wc - 160, 65)
                 .maxWidth(150)
                 .selected(tagsData.contains(PowerToolBlockTagsProvider.REPEATING_COMMAND_BLOCK_TAG))
                 .onValueChange(withTag(PowerToolBlockTagsProvider.REPEATING_COMMAND_BLOCK_TAG))
                 .build();
-        bezierCurveBlockCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.bezier_curve_block"),font)
-                .pos(wc-160,90)
+        bezierCurveBlockCheckBox = Checkbox.builder(Component.translatable("powertool.examine_holo_glass.screen.tag.bezier_curve_block"), font)
+                .pos(wc - 160, 90)
                 .maxWidth(150)
                 .selected(blocksData.contains(PowerToolBlocks.BEZIER_CURVE_BLOCK.getId()))
                 .onValueChange(withBlock(PowerToolBlocks.BEZIER_CURVE_BLOCK.getId()))
                 .build();
-        blockEntityList = new BlockEntityList(this, (int) (width*0.4), (int) (height*0.8), (int) (height*0.1),25);
+        blockEntityList = new BlockEntityList(this, (int) (width * 0.4), (int) (height * 0.8), (int) (height * 0.1), 25);
         this.addRenderableWidget(commandBlockTagCheckBox);
         this.addRenderableWidget(repeatingCommandBlockTagCheckBox);
         this.addRenderableWidget(bezierCurveBlockCheckBox);
@@ -76,16 +76,16 @@ public class ExamineHoloGlassScreen extends Screen {
     }
     
     protected Checkbox.OnValueChange withTag(TagKey<Block> tag) {
-        return (self,value) -> {
-            if(value) tagsData.add(tag);
+        return (self, value) -> {
+            if (value) tagsData.add(tag);
             else tagsData.remove(tag);
             //if(blockEntityList != null) blockEntityList.update();
         };
     }
     
     protected Checkbox.OnValueChange withBlock(Identifier blockID) {
-        return (self,value) -> {
-            if(value) blocksData.add(blockID);
+        return (self, value) -> {
+            if (value) blocksData.add(blockID);
             else blocksData.remove(blockID);
             //if(blockEntityList != null) blockEntityList.update();
         };
@@ -93,14 +93,14 @@ public class ExamineHoloGlassScreen extends Screen {
     
     @Override
     public void removed() {
-        if(blockEntityList != null) {
+        if (blockEntityList != null) {
             blocksData.addAll(blockEntityList.getResult());
         }
         var patch = DataComponentPatch.builder()
-                .set(PowerToolDataComponents.BLOCK_TAGS_DATA.get(),new ExamineHoloGlass.BlockTagsComponent(new ArrayList<>(tagsData)))
-                .set(PowerToolDataComponents.BLOCKS_DATA.get(),new ExamineHoloGlass.BlockComponents(new ArrayList<>(blocksData)))
+                .set(PowerToolDataComponents.BLOCK_TAGS_DATA.get(), new ExamineHoloGlass.BlockTagsComponent(new ArrayList<>(tagsData)))
+                .set(PowerToolDataComponents.BLOCKS_DATA.get(), new ExamineHoloGlass.BlockComponents(new ArrayList<>(blocksData)))
                 .build();
-        PacketDistributor.sendToServer(new UpdateItemStackData(slot,patch));
+        PacketDistributor.sendToServer(new UpdateItemStackData(slot, patch));
     }
     
     @Override
@@ -109,7 +109,7 @@ public class ExamineHoloGlassScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         Lighting.setupFor3DItems();
         var str = Component.translatable("powertool.gui.examine_holo_glass.warn");
-        guiGraphics.drawString(font,str, (int) (width*0.55), (int) (height*0.9+2),-1);
+        guiGraphics.drawString(font, str, (int) (width * 0.55), (int) (height * 0.9 + 2), -1);
     }
     
     @Override

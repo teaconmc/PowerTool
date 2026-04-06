@@ -11,8 +11,8 @@ import org.teacon.powertool.PowerToolConfig;
 public class MixinThrownEgg {
     
     @Redirect(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/RandomSource;nextInt(I)I"))
-    public int onHit(RandomSource instance, int i){
-        if(PowerToolConfig.noLittleChicken.get()) return 4;
+    public int onHit(RandomSource instance, int i) {
+        if (PowerToolConfig.noLittleChicken.get()) return 4;
         return instance.nextInt(i);
     }
 }

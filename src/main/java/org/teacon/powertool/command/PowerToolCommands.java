@@ -7,7 +7,7 @@ import org.teacon.powertool.PowerTool;
 
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolCommands {
-
+    
     @SubscribeEvent
     public static void regCommand(RegisterCommandsEvent event) {
         FlyCommand.reg(event.getDispatcher());

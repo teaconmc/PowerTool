@@ -16,9 +16,9 @@ import java.util.function.Consumer;
 public class MartingCarItem extends Item {
     public static final String TOOLTIP1 = "tooltip.powertool.marting";
     public static final String TOOLTIP2 = "tooltip.powertool.marting2";
-
+    
     private final MartingCarEntity.Variant variant;
-
+    
     public MartingCarItem(Properties properties, MartingCarEntity.Variant variant) {
         super(properties);
         this.variant = variant;
@@ -31,7 +31,7 @@ public class MartingCarItem extends Item {
         builder.accept(Component.translatable(TOOLTIP2));
         super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
     }
-
+    
     @Override
     public @NonNull InteractionResult useOn(@NonNull UseOnContext context) {
         var level = context.getLevel();
@@ -40,7 +40,7 @@ public class MartingCarItem extends Item {
             var entity = new MartingCarEntity(PowerToolEntities.MARTING.get(), level);
             entity.setVariant(variant);
             entity.setPos(pos.getCenter());
-            if(context.getPlayer() != null) entity.setYRot(context.getPlayer().getYRot());
+            if (context.getPlayer() != null) entity.setYRot(context.getPlayer().getYRot());
             context.getItemInHand().shrink(1);
             level.addFreshEntity(entity);
         }

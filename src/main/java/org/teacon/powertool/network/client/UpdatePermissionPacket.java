@@ -1,7 +1,7 @@
 package org.teacon.powertool.network.client;
 
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,13 +11,14 @@ import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
-public record UpdatePermissionPacket(boolean canUseGameMasterBlock, boolean canSwitchGameMode) implements CustomPacketPayload {
+public record UpdatePermissionPacket(boolean canUseGameMasterBlock,
+                                     boolean canSwitchGameMode) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<UpdatePermissionPacket> TYPE = new Type<>(VanillaUtils.modRL("update_permission"));
-
-    public static final StreamCodec<ByteBuf,UpdatePermissionPacket> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.BOOL,UpdatePermissionPacket::canUseGameMasterBlock,
-            ByteBufCodecs.BOOL,UpdatePermissionPacket::canSwitchGameMode,
+    
+    public static final StreamCodec<ByteBuf, UpdatePermissionPacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL, UpdatePermissionPacket::canUseGameMasterBlock,
+            ByteBufCodecs.BOOL, UpdatePermissionPacket::canSwitchGameMode,
             UpdatePermissionPacket::new
     );
     

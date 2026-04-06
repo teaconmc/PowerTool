@@ -1,7 +1,7 @@
 package org.teacon.powertool.block.cosmetical;
 
-import net.minecraft.ChatFormatting;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -23,15 +23,14 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CosmeticFurnace extends CosmeticHorizontalDirectionalBlock{
-
+public class CosmeticFurnace extends CosmeticHorizontalDirectionalBlock {
+    
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
-
+    
     public CosmeticFurnace(Properties p) {
         super(p);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
@@ -50,13 +49,13 @@ public class CosmeticFurnace extends CosmeticHorizontalDirectionalBlock{
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (stack.is(Items.FLINT_AND_STEEL) && player.isCreative() && !state.getValue(LIT)){
+        if (stack.is(Items.FLINT_AND_STEEL) && player.isCreative() && !state.getValue(LIT)) {
             level.setBlock(pos, state.setValue(LIT, true), Block.UPDATE_NONE);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
-
+    
     @Override
     public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
         return state.getValue(LIT) ? 14 : 0;

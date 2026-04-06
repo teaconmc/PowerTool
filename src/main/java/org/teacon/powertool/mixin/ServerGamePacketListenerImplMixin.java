@@ -14,9 +14,10 @@ import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 
 @Mixin(ServerGamePacketListenerImpl.class)
 public class ServerGamePacketListenerImplMixin {
-
-    @Shadow public ServerPlayer player;
-
+    
+    @Shadow
+    public ServerPlayer player;
+    
     @Redirect(method = "handleSetCommandBlock", at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/block/Blocks;REPEATING_COMMAND_BLOCK:Lnet/minecraft/world/level/block/Block;"))
     private Block usePowerToolBlock(ServerboundSetCommandBlockPacket packet) {
         var blockEntity = this.player.level().getBlockEntity(packet.getPos());

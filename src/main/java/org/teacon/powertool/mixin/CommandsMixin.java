@@ -10,7 +10,7 @@ import org.teacon.powertool.network.attachment.Permission;
 
 @Mixin(Commands.class)
 public class CommandsMixin {
-
+    
     @Inject(method = "sendCommands", at = @At("RETURN"))
     private void sendPermission(ServerPlayer player, CallbackInfo ci) {
         Permission.updatePermission(player);

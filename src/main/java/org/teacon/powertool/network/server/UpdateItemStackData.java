@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @MethodsReturnNonnullByDefault
-public record UpdateItemStackData(EquipmentSlot slot, DataComponentPatch componentPatch) implements CustomPacketPayload {
+public record UpdateItemStackData(EquipmentSlot slot,
+                                  DataComponentPatch componentPatch) implements CustomPacketPayload {
     
     public static final Type<UpdateItemStackData> TYPE = new Type<>(VanillaUtils.modRL("update_item_stack_data"));
     
@@ -28,14 +29,14 @@ public record UpdateItemStackData(EquipmentSlot slot, DataComponentPatch compone
     );
     
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void handle(IPayloadContext context){
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             var player = context.player();
             var itemOnPlayer = player.getItemBySlot(slot);
-            for(Map.Entry<DataComponentType<?>, Optional<?>> data: componentPatch.entrySet()){
-                if(data.getValue().isEmpty()) continue;
+            for (Map.Entry<DataComponentType<?>, Optional<?>> data : componentPatch.entrySet()) {
+                if (data.getValue().isEmpty()) continue;
                 Object value = data.getValue().get();
-                itemOnPlayer.set((DataComponentType) data.getKey(),value);
+                itemOnPlayer.set((DataComponentType) data.getKey(), value);
             }
         });
     }

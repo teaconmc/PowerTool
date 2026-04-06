@@ -10,18 +10,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class ButtonWithHighlight extends Button {
-
+    
     private final Identifier texture;
     private final int texWidth, texHeight;
     private final int normalU, normalV;
     private final int highlightU, highlightV;
     private final int pressedU, pressedV;
-
+    
     private boolean isBeingPressed;
     private int pressElapsedTime;
-
+    
     private final OnPress onReleaseMoment;
-
+    
     public ButtonWithHighlight(Builder builder, OnPress onRelease,
                                Identifier texture, int texWidth, int texHeight,
                                int normalU, int normalV, int highlightU, int highlightV, int pressedU, int pressedV) {
@@ -37,19 +37,19 @@ public class ButtonWithHighlight extends Button {
         this.pressedV = pressedV;
         this.onReleaseMoment = onRelease;
     }
-
+    
     public void tick() {
         if (this.isBeingPressed && this.pressElapsedTime++ > 50) {
             this.onPress.onPress(this);
         }
     }
-
+    
     @Override
     public void onPress() {
         super.onPress();
         this.isBeingPressed = true;
     }
-
+    
     @Override
     public void onRelease(double pMouseX, double pMouseY) {
         super.onRelease(pMouseX, pMouseY);
@@ -59,7 +59,7 @@ public class ButtonWithHighlight extends Button {
             this.onReleaseMoment.onPress(this);
         }
     }
-
+    
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);

@@ -41,17 +41,16 @@ public class RealTimeObserverScreen extends Screen {
         this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
                 .pos(this.width / 2 - 100, this.height / 4 + 120)
                 .size(200, 20).build());
-        if(te.getBlockType() != TimeObserverBlock.Type.REAL_TIME){
-            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"),font).alignCenter());
-        }
-        else {
-            var box_l = (int)Math.max(150,width*0.3);
+        if (te.getBlockType() != TimeObserverBlock.Type.REAL_TIME) {
+            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"), font).alignCenter());
+        } else {
+            var box_l = (int) Math.max(150, width * 0.3);
             var timeSection = te.getTimeSection() instanceof TimestampTimeSection ? (TimestampTimeSection) te.getTimeSection() : null;
-            this.startTimeInput = new ObjectInputBox<>(font,width/2-box_l/2,height/2-60,box_l,20,Component.empty(),ObjectInputBox.TIMESTAMP_VALIDATOR,ObjectInputBox.LONG_RESPONDER);
+            this.startTimeInput = new ObjectInputBox<>(font, width / 2 - box_l / 2, height / 2 - 60, box_l, 20, Component.empty(), ObjectInputBox.TIMESTAMP_VALIDATOR, ObjectInputBox.LONG_RESPONDER);
             this.startTimeInput.setMaxLength(114);
-            this.endTimeInput = new ObjectInputBox<>(font,width/2-box_l/2,height/2-35,box_l,20,Component.empty(),ObjectInputBox.TIMESTAMP_VALIDATOR,ObjectInputBox.LONG_RESPONDER);
+            this.endTimeInput = new ObjectInputBox<>(font, width / 2 - box_l / 2, height / 2 - 35, box_l, 20, Component.empty(), ObjectInputBox.TIMESTAMP_VALIDATOR, ObjectInputBox.LONG_RESPONDER);
             this.endTimeInput.setMaxLength(114);
-            if(timeSection != null){
+            if (timeSection != null) {
                 this.startTimeInput.setValue(String.valueOf(timeSection.start()));
                 this.endTimeInput.setValue(String.valueOf(timeSection.end()));
             }
@@ -74,30 +73,32 @@ public class RealTimeObserverScreen extends Screen {
     
     @Override
     public void removed() {
-        if(startTimeInput == null || endTimeInput == null) return;
+        if (startTimeInput == null || endTimeInput == null) return;
         var start = startTimeInput.get();
         var end = endTimeInput.get();
-        if(start == null || end == null) return;
-        te.setTimeSection(new TimestampTimeSection(start,end));
+        if (start == null || end == null) return;
+        te.setTimeSection(new TimestampTimeSection(start, end));
         PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }
     
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        if(startTimeInput == null || endTimeInput == null) return;
+        if (startTimeInput == null || endTimeInput == null) return;
         var time = System.currentTimeMillis();
-        var textColor = VanillaUtils.getColor(255,255,255,255);
-        var text = Component.translatable("powertool.realtime_observer.gui.current_time",time);
-        guiGraphics.drawString(font,text,width/2 - font.width(text)/2,height/2-80, textColor);
-        var box_l = (int)Math.max(150,width*0.3);
+        var textColor = VanillaUtils.getColor(255, 255, 255, 255);
+        var text = Component.translatable("powertool.realtime_observer.gui.current_time", time);
+        guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, height / 2 - 80, textColor);
+        var box_l = (int) Math.max(150, width * 0.3);
         var startText = "Start Time:";
         var endText = "End Time:";
-        guiGraphics.drawString(font,startText,width/2-box_l/2-font.width(startText)-12,height/2-58, textColor);
-        guiGraphics.drawString(font,endText,width/2-box_l/2-font.width(endText)-12,height/2-33, textColor);
+        guiGraphics.drawString(font, startText, width / 2 - box_l / 2 - font.width(startText) - 12, height / 2 - 58, textColor);
+        guiGraphics.drawString(font, endText, width / 2 - box_l / 2 - font.width(endText) - 12, height / 2 - 33, textColor);
         var start = startTimeInput.get();
         var end = endTimeInput.get();
-        if(start != null) guiGraphics.drawString(font, "UTC+0 "+LocalDateTime.ofInstant(Instant.ofEpochMilli(start),ZoneOffset.UTC), width/2+box_l/2,height/2-50, textColor);
-        if(end != null) guiGraphics.drawString(font, "UTC+0 "+LocalDateTime.ofInstant(Instant.ofEpochMilli(end), ZoneOffset.UTC), width/2+box_l/2,height/2-25, textColor);
+        if (start != null)
+            guiGraphics.drawString(font, "UTC+0 " + LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneOffset.UTC), width / 2 + box_l / 2, height / 2 - 50, textColor);
+        if (end != null)
+            guiGraphics.drawString(font, "UTC+0 " + LocalDateTime.ofInstant(Instant.ofEpochMilli(end), ZoneOffset.UTC), width / 2 + box_l / 2, height / 2 - 25, textColor);
     }
 }

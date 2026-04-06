@@ -17,7 +17,7 @@ public class AutoVanishMinecart extends Minecart {
     }
     
     public AutoVanishMinecart(Level level, double x, double y, double z) {
-        super(PowerToolEntities.AUTO_VANISH_MINECART.get(),level);
+        super(PowerToolEntities.AUTO_VANISH_MINECART.get(), level);
         this.setPos(x, y, z);
         this.xo = x;
         this.yo = y;
@@ -25,21 +25,20 @@ public class AutoVanishMinecart extends Minecart {
     }
     
     public static AutoVanishMinecart fromMinecart(Minecart minecart) {
-        var result = new AutoVanishMinecart(minecart.level(),minecart.xo,minecart.yo,minecart.zo);
+        var result = new AutoVanishMinecart(minecart.level(), minecart.xo, minecart.yo, minecart.zo);
         result.setYRot(minecart.getYRot());
         return result;
     }
     
     @Override
     public void tick() {
-        if(!this.level().isClientSide()){
-            if(this.getPassengers().isEmpty()){
+        if (!this.level().isClientSide()) {
+            if (this.getPassengers().isEmpty()) {
                 idleTickCount++;
-            }
-            else {
+            } else {
                 idleTickCount = 0;
             }
-            if(idleTickCount > 401){
+            if (idleTickCount > 401) {
                 this.discard();
             }
         }

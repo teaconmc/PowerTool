@@ -4,15 +4,12 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
-import net.minecraft.world.entity.vehicle.boat.Boat;
-import net.minecraft.world.entity.vehicle.boat.Raft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.teacon.powertool.item.PowerToolItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
 @MethodsReturnNonnullByDefault
@@ -22,15 +19,15 @@ public class AutoVanishBoat extends AbstractBoat {
     protected int idleTickCount = 0;
     protected EntityType<? extends AbstractBoat> boatType;
     protected EntityType<? extends AbstractBoat> wrapped = EntityType.OAK_BOAT;
-    protected Function<EntityDimensions,Double> rideHeightFunc = e -> e.height()/3d;
+    protected Function<EntityDimensions, Double> rideHeightFunc = e -> e.height() / 3d;
     
     public AutoVanishBoat(EntityType<? extends AbstractBoat> entityType, Level level) {
-        super(entityType, level,() -> Items.AIR);
+        super(entityType, level, () -> Items.AIR);
         this.dropItem = this::getDropItem_;
     }
     
     public AutoVanishBoat(Level level, double x, double y, double z) {
-        super(PowerToolEntities.AUTO_VANISH_BOAT.get(),level,() -> Items.AIR);
+        super(PowerToolEntities.AUTO_VANISH_BOAT.get(), level, () -> Items.AIR);
         this.dropItem = this::getDropItem_;
         this.setPos(x, y, z);
         this.xo = x;
@@ -40,7 +37,8 @@ public class AutoVanishBoat extends AbstractBoat {
     
     public void setWrapped(EntityType<? extends AbstractBoat> boatType) {
         this.wrapped = boatType;
-        if(wrapped == EntityType.BAMBOO_RAFT || wrapped == EntityType.BAMBOO_CHEST_RAFT) this.rideHeightFunc = d -> d.height() * 0.8888889d;
+        if (wrapped == EntityType.BAMBOO_RAFT || wrapped == EntityType.BAMBOO_CHEST_RAFT)
+            this.rideHeightFunc = d -> d.height() * 0.8888889d;
     }
     
     @SuppressWarnings("unchecked")
@@ -58,14 +56,13 @@ public class AutoVanishBoat extends AbstractBoat {
     
     @Override
     public void tick() {
-        if(!this.level().isClientSide()){
-            if(this.getPassengers().isEmpty()){
+        if (!this.level().isClientSide()) {
+            if (this.getPassengers().isEmpty()) {
                 idleTickCount++;
-            }
-            else {
+            } else {
                 idleTickCount = 0;
             }
-            if(idleTickCount > 401){
+            if (idleTickCount > 401) {
                 this.discard();
             }
         }
@@ -74,14 +71,14 @@ public class AutoVanishBoat extends AbstractBoat {
     
     
     public Item getDropItem_() {
-        if(boatType.equals(EntityType.SPRUCE_BOAT)) return PowerToolItems.AV_SPRUCE_BOAT.get();
-        if(boatType.equals(EntityType.BIRCH_BOAT)) return PowerToolItems.AV_BIRCH_BOAT.get();
-        if(boatType.equals(EntityType.JUNGLE_BOAT)) return PowerToolItems.AV_JUNGLE_BOAT.get();
-        if(boatType.equals(EntityType.ACACIA_BOAT)) return PowerToolItems.AV_ACACIA_BOAT.get();
-        if(boatType.equals(EntityType.CHERRY_BOAT)) return PowerToolItems.AV_CHERRY_BOAT.get();
-        if(boatType.equals(EntityType.DARK_OAK_BOAT)) return PowerToolItems.AV_DARK_OAK_BOAT.get();
-        if(boatType.equals(EntityType.MANGROVE_BOAT)) return PowerToolItems.AV_MANGROVE_BOAT.get();
-        if(boatType.equals(EntityType.BAMBOO_RAFT))  return PowerToolItems.AV_BAMBOO_RAFT.get();
+        if (boatType.equals(EntityType.SPRUCE_BOAT)) return PowerToolItems.AV_SPRUCE_BOAT.get();
+        if (boatType.equals(EntityType.BIRCH_BOAT)) return PowerToolItems.AV_BIRCH_BOAT.get();
+        if (boatType.equals(EntityType.JUNGLE_BOAT)) return PowerToolItems.AV_JUNGLE_BOAT.get();
+        if (boatType.equals(EntityType.ACACIA_BOAT)) return PowerToolItems.AV_ACACIA_BOAT.get();
+        if (boatType.equals(EntityType.CHERRY_BOAT)) return PowerToolItems.AV_CHERRY_BOAT.get();
+        if (boatType.equals(EntityType.DARK_OAK_BOAT)) return PowerToolItems.AV_DARK_OAK_BOAT.get();
+        if (boatType.equals(EntityType.MANGROVE_BOAT)) return PowerToolItems.AV_MANGROVE_BOAT.get();
+        if (boatType.equals(EntityType.BAMBOO_RAFT)) return PowerToolItems.AV_BAMBOO_RAFT.get();
         return PowerToolItems.AV_OAK_BOAT.get();
     }
 }

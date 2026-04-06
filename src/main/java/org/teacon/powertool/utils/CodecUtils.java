@@ -11,7 +11,7 @@ import java.util.function.Function;
 @ParametersAreNonnullByDefault
 public class CodecUtils {
     
-    public static <B, C, T1, T2, T3, T4, T5, T6,T7,T8,T9,T10> StreamCodec<B, C> composite10(
+    public static <B, C, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> StreamCodec<B, C> composite10(
             final StreamCodec<? super B, T1> codec1,
             final Function<C, T1> getter1,
             final StreamCodec<? super B, T2> codec2,

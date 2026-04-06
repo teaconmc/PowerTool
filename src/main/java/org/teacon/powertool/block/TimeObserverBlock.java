@@ -3,11 +3,8 @@ package org.teacon.powertool.block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -35,7 +32,6 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
@@ -45,8 +41,6 @@ import org.teacon.powertool.utils.time.DailyCycleTimeSection;
 import org.teacon.powertool.utils.time.ITimeSection;
 import org.teacon.powertool.utils.time.InWorldDailyCycleTimeSection;
 import org.teacon.powertool.utils.time.TimestampTimeSection;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @NonNullByDefault
 public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff {
@@ -82,8 +76,8 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer,new OpenBlockScreen(pos,type.getGuiID()));
+        if (!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenBlockScreen(pos, type.getGuiID()));
         }
         return InteractionResult.SUCCESS;
     }
@@ -97,10 +91,10 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         var facing = context.getNearestLookingDirection();
-        var invalid = context.getLevel().getSignal(context.getClickedPos().relative(facing.getOpposite()),facing.getOpposite()) > 0;
+        var invalid = context.getLevel().getSignal(context.getClickedPos().relative(facing.getOpposite()), facing.getOpposite()) > 0;
         return this.defaultBlockState()
                 .setValue(FACING, facing)
-                .setValue(INVALIDATED,invalid);
+                .setValue(INVALIDATED, invalid);
     }
     
     @Nullable
@@ -134,11 +128,11 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         var facing = state.getValue(FACING);
-        var invalid = level.getSignal(pos.relative(facing),facing) > 0;
-        level.setBlock(pos, state.setValue(INVALIDATED,invalid).setValue(POWERED, !invalid && state.getValue(POWERED)), Block.UPDATE_ALL);
+        var invalid = level.getSignal(pos.relative(facing), facing) > 0;
+        level.setBlock(pos, state.setValue(INVALIDATED, invalid).setValue(POWERED, !invalid && state.getValue(POWERED)), Block.UPDATE_ALL);
         var te = level.getBlockEntity(pos);
-        if(te instanceof TimeObserverBlockEntity _te) _te.resetDelay();
-        updateNeighborsInFront(level,pos,state);
+        if (te instanceof TimeObserverBlockEntity _te) _te.resetDelay();
+        updateNeighborsInFront(level, pos, state);
     }
     
     public void updateNeighborsInFront(Level level, BlockPos pos, BlockState state) {
@@ -152,12 +146,12 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide() ? null : createTickerHelper(blockEntityType,PowerToolBlocks.TIME_OBSERVER_BLOCK_ENTITY.get(),TimeObserverBlockEntity::tick);
+        return level.isClientSide() ? null : createTickerHelper(blockEntityType, PowerToolBlocks.TIME_OBSERVER_BLOCK_ENTITY.get(), TimeObserverBlockEntity::tick);
     }
     
     public enum Type implements StringRepresentable {
-        REAL_TIME(OpenBlockScreen.REAL_TIME_OBSERVER){
-            private static final TimestampTimeSection BRIDGE = new TimestampTimeSection(0,0);
+        REAL_TIME(OpenBlockScreen.REAL_TIME_OBSERVER) {
+            private static final TimestampTimeSection BRIDGE = new TimestampTimeSection(0, 0);
             
             @Override
             public ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input) {
@@ -169,8 +163,8 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
                 return timeSection instanceof TimestampTimeSection;
             }
         },
-        REAL_DAILY_CYCLE(OpenBlockScreen.REAL_TIME_CYCLE_OBSERVER){
-            private static final DailyCycleTimeSection BRIDGE = new DailyCycleTimeSection(0,0,0);
+        REAL_DAILY_CYCLE(OpenBlockScreen.REAL_TIME_CYCLE_OBSERVER) {
+            private static final DailyCycleTimeSection BRIDGE = new DailyCycleTimeSection(0, 0, 0);
             
             @Override
             public ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input) {
@@ -182,10 +176,10 @@ public class TimeObserverBlock extends BaseEntityBlock implements IRedStoneStuff
                 return timeSection instanceof DailyCycleTimeSection;
             }
         },
-        GAME_DAILY_CYCLE(OpenBlockScreen.GAME_TIME_CYCLE_OBSERVER){
+        GAME_DAILY_CYCLE(OpenBlockScreen.GAME_TIME_CYCLE_OBSERVER) {
             @Override
             public ITimeSection readFromTE(TimeObserverBlockEntity te, ValueInput input) {
-                 return new InWorldDailyCycleTimeSection(te::getLevel,0,0).load(input);
+                return new InWorldDailyCycleTimeSection(te::getLevel, 0, 0).load(input);
             }
             
             @Override

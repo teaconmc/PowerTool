@@ -1,6 +1,5 @@
 package org.teacon.powertool.item;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.dispenser.MinecartDispenseItemBehavior;
@@ -19,14 +18,13 @@ import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.gameevent.GameEvent;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.entity.AutoVanishMinecart;
 import org.teacon.powertool.entity.PowerToolEntities;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class AutoVanishMinecartItem extends Item {
     
     public AutoVanishMinecartItem(Properties properties) {
@@ -41,11 +39,11 @@ public class AutoVanishMinecartItem extends Item {
             double x,
             double y,
             double z,
-
+            
             ItemStack stack,
             @Nullable Player player
     ) {
-        var abstractMinecart = new AutoVanishMinecart(level,x,y,z);
+        var abstractMinecart = new AutoVanishMinecart(level, x, y, z);
         EntityType.<AbstractMinecart>createDefaultStackConfig(level, stack, player).accept(abstractMinecart);
         return abstractMinecart;
     }
@@ -61,7 +59,7 @@ public class AutoVanishMinecartItem extends Item {
             ItemStack itemstack = context.getItemInHand();
             if (level instanceof ServerLevel serverlevel) {
                 RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock
-                        ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null)
+                        ? ((BaseRailBlock) blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null)
                         : RailShape.NORTH_SOUTH;
                 double d0 = 0.0;
                 if (railshape.isSlope()) {
@@ -70,9 +68,9 @@ public class AutoVanishMinecartItem extends Item {
                 
                 AbstractMinecart abstractminecart = createMinecart(
                         serverlevel,
-                        (double)blockpos.getX() + 0.5,
-                        (double)blockpos.getY() + 0.0625 + d0,
-                        (double)blockpos.getZ() + 0.5,
+                        (double) blockpos.getX() + 0.5,
+                        (double) blockpos.getY() + 0.0625 + d0,
+                        (double) blockpos.getZ() + 0.5,
                         itemstack,
                         context.getPlayer()
                 );

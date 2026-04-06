@@ -4,8 +4,6 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -35,30 +33,29 @@ public class TimeObserverBlockEntity extends BlockEntity implements IClientUpdat
     }
     
     public void setType(TimeObserverBlock.Type type) {
-        if(this.type == null) this.type = type;
+        if (this.type == null) this.type = type;
     }
     
-    public TimeObserverBlock.Type getBlockType(){
+    public TimeObserverBlock.Type getBlockType() {
         return this.type;
     }
     
     protected void writeTo(ValueOutput output) {
         if (type != null) {
             output.putInt("type", type.ordinal());
-            if(this.timeSection != null) timeSection.save(output);
+            if (this.timeSection != null) timeSection.save(output);
         }
     }
     
     protected void readFrom(ValueInput input) {
         var index = input.getInt("type");
-        if(index.isPresent()){
+        if (index.isPresent()) {
             var i = index.get();
-            if(i >= 0 && i < TimeObserverBlock.Type.values().length) {
+            if (i >= 0 && i < TimeObserverBlock.Type.values().length) {
                 type = TimeObserverBlock.Type.values()[i];
-                timeSection = type.readFromTE(this,input);
+                timeSection = type.readFromTE(this, input);
             }
-        }
-        else {
+        } else {
             this.type = null;
         }
         this.resetDelay();
@@ -99,23 +96,23 @@ public class TimeObserverBlockEntity extends BlockEntity implements IClientUpdat
     
     
     public static void tick(Level level, BlockPos pos, BlockState state, TimeObserverBlockEntity te) {
-        if(te.type == null || te.timeSection == null) return;
-        if(te.delay > 0){
-            te.delay-=1;
+        if (te.type == null || te.timeSection == null) return;
+        if (te.delay > 0) {
+            te.delay -= 1;
             return;
         }
         var old = state.getValue(TimeObserverBlock.POWERED);
-        if(state.getValue(TimeObserverBlock.INVALIDATED)) state.setValue(TimeObserverBlock.POWERED, false);
-        else state = state.setValue(TimeObserverBlock.POWERED,te.timeSection.currentInTimeSection());
+        if (state.getValue(TimeObserverBlock.INVALIDATED)) state.setValue(TimeObserverBlock.POWERED, false);
+        else state = state.setValue(TimeObserverBlock.POWERED, te.timeSection.currentInTimeSection());
         te.delay = te.timeSection.nextCheckDelay();
-        if(state.getValue(TimeObserverBlock.POWERED) != old && state.getBlock() instanceof TimeObserverBlock block) {
-            level.setBlock(pos,state, Block.UPDATE_ALL);
-            block.updateNeighborsInFront(level,pos,state);
+        if (state.getValue(TimeObserverBlock.POWERED) != old && state.getBlock() instanceof TimeObserverBlock block) {
+            level.setBlock(pos, state, Block.UPDATE_ALL);
+            block.updateNeighborsInFront(level, pos, state);
         }
         
     }
     
-    public void resetDelay(){
+    public void resetDelay() {
         this.delay = 0;
     }
     
@@ -124,7 +121,7 @@ public class TimeObserverBlockEntity extends BlockEntity implements IClientUpdat
         return timeSection;
     }
     
-    public void setTimeSection(ITimeSection section){
-        if(type != null && type.checkType(section)) this.timeSection = section;
+    public void setTimeSection(ITimeSection section) {
+        if (type != null && type.checkType(section)) this.timeSection = section;
     }
 }

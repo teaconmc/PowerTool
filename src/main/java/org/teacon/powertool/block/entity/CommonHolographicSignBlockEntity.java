@@ -2,11 +2,6 @@ package org.teacon.powertool.block.entity;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,13 +12,12 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.block.PowerToolBlocks;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEntity{
+public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEntity {
     
     public List<? extends Component> contents = Collections.emptyList();
     public List<String> renderedContents = Collections.emptyList();
@@ -35,8 +29,8 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
     @Override
     public void readFrom(ValueInput input) {
         super.readFrom(input);
-        this.contents = input.listOrEmpty("content",ComponentSerialization.CODEC).stream().toList();
-        if(getLevel() != null && getLevel().isClientSide()) {
+        this.contents = input.listOrEmpty("content", ComponentSerialization.CODEC).stream().toList();
+        if (getLevel() != null && getLevel().isClientSide()) {
             renderedContents = contents.stream().map(Component::getString).toList();
         }
     }
@@ -45,7 +39,7 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
     public void writeTo(ValueOutput output) {
         super.writeTo(output);
         var list = output.list("content", ComponentSerialization.CODEC);
-        for(var c : contents){
+        for (var c : contents) {
             list.add(c);
         }
     }

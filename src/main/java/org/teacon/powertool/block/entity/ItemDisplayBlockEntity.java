@@ -4,7 +4,6 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -21,10 +20,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class ItemDisplayBlockEntity extends BlockEntity {
-
+    
     public ItemStack itemToDisplay = ItemStack.EMPTY;
     public int rotation = 0;
-
+    
     public ItemDisplayBlockEntity(BlockPos pos, BlockState state) {
         super(PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(), pos, state);
     }
@@ -32,14 +31,14 @@ public class ItemDisplayBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        this.itemToDisplay = input.read("item",ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.itemToDisplay = input.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         this.rotation = input.getIntOr("rotation", 0);
     }
     
     @Override
     protected void saveAdditional(ValueOutput output) {
-        output.store("item",ItemStack.CODEC,this.itemToDisplay);
-        output.putInt("rotation",this.rotation);
+        output.store("item", ItemStack.CODEC, this.itemToDisplay);
+        output.putInt("rotation", this.rotation);
         super.saveAdditional(output);
     }
     
@@ -47,12 +46,12 @@ public class ItemDisplayBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
     }
-
+    
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-
+    
 }

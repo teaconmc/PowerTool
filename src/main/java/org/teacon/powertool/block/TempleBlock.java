@@ -1,7 +1,6 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -39,8 +38,6 @@ import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.TempleBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 @NonNullByDefault
 public class TempleBlock extends BaseEntityBlock {
     
@@ -50,9 +47,9 @@ public class TempleBlock extends BaseEntityBlock {
     
     public static final VoxelShape[] SHAPE = new VoxelShape[]{
             Block.box(2.5D, 0.0D, 6.5D, 13.5D, 20.0D, 13.5D), //NORTH
-            Block.box(6.5D,0.0D,2.5D,13.5D,20.0D,13.5D), //EAST
+            Block.box(6.5D, 0.0D, 2.5D, 13.5D, 20.0D, 13.5D), //EAST
             Block.box(2.5D, 0.0D, 2.5D, 13.5D, 20.0D, 9.5D), //SOUTH
-            Block.box(2.5D,0.0D,2.5D,9.5D,20.0D,13.5D), //WEST
+            Block.box(2.5D, 0.0D, 2.5D, 9.5D, 20.0D, 13.5D), //WEST
     };
     
     public TempleBlock(Properties properties) {
@@ -70,24 +67,25 @@ public class TempleBlock extends BaseEntityBlock {
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(level.isClientSide()) {
+        if (level.isClientSide()) {
             return InteractionResult.CONSUME;
         }
-        if(stack.isEmpty()){
-            if(player instanceof ServerPlayer sp) {
-                if(player.isCrouching() && player.getAbilities().instabuild) setTheItem(ItemStack.EMPTY,level,pos,state);
-                else sp.setRespawnPosition(new ServerPlayer.RespawnConfig(new LevelData.RespawnData(new GlobalPos(level.dimension(),pos.relative(state.getValue(HORIZONTAL_FACING))),player.getYRot(),0),true),true);
+        if (stack.isEmpty()) {
+            if (player instanceof ServerPlayer sp) {
+                if (player.isCrouching() && player.getAbilities().instabuild)
+                    setTheItem(ItemStack.EMPTY, level, pos, state);
+                else
+                    sp.setRespawnPosition(new ServerPlayer.RespawnConfig(new LevelData.RespawnData(new GlobalPos(level.dimension(), pos.relative(state.getValue(HORIZONTAL_FACING))), player.getYRot(), 0), true), true);
             }
-        }
-        else if(player.getAbilities().instabuild){
-            setTheItem(stack,level,pos,state);
+        } else if (player.getAbilities().instabuild) {
+            setTheItem(stack, level, pos, state);
         }
         return InteractionResult.SUCCESS;
     }
     
-    protected void setTheItem(ItemStack stack, Level level, BlockPos pos, BlockState state){
+    protected void setTheItem(ItemStack stack, Level level, BlockPos pos, BlockState state) {
         var te = level.getBlockEntity(pos);
-        if(te instanceof TempleBlockEntity tb){
+        if (te instanceof TempleBlockEntity tb) {
             tb.theItem = stack.copy();
             tb.setChanged();
             level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
@@ -101,7 +99,7 @@ public class TempleBlock extends BaseEntityBlock {
     
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING,WATERLOGGED);
+        builder.add(HORIZONTAL_FACING, WATERLOGGED);
     }
     
     @Override
@@ -146,17 +144,19 @@ public class TempleBlock extends BaseEntityBlock {
     
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if(level.getBlockEntity(pos) instanceof TempleBlockEntity te){
-            if(te.theItem.isEmpty()) return;
+        if (level.getBlockEntity(pos) instanceof TempleBlockEntity te) {
+            if (te.theItem.isEmpty()) return;
             var facing = state.getValue(HORIZONTAL_FACING);
-            var r = (facing.get2DDataValue()+2)%4;
-            var p1 = VanillaUtils.rotate90FromBlockCenterYP(new Vec2(7.5f,-0.5f),r);
-            var p2 = VanillaUtils.rotate90FromBlockCenterYP(new Vec2(8.5f,0.5f),r);
+            var r = (facing.get2DDataValue() + 2) % 4;
+            var p1 = VanillaUtils.rotate90FromBlockCenterYP(new Vec2(7.5f, -0.5f), r);
+            var p2 = VanillaUtils.rotate90FromBlockCenterYP(new Vec2(8.5f, 0.5f), r);
             var px = pos.getX();
             var py = pos.getY();
             var pz = pos.getZ();
-            if(random.nextBoolean()) addParticlesAndSound(level,new Vec3(px+p1.x/16, py+ 0.5625f,pz+p1.y/16),random);
-            if(random.nextBoolean()) addParticlesAndSound(level,new Vec3(px+p2.x/16, py+ 0.6875f,pz+p2.y/16),random);
+            if (random.nextBoolean())
+                addParticlesAndSound(level, new Vec3(px + p1.x / 16, py + 0.5625f, pz + p1.y / 16), random);
+            if (random.nextBoolean())
+                addParticlesAndSound(level, new Vec3(px + p2.x / 16, py + 0.6875f, pz + p2.y / 16), random);
         }
     }
     

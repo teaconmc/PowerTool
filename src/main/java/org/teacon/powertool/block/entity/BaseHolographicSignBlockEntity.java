@@ -31,25 +31,27 @@ import org.teacon.powertool.block.holo_sign.HoloSignBEFlag;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 
 @NonNullByDefault
-public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloSignBEFlag,IClientUpdateBlockEntity {
+public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloSignBEFlag, IClientUpdateBlockEntity {
     
-    /** Controls how text are aligned: left-align, centered, or right-align. */
-    public enum Align  implements StringRepresentable {
+    /**
+     * Controls how text are aligned: left-align, centered, or right-align.
+     */
+    public enum Align implements StringRepresentable {
         LEFT(Component.translatable("powertool.gui.holographic_sign.align_left")),
         CENTER(Component.translatable("powertool.gui.holographic_sign.align_center")),
         RIGHT(Component.translatable("powertool.gui.holographic_sign.align_right"));
         
         
         public static final Codec<Align> CODEC = StringRepresentable.fromEnum(Align::values);
-        public static final StreamCodec<ByteBuf,Align> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        public static final StreamCodec<ByteBuf, Align> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
         
         private static final Align[] VALUES = Align.values();
         public final Component displayName;
-
+        
         Align(Component displayName) {
             this.displayName = displayName;
         }
-
+        
         public static Align byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : CENTER;
         }
@@ -61,23 +63,25 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         }
         
     }
-
-    /** Represents the text shadow. */
-    public enum Shadow implements StringRepresentable  {
+    
+    /**
+     * Represents the text shadow.
+     */
+    public enum Shadow implements StringRepresentable {
         NONE(Component.translatable("powertool.gui.holographic_sign.shadow_none")),
         DROP(Component.translatable("powertool.gui.holographic_sign.shadow_drop")),
         PLATE(Component.translatable("powertool.gui.holographic_sign.shadow_plate"));
         
         public static final Codec<Shadow> CODEC = StringRepresentable.fromEnum(Shadow::values);
-        public static final StreamCodec<ByteBuf,Shadow> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+        public static final StreamCodec<ByteBuf, Shadow> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
         
         private static final Shadow[] VALUES = Shadow.values();
         public final Component displayName;
-
+        
         Shadow(Component displayName) {
             this.displayName = displayName;
         }
-
+        
         public static Shadow byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : PLATE;
         }
@@ -85,15 +89,18 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         @Override
         @NonNull
         public String getSerializedName() {
-    return name();
-}}
-
-    /** Represents the Z-offset of the text: above things, same layer or below things. */
-    public enum LayerArrange implements StringRepresentable  {
-        FRONT(Component.translatable("powertool.gui.holographic_sign.arrange_front"),-0.45f),
-        CENTER(Component.translatable("powertool.gui.holographic_sign.arrange_center"),0f),
-        BACK(Component.translatable("powertool.gui.holographic_sign.arrange_back"),0.45f),
-        CUSTOM(Component.translatable("powertool.gui.holographic_sign.arrange_custom"),Float.NaN);
+            return name();
+        }
+    }
+    
+    /**
+     * Represents the Z-offset of the text: above things, same layer or below things.
+     */
+    public enum LayerArrange implements StringRepresentable {
+        FRONT(Component.translatable("powertool.gui.holographic_sign.arrange_front"), -0.45f),
+        CENTER(Component.translatable("powertool.gui.holographic_sign.arrange_center"), 0f),
+        BACK(Component.translatable("powertool.gui.holographic_sign.arrange_back"), 0.45f),
+        CUSTOM(Component.translatable("powertool.gui.holographic_sign.arrange_custom"), Float.NaN);
         
         public static final Codec<LayerArrange> CODEC = StringRepresentable.fromEnum(LayerArrange::values);
         public static final StreamCodec<ByteBuf, LayerArrange> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
@@ -101,19 +108,19 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         private static final LayerArrange[] VALUES = LayerArrange.values();
         public final Component displayName;
         public final float offsetValue;
-
+        
         LayerArrange(Component displayName, float offsetValue) {
             this.displayName = displayName;
             this.offsetValue = offsetValue;
         }
-
+        
         public static LayerArrange byOrdinal(int ordinal) {
             return ordinal >= 0 && ordinal <= VALUES.length ? VALUES[ordinal] : CENTER;
         }
         
         public static LayerArrange formOffset(float offset) {
-            for(var arr : LayerArrange.VALUES) {
-                if(arr.offsetValue == offset) {
+            for (var arr : LayerArrange.VALUES) {
+                if (arr.offsetValue == offset) {
                     return arr;
                 }
             }
@@ -123,8 +130,9 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         @Override
         @NonNull
         public String getSerializedName() {
-    return name();
-}}
+            return name();
+        }
+    }
     
     public int colorInARGB = 0xFFFFFFFF;
     //public int bgColorInARGB = VanillaUtils.getColor(255,255,255,0);
@@ -141,39 +149,39 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
     
     public boolean bidirectional = false;
     public boolean lit = true;
-
+    
     public BaseHolographicSignBlockEntity(BlockEntityType<?> type, BlockPos pPos, BlockState pBlockState) {
         super(type, pPos, pBlockState);
     }
-
+    
     public void writeTo(ValueOutput output) {
         output.putInt("color", this.colorInARGB);
         output.putFloat("scale", this.scale);
         output.putInt("align", this.align.ordinal());
-        output.putBoolean("lock",lock);
+        output.putBoolean("lock", lock);
         output.putInt("rotate", yRotate);
-        output.putBoolean("bidirectional",bidirectional);
-        output.putBoolean("renderBackground",renderBackground);
-        output.putBoolean("dropShadow",dropShadow);
+        output.putBoolean("bidirectional", bidirectional);
+        output.putBoolean("renderBackground", renderBackground);
+        output.putBoolean("dropShadow", dropShadow);
         output.putInt("xRotate", xRotate);
         output.putFloat("zOffset", zOffset);
         output.putBoolean("lit", lit);
     }
-
+    
     public void readFrom(ValueInput input) {
-        this.colorInARGB = input.getIntOr("color",-1);
-        this.scale = input.getFloatOr("scale",1.0F);
-        this.align = Align.byOrdinal(input.getIntOr("align",0));
-        this.lock = input.getBooleanOr("lock",false);
-        this.yRotate = input.getIntOr("rotate",0);
-        this.bidirectional = input.getBooleanOr("bidirectional",false);
-        this.renderBackground = input.getBooleanOr("renderBackground",false);
-        this.dropShadow = input.getBooleanOr("dropShadow",false);
-        this.xRotate = input.getIntOr("xRotate",0);
-        this.zOffset = input.getFloatOr("zOffset",0F);
-        this.lit = input.getBooleanOr("lit",false);
-        if(this.getLevel() != null){
-            this.getLevel().setBlock(getBlockPos(),getBlockState().setValue(HolographicSignBlock.LIT,lit), Block.UPDATE_ALL);
+        this.colorInARGB = input.getIntOr("color", -1);
+        this.scale = input.getFloatOr("scale", 1.0F);
+        this.align = Align.byOrdinal(input.getIntOr("align", 0));
+        this.lock = input.getBooleanOr("lock", false);
+        this.yRotate = input.getIntOr("rotate", 0);
+        this.bidirectional = input.getBooleanOr("bidirectional", false);
+        this.renderBackground = input.getBooleanOr("renderBackground", false);
+        this.dropShadow = input.getBooleanOr("dropShadow", false);
+        this.xRotate = input.getIntOr("xRotate", 0);
+        this.zOffset = input.getFloatOr("zOffset", 0F);
+        this.lit = input.getBooleanOr("lit", false);
+        if (this.getLevel() != null) {
+            this.getLevel().setBlock(getBlockPos(), getBlockState().setValue(HolographicSignBlock.LIT, lit), Block.UPDATE_ALL);
         }
     }
     
@@ -210,7 +218,7 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         return ClientboundBlockEntityDataPacket.create(this);
     }
     
-    public void filterMessage(ServerPlayer player){
+    public void filterMessage(ServerPlayer player) {
     
     }
 }

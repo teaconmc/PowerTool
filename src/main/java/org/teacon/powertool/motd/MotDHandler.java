@@ -8,9 +8,9 @@ import org.teacon.powertool.PowerTool;
 
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class MotDHandler {
-
+    
     public static Component motd = null;
-
+    
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (motd != null) {

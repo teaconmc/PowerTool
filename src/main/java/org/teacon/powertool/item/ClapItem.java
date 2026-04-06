@@ -1,6 +1,5 @@
 package org.teacon.powertool.item;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -9,16 +8,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import org.teacon.powertool.PowerToolSoundEvents;
+import org.teacon.powertool.annotation.NonNullByDefault;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NonNullByDefault
 public class ClapItem extends Item {
     public ClapItem(Properties prop) {
         super(prop);
     }
-
+    
     @Override
     public InteractionResult use(Level level, Player p, InteractionHand hand) {
         if (!level.isClientSide()) {

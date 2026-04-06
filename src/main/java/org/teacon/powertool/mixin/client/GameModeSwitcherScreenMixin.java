@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @Mixin(GameModeSwitcherScreen.class)
 public class GameModeSwitcherScreenMixin {
-
+    
     @Redirect(method = "switchToHoveredGameMode(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/debug/GameModeSwitcherScreen$GameModeIcon;)V",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasPermissions(I)Z"))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasPermissions(I)Z"))
     private static boolean usePermission(LocalPlayer player, int i) {
         return Optional.of(player.getData(PowerToolAttachments.PERMISSION))
                 .flatMap(Permission::isCanSwitchGameMode)

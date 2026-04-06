@@ -17,24 +17,24 @@ import org.teacon.powertool.block.PowerToolBlocks;
 
 @NonNullByDefault
 public class PeriodicCommandBlockEntity extends CommandBlockEntity {
-
+    
     private int period = 10;
-
+    
     @SuppressWarnings("deprecation")
     public PeriodicCommandBlockEntity(BlockPos pos, BlockState state) {
         super(pos, state);
         this.type = PowerToolBlocks.COMMAND_BLOCK_ENTITY.get();
     }
-
+    
     public void setPeriod(int period) {
         this.period = Math.max(period, 1);
         this.setChanged();
     }
-
+    
     public int getPeriod() {
         return period;
     }
-
+    
     @Override
     public Mode getMode() {
         var state = this.getBlockState();

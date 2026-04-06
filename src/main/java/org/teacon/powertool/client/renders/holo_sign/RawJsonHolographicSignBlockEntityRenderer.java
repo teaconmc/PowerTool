@@ -32,64 +32,64 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
         var renderHoverText = Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().equals(theSign.getBlockPos());
         renderInternal(theSign, transform, bufferSource, packedLight, theSign.yRotate, theSign.xRotate, renderHoverText);
         if (theSign.bidirectional) {
-            renderInternal(theSign, transform, bufferSource, packedLight, (theSign.yRotate + 180) % 360, (360 - theSign.xRotate) % 360 , renderHoverText);
+            renderInternal(theSign, transform, bufferSource, packedLight, (theSign.yRotate + 180) % 360, (360 - theSign.xRotate) % 360, renderHoverText);
         }
     }
     
-    public void renderComponent(Component component,float x,float y,PoseStack transform,MultiBufferSource bufferSource, boolean dropShadow, int packedLight,int fontColorDefault,int bgColor) {
-        if(component.equals(Component.empty()) || component.getString().isEmpty()) return;
+    public void renderComponent(Component component, float x, float y, PoseStack transform, MultiBufferSource bufferSource, boolean dropShadow, int packedLight, int fontColorDefault, int bgColor) {
+        if (component.equals(Component.empty()) || component.getString().isEmpty()) return;
         var textColor = component.getStyle().getColor();
         int fontColor = textColor == null ? fontColorDefault : textColor.getValue();
         int w = this.font.width(component);
-        HolographicSignBlockEntityRenderer.renderText(font,component,x- (float) w /2,y,w,fontColor,dropShadow,transform.last().pose(),bufferSource,bgColor,packedLight);
+        HolographicSignBlockEntityRenderer.renderText(font, component, x - (float) w / 2, y, w, fontColor, dropShadow, transform.last().pose(), bufferSource, bgColor, packedLight);
     }
     
     //todo 应用对齐方式
-    public float renderComponentList(List<Component> components, float x, float y, PoseStack transform, MultiBufferSource bufferSource, boolean dropShadow, int packedLight, int fontColorDefault, int bgColor,boolean renderHoverText) {
+    public float renderComponentList(List<Component> components, float x, float y, PoseStack transform, MultiBufferSource bufferSource, boolean dropShadow, int packedLight, int fontColorDefault, int bgColor, boolean renderHoverText) {
         var yr = y;
         for (var component : components) {
             renderComponent(component, x, y, transform, bufferSource, dropShadow, packedLight, fontColorDefault, bgColor);
-            y += this.font.lineHeight+1;
+            y += this.font.lineHeight + 1;
             if (renderHoverText) {
                 y += renderHoverText(component, x, y, transform, bufferSource, dropShadow, packedLight, bgColor);
             }
         }
-        return y-yr;
+        return y - yr;
     }
     
-    public float renderHoverText(Component component,float x,float y,PoseStack transform, MultiBufferSource bufferSource, boolean dropShadow,  int packedLight, int bgColor){
+    public float renderHoverText(Component component, float x, float y, PoseStack transform, MultiBufferSource bufferSource, boolean dropShadow, int packedLight, int bgColor) {
         var yr = y;
         var hoverEvent = component.getStyle().getHoverEvent();
-        if (hoverEvent != null){
+        if (hoverEvent != null) {
             var action = hoverEvent.getAction();
-            if(action == HoverEvent.Action.SHOW_TEXT){
+            if (action == HoverEvent.Action.SHOW_TEXT) {
                 var text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-                if(text != null){
-                    renderComponent(text,x,y,transform,bufferSource,dropShadow,packedLight,0xffffff,bgColor);
-                    y+=this.font.lineHeight+1;
+                if (text != null) {
+                    renderComponent(text, x, y, transform, bufferSource, dropShadow, packedLight, 0xffffff, bgColor);
+                    y += this.font.lineHeight + 1;
                 }
             }
-            if(action == HoverEvent.Action.SHOW_ENTITY){
+            if (action == HoverEvent.Action.SHOW_ENTITY) {
                 var entity_info = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
-                if(entity_info != null){
-                    y+=renderComponentList(entity_info.getTooltipLines(),x,y,transform,bufferSource,dropShadow,packedLight,0xffffff,bgColor,true);
+                if (entity_info != null) {
+                    y += renderComponentList(entity_info.getTooltipLines(), x, y, transform, bufferSource, dropShadow, packedLight, 0xffffff, bgColor, true);
                 }
             }
-            if(action == HoverEvent.Action.SHOW_ITEM){
+            if (action == HoverEvent.Action.SHOW_ITEM) {
                 var item_info = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
-                if(item_info != null){
-                    y+=renderComponentList(Screen.getTooltipFromItem(Minecraft.getInstance(),item_info.getItemStack()),x,y,transform,bufferSource,dropShadow,packedLight,0xffffff,bgColor,true);
+                if (item_info != null) {
+                    y += renderComponentList(Screen.getTooltipFromItem(Minecraft.getInstance(), item_info.getItemStack()), x, y, transform, bufferSource, dropShadow, packedLight, 0xffffff, bgColor, true);
                 }
             }
         }
-        return yr-y;
+        return yr - y;
     }
     
-    public void renderInternal(RawJsonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation,int xRotation,boolean renderHoverText) {
+    public void renderInternal(RawJsonHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation, int xRotation, boolean renderHoverText) {
         transform.pushPose();
-        HolographicSignBlockEntityRenderer.beforeRender(theSign, transform, dispatcher, yRotation,xRotation);
+        HolographicSignBlockEntityRenderer.beforeRender(theSign, transform, dispatcher, yRotation, xRotation);
         int yOffset = (int) -(0.5 * this.font.lineHeight);
-        renderComponentList(theSign.forRender,0,yOffset,transform,bufferSource,theSign.dropShadow,packedLight,theSign.colorInARGB,HolographicSignBlockEntityRenderer.getBackgroundColor(theSign),renderHoverText);
+        renderComponentList(theSign.forRender, 0, yOffset, transform, bufferSource, theSign.dropShadow, packedLight, theSign.colorInARGB, HolographicSignBlockEntityRenderer.getBackgroundColor(theSign), renderHoverText);
         transform.popPose();
     }
 }

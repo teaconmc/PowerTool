@@ -1,7 +1,7 @@
 package org.teacon.powertool.network.server;
 
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -14,9 +14,9 @@ public record UpdatePowerSupplyData(int type_, int data) implements CustomPacket
     
     public static final Type<UpdatePowerSupplyData> TYPE = new Type<>(VanillaUtils.modRL("update_power_supply"));
     
-    public static final StreamCodec<ByteBuf,UpdatePowerSupplyData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT,UpdatePowerSupplyData::type_,
-            ByteBufCodecs.INT,UpdatePowerSupplyData::data,
+    public static final StreamCodec<ByteBuf, UpdatePowerSupplyData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT, UpdatePowerSupplyData::type_,
+            ByteBufCodecs.INT, UpdatePowerSupplyData::data,
             UpdatePowerSupplyData::new
     );
     

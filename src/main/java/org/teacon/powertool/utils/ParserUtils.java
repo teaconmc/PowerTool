@@ -25,6 +25,6 @@ public class ParserUtils {
             throw new JsonParseException(stackoverflowerror);
         }
         
-        return (T)object;
+        return (T) object;
     }
 }

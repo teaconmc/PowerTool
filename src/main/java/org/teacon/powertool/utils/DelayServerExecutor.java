@@ -15,7 +15,9 @@ import java.util.function.Consumer;
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class DelayServerExecutor {
     
-    private DelayServerExecutor() {}
+    private DelayServerExecutor() {
+    }
+    
     @Nonnull
     private static List<Task> tasks = new ArrayList<>();
     
@@ -24,15 +26,16 @@ public class DelayServerExecutor {
     }
     
     @SubscribeEvent
-    public static void afterServerTick(ServerTickEvent.Post event){
+    public static void afterServerTick(ServerTickEvent.Post event) {
         var server = event.getServer();
         var tasksNew = new ArrayList<Task>();
-        for(var task : tasks) {
-            if(task.tickDelay <= 0) task.task.accept(server);
-            else tasksNew.add(new Task(task.tickDelay-1, task.task));
+        for (var task : tasks) {
+            if (task.tickDelay <= 0) task.task.accept(server);
+            else tasksNew.add(new Task(task.tickDelay - 1, task.task));
         }
         tasks = tasksNew;
     }
     
-    private record Task(int tickDelay, Consumer<MinecraftServer> task){}
+    private record Task(int tickDelay, Consumer<MinecraftServer> task) {
+    }
 }

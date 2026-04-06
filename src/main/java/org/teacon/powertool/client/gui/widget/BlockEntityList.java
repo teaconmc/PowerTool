@@ -25,7 +25,7 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
     
     public BlockEntityList(ExamineHoloGlassScreen screen, int width, int height, int y, int itemHeight) {
         super(screen, width, height, y, itemHeight);
-        this.setX((int) (screen.width*0.55));
+        this.setX((int) (screen.width * 0.55));
     }
     
     @Override
@@ -33,23 +33,23 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
         update();
     }
     
-    public void update(){
+    public void update() {
         this.clearEntries();
         var blockData = screen.blocksData;
-        for(var entry : BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet()){
+        for (var entry : BuiltInRegistries.BLOCK_ENTITY_TYPE.entrySet()) {
             var key = entry.getKey();
             var value = entry.getValue();
             var selected = value.getValidBlocks().stream().map(BuiltInRegistries.BLOCK::getKey).anyMatch(blockData::contains);
-            addEntry(new Entry(id,key.identifier().toString(),value,selected));
+            addEntry(new Entry(id, key.identifier().toString(), value, selected));
         }
     }
     
     @Override
     public int getRowWidth() {
-        return width-30;
+        return width - 30;
     }
     
-    public Set<Identifier> getResult(){
+    public Set<Identifier> getResult() {
         return entries().stream()
                 .flatMap(entry -> entry.getResult().stream())
                 .map(BuiltInRegistries.BLOCK::getKey)
@@ -62,7 +62,7 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
         protected final BlockEntityType<?> type;
         protected final Checkbox checkbox;
         
-        public Entry(int id,String name, BlockEntityType<?> blockEntityType,boolean selected) {
+        public Entry(int id, String name, BlockEntityType<?> blockEntityType, boolean selected) {
             this.id = id;
             this.name = name;
             this.type = blockEntityType;
@@ -83,7 +83,7 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
         
         @Override
         public Entry copyWithID(int id) {
-            return new Entry(id, name,type,checkbox.selected());
+            return new Entry(id, name, type, checkbox.selected());
         }
         
         @Override
@@ -91,14 +91,14 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
             return List.of(checkbox);
         }
         
-        public Set<Block> getResult(){
-            if(!checkbox.selected()) return Set.of();
+        public Set<Block> getResult() {
+            if (!checkbox.selected()) return Set.of();
             return type.getValidBlocks();
         }
         
         @Override
         public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
-            checkbox.setPosition(left,top);
+            checkbox.setPosition(left, top);
             checkbox.extractContents(graphics, mouseX, mouseY, a);
         }
         

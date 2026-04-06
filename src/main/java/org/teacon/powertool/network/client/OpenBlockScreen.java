@@ -1,7 +1,7 @@
 package org.teacon.powertool.network.client;
 
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -19,7 +19,7 @@ import org.teacon.powertool.client.gui.observers.RealTimeObserverScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
-public record OpenBlockScreen(BlockPos pos, int guiType) implements CustomPacketPayload{
+public record OpenBlockScreen(BlockPos pos, int guiType) implements CustomPacketPayload {
     
     public static final int REAL_TIME_OBSERVER = 1;
     public static final int REAL_TIME_CYCLE_OBSERVER = 2;
@@ -42,28 +42,24 @@ public record OpenBlockScreen(BlockPos pos, int guiType) implements CustomPacket
         return TYPE;
     }
     
-    public void handle(IPayloadContext context){
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> Handler.run(this));
     }
     
-    public static class Handler{
-        public static void run(OpenBlockScreen pack){
+    public static class Handler {
+        public static void run(OpenBlockScreen pack) {
             var level = Minecraft.getInstance().level;
-            if(level == null) return;
+            if (level == null) return;
             var te = level.getBlockEntity(pack.pos);
-            if(pack.guiType == REAL_TIME_OBSERVER && te instanceof TimeObserverBlockEntity _te){
+            if (pack.guiType == REAL_TIME_OBSERVER && te instanceof TimeObserverBlockEntity _te) {
                 Minecraft.getInstance().setScreen(new RealTimeObserverScreen(_te));
-            }
-            else if(pack.guiType == REAL_TIME_CYCLE_OBSERVER && te instanceof TimeObserverBlockEntity _te){
+            } else if (pack.guiType == REAL_TIME_CYCLE_OBSERVER && te instanceof TimeObserverBlockEntity _te) {
                 Minecraft.getInstance().setScreen(new RealTimeCycleObserverScreen(_te));
-            }
-            else if(pack.guiType == GAME_TIME_CYCLE_OBSERVER && te instanceof TimeObserverBlockEntity _te){
+            } else if (pack.guiType == GAME_TIME_CYCLE_OBSERVER && te instanceof TimeObserverBlockEntity _te) {
                 Minecraft.getInstance().setScreen(new GameTimeCycleObserverScreen(_te));
-            }
-            else if(pack.guiType == RED_STONE_DELAYER && te instanceof RedStoneDelayBlockEntity _te){
+            } else if (pack.guiType == RED_STONE_DELAYER && te instanceof RedStoneDelayBlockEntity _te) {
                 Minecraft.getInstance().setScreen(new RedStoneDelayerScreen(_te));
-            }
-            else if(pack.guiType == BEZIER_CURVE_BLOCK && te instanceof BezierCurveBlockEntity _te){
+            } else if (pack.guiType == BEZIER_CURVE_BLOCK && te instanceof BezierCurveBlockEntity _te) {
                 Minecraft.getInstance().setScreen(new BezierCurveBlockScreen(_te));
             }
         }

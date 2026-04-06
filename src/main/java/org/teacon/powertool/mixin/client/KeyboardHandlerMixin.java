@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Mixin(KeyboardHandler.class)
 public class KeyboardHandlerMixin {
-
+    
     @Redirect(method = "handleDebugKeys", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasPermissions(I)Z"),
-        slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyboardHandler;copyRecreateCommand(ZZ)V")))
+            slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyboardHandler;copyRecreateCommand(ZZ)V")))
     private boolean usePermission(LocalPlayer player, int i) {
         return Optional.of(player.getData(PowerToolAttachments.PERMISSION))
                 .flatMap(Permission::isCanSwitchGameMode)

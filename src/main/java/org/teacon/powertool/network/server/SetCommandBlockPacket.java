@@ -1,7 +1,7 @@
 package org.teacon.powertool.network.server;
 
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,9 +15,9 @@ public record SetCommandBlockPacket(BlockPos pos, int period) implements CustomP
     
     public static final CustomPacketPayload.Type<SetCommandBlockPacket> TYPE = new Type<>(VanillaUtils.modRL("set_command_block_packet"));
     
-    public static final StreamCodec<ByteBuf,SetCommandBlockPacket> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,SetCommandBlockPacket::pos,
-            ByteBufCodecs.INT,SetCommandBlockPacket::period,
+    public static final StreamCodec<ByteBuf, SetCommandBlockPacket> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC, SetCommandBlockPacket::pos,
+            ByteBufCodecs.INT, SetCommandBlockPacket::period,
             SetCommandBlockPacket::new
     );
     

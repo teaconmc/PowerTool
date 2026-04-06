@@ -30,22 +30,22 @@ public class PowerToolDataComponents {
             "command", () -> DataComponentType.<String>builder().persistent(Codec.STRING).build()
     );
     
-    public static final DeferredHolder<DataComponentType<?>,DataComponentType<ExamineHoloGlass.BlockComponents>> BLOCKS_DATA = DATA_COMPONENTS.register(
-            "blocks_data",() -> DataComponentType.<ExamineHoloGlass.BlockComponents>builder()
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ExamineHoloGlass.BlockComponents>> BLOCKS_DATA = DATA_COMPONENTS.register(
+            "blocks_data", () -> DataComponentType.<ExamineHoloGlass.BlockComponents>builder()
                     .persistent(ExamineHoloGlass.BlockComponents.CODEC)
                     .networkSynchronized(ExamineHoloGlass.BlockComponents.STREAM_CODEC)
                     .build()
     );
     
-    public static final DeferredHolder<DataComponentType<?>,DataComponentType<ExamineHoloGlass.BlockTagsComponent>> BLOCK_TAGS_DATA = DATA_COMPONENTS.register(
-            "block_tags",() -> DataComponentType.<ExamineHoloGlass.BlockTagsComponent>builder()
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ExamineHoloGlass.BlockTagsComponent>> BLOCK_TAGS_DATA = DATA_COMPONENTS.register(
+            "block_tags", () -> DataComponentType.<ExamineHoloGlass.BlockTagsComponent>builder()
                     .persistent(ExamineHoloGlass.BlockTagsComponent.CODEC)
                     .networkSynchronized(ExamineHoloGlass.BlockTagsComponent.STREAM_CODEC)
                     .build()
     );
     
-    public static final DeferredHolder<DataComponentType<?>,DataComponentType<FenceKnotEntity.PowerToolKnotData>> KNOT_DATA = DATA_COMPONENTS.register(
-            "knot_data",() -> DataComponentType.<FenceKnotEntity.PowerToolKnotData>builder()
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<FenceKnotEntity.PowerToolKnotData>> KNOT_DATA = DATA_COMPONENTS.register(
+            "knot_data", () -> DataComponentType.<FenceKnotEntity.PowerToolKnotData>builder()
                     .persistent(FenceKnotEntity.PowerToolKnotData.CODEC)
                     .networkSynchronized(FenceKnotEntity.PowerToolKnotData.STREAM_CODEC)
                     .build()

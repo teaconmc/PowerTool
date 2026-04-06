@@ -24,52 +24,52 @@ import org.teacon.powertool.utils.VanillaUtils;
 
 @NonNullByDefault
 public class SafeBlock extends BaseEntityBlock {
-
+    
     public static final MapCodec<SafeBlock> CODEC = simpleCodec(SafeBlock::new);
-
+    
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-
+    
     protected SafeBlock(Properties properties) {
         super(properties);
     }
-
+    
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
-
+    
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SafeBlockEntity(pos, state);
     }
-
+    
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
-
+    
     @Override
     protected BlockState rotate(BlockState state, Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
-
+    
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
-
+    
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
-
+    
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof SafeBlockEntity theSafe) {
             String cmd = theSafe.components().getOrDefault(PowerToolDataComponents.COMMAND.get(), "/ac safe");
             var server = level.getServer();
             if (server != null) {
-                VanillaUtils.runCommand(cmd,player);
+                VanillaUtils.runCommand(cmd, player);
                 return InteractionResult.SUCCESS;
             }
         }

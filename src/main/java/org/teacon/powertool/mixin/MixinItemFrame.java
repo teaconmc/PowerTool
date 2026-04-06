@@ -20,11 +20,11 @@ public abstract class MixinItemFrame extends Entity {
         super(entityType, level);
     }
     
-    @Inject(method = "interact",at = @At("HEAD"),cancellable = true)
-    public void onItemUse(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir){
+    @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
+    public void onItemUse(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         var item = player.getItemInHand(hand);
-        if(!(item.getItem() instanceof TransparentBrushItem)) return;
-        if(player.isCrouching()){
+        if (!(item.getItem() instanceof TransparentBrushItem)) return;
+        if (player.isCrouching()) {
             this.setInvisible(!this.isInvisible());
             cir.setReturnValue(InteractionResult.SUCCESS);
             cir.cancel();

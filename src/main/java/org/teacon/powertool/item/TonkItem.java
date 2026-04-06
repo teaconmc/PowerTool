@@ -1,6 +1,5 @@
 package org.teacon.powertool.item;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Mob;
@@ -8,17 +7,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.entity.FenceKnotEntity;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class TonkItem extends Item {
     
     protected final FenceKnotEntity.Type type;
     
-    public TonkItem(Properties properties,FenceKnotEntity.Type type) {
+    public TonkItem(Properties properties, FenceKnotEntity.Type type) {
         super(properties);
         this.type = type;
     }
@@ -30,7 +27,7 @@ public class TonkItem extends Item {
             var held = context.getItemInHand();
             var level = context.getLevel();
             var pos = context.getClickedPos();
-            if(!level.getBlockState(pos).is(BlockTags.FENCES)){
+            if (!level.getBlockState(pos).is(BlockTags.FENCES)) {
                 return InteractionResult.PASS;
             }
             var range = new AABB(pos.getX() - 7, pos.getY() - 7, pos.getZ() - 7, pos.getX() + 7, pos.getY() + 7, pos.getZ() + 7);

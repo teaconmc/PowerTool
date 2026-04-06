@@ -1,8 +1,8 @@
 package org.teacon.powertool.network.server;
 
 import com.mojang.logging.LogUtils;
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -20,8 +20,6 @@ import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.IClientUpdateBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 
-import java.util.Objects;
-
 @MethodsReturnNonnullByDefault
 public record UpdateBlockEntityData(CompoundTag data, BlockPos location) implements CustomPacketPayload {
     
@@ -38,7 +36,7 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
     
     public static UpdateBlockEntityData create(BlockEntity entity) {
         var tag = new CompoundTag();
-        if(entity instanceof IClientUpdateBlockEntity theTE) {
+        if (entity instanceof IClientUpdateBlockEntity theTE) {
             var registries = entity.getLevel().registryAccess();
             try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(PATH, LOGGER)) {
                 TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
@@ -47,9 +45,9 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
             }
         }
         
-        return new UpdateBlockEntityData(tag,entity.getBlockPos());
+        return new UpdateBlockEntityData(tag, entity.getBlockPos());
     }
-
+    
     public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             var sender = context.player();
@@ -60,13 +58,13 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
             if (te instanceof IClientUpdateBlockEntity theTE) {
                 var registries = te.getLevel().registryAccess();
                 try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(PATH, LOGGER)) {
-                    var input = TagValueInput.create(reporter,registries,this.data);
+                    var input = TagValueInput.create(reporter, registries, this.data);
                     theTE.updateFromClient(input);
                 }
                 var state = level.getBlockState(this.location);
                 te.setChanged();
                 level.sendBlockUpdated(this.location, state, state, Block.UPDATE_CLIENTS);
-                if(sender instanceof ServerPlayer serverPlayer && te instanceof BaseHolographicSignBlockEntity theSign) {
+                if (sender instanceof ServerPlayer serverPlayer && te instanceof BaseHolographicSignBlockEntity theSign) {
                     theSign.filterMessage(serverPlayer);
                 }
             }
@@ -86,5 +84,5 @@ public record UpdateBlockEntityData(CompoundTag data, BlockPos location) impleme
             return "powertool:client_update";
         }
     }
-
+    
 }

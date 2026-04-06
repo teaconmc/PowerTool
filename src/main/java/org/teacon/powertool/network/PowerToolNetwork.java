@@ -4,7 +4,16 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.network.client.*;
+import org.teacon.powertool.network.client.OpenBlockScreen;
+import org.teacon.powertool.network.client.OpenHolographicSignEditor;
+import org.teacon.powertool.network.client.OpenItemScreen;
+import org.teacon.powertool.network.client.RecordDebugData;
+import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateOpenMenuSourcePacket;
+import org.teacon.powertool.network.client.UpdatePermissionPacket;
+import org.teacon.powertool.network.client.UpdatePlayerMovement;
+import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.network.server.UpdateItemStackData;
@@ -12,7 +21,7 @@ import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolNetwork {
-
+    
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
         var register = event.registrar(PowerTool.MODID);
@@ -21,7 +30,7 @@ public class PowerToolNetwork {
                 UpdatePermissionPacket.TYPE,
                 UpdatePermissionPacket.STREAM_CODEC,
                 UpdatePermissionPacket::handle
-                );
+        );
         register.commonToClient(
                 OpenHolographicSignEditor.TYPE,
                 OpenHolographicSignEditor.STREAM_CODEC,
@@ -43,19 +52,19 @@ public class PowerToolNetwork {
                 UpdatePlayerMovement::handle
         );
         register.playToClient(
-            UpdateOpenMenuSourcePacket.TYPE,
-            UpdateOpenMenuSourcePacket.STREAM_CODEC,
-            UpdateOpenMenuSourcePacket::handle
+                UpdateOpenMenuSourcePacket.TYPE,
+                UpdateOpenMenuSourcePacket.STREAM_CODEC,
+                UpdateOpenMenuSourcePacket::handle
         );
         register.playToClient(
-            UpdateDisplayChunkDataPacket.TYPE,
-            UpdateDisplayChunkDataPacket.STREAM_CODEC,
-            UpdateDisplayChunkDataPacket::handle
+                UpdateDisplayChunkDataPacket.TYPE,
+                UpdateDisplayChunkDataPacket.STREAM_CODEC,
+                UpdateDisplayChunkDataPacket::handle
         );
         register.playToClient(
-            UpdateCachedModeChunkDataPacket.TYPE,
-            UpdateCachedModeChunkDataPacket.STREAM_CODEC,
-            UpdateCachedModeChunkDataPacket::handle
+                UpdateCachedModeChunkDataPacket.TYPE,
+                UpdateCachedModeChunkDataPacket.STREAM_CODEC,
+                UpdateCachedModeChunkDataPacket::handle
         );
         register.playToClient(
                 RecordDebugData.TYPE,
@@ -67,7 +76,7 @@ public class PowerToolNetwork {
                 UpdateStaticModeChunkDataPacket.STREAM_CODEC,
                 UpdateStaticModeChunkDataPacket::handle
         );
-    
+        
         register.commonToServer(
                 SetCommandBlockPacket.TYPE,
                 SetCommandBlockPacket.STREAM_CODEC,

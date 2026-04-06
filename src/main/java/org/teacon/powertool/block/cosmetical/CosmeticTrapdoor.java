@@ -1,8 +1,8 @@
 package org.teacon.powertool.block.cosmetical;
 
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -28,7 +28,6 @@ import org.teacon.powertool.block.ICosmeticBlock;
 import org.teacon.powertool.block.WithTooltip;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
@@ -36,15 +35,15 @@ import java.util.function.Consumer;
 public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterloggedBlock, ICosmeticBlock, WithTooltip {
     
     public static final MapCodec<CosmeticTrapdoor> CODEC = simpleCodec(CosmeticTrapdoor::new);
-
+    
     protected static final VoxelShape EAST_OPEN_AABB = Block.box(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
     protected static final VoxelShape WEST_OPEN_AABB = Block.box(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape SOUTH_OPEN_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 3.0D);
     protected static final VoxelShape NORTH_OPEN_AABB = Block.box(0.0D, 0.0D, 13.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape BOTTOM_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
     protected static final VoxelShape TOP_AABB = Block.box(0.0D, 13.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-
-
+    
+    
     public CosmeticTrapdoor(Properties prop) {
         super(prop);
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.UP).setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE));
@@ -58,7 +57,7 @@ public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterlog
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, BlockStateProperties.WATERLOGGED);
     }
-
+    
     @Override
     @SuppressWarnings("DuplicatedCode") //The "duplicated code" in switch cannot actually extract methods.
     public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext collisionContext) {
@@ -76,7 +75,7 @@ public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterlog
     protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return pathComputationType == PathComputationType.WATER && state.getValue(BlockStateProperties.WATERLOGGED);
     }
-
+    
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getClickedFace();
@@ -87,7 +86,7 @@ public class CosmeticTrapdoor extends DirectionalBlock implements SimpleWaterlog
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
         builder.accept(Component.translatable("block.powertool.cosmetic_trapdoor.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
-
+    
     @Override
     public FluidState getFluidState(BlockState state) {
         return state.getValue(TrapDoorBlock.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);

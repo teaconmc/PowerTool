@@ -16,7 +16,7 @@ import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 
 import java.util.function.BiFunction;
 
-public enum SignType implements StringRepresentable  {
+public enum SignType implements StringRepresentable {
     COMMON(CommonHolographicSignBlockEntity::new),
     URL(LinkHolographicSignBlockEntity::new),
     RAW_JSON(RawJsonHolographicSignBlockEntity::new),
@@ -25,7 +25,7 @@ public enum SignType implements StringRepresentable  {
     private final BiFunction<BlockPos, BlockState, ? extends BaseHolographicSignBlockEntity> blockEntitySupplier;
     
     public static final Codec<SignType> CODEC = StringRepresentable.fromEnum(SignType::values);
-    public static final StreamCodec<ByteBuf,SignType> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
+    public static final StreamCodec<ByteBuf, SignType> STREAM_CODEC = ByteBufCodecs.fromCodec(CODEC);
     
     SignType(BiFunction<BlockPos, BlockState, ? extends BaseHolographicSignBlockEntity> blockEntitySupplier) {
         this.blockEntitySupplier = blockEntitySupplier;
@@ -39,5 +39,6 @@ public enum SignType implements StringRepresentable  {
     @Override
     @NonNull
     public String getSerializedName() {
-    return name();
-}}
+        return name();
+    }
+}

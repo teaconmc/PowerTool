@@ -21,7 +21,7 @@ import org.teacon.powertool.item.ExamineHoloGlass;
 public class OutLineRender {
     
     @SubscribeEvent
-    public static void renderBEOutLines(RenderLevelStageEvent event){
+    public static void renderBEOutLines(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
         var levelRenderer = event.getLevelRenderer();
         if (levelRenderer.entityEffect == null) return;
@@ -31,18 +31,18 @@ public class OutLineRender {
         var mc = Minecraft.getInstance();
         var r = mc.options.getEffectiveRenderDistance();
         var level = mc.level;
-        if(level == null) return;
+        if (level == null) return;
         var center = new ChunkPos(event.getCamera().getBlockPosition());
-        var sx = center.x-r;
-        var sz = center.z-r;
-        for (int i = 0; i < r*2+1; i++) {
-            for (int j = 0; j < r*2+1; j++) {
-                if(Math.abs(j-r)+Math.abs(i-r)>r) continue;
-                var chunk = level.getChunk(sx +j, sz +i);
+        var sx = center.x - r;
+        var sz = center.z - r;
+        for (int i = 0; i < r * 2 + 1; i++) {
+            for (int j = 0; j < r * 2 + 1; j++) {
+                if (Math.abs(j - r) + Math.abs(i - r) > r) continue;
+                var chunk = level.getChunk(sx + j, sz + i);
                 chunk.getBlockEntities().values()
                         .stream()
-                        .filter(be -> be.getBlockState().getTags().anyMatch(tags::contains) || blocks.contains(be.getBlockState().getBlock()) )
-                        .forEach(be -> renderOutLine(be.getBlockPos(),event.getPoseStack(),event.getCamera()));
+                        .filter(be -> be.getBlockState().getTags().anyMatch(tags::contains) || blocks.contains(be.getBlockState().getBlock()))
+                        .forEach(be -> renderOutLine(be.getBlockPos(), event.getPoseStack(), event.getCamera()));
             }
         }
         mc.renderBuffers().outlineBufferSource().endOutlineBatch();
@@ -50,9 +50,9 @@ public class OutLineRender {
         mc.getMainRenderTarget().bindWrite(false);
     }
     
-    public static void renderOutLine(BlockPos pos, PoseStack poseStack, Camera camera){
+    public static void renderOutLine(BlockPos pos, PoseStack poseStack, Camera camera) {
         var mc = Minecraft.getInstance();
-        if(mc.level == null) return;
+        if (mc.level == null) return;
         var state = mc.level.getBlockState(pos);
         var outline = RenderType.outline(InventoryMenu.BLOCK_ATLAS);
         var outlineSource = mc.renderBuffers().outlineBufferSource();
@@ -62,7 +62,7 @@ public class OutLineRender {
         double d1 = vec3.y();
         double d2 = vec3.z();
         poseStack.pushPose();
-        poseStack.translate((double)pos.getX() - d0, (double)pos.getY() - d1, (double)pos.getZ() - d2);
+        poseStack.translate((double) pos.getX() - d0, (double) pos.getY() - d1, (double) pos.getZ() - d2);
         mc.getBlockRenderer().getModelRenderer().renderModel(
                 poseStack.last(), outlineSource.getBuffer(outline), state, blockModel,
                 0.0F, 0.0F, 0.0F, 15728880, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, outline);

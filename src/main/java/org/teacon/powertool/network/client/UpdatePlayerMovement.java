@@ -15,9 +15,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public record UpdatePlayerMovement(Operation operation, double x, double y, double z) implements CustomPacketPayload {
-
+    
     public static final CustomPacketPayload.Type<UpdatePlayerMovement> TYPE = new Type<>(VanillaUtils.modRL("update_player_movement"));
-
+    
     public static final StreamCodec<FriendlyByteBuf, UpdatePlayerMovement> STREAM_CODEC = StreamCodec.composite(
             NeoForgeStreamCodecs.enumCodec(Operation.class), UpdatePlayerMovement::operation,
             ByteBufCodecs.DOUBLE, UpdatePlayerMovement::x,
@@ -25,13 +25,13 @@ public record UpdatePlayerMovement(Operation operation, double x, double y, doub
             ByteBufCodecs.DOUBLE, UpdatePlayerMovement::z,
             UpdatePlayerMovement::new
     );
-
+    
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
-
-    public void handle(IPayloadContext context){
+    
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             var player = context.player();
             switch (operation) {
@@ -41,7 +41,7 @@ public record UpdatePlayerMovement(Operation operation, double x, double y, doub
             }
         });
     }
-
+    
     public enum Operation {
         SET,
         ADD,

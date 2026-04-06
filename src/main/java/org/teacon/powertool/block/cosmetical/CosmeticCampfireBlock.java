@@ -1,7 +1,7 @@
 package org.teacon.powertool.block.cosmetical;
 
-import net.minecraft.ChatFormatting;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -50,19 +50,18 @@ import org.teacon.powertool.block.WithTooltip;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlock, ICosmeticBlock, WithTooltip {
-
+    
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     private final boolean spawnParticles;
-
+    
     public CosmeticCampfireBlock(boolean pSpawnParticles, BlockBehaviour.Properties prop) {
         super(prop);
         this.spawnParticles = pSpawnParticles;
@@ -81,7 +80,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (stack.is(ItemTags.SHOVELS) && state.getValue(LIT)) {
             if (level.isClientSide()) {
-                for(int i = 0; i < 20; ++i) {
+                for (int i = 0; i < 20; ++i) {
                     CampfireBlock.makeParticles(level, pos, false, true);
                 }
             }
@@ -93,7 +92,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
         }
         return InteractionResult.PASS;
     }
-
+    
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -108,14 +107,14 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
         if (state.getValue(WATERLOGGED)) {
             ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        return facing == Direction.DOWN ? state :  super.updateShape(state, level, ticks, pos, facing, neighbourPos, neighbourState, random);
+        return facing == Direction.DOWN ? state : super.updateShape(state, level, ticks, pos, facing, neighbourPos, neighbourState, random);
     }
-
+    
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
     }
-
+    
     @Override
     public void animateTick(BlockState pState, Level level, BlockPos pos, RandomSource rng) {
         if (pState.getValue(LIT)) {
@@ -123,13 +122,13 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
                 level.playLocalSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS, 0.5F + rng.nextFloat(), rng.nextFloat() * 0.7F + 0.6F, false);
             }
             if (this.spawnParticles && rng.nextInt(5) == 0) {
-                for(int i = 0; i < rng.nextInt(1) + 1; ++i) {
+                for (int i = 0; i < rng.nextInt(1) + 1; ++i) {
                     level.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, rng.nextDouble() / 2.0, 5.0E-5D, rng.nextDouble() / 2);
                 }
             }
         }
     }
-
+    
     public static void dowse(@Nullable Entity entity, LevelAccessor level, BlockPos pos, BlockState state) {
         if (level.isClientSide() && level instanceof Level realLevel) {
             var random = level.getRandom();
@@ -140,7 +139,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
         }
         level.gameEvent(entity, GameEvent.BLOCK_CHANGE, pos);
     }
-
+    
     @Override
     public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
         if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
@@ -150,7 +149,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
                 }
                 dowse(null, level, pos, state);
             }
-
+            
             level.setBlock(pos, state.setValue(WATERLOGGED, Boolean.TRUE).setValue(LIT, Boolean.FALSE), Block.UPDATE_ALL);
             level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
             return true;
@@ -158,7 +157,7 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
             return false;
         }
     }
-
+    
     @Override
     public void onProjectileHit(Level pLevel, BlockState state, BlockHitResult pHit, Projectile projectile) {
         BlockPos blockpos = pHit.getBlockPos();
@@ -166,23 +165,23 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
             pLevel.setBlock(blockpos, state.setValue(BlockStateProperties.LIT, Boolean.TRUE), Block.UPDATE_ALL_IMMEDIATE);
         }
     }
-
+    
     @Override
     public FluidState getFluidState(BlockState pState) {
         return pState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(pState);
     }
-
+    
     @Override
     public BlockState rotate(BlockState pState, Rotation pRot) {
         return pState.setValue(FACING, pRot.rotate(pState.getValue(FACING)));
     }
-
+    
     @Override
     @SuppressWarnings("deprecation")
     public BlockState mirror(BlockState pState, Mirror pMirror) {
         return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
     }
-
+    
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT, WATERLOGGED, FACING);
@@ -192,5 +191,5 @@ public class CosmeticCampfireBlock extends Block implements SimpleWaterloggedBlo
     protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return false;
     }
-
+    
 }

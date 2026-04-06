@@ -16,11 +16,12 @@ import java.util.Set;
 @Mixin(Entity.class)
 public abstract class MixinEntity {
     
-    @Shadow public abstract Level level();
+    @Shadow
+    public abstract Level level();
     
-    @Inject(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FF)Z", at = @At("HEAD"),cancellable = true)
-    public void onTP(ServerLevel level, double x, double y, double z, Set<RelativeMovement> relativeMovements, float yRot, float xRot, CallbackInfoReturnable<Boolean> cir){
-        if(level != this.level() && level.dimension() == ServerLevel.END && PowerToolConfig.disableTeleportToEnd.get()){
+    @Inject(method = "teleportTo(Lnet/minecraft/server/level/ServerLevel;DDDLjava/util/Set;FF)Z", at = @At("HEAD"), cancellable = true)
+    public void onTP(ServerLevel level, double x, double y, double z, Set<RelativeMovement> relativeMovements, float yRot, float xRot, CallbackInfoReturnable<Boolean> cir) {
+        if (level != this.level() && level.dimension() == ServerLevel.END && PowerToolConfig.disableTeleportToEnd.get()) {
             cir.setReturnValue(true);
             cir.cancel();
         }

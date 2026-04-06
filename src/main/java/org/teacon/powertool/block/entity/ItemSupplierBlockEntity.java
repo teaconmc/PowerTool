@@ -19,8 +19,8 @@ import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 
 @NonNullByDefault
-public class ItemSupplierBlockEntity extends BlockEntity{
-
+public class ItemSupplierBlockEntity extends BlockEntity {
+    
     public ItemStack theItem = ItemStack.EMPTY;
     
     private final ResourceHandler<ItemResource> itemHandler = new ResourceHandler<>() {
@@ -66,7 +66,7 @@ public class ItemSupplierBlockEntity extends BlockEntity{
     
     @Override
     protected void loadAdditional(ValueInput input) {
-        this.theItem = input.read("item",ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.theItem = input.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         super.loadAdditional(input);
     }
     
@@ -80,7 +80,7 @@ public class ItemSupplierBlockEntity extends BlockEntity{
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
     }
-
+    
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {

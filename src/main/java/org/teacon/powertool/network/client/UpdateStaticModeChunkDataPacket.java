@@ -1,7 +1,7 @@
 package org.teacon.powertool.network.client;
 
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,7 +16,8 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public record UpdateStaticModeChunkDataPacket(int chunkX, int chunkZ, List<BlockPos> blockPosList) implements CustomPacketPayload {
+public record UpdateStaticModeChunkDataPacket(int chunkX, int chunkZ,
+                                              List<BlockPos> blockPosList) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<UpdateStaticModeChunkDataPacket> TYPE = new CustomPacketPayload.Type<>(VanillaUtils.modRL("static_mode_chunk_data"));
     
@@ -35,7 +36,7 @@ public record UpdateStaticModeChunkDataPacket(int chunkX, int chunkZ, List<Block
         return TYPE;
     }
     
-    public void handle(IPayloadContext context){
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             ChunkPos chunkPos = new ChunkPos(chunkX, chunkZ);
             AccessControlClient.INSTANCE.updateStaticModeData(chunkPos, blockPosList);

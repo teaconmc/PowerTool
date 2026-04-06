@@ -1,8 +1,5 @@
 package org.teacon.powertool.utils.time;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -13,7 +10,7 @@ import java.time.ZoneOffset;
 
 //todo 按小时算的offset貌似不够合理 另外夏令时也没处理(夏令时真可恨吧) -- xkball
 public class DailyCycleTimeSection implements ITimeSection {
-
+    
     protected final int start;
     protected final int end;
     protected final int hourOffset;
@@ -48,8 +45,8 @@ public class DailyCycleTimeSection implements ITimeSection {
     @Override
     public void save(ValueOutput output) {
         output.putInt("start", start);
-        output.putInt("end",end);
-        output.putInt("hourOffset",hourOffset);
+        output.putInt("end", end);
+        output.putInt("hourOffset", hourOffset);
     }
     
     @Override
@@ -60,8 +57,8 @@ public class DailyCycleTimeSection implements ITimeSection {
         return new DailyCycleTimeSection(_start, _end, _offset);
     }
     
-    public static LocalTime fromFormatedInt(int time){
-        return LocalTime.of(time /10_000_000, (time %10_000_000)/100_000, (time %100_000)/1000, (time %1000)*1000000);
+    public static LocalTime fromFormatedInt(int time) {
+        return LocalTime.of(time / 10_000_000, (time % 10_000_000) / 100_000, (time % 100_000) / 1000, (time % 1000) * 1000000);
     }
     
     public int getStart() {

@@ -22,7 +22,7 @@ public class PowerToolBlockItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
-        if(this.getBlock() instanceof WithTooltip wt){
+        if (this.getBlock() instanceof WithTooltip wt) {
             wt.appendHoverText(itemStack, context, display, builder, tooltipFlag);
         }
     }

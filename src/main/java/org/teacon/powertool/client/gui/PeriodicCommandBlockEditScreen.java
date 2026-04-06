@@ -15,39 +15,39 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
-
+    
     private static final Component PERIOD = Component.translatable("powertool.gui.period");
-
+    
     private EditBox periodBox;
-
+    
     public PeriodicCommandBlockEditScreen(PeriodicCommandBlockEntity blockEntity) {
         super(blockEntity);
     }
-
+    
     @Override
     protected void init() {
         super.init();
         this.periodBox = this.addRenderableWidget(
-            new EditBox(this.font, this.width / 2 - 150 + (300 - 40), 105, 40, 20, Component.empty())
+                new EditBox(this.font, this.width / 2 - 150 + (300 - 40), 105, 40, 20, Component.empty())
         );
         this.periodBox.setValue("10");
         this.modeButton.active = false;
         this.modeButton.visible = false;
     }
-
+    
     @Override
     public void updateGui() {
         super.updateGui();
         this.periodBox.setValue(String.valueOf(((PeriodicCommandBlockEntity) autoCommandBlock).getPeriod()));
         this.mode = CommandBlockEntity.Mode.AUTO;
     }
-
+    
     @Override
     public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
         guiGraphics.drawString(this.font, PERIOD, this.width / 2 - 150 + (300 - 40), 95, 10526880);
     }
-
+    
     //todo 修复命令方块使其正常工作
     @Override
     protected void populateAndSendPacket(BaseCommandBlock baseCommandBlock) {
@@ -55,7 +55,7 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
         try {
             var period = Integer.parseInt(this.periodBox.getValue());
             PacketDistributor.sendToServer(new SetCommandBlockPacket(
-                BlockPos.containing(baseCommandBlock.getPosition()), period
+                    BlockPos.containing(baseCommandBlock.getPosition()), period
             ));
         } catch (NumberFormatException ignored) {
         }

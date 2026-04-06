@@ -3,7 +3,6 @@ package org.teacon.powertool.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
@@ -29,24 +28,23 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.client.gui.ExamineHoloGlassScreen;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public class ExamineHoloGlass extends Item implements IScreenProviderItem{
+@NonNullByDefault
+public class ExamineHoloGlass extends Item implements IScreenProviderItem {
     
     //TODO 头部模型渲染
     public ExamineHoloGlass() {
         super(new Properties().stacksTo(1).component(
-                DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.HEAD).setEquipSound(SoundEvents.ARMOR_EQUIP_CHAIN).setAsset(VanillaUtils.modResourceKey(EquipmentAssets.ROOT_ID,"holo_glass")).build()
+                DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.HEAD).setEquipSound(SoundEvents.ARMOR_EQUIP_CHAIN).setAsset(VanillaUtils.modResourceKey(EquipmentAssets.ROOT_ID, "holo_glass")).build()
         ));
     }
     
@@ -54,33 +52,33 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem{
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer,
-                    new OpenItemScreen(player.getItemInHand(hand),hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
+                    new OpenItemScreen(player.getItemInHand(hand), hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
             return InteractionResult.SUCCESS;
         }
         return super.use(level, player, hand);
     }
     
-    public static Collection<TagKey<Block>> getOutLinedBlockTags(){
+    public static Collection<TagKey<Block>> getOutLinedBlockTags() {
         var mc = Minecraft.getInstance();
         var player = mc.player;
         if (player == null) return List.of();
         var result = new ArrayList<TagKey<Block>>();
         var headItem = player.getItemBySlot(EquipmentSlot.HEAD);
         addTags(headItem, result);
-        addTags(player.getMainHandItem(),result);
-        addTags(player.getOffhandItem(),result);
+        addTags(player.getMainHandItem(), result);
+        addTags(player.getOffhandItem(), result);
         return result;
     }
     
-    public static Collection<Block> getOtherLinedBlocks(){
+    public static Collection<Block> getOtherLinedBlocks() {
         var mc = Minecraft.getInstance();
         var player = mc.player;
         if (player == null) return List.of();
         var result = new ArrayList<Block>();
         var headItem = player.getItemBySlot(EquipmentSlot.HEAD);
         addBlocks(headItem, result);
-        addBlocks(player.getMainHandItem(),result);
-        addBlocks(player.getOffhandItem(),result);
+        addBlocks(player.getMainHandItem(), result);
+        addBlocks(player.getOffhandItem(), result);
         return result;
     }
     
@@ -94,7 +92,7 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem{
     private static void addBlocks(ItemStack stack, List<Block> blockList) {
         if (stack.getItem() instanceof ExamineHoloGlass) {
             var blocks = stack.get(PowerToolDataComponents.BLOCKS_DATA);
-            if(blocks != null){
+            if (blocks != null) {
                 blockList.addAll(blocks.blocks.stream()
                         .map(BuiltInRegistries.BLOCK::get).filter(b -> b.isPresent() && b.get().value() != Blocks.AIR)
                         .map(b -> b.get().value())
@@ -106,7 +104,7 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem{
     @Override
     @OnlyIn(Dist.CLIENT)
     public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
-        return () -> new ExamineHoloGlassScreen(slot,stack.get(PowerToolDataComponents.BLOCK_TAGS_DATA),stack.get(PowerToolDataComponents.BLOCKS_DATA));
+        return () -> new ExamineHoloGlassScreen(slot, stack.get(PowerToolDataComponents.BLOCK_TAGS_DATA), stack.get(PowerToolDataComponents.BLOCKS_DATA));
     }
     
     public record BlockTagsComponent(List<TagKey<Block>> tags) {
@@ -121,7 +119,7 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem{
         
     }
     
-    public record BlockComponents(List<Identifier> blocks){
+    public record BlockComponents(List<Identifier> blocks) {
         
         public static final Codec<BlockComponents> CODEC = RecordCodecBuilder.create(ins -> ins.group(
                 Identifier.CODEC.listOf().fieldOf("blocks").forGetter(o -> o.blocks)

@@ -11,13 +11,13 @@ public interface ITimeSection {
     
     void save(ValueOutput output);
     
-    ITimeSection load(ValueInput  input);
+    ITimeSection load(ValueInput input);
     
-    default boolean currentInTimeSection(){
+    default boolean currentInTimeSection() {
         return inTimeSection(System.currentTimeMillis());
     }
     
-    default int nextCheckDelay(){
+    default int nextCheckDelay() {
         return nextCheckDelay(System.currentTimeMillis());
     }
 }

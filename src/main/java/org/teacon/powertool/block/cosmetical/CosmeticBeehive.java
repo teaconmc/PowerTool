@@ -8,12 +8,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
-public class CosmeticBeehive extends CosmeticHorizontalDirectionalBlock{
-
+public class CosmeticBeehive extends CosmeticHorizontalDirectionalBlock {
+    
     public CosmeticBeehive(Properties p) {
         super(p);
     }

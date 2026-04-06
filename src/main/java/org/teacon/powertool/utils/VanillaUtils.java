@@ -35,7 +35,7 @@ public class VanillaUtils {
     
     public static final Direction[] DIRECTIONS = Direction.values();
     public static final Identifier MISSING_TEXTURE = Identifier.withDefaultNamespace("missingno");
-    public static final int TRANSPARENT = VanillaUtils.getColor(255,255,255,0);
+    public static final int TRANSPARENT = VanillaUtils.getColor(255, 255, 255, 0);
     
     public static Identifier modRL(String path) {
         return resourceLocationOf(PowerTool.MODID, path);
@@ -45,8 +45,8 @@ public class VanillaUtils {
         return Identifier.fromNamespaceAndPath(namespace, path);
     }
     
-    public static <T> ResourceKey<T> modResourceKey(ResourceKey< ? extends Registry<T>> key, String value){
-        return ResourceKey.create(key,modRL(value));
+    public static <T> ResourceKey<T> modResourceKey(ResourceKey<? extends Registry<T>> key, String value) {
+        return ResourceKey.create(key, modRL(value));
     }
     
     public static EquipmentSlot equipmentSlotFromHand(InteractionHand hand) {
@@ -54,7 +54,7 @@ public class VanillaUtils {
     }
     
     public static void runCommand(String command, LivingEntity livingEntity) {
-        if(!(livingEntity instanceof ServerPlayer sp)) return;
+        if (!(livingEntity instanceof ServerPlayer sp)) return;
         // Raise permission level to 2, akin to what vanilla sign does
         
         CommandSourceStack cmdSrc = sp.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER);
@@ -64,38 +64,38 @@ public class VanillaUtils {
         }
     }
     
-    public static void runCommand(String command,MinecraftServer server, UUID playerUUID){
+    public static void runCommand(String command, MinecraftServer server, UUID playerUUID) {
         var player = server.getPlayerList().getPlayer(playerUUID);
-        if(player != null){
-            server.getCommands().performPrefixedCommand(player.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER),command);
+        if (player != null) {
+            server.getCommands().performPrefixedCommand(player.createCommandSourceStack().withPermission(LevelBasedPermissionSet.GAMEMASTER), command);
         }
     }
     
     //irrelevant vanilla(笑)
-    public static int getColor(int r,int g,int b,int a){
+    public static int getColor(int r, int g, int b, int a) {
         return a << 24 | r << 16 | g << 8 | b;
     }
     
     public static int parseColorHEX(String color) throws IllegalArgumentException {
-        if(color.length() == 6){
+        if (color.length() == 6) {
             return getColor(
-                    Integer.parseInt(color.substring(0,2),16),
-                    Integer.parseInt(color.substring(2,4),16),
-                    Integer.parseInt(color.substring(4,6),16),
+                    Integer.parseInt(color.substring(0, 2), 16),
+                    Integer.parseInt(color.substring(2, 4), 16),
+                    Integer.parseInt(color.substring(4, 6), 16),
                     255);
         }
-        if(color.length() == 8){
+        if (color.length() == 8) {
             return getColor(
-                    Integer.parseInt(color.substring(0,2),16),
-                    Integer.parseInt(color.substring(2,4),16),
-                    Integer.parseInt(color.substring(4,6),16),
-                    Integer.parseInt(color.substring(6,8),16)
+                    Integer.parseInt(color.substring(0, 2), 16),
+                    Integer.parseInt(color.substring(2, 4), 16),
+                    Integer.parseInt(color.substring(4, 6), 16),
+                    Integer.parseInt(color.substring(6, 8), 16)
             );
         }
         throw new IllegalArgumentException("Format of color must be RGB or RGBA digits");
     }
     
-    public static String hexColorFromInt(int color){
+    public static String hexColorFromInt(int color) {
         var a = color >>> 24;
         var r = (color >> 16) & 0xFF;
         var g = (color >> 8) & 0xFF;
@@ -109,43 +109,41 @@ public class VanillaUtils {
         if (times == 0) return point;
         var x = point.x;
         var y = point.y;
-        if (times == 1) return new Vec2(16-y,x);
-        if (times == 2) return new Vec2(16-x,16-y);
-        return new Vec2(y,16-x);
+        if (times == 1) return new Vec2(16 - y, x);
+        if (times == 2) return new Vec2(16 - x, 16 - y);
+        return new Vec2(y, 16 - x);
     }
-
+    
     public static Component getName(Block block) {
         Identifier rl = BuiltInRegistries.BLOCK.getKey(block);
         return Component.translatable("block." + rl.getNamespace() + "." + rl.getPath());
     }
     
-    public static void recordDebugData(String id,long data){
-        if(FMLEnvironment.getDist() == Dist.DEDICATED_SERVER){
+    public static void recordDebugData(String id, long data) {
+        if (FMLEnvironment.getDist() == Dist.DEDICATED_SERVER) {
             PacketDistributor.sendToAllPlayers(new RecordDebugData(id, data));
-        }
-        else {
+        } else {
             ClientHandler.handleDebugData(id, data);
         }
     }
     
-    public static boolean isBlockStaticMode(Player player, BlockPos pos){
-        if(player.getAbilities().instabuild) return false;
+    public static boolean isBlockStaticMode(Player player, BlockPos pos) {
+        if (player.getAbilities().instabuild) return false;
         var level = player.level();
-        if(level.isClientSide){
+        if (level.isClientSide) {
             return ClientHandler.handleIsBlockStaticMode(pos);
-        }
-        else {
+        } else {
             return level.getChunk(pos).getData(PowerToolAttachments.STATIC_MODE).contains(pos);
         }
     }
     
-    public static class ClientHandler{
+    public static class ClientHandler {
         
-        public static void handleDebugData(String id,long data){
-            ClientDebugCharts.recordDebugData(id,data);
+        public static void handleDebugData(String id, long data) {
+            ClientDebugCharts.recordDebugData(id, data);
         }
         
-        public static boolean handleIsBlockStaticMode(BlockPos pos){
+        public static boolean handleIsBlockStaticMode(BlockPos pos) {
             return AccessControlClient.INSTANCE.isStaticModeEnabledAt(pos);
         }
         

@@ -13,24 +13,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PowerToolAttachments {
-
+    
     private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPE = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, PowerTool.MODID);
-
+    
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Permission>> PERMISSION = ATTACHMENT_TYPE.register(Permission.KEY.getPath(),
-        () -> AttachmentType.builder(Permission::new).build());
-
+            () -> AttachmentType.builder(Permission::new).build());
+    
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> DISPLAY_MODE = ATTACHMENT_TYPE.register(
-        "display_mode",
-        () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
-            .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
-            .build()
+            "display_mode",
+            () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
+                    .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
+                    .build()
     );
-
+    
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> CACHED_MODE = ATTACHMENT_TYPE.register(
-        "cached_mode",
-        () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
-            .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
-            .build()
+            "cached_mode",
+            () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
+                    .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
+                    .build()
     );
     
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> STATIC_MODE = ATTACHMENT_TYPE.register(
@@ -39,7 +39,7 @@ public class PowerToolAttachments {
                     .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
                     .build()
     );
-
+    
     public static void register(IEventBus bus) {
         ATTACHMENT_TYPE.register(bus);
     }

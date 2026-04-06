@@ -11,7 +11,7 @@ import org.teacon.powertool.network.attachment.Permission;
 
 @Mixin(CommandSourceStack.class)
 public class CommandSourceStackMixin {
-
+    
     @WrapWithCondition(method = "broadcastToAdmins", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;sendSystemMessage(Lnet/minecraft/network/chat/Component;)V"))
     private boolean checkForPermission(ServerPlayer player, Component message) {
         return PermissionAPI.getPermission(player, Permission.Provider.SEE_COMMAND_FEEDBACK_FROM_OTHERS);

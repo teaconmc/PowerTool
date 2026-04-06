@@ -42,8 +42,8 @@ public class RedStoneDelayerScreen extends Screen {
     protected void init() {
         var mc = Minecraft.getInstance();
         var font = mc.font;
-        var box_l = (int)Math.max(100,width*0.2);
-        var startY = (int)(height*0.15);
+        var box_l = (int) Math.max(100, width * 0.2);
+        var startY = (int) (height * 0.15);
         mode = te.mode;
         checkRisingEdge = te.checkRisingEdge;
         
@@ -51,33 +51,33 @@ public class RedStoneDelayerScreen extends Screen {
                 .pos(this.width / 2 - 100, this.height / 2 + startY)
                 .size(200, 20).build());
         
-        this.delayInput = new ObjectInputBox<>(font,this.width/2 - box_l/2,height/2,box_l,20,Component.literal("Delay Ticks"),ObjectInputBox.INT_VALIDATOR,ObjectInputBox.INT_RESPONDER);
+        this.delayInput = new ObjectInputBox<>(font, this.width / 2 - box_l / 2, height / 2, box_l, 20, Component.literal("Delay Ticks"), ObjectInputBox.INT_VALIDATOR, ObjectInputBox.INT_RESPONDER);
         this.delayInput.setMaxLength(6);
         this.delayInput.setValue(String.valueOf(te.delayTicks));
         
-        var buttonCheckRisingEdge = new SpriteIconButton.Builder(Component.empty(),(btn) -> checkRisingEdge = true,true)
-                .sprite(TEXTURE_RISING_EDGE,16,16)
+        var buttonCheckRisingEdge = new SpriteIconButton.Builder(Component.empty(), (btn) -> checkRisingEdge = true, true)
+                .sprite(TEXTURE_RISING_EDGE, 16, 16)
                 .size(20, 20)
                 .build();
-        buttonCheckRisingEdge.setPosition(this.width/2 - 22,height/2 - 50);
+        buttonCheckRisingEdge.setPosition(this.width / 2 - 22, height / 2 - 50);
         buttonCheckRisingEdge.setTooltip(Tooltip.create(Component.translatable("powertool.gui.delayer.check_rising_edge")));
-        var buttonCheckDescendingEdge = new SpriteIconButton.Builder(Component.empty(),(btn) -> checkRisingEdge = false,true)
-                .sprite(TEXTURE_DESCENDING_EDGE,16,16)
+        var buttonCheckDescendingEdge = new SpriteIconButton.Builder(Component.empty(), (btn) -> checkRisingEdge = false, true)
+                .sprite(TEXTURE_DESCENDING_EDGE, 16, 16)
                 .size(20, 20)
                 .build();
-        buttonCheckDescendingEdge.setPosition(this.width/2+3,height/2 - 50);
+        buttonCheckDescendingEdge.setPosition(this.width / 2 + 3, height / 2 - 50);
         buttonCheckDescendingEdge.setTooltip(Tooltip.create(Component.translatable("powertool.gui.delayer.check_descending_edge")));
-        var buttonIgnore = new SpriteIconButton.Builder(Component.empty(),(btn) -> mode = RedStoneDelayBlockEntity.Mode.IGNORE,true)
-                .sprite(TEXTURE_IGNORE,16,16)
+        var buttonIgnore = new SpriteIconButton.Builder(Component.empty(), (btn) -> mode = RedStoneDelayBlockEntity.Mode.IGNORE, true)
+                .sprite(TEXTURE_IGNORE, 16, 16)
                 .size(20, 20)
                 .build();
-        buttonIgnore.setPosition(this.width/2 - 22,height/2 - 25);
+        buttonIgnore.setPosition(this.width / 2 - 22, height / 2 - 25);
         buttonIgnore.setTooltip(Tooltip.create(Component.translatable("powertool.gui.delayer.ignore")));
-        var buttonReset = new SpriteIconButton.Builder(Component.empty(),(btn) -> mode = RedStoneDelayBlockEntity.Mode.RESET,true)
-                .sprite(TEXTURE_RESET,16,16)
+        var buttonReset = new SpriteIconButton.Builder(Component.empty(), (btn) -> mode = RedStoneDelayBlockEntity.Mode.RESET, true)
+                .sprite(TEXTURE_RESET, 16, 16)
                 .size(20, 20)
                 .build();
-        buttonReset.setPosition(this.width/2+3,height/2 - 25);
+        buttonReset.setPosition(this.width / 2 + 3, height / 2 - 25);
         buttonReset.setTooltip(Tooltip.create(Component.translatable("powertool.gui.delayer.reset")));
         this.addRenderableWidget(this.delayInput);
         this.addRenderableWidget(buttonCheckRisingEdge);
@@ -95,8 +95,8 @@ public class RedStoneDelayerScreen extends Screen {
     
     @Override
     public void removed() {
-        if(this.delayInput == null) return;
-        te.delayTicks = Objects.requireNonNullElse(delayInput.get(),0);
+        if (this.delayInput == null) return;
+        te.delayTicks = Objects.requireNonNullElse(delayInput.get(), 0);
         te.mode = mode;
         te.checkRisingEdge = checkRisingEdge;
         PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
@@ -107,10 +107,10 @@ public class RedStoneDelayerScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         var currentMode1 = Component.translatable("powertool.gui.delayer.mode1");
         var currentMode2 = Component.translatable("powertool.gui.delayer.mode2");
-        guiGraphics.drawString(font,currentMode1,width/2 - 50 - font.width(currentMode1),height/2 - 50 + 6,-1);
-        guiGraphics.drawString(font,currentMode2,width/2 - 50 - font.width(currentMode2),height/2 - 25 + 6,-1);
-        guiGraphics.blitSprite(mode == RedStoneDelayBlockEntity.Mode.IGNORE ? TEXTURE_IGNORE : TEXTURE_RESET,width/2 - 43,height/2 - 25 + 2,16,16);
-        guiGraphics.blitSprite(checkRisingEdge? TEXTURE_RISING_EDGE : TEXTURE_DESCENDING_EDGE,width/2 - 43,height/2 - 50 + 2,16,16);
+        guiGraphics.drawString(font, currentMode1, width / 2 - 50 - font.width(currentMode1), height / 2 - 50 + 6, -1);
+        guiGraphics.drawString(font, currentMode2, width / 2 - 50 - font.width(currentMode2), height / 2 - 25 + 6, -1);
+        guiGraphics.blitSprite(mode == RedStoneDelayBlockEntity.Mode.IGNORE ? TEXTURE_IGNORE : TEXTURE_RESET, width / 2 - 43, height / 2 - 25 + 2, 16, 16);
+        guiGraphics.blitSprite(checkRisingEdge ? TEXTURE_RISING_EDGE : TEXTURE_DESCENDING_EDGE, width / 2 - 43, height / 2 - 50 + 2, 16, 16);
     }
     
     @Override

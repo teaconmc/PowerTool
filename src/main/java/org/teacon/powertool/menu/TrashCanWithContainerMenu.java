@@ -17,10 +17,10 @@ public class TrashCanWithContainerMenu extends AbstractContainerMenu {
     
     private final Container container;
     
-    public TrashCanWithContainerMenu(int containerId, Inventory playerInventory,Container container) {
+    public TrashCanWithContainerMenu(int containerId, Inventory playerInventory, Container container) {
         super(PowerToolMenus.TRASH_CAN_MENU.get(), containerId);
         this.container = container;
-        this.addSlot(new Slot(container, 0, 80, 36){
+        this.addSlot(new Slot(container, 0, 80, 36) {
             @Override
             public ItemStack safeInsert(ItemStack stack, int increment) {
                 this.setByPlayer(stack.copy());
@@ -44,13 +44,12 @@ public class TrashCanWithContainerMenu extends AbstractContainerMenu {
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
         var slot = this.slots.get(index);
-        if(!slot.hasItem()) return ItemStack.EMPTY;
+        if (!slot.hasItem()) return ItemStack.EMPTY;
         var itemInSlot = slot.getItem();
-        if(itemInSlot.isEmpty()) return ItemStack.EMPTY;
-        if(index == 0) {
-            if(!this.moveItemStackTo(itemInSlot, 1,37,true)) return ItemStack.EMPTY;
-        }
-        else {
+        if (itemInSlot.isEmpty()) return ItemStack.EMPTY;
+        if (index == 0) {
+            if (!this.moveItemStackTo(itemInSlot, 1, 37, true)) return ItemStack.EMPTY;
+        } else {
             this.slots.getFirst().setByPlayer(itemInSlot.copy());
             this.slots.getFirst().setChanged();
             slot.setByPlayer(ItemStack.EMPTY);
@@ -66,10 +65,9 @@ public class TrashCanWithContainerMenu extends AbstractContainerMenu {
     
     @Override
     public void clicked(int slotId, int button, ClickType clickType, Player player) {
-        if(slotId == 0 && clickType == ClickType.PICKUP && (button == 0 || button == 1) && !this.getCarried().isEmpty()) {
+        if (slotId == 0 && clickType == ClickType.PICKUP && (button == 0 || button == 1) && !this.getCarried().isEmpty()) {
             this.slots.getFirst().set(this.getCarried());
             this.setCarried(ItemStack.EMPTY);
-        }
-        else super.clicked(slotId, button, clickType, player);
+        } else super.clicked(slotId, button, clickType, player);
     }
 }

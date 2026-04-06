@@ -47,7 +47,7 @@ public class TrashCanWithContainerBlockEntity extends BaseContainerBlockEntity {
     
     @Override
     protected AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
-        return new TrashCanWithContainerMenu(containerId, inventory,this);
+        return new TrashCanWithContainerMenu(containerId, inventory, this);
     }
     
     @Override
@@ -58,8 +58,8 @@ public class TrashCanWithContainerBlockEntity extends BaseContainerBlockEntity {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        ContainerHelper.loadAllItems(input,items);
-        if(!this.init){
+        ContainerHelper.loadAllItems(input, items);
+        if (!this.init) {
             items.clear();
             init = true;
         }
@@ -68,7 +68,7 @@ public class TrashCanWithContainerBlockEntity extends BaseContainerBlockEntity {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        ContainerHelper.saveAllItems(output,items);
+        ContainerHelper.saveAllItems(output, items);
     }
     
     @Override

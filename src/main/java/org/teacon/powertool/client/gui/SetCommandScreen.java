@@ -46,26 +46,27 @@ public class SetCommandScreen extends Screen {
     protected void init() {
         var mc = Minecraft.getInstance();
         var font = mc.font;
-        var box_l = (int)Math.max(100,width*0.4);
-        var startY = (int)(height*0.05);
+        var box_l = (int) Math.max(100, width * 0.4);
+        var startY = (int) (height * 0.05);
         delayedCommands.clear();
-        if(itemStack.has(PowerToolDataComponents.DELAYED_COMMANDS)) delayedCommands.addAll(Objects.requireNonNull(itemStack.get(PowerToolDataComponents.DELAYED_COMMANDS)));
-        this.name = new ObjectInputBox<>(font,width/2-box_l/2,startY,box_l,20,Component.literal("name"),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
+        if (itemStack.has(PowerToolDataComponents.DELAYED_COMMANDS))
+            delayedCommands.addAll(Objects.requireNonNull(itemStack.get(PowerToolDataComponents.DELAYED_COMMANDS)));
+        this.name = new ObjectInputBox<>(font, width / 2 - box_l / 2, startY, box_l, 20, Component.literal("name"), ObjectInputBox.PASS_VALIDATOR, ObjectInputBox.PASS_RESPONDER);
         this.name.setMaxLength(114514);
         this.name.setRenderState(false);
-        this.input = new ObjectInputBox<>(font,width/2-box_l/2,startY+25,box_l,20,Component.literal("command"),ObjectInputBox.PASS_VALIDATOR,ObjectInputBox.PASS_RESPONDER);
+        this.input = new ObjectInputBox<>(font, width / 2 - box_l / 2, startY + 25, box_l, 20, Component.literal("command"), ObjectInputBox.PASS_VALIDATOR, ObjectInputBox.PASS_RESPONDER);
         this.input.setMaxLength(114514);
         this.input.setRenderState(false);
-        this.appendCommand = Button.builder(Component.literal("+"),(b) -> {
-            if(this.commandList != null) commandList.appendEntry();
+        this.appendCommand = Button.builder(Component.literal("+"), (b) -> {
+            if (this.commandList != null) commandList.appendEntry();
             this.refreshContentPos();
-        }).size(20,20).pos(width/2+box_l/2-25,startY+52).build();
-        this.commandList = new DelayCommandList(this,box_l,startY+50);
-        var listEndY = startY+50+commandList.getHeight_();
-        this.consume = Checkbox.builder(Component.literal("consumable"),font).pos(width/2-box_l/2, listEndY+5).selected(Boolean.TRUE.equals(itemStack.get(PowerToolDataComponents.CONSUME))).build();
+        }).size(20, 20).pos(width / 2 + box_l / 2 - 25, startY + 52).build();
+        this.commandList = new DelayCommandList(this, box_l, startY + 50);
+        var listEndY = startY + 50 + commandList.getHeight_();
+        this.consume = Checkbox.builder(Component.literal("consumable"), font).pos(width / 2 - box_l / 2, listEndY + 5).selected(Boolean.TRUE.equals(itemStack.get(PowerToolDataComponents.CONSUME))).build();
         this.closeButton = new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
-                .pos((int) (this.width / 2f - box_l*0.3f), listEndY+30)
-                .size((int) (box_l*0.6), 20).build();
+                .pos((int) (this.width / 2f - box_l * 0.3f), listEndY + 30)
+                .size((int) (box_l * 0.6), 20).build();
         
         String command = itemStack.get(PowerToolDataComponents.COMMAND);
         if (command != null) {
@@ -82,19 +83,19 @@ public class SetCommandScreen extends Screen {
         super.init();
     }
     
-    public void refreshContentPos(){
-        var startY = (int)(height*0.05);
+    public void refreshContentPos() {
+        var startY = (int) (height * 0.05);
         this.commandList.resize();
-        var listEndY = startY+50+commandList.getHeight_();
-        this.consume.setPosition(consume.getX(), listEndY+5);
-        this.closeButton.setPosition(closeButton.getX(), listEndY+30);
+        var listEndY = startY + 50 + commandList.getHeight_();
+        this.consume.setPosition(consume.getX(), listEndY + 5);
+        this.closeButton.setPosition(closeButton.getX(), listEndY + 30);
         refreshDelayedCommandsFromList();
     }
     
-    public void refreshDelayedCommandsFromList(){
+    public void refreshDelayedCommandsFromList() {
         this.delayedCommands.clear();
-        for(var entry : this.commandList.entries()){
-            delayedCommands.add(new CommandRune.DelayedCommandData(entry.delay(),entry.command()));
+        for (var entry : this.commandList.entries()) {
+            delayedCommands.add(new CommandRune.DelayedCommandData(entry.delay(), entry.command()));
         }
     }
     
@@ -106,21 +107,21 @@ public class SetCommandScreen extends Screen {
     
     @Override
     public void removed() {
-        if(input == null || name == null || consume == null) return;
+        if (input == null || name == null || consume == null) return;
         refreshDelayedCommandsFromList();
-        var patch = DataComponentPatch.builder().set(DataComponents.CUSTOM_NAME,Component.literal(name.getValue()));
-        if(!input.getValue().isEmpty()) patch.set(PowerToolDataComponents.COMMAND.get(),input.getValue());
-        patch.set(PowerToolDataComponents.CONSUME.get(),consume.selected());
-        patch.set(PowerToolDataComponents.DELAYED_COMMANDS.get(),delayedCommands);
-        PacketDistributor.sendToServer(new UpdateItemStackData(slot,patch.build()));
+        var patch = DataComponentPatch.builder().set(DataComponents.CUSTOM_NAME, Component.literal(name.getValue()));
+        if (!input.getValue().isEmpty()) patch.set(PowerToolDataComponents.COMMAND.get(), input.getValue());
+        patch.set(PowerToolDataComponents.CONSUME.get(), consume.selected());
+        patch.set(PowerToolDataComponents.DELAYED_COMMANDS.get(), delayedCommands);
+        PacketDistributor.sendToServer(new UpdateItemStackData(slot, patch.build()));
     }
     
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        var box_l = (int)Math.max(100,width*0.4);
-        var startY = (int)(height*0.15);
+        var box_l = (int) Math.max(100, width * 0.4);
+        var startY = (int) (height * 0.15);
         var text = "delayed commands";
-        guiGraphics.drawString(font,text,width/2-box_l/2-font.width(text)-2,startY+52,0xFFFFFF);
+        guiGraphics.drawString(font, text, width / 2 - box_l / 2 - font.width(text) - 2, startY + 52, 0xFFFFFF);
     }
 }

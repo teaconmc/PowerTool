@@ -1,15 +1,12 @@
 package org.teacon.powertool.utils.time;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.function.Supplier;
 
-public class InWorldDailyCycleTimeSection implements ITimeSection{
+public class InWorldDailyCycleTimeSection implements ITimeSection {
     
     protected final Supplier<Level> levelGetter;
     //[0.0-1.0]
@@ -41,8 +38,8 @@ public class InWorldDailyCycleTimeSection implements ITimeSection{
     
     @Override
     public ITimeSection load(ValueInput input) {
-        var _start = input.getFloatOr("start",0);
-        var _end = input.getFloatOr("end",0);
+        var _start = input.getFloatOr("start", 0);
+        var _end = input.getFloatOr("end", 0);
         return new InWorldDailyCycleTimeSection(levelGetter, _start, _end);
     }
     

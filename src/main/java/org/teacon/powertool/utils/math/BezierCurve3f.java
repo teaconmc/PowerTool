@@ -30,9 +30,9 @@ public class BezierCurve3f {
     
     private void calculatePoints() {
         points = new ArrayList<>();
-        double delta = 1d/(steps-1);
+        double delta = 1d / (steps - 1);
         double t = 0;
-        if(Double.isNaN(delta)) {
+        if (Double.isNaN(delta)) {
             points.add(controlPoints.getFirst());
             points.add(controlPoints.getLast());
             return;
@@ -40,11 +40,11 @@ public class BezierCurve3f {
         for (int i = 0; i < steps; i++) {
             var result = new Vector3f();
             for (int n = 0; n < degree + 1; n++) {
-                double scale = degree * Math.min(n,degree-n);
-                if(scale == 0) scale = 1;
-                scale *= Math.pow(1-t,degree - n) * Math.pow(t,n);
+                double scale = degree * Math.min(n, degree - n);
+                if (scale == 0) scale = 1;
+                scale *= Math.pow(1 - t, degree - n) * Math.pow(t, n);
                 var pn = controlPoints.get(n);
-                pn.mulAdd((float) scale,result,result);
+                pn.mulAdd((float) scale, result, result);
             }
             points.add(result);
             t += delta;
@@ -52,7 +52,7 @@ public class BezierCurve3f {
     }
     
     public List<Vector3f> getPoints() {
-        if (points == null){
+        if (points == null) {
             calculatePoints();
             points = Collections.unmodifiableList(points);
         }
@@ -60,10 +60,10 @@ public class BezierCurve3f {
     }
     
     public float getLength() {
-        if(length < 0){
+        if (length < 0) {
             var context = new Vector3f();
-            for(var i = 0; i < getPoints().size()-1; i++) {
-                length += getPoints().get(i+1).sub(getPoints().get(i),context).length();
+            for (var i = 0; i < getPoints().size() - 1; i++) {
+                length += getPoints().get(i + 1).sub(getPoints().get(i), context).length();
             }
         }
         return length;

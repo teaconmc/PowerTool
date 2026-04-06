@@ -34,9 +34,9 @@ public class TextureExtractorMenu extends AbstractContainerMenu {
     public final Container targetContainer;
     public boolean needRefreshFilter = false;
     
-    protected TextureExtractorMenu( int containerId, Inventory playerInventory) {
+    protected TextureExtractorMenu(int containerId, Inventory playerInventory) {
         super(PowerToolMenus.TEXTURE_EXTRACTOR_MENU.get(), containerId);
-        targetContainer = new SimpleContainer(1){
+        targetContainer = new SimpleContainer(1) {
             @Override
             public ItemStack removeItem(int index, int count) {
                 super.removeItem(index, count);

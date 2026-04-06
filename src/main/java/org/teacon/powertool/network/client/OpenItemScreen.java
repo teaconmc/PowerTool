@@ -25,11 +25,11 @@ public record OpenItemScreen(ItemStack stack, EquipmentSlot slot) implements Cus
             OpenItemScreen::new
     );
     
-    public void handle(IPayloadContext context){
+    public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             var mc = Minecraft.getInstance();
-            if(stack.getItem() instanceof IScreenProviderItem screenProvider){
-                mc.setScreen(screenProvider.getScreenSupplier(stack,slot).get());
+            if (stack.getItem() instanceof IScreenProviderItem screenProvider) {
+                mc.setScreen(screenProvider.getScreenSupplier(stack, slot).get());
             }
         });
     }

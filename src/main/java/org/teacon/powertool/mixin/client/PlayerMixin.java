@@ -17,9 +17,11 @@ import java.util.Optional;
 
 @Mixin(Player.class)
 public class PlayerMixin {
-
-    @Shadow @Final private Abilities abilities;
-
+    
+    @Shadow
+    @Final
+    private Abilities abilities;
+    
     @Inject(method = "canUseGameMasterBlocks", cancellable = true, at = @At("RETURN"))
     private void usePermission(CallbackInfoReturnable<Boolean> cir) {
         // noinspection ConstantConditions

@@ -1,10 +1,8 @@
 package org.teacon.powertool.block;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -27,16 +25,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 @NonNullByDefault
 public class TrashCanBlock extends Block {
-
-    private static final VoxelShape OUTER_SHAPE = box(1,0,1,15,16,15);
+    
+    private static final VoxelShape OUTER_SHAPE = box(1, 0, 1, 15, 16, 15);
     protected static final VoxelShape SHAPE = Shapes.join(OUTER_SHAPE, Block.box(2, 2, 2, 14, 16, 14), BooleanOp.ONLY_FIRST);
-
+    
     private static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-
+    
     public TrashCanBlock(Properties prop) {
         super(prop);
         this.registerDefaultState(this.defaultBlockState().setValue(POWERED, Boolean.FALSE));
@@ -46,12 +42,12 @@ public class TrashCanBlock extends Block {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWERED);
     }
-
+    
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
     }
-
+    
     @Override
     public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;

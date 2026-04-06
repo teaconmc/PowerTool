@@ -21,30 +21,30 @@ import org.teacon.powertool.utils.VanillaUtils;
 public class ClientOverlays {
     @SubscribeEvent
     public static void onRegGuiLayerDef(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, VanillaUtils.modRL( "cashier_hud"), (guiGraphics, partialTicks) -> {
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR, VanillaUtils.modRL("cashier_hud"), (guiGraphics, partialTicks) -> {
             Minecraft mc = Minecraft.getInstance();
             HitResult res = mc.hitResult;
             if (mc.level != null && res instanceof BlockHitResult hit) {
                 BlockEntity be = mc.level.getBlockEntity(hit.getBlockPos());
                 if (be instanceof RegisterBlockEntity theBE && !theBE.itemToAccept.isEmpty()) {
-                    var offset = ClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept,0,0,
+                    var offset = ClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept, 0, 0,
                             Component.translatable("block.powertool.register.hud.prompt.1").withStyle(ChatFormatting.ITALIC),
                             Component.translatable("block.powertool.register.hud.prompt.2", Component.keybind("key.use")).withStyle(ChatFormatting.ITALIC));
-                    if(theBE.displaySupply && !theBE.itemToSupply.isEmpty()){
-                        ClientEvents.drawRegisterInfo(mc,guiGraphics,theBE.itemToSupply,offset.x+8,0,
+                    if (theBE.displaySupply && !theBE.itemToSupply.isEmpty()) {
+                        ClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToSupply, offset.x + 8, 0,
                                 Component.translatable("block.powertool.register.hud.prompt.3").withStyle(ChatFormatting.ITALIC),
                                 Component.empty());
                     }
                 }
             }
         });
-        event.registerAbove(VanillaGuiLayers.HOTBAR,VanillaUtils.modRL("marting_car_info"),MartingCarOverlay::renderBoostBar);
-        if(SharedConstants.IS_RUNNING_WITH_JDWP){
-            event.registerAboveAll(VanillaUtils.modRL("debug_charts"),(guiGraphics, partialTicks) -> {
+        event.registerAbove(VanillaGuiLayers.HOTBAR, VanillaUtils.modRL("marting_car_info"), MartingCarOverlay::renderBoostBar);
+        if (SharedConstants.IS_RUNNING_WITH_JDWP) {
+            event.registerAboveAll(VanillaUtils.modRL("debug_charts"), (guiGraphics, partialTicks) -> {
                 var y = 80;
-                for(var value : ClientDebugCharts.DEBUG_CHARTS.values()){
+                for (var value : ClientDebugCharts.DEBUG_CHARTS.values()) {
                     var chart = value.getFirst();
-                    chart.drawChart(guiGraphics,0,y,chart.getWidth(guiGraphics.guiWidth()/2));
+                    chart.drawChart(guiGraphics, 0, y, chart.getWidth(guiGraphics.guiWidth() / 2));
                     y += 80;
                 }
             });

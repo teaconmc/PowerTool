@@ -15,11 +15,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemDisplayBlockEntity> {
-
+    
     private final ItemRenderer itemRenderer;
+    
     public ItemDisplayBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.itemRenderer = context.getItemRenderer();
     }
+    
     @Override
     public void render(ItemDisplayBlockEntity theBE, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         if (theBE.itemToDisplay.isEmpty()) {
@@ -42,6 +44,6 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
         this.itemRenderer.renderStatic(theBE.itemToDisplay, ItemDisplayContext.FIXED, packedLight, OverlayTexture.NO_OVERLAY,
                 transform, bufferSource, theBE.getLevel(), 0);
         transform.popPose();
-
+        
     }
 }

@@ -16,23 +16,23 @@ import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipe
 @Mixin(SodiumWorldRenderer.class)
 public class SodiumWorldRenderMixin {
     @WrapOperation(
-        method = "renderBlockEntity",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V"
-        )
+            method = "renderBlockEntity",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher;render(Lnet/minecraft/world/level/block/entity/BlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V"
+            )
     )
     private static <E extends BlockEntity> void wrapRenderBlockEntity(
-        BlockEntityRenderDispatcher instance,
-        E blockEntity,
-        float partialTick,
-        PoseStack poseStack,
-        MultiBufferSource bufferSource,
-        Operation<Void> original
+            BlockEntityRenderDispatcher instance,
+            E blockEntity,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource bufferSource,
+            Operation<Void> original
     ) {
         if (CachedModeClient.INSTANCE.isCachedModeEnabledOn(blockEntity)) {
             CacheableBERenderingPipeline.getInstance().getRenderRegion(new ChunkPos(blockEntity.getBlockPos()))
-                .addIfPossible(blockEntity);
+                    .addIfPossible(blockEntity);
             return;
         }
         original.call(instance, blockEntity, partialTick, poseStack, bufferSource);

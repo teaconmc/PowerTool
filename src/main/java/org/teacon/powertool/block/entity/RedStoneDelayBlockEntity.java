@@ -21,7 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpdateBlockEntity{
+public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpdateBlockEntity {
     
     public int delayTicks;
     public int delayedTicks;
@@ -37,28 +37,28 @@ public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpda
     }
     
     public static void tick(Level level, BlockPos pos, BlockState state, RedStoneDelayBlockEntity blockEntity) {
-        if(blockEntity.powered == null || blockEntity.poweredOld == null) {
+        if (blockEntity.powered == null || blockEntity.poweredOld == null) {
             blockEntity.powered = blockEntity.poweredOld = RedStoneDelayBlock.powered(level, pos);
         }
         Boolean risingEdge = null;
-        if(blockEntity.powered != blockEntity.poweredOld){
+        if (blockEntity.powered != blockEntity.poweredOld) {
             risingEdge = blockEntity.powered;
             blockEntity.poweredOld = blockEntity.powered;
         }
-        if(risingEdge != null && blockEntity.checkRisingEdge == risingEdge){
+        if (risingEdge != null && blockEntity.checkRisingEdge == risingEdge) {
             blockEntity.counting = true;
-            if(blockEntity.mode == Mode.RESET) blockEntity.delayedTicks = 0;
+            if (blockEntity.mode == Mode.RESET) blockEntity.delayedTicks = 0;
             blockEntity.setChanged();
         }
-        if(blockEntity.counting){
+        if (blockEntity.counting) {
             blockEntity.delayedTicks++;
-            if(blockEntity.delayedTicks%2==0) level.updateNeighbourForOutputSignal(pos,state.getBlock());
+            if (blockEntity.delayedTicks % 2 == 0) level.updateNeighbourForOutputSignal(pos, state.getBlock());
         }
-        if(blockEntity.counting && blockEntity.delayedTicks >= blockEntity.delayTicks){
+        if (blockEntity.counting && blockEntity.delayedTicks >= blockEntity.delayTicks) {
             blockEntity.delayedTicks = 0;
             blockEntity.counting = false;
-            level.setBlock(pos,state.setValue(RedStoneDelayBlock.POWERED, true), Block.UPDATE_ALL);
-            level.scheduleTick(pos,state.getBlock(),2);
+            level.setBlock(pos, state.setValue(RedStoneDelayBlock.POWERED, true), Block.UPDATE_ALL);
+            level.scheduleTick(pos, state.getBlock(), 2);
             blockEntity.setChanged();
         }
         
@@ -123,7 +123,7 @@ public class RedStoneDelayBlockEntity extends BlockEntity implements IClientUpda
         this.writeWithoutState(output);
     }
     
-    public enum Mode{
+    public enum Mode {
         IGNORE,
         RESET;
         

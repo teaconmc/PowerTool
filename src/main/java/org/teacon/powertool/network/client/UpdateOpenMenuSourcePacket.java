@@ -11,23 +11,23 @@ import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
 public record UpdateOpenMenuSourcePacket(
-    BlockPos pos
+        BlockPos pos
 ) implements CustomPacketPayload {
-
+    
     public static final CustomPacketPayload.Type<UpdateOpenMenuSourcePacket> TYPE = new Type<>(VanillaUtils.modRL("open_menu_source"));
-
+    
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateOpenMenuSourcePacket> STREAM_CODEC = StreamCodec.composite(
-        BlockPos.STREAM_CODEC,
-        UpdateOpenMenuSourcePacket::pos,
-        UpdateOpenMenuSourcePacket::new
+            BlockPos.STREAM_CODEC,
+            UpdateOpenMenuSourcePacket::pos,
+            UpdateOpenMenuSourcePacket::new
     );
-
+    
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
-
-    public void handle(IPayloadContext context){
+    
+    public void handle(IPayloadContext context) {
         AccessControlClient.INSTANCE.updateInteractionSource(pos);
     }
 }

@@ -2,8 +2,6 @@ package org.teacon.powertool.block.holo_sign;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.RandomSource;
-import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
@@ -12,6 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -52,24 +52,22 @@ import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.utils.VanillaUtils;
 
-import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.function.Consumer;
 
 @NonNullByDefault
 public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, WithTooltip {
-
+    
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
-
+    
     public static final MapCodec<HolographicSignBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(propertiesCodec(), SignType.CODEC.fieldOf("type").forGetter(block -> block.type))
                     .apply(instance, HolographicSignBlock::new)
     );
     
     public final SignType type;
-
+    
     public HolographicSignBlock(Properties prop, SignType type) {
         super(prop);
         this.type = type;
@@ -83,14 +81,14 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(WATERLOGGED,LIT);
+        builder.add(WATERLOGGED, LIT);
     }
     
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
-
+    
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -99,8 +97,8 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(hand == InteractionHand.MAIN_HAND){
-            return use(level,pos,player);
+        if (hand == InteractionHand.MAIN_HAND) {
+            return use(level, pos, player);
         }
         return InteractionResult.SUCCESS;
     }
@@ -122,7 +120,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if(type == SignType.COMMON && context instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player player && !player.getAbilities().instabuild){
+        if (type == SignType.COMMON && context instanceof EntityCollisionContext ecc && ecc.getEntity() instanceof Player player && !player.getAbilities().instabuild) {
             return Shapes.empty();
         }
         return super.getShape(state, level, pos, context);
@@ -147,17 +145,15 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
         if (!level.isClientSide() && player instanceof ServerPlayer sp
                 && sp.getAbilities().instabuild && !player.isCrouching()) {
             PacketDistributor.sendToPlayer(sp, new OpenHolographicSignEditor(pos, type));
-        }
-        else if(!player.getAbilities().instabuild || player.isCrouching()){
-            if(level.isClientSide()){
-                return ClientLogicHolder.tryUseAdditional(level,pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
-            }
-            else if(level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be){
-                for(var component : be.forRender){
+        } else if (!player.getAbilities().instabuild || player.isCrouching()) {
+            if (level.isClientSide()) {
+                return ClientLogicHolder.tryUseAdditional(level, pos) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+            } else if (level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
+                for (var component : be.forRender) {
                     var clickEvent = component.getStyle().getClickEvent();
-                    if(clickEvent == null) return InteractionResult.PASS;
-                    if(clickEvent instanceof ClickEvent.RunCommand(String command)){
-                        VanillaUtils.runCommand(command,player);
+                    if (clickEvent == null) return InteractionResult.PASS;
+                    if (clickEvent instanceof ClickEvent.RunCommand(String command)) {
+                        VanillaUtils.runCommand(command, player);
                     }
                 }
             }
@@ -170,7 +166,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
         if (state.getValue(WATERLOGGED)) {
             ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        if(this.type == SignType.RAW_JSON && level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity sign){
+        if (this.type == SignType.RAW_JSON && level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity sign) {
             ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
         }
         return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
@@ -178,7 +174,7 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
-        if(type == SignType.RAW_JSON){
+        if (type == SignType.RAW_JSON) {
             builder.accept(Component.translatable(""));
         }
     }
@@ -187,9 +183,9 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
     public FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
-
+    
     private static final class ClientLogicHolder {
-        public static boolean tryOpenURL(URI uri){
+        public static boolean tryOpenURL(URI uri) {
             var mc = Minecraft.getInstance();
             if (mc.options.chatLinksPrompt().get()) {
                 mc.setScreen(new ConfirmLinkScreen(p_351659_ -> {
@@ -203,29 +199,29 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
             }
             return true;
         }
-
+        
         public static boolean tryUseAdditional(Level level, BlockPos pos) {
-            if(level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
+            if (level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
                 return tryOpenURL(URI.create(be.url));
             }
-            if(level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
-                for(var component : be.forRender){
+            if (level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
+                for (var component : be.forRender) {
                     var clickEvent = component.getStyle().getClickEvent();
-                    if(clickEvent == null) return false;
-                    if(clickEvent instanceof ClickEvent.OpenUrl(URI uri)) return tryOpenURL(uri);
-                    if(clickEvent instanceof ClickEvent.OpenFile of){
+                    if (clickEvent == null) return false;
+                    if (clickEvent instanceof ClickEvent.OpenUrl(URI uri)) return tryOpenURL(uri);
+                    if (clickEvent instanceof ClickEvent.OpenFile of) {
                         Util.getPlatform().openFile(of.file());
                         return true;
                     }
-                    if(clickEvent instanceof ClickEvent.CopyToClipboard(String value)){
+                    if (clickEvent instanceof ClickEvent.CopyToClipboard(String value)) {
                         Minecraft.getInstance().keyboardHandler.setClipboard(value);
                         return true;
                     }
                     //交给服务端
                     //if(action == ClickEvent.Action.RUN_COMMAND)
-                    if(clickEvent instanceof ClickEvent.SuggestCommand(String command)){
-                        var screen = new ChatScreen("",true);
-                        screen.insertText(command,false);
+                    if (clickEvent instanceof ClickEvent.SuggestCommand(String command)) {
+                        var screen = new ChatScreen("", true);
+                        screen.insertText(command, false);
                         Minecraft.getInstance().setScreen(screen);
                         return true;
                     }

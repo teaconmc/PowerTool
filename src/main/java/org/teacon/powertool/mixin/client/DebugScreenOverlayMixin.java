@@ -19,31 +19,31 @@ import java.util.List;
 public class DebugScreenOverlayMixin {
     @Shadow
     private HitResult block;
-
+    
     @Inject(
-        method = "getSystemInformation",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/world/level/block/state/BlockState;getTags()Ljava/util/stream/Stream;"
-        )
+            method = "getSystemInformation",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/level/block/state/BlockState;getTags()Ljava/util/stream/Stream;"
+            )
     )
     private void appendDisplayModeInformation(
-        CallbackInfoReturnable<List<String>> cir,
-        @Local(index = 9) List<String> list
+            CallbackInfoReturnable<List<String>> cir,
+            @Local(index = 9) List<String> list
     ) {
         boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(
-            ((BlockHitResult) this.block).getBlockPos()
+                ((BlockHitResult) this.block).getBlockPos()
         );
         boolean isCachedModeEnabled = CachedModeClient.INSTANCE.isCachedModeEnabledOn(
-            ((BlockHitResult) this.block).getBlockPos()
+                ((BlockHitResult) this.block).getBlockPos()
         );
         list.add(
-            "Display Mode: "
-                + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                "Display Mode: "
+                        + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
         );
         list.add(
-            "Cached Mode: "
-                + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                "Cached Mode: "
+                        + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
         );
     }
 }

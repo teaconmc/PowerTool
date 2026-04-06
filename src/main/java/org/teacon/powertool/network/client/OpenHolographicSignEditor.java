@@ -1,7 +1,7 @@
 package org.teacon.powertool.network.client;
 
-import io.netty.buffer.ByteBuf;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,7 +14,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 
 @MethodsReturnNonnullByDefault
 public record OpenHolographicSignEditor(BlockPos location, SignType signType) implements CustomPacketPayload {
-
+    
     public static final CustomPacketPayload.Type<OpenHolographicSignEditor> TYPE = new Type<>(VanillaUtils.modRL("open_holographic_sign_editor"));
     
     public static final StreamCodec<ByteBuf, OpenHolographicSignEditor> STREAM_CODEC = StreamCodec.composite(
@@ -49,9 +49,9 @@ public record OpenHolographicSignEditor(BlockPos location, SignType signType) im
             if (level == null) return;
             var te = level.getBlockEntity(OpenHolographicSignEditor.this.location);
             if (te instanceof HoloSignBEFlag) {
-                mc.setScreen(BaseHolographicSignEditingScreen.creatHoloSignScreen(te,type));
+                mc.setScreen(BaseHolographicSignEditingScreen.creatHoloSignScreen(te, type));
             }
         }
     }
-
+    
 }

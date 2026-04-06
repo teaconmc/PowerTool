@@ -22,13 +22,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupplyMenu> {
-
+    
     private static final Identifier BG_LOCATION = VanillaUtils.modRL("textures/gui/power_supply.png");
-
+    
     private EditBox input;
     private ButtonWithHighlight minus, plus;
     private int status = 1, power = -1;
-
+    
     public PowerSupplyScreen(PowerSupplyMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.status = menu.dataHolder.status;
@@ -36,23 +36,23 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
         this.imageWidth = 170;
         this.imageHeight = 105;
     }
-
+    
     public void onToggled(Button toggle) {
         this.status = this.status == 0 ? 1 : 0;
         PacketDistributor.sendToServer(new UpdatePowerSupplyData(0, this.status));
     }
-
+    
     public void updatePowerOutput() {
         PacketDistributor.sendToServer(new UpdatePowerSupplyData(1, this.power));
     }
-
+    
     @Override
     protected void init() {
         super.init();
         // The minus button
         this.minus = this.addRenderableWidget(new ButtonWithHighlight(new Button.Builder(Component.empty(), btn -> this.input.setValue(Integer.toString(--this.power)))
                 .pos(this.leftPos + 9, this.topPos + 44)
-                .size( 16, 16),
+                .size(16, 16),
                 btn -> updatePowerOutput(), BG_LOCATION, 256, 256, 170, 44, 170, 60, 170, 76));
         // The plus button
         this.plus = this.addRenderableWidget(new ButtonWithHighlight(new Button.Builder(Component.empty(), btn -> this.input.setValue(Integer.toString(++this.power)))
@@ -83,21 +83,21 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
         this.addWidget(this.input);
         this.setInitialFocus(this.input);
     }
-
+    
     @Override
     protected void containerTick() {
         super.containerTick();
         this.minus.tick();
         this.plus.tick();
     }
-
+    
     @Override
     public void resize(Minecraft mc, int pWidth, int pHeight) {
         String s = this.input.getValue();
         super.resize(mc, pWidth, pHeight);
         this.input.setValue(s);
     }
-
+    
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
@@ -113,7 +113,7 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
                 || this.input.canConsumeInput()
                 || super.keyPressed(keyCode, scanCode, modifiers);
     }
-
+    
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         //this.renderBackground(guiGraphics,mouseX,mouseY,partialTick);
@@ -122,14 +122,14 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
         this.input.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
-
+    
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    private void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         guiGraphics.blit(BG_LOCATION, 125, 0, this.status == 0 ? 202 : 170, 0, 32, 44);
     }
-
+    
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+    private void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         guiGraphics.blit(BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);

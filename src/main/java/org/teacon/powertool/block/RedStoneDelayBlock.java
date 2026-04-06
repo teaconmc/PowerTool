@@ -37,7 +37,6 @@ import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
 import org.teacon.powertool.item.IRedStoneStuff;
 import org.teacon.powertool.network.client.OpenBlockScreen;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @NonNullByDefault
@@ -67,7 +66,7 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING,context.getNearestLookingDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
     
     @Override
@@ -83,8 +82,8 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     @Override
     protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         var be = level.getBlockEntity(pos);
-        if(!(be instanceof RedStoneDelayBlockEntity te)) return 0;
-        return (int) Mth.clamp(((te.delayTicks - te.delayedTicks)/(float)te.delayTicks)*15,0f,15f);
+        if (!(be instanceof RedStoneDelayBlockEntity te)) return 0;
+        return (int) Mth.clamp(((te.delayTicks - te.delayedTicks) / (float) te.delayTicks) * 15, 0f, 15f);
     }
     
     @Override
@@ -94,8 +93,8 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer,new OpenBlockScreen(pos,OpenBlockScreen.RED_STONE_DELAYER));
+        if (!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenBlockScreen(pos, OpenBlockScreen.RED_STONE_DELAYER));
         }
         return InteractionResult.SUCCESS;
     }
@@ -103,20 +102,20 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new RedStoneDelayBlockEntity(pos,state);
+        return new RedStoneDelayBlockEntity(pos, state);
     }
     
     public static boolean powered(Level level, BlockPos pos) {
         var state = level.getBlockState(pos);
-        if(!state.is(PowerToolBlocks.DELAYER)) return false;
+        if (!state.is(PowerToolBlocks.DELAYER)) return false;
         var facing = state.getValue(FACING);
-        return level.getSignal(pos.relative(facing),facing) > 0;
+        return level.getSignal(pos.relative(facing), facing) > 0;
     }
     
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.tick(state, level, pos, random);
-        if(state.getValue(POWERED)) {
+        if (state.getValue(POWERED)) {
             level.setBlock(pos, state.setValue(POWERED, Boolean.FALSE), UPDATE_ALL);
         }
     }
@@ -125,7 +124,7 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         var be = level.getBlockEntity(pos);
-        if(be instanceof RedStoneDelayBlockEntity te) {
+        if (be instanceof RedStoneDelayBlockEntity te) {
             te.powered = powered(level, pos);
         }
     }
@@ -133,7 +132,7 @@ public class RedStoneDelayBlock extends BaseEntityBlock implements IRedStoneStuf
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide() ? null : createTickerHelper(blockEntityType,PowerToolBlocks.DELAYER_BLOCK_ENTITY.get(), RedStoneDelayBlockEntity::tick);
+        return level.isClientSide() ? null : createTickerHelper(blockEntityType, PowerToolBlocks.DELAYER_BLOCK_ENTITY.get(), RedStoneDelayBlockEntity::tick);
     }
     
     @Override

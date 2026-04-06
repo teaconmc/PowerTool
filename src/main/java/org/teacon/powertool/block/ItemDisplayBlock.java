@@ -31,36 +31,35 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @NonNullByDefault
 public class ItemDisplayBlock extends BaseEntityBlock implements WithTooltip {
     
     public static final MapCodec<ItemDisplayBlock> CODEC = simpleCodec(ItemDisplayBlock::new);
-
+    
     protected static final VoxelShape DOWN_AABB = Block.box(2, 15, 2, 14, 16, 14);
     protected static final VoxelShape UP_AABB = Block.box(2, 0, 2, 14, 1, 14);
     protected static final VoxelShape SOUTH_AABB = Block.box(2, 2, 0, 14, 14, 1);
     protected static final VoxelShape WEST_AABB = Block.box(15, 2, 2, 16, 14, 14);
     protected static final VoxelShape NORTH_AABB = Block.box(2, 2, 15, 14, 14, 16);
     protected static final VoxelShape EAST_AABB = Block.box(0, 2, 2, 1, 14, 14);
-
+    
     private static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
-
+    
     public static final BooleanProperty INVISIBLE = BooleanProperty.create("invisible");
     private static final BooleanProperty SURVIVAL_AVAILABLE = BooleanProperty.create("survival_available");
-
+    
     public ItemDisplayBlock(Properties prop) {
         super(prop);
-        this.registerDefaultState(this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(SURVIVAL_AVAILABLE,Boolean.FALSE));
+        this.registerDefaultState(this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(SURVIVAL_AVAILABLE, Boolean.FALSE));
     }
     
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
-
+    
     @Override
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
@@ -78,18 +77,18 @@ public class ItemDisplayBlock extends BaseEntityBlock implements WithTooltip {
             case DOWN -> DOWN_AABB;
         };
     }
-
+    
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, INVISIBLE, SURVIVAL_AVAILABLE);
     }
-
+    
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Direction direction = context.getClickedFace();
-        return this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(FACING, direction).setValue(SURVIVAL_AVAILABLE,Boolean.FALSE);
+        return this.defaultBlockState().setValue(INVISIBLE, Boolean.FALSE).setValue(FACING, direction).setValue(SURVIVAL_AVAILABLE, Boolean.FALSE);
     }
-
+    
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ItemDisplayBlockEntity(pos, state);
@@ -107,11 +106,10 @@ public class ItemDisplayBlock extends BaseEntityBlock implements WithTooltip {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof ItemDisplayBlockEntity theBE) {
-            if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)){
-                if(stack.isEmpty()){
+            if (player.getAbilities().instabuild || state.getValue(SURVIVAL_AVAILABLE)) {
+                if (stack.isEmpty()) {
                     theBE.rotation = (theBE.rotation + 45) % 360;
-                }
-                else{
+                } else {
                     theBE.itemToDisplay = stack.copy();
                 }
                 if (!level.isClientSide) {
@@ -131,7 +129,7 @@ public class ItemDisplayBlock extends BaseEntityBlock implements WithTooltip {
         }
         return ItemStack.EMPTY;
     }
-
+    
     @Override
     public boolean hasAnalogOutputSignal(BlockState state) {
         return true;

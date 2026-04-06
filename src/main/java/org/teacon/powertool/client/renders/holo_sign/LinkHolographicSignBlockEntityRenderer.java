@@ -27,18 +27,18 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
     
     @Override
     public void render(LinkHolographicSignBlockEntity theSign, float partialTick, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        renderInternal(theSign,transform,bufferSource,packedLight,theSign.yRotate,theSign.xRotate);
-        if(theSign.bidirectional){
-            renderInternal(theSign,transform,bufferSource,packedLight,(theSign.yRotate +180)%360,(360 - theSign.xRotate) % 360);
+        renderInternal(theSign, transform, bufferSource, packedLight, theSign.yRotate, theSign.xRotate);
+        if (theSign.bidirectional) {
+            renderInternal(theSign, transform, bufferSource, packedLight, (theSign.yRotate + 180) % 360, (360 - theSign.xRotate) % 360);
         }
     }
     
-    public void renderInternal(LinkHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation, int xRotation){
+    public void renderInternal(LinkHolographicSignBlockEntity theSign, PoseStack transform, MultiBufferSource bufferSource, int packedLight, int yRotation, int xRotation) {
         transform.pushPose();
-        HolographicSignBlockEntityRenderer.beforeRender(theSign,transform,dispatcher,yRotation,xRotation);
+        HolographicSignBlockEntityRenderer.beforeRender(theSign, transform, dispatcher, yRotation, xRotation);
         Matrix4f matrix4f = transform.last().pose();
         var text = theSign.displayContent.getString();
-        text = text.startsWith("🌐") ? text : "🌐"+ text;
+        text = text.startsWith("🌐") ? text : "🌐" + text;
         var component = Component.literal(text).withStyle(LINK_STYLE);
         int bgColor = HolographicSignBlockEntityRenderer.getBackgroundColor(theSign);
         int yOffset = (int) -(0.5 * this.font.lineHeight);

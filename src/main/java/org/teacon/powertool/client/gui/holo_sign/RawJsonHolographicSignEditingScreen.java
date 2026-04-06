@@ -1,22 +1,12 @@
 package org.teacon.powertool.client.gui.holo_sign;
 
-import com.mojang.brigadier.StringReader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.commands.ParserUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
-import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.client.gui.widget.JsonComponentList;
-import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RawJsonHolographicSignEditingScreen extends BaseHolographicSignEditingScreen<RawJsonHolographicSignBlockEntity> {
     
@@ -33,19 +23,19 @@ public class RawJsonHolographicSignEditingScreen extends BaseHolographicSignEdit
     protected void init() {
         super.init();
         
-        var startY = (int)(height*0.05);
-        this.append = Button.builder(Component.literal("+"),(b) -> {
-            if(this.jsonComponentList != null) jsonComponentList.appendEntry();
-        }).size(20,20).pos(width-45,startY+52).build();
-        this.jsonComponentList = new JsonComponentList(this, (int) (width - 220 - width*0.05),startY+50);
+        var startY = (int) (height * 0.05);
+        this.append = Button.builder(Component.literal("+"), (b) -> {
+            if (this.jsonComponentList != null) jsonComponentList.appendEntry();
+        }).size(20, 20).pos(width - 45, startY + 52).build();
+        this.jsonComponentList = new JsonComponentList(this, (int) (width - 220 - width * 0.05), startY + 50);
         this.addRenderableWidget(jsonComponentList);
         this.addRenderableWidget(append);
     }
     
     @Override
     public int getDoneButtonY() {
-        var startY = (int)(height*0.15);
-        return (int) (startY + height*0.7 + 15);
+        var startY = (int) (height * 0.15);
+        return (int) (startY + height * 0.7 + 15);
     }
     
     @Override

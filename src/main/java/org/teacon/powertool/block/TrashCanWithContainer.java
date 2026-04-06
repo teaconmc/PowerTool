@@ -1,7 +1,6 @@
 package org.teacon.powertool.block;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -34,9 +33,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.TrashCanWithContainerBlockEntity;
-import org.teacon.powertool.utils.VanillaUtils;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 @NonNullByDefault
 public class TrashCanWithContainer extends BaseEntityBlock {
@@ -51,8 +47,8 @@ public class TrashCanWithContainer extends BaseEntityBlock {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(HORIZONTAL_FACING, Direction.NORTH)
-                .setValue(POWERED,false)
-                .setValue(WATERLOGGED,false));
+                .setValue(POWERED, false)
+                .setValue(WATERLOGGED, false));
     }
     
     @Override
@@ -78,7 +74,7 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new TrashCanWithContainerBlockEntity(pos,state);
+        return new TrashCanWithContainerBlockEntity(pos, state);
     }
     
     @Override
@@ -93,10 +89,10 @@ public class TrashCanWithContainer extends BaseEntityBlock {
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        return use(level,pos,player);
+        return use(level, pos, player);
     }
     
-    protected InteractionResult use(Level level,BlockPos pos,Player p){
+    protected InteractionResult use(Level level, BlockPos pos, Player p) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {

@@ -71,48 +71,48 @@ import static org.teacon.powertool.item.PowerToolItems.ITEMS;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class PowerToolBlocks {
-
+    
     public static final SoundType ITEM_DISPLAY_SOUND_TYPE = new DeferredSoundType(1.0F, 1.0F,
             () -> SoundEvents.ITEM_FRAME_BREAK,
             () -> SoundEvents.MOSS_CARPET_STEP,
             () -> SoundEvents.ITEM_FRAME_PLACE,
             () -> SoundEvents.ITEM_FRAME_REMOVE_ITEM,
             () -> SoundEvents.MOSS_CARPET_FALL
-            );
-
+    );
+    
     public static final SoundType GLOW_ITEM_DISPLAY_SOUND_TYPE = new DeferredSoundType(1.0F, 1.0F,
             () -> SoundEvents.GLOW_ITEM_FRAME_BREAK,
             () -> SoundEvents.MOSS_CARPET_STEP,
             () -> SoundEvents.GLOW_ITEM_FRAME_PLACE,
             () -> SoundEvents.GLOW_ITEM_FRAME_REMOVE_ITEM,
             () -> SoundEvents.MOSS_CARPET_FALL);
-
-    public static final List<Block> SIMPLE_BLOCKS = List.of(Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL, Blocks.TUBE_CORAL_BLOCK, Blocks.BRAIN_CORAL_BLOCK, Blocks.BUBBLE_CORAL_BLOCK, Blocks.FIRE_CORAL_BLOCK, Blocks.HORN_CORAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.CARTOGRAPHY_TABLE, Blocks.CRAFTING_TABLE, Blocks.FLETCHING_TABLE, Blocks.SMITHING_TABLE,Blocks.BEACON);
-
+    
+    public static final List<Block> SIMPLE_BLOCKS = List.of(Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL, Blocks.TUBE_CORAL_BLOCK, Blocks.BRAIN_CORAL_BLOCK, Blocks.BUBBLE_CORAL_BLOCK, Blocks.FIRE_CORAL_BLOCK, Blocks.HORN_CORAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.CARTOGRAPHY_TABLE, Blocks.CRAFTING_TABLE, Blocks.FLETCHING_TABLE, Blocks.SMITHING_TABLE, Blocks.BEACON);
+    
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, PowerTool.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PowerTool.MODID);
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, PowerTool.MODID);
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, PowerTool.MODID);
-    public static final Map<DyeColor,DeferredHolder<Block,? extends Block>> DH_CHEAT_BLOCKS = new EnumMap<>(DyeColor.class);
-
-    public static DeferredHolder<Block,PeriodicCommandBlock> COMMAND_BLOCK;
-    public static DeferredHolder<Block,TrashCanWithContainer> TRASH_CAN;
-    public static DeferredHolder<Block,PowerSupplyBlock> POWER_SUPPLY;
-    public static DeferredHolder<Block,ItemDisplayBlock> ITEM_DISPLAY;
-
-    public static DeferredHolder<Block,ItemDisplayBlock> GLOW_ITEM_DISPLAY;
-    public static DeferredHolder<Block,ItemSupplierBlock> ITEM_SUPPLIER;
-
-    public static DeferredHolder<Block,SlimItemSupplierBlock> SLIM_ITEM_SUPPLIER;
+    public static final Map<DyeColor, DeferredHolder<Block, ? extends Block>> DH_CHEAT_BLOCKS = new EnumMap<>(DyeColor.class);
+    
+    public static DeferredHolder<Block, PeriodicCommandBlock> COMMAND_BLOCK;
+    public static DeferredHolder<Block, TrashCanWithContainer> TRASH_CAN;
+    public static DeferredHolder<Block, PowerSupplyBlock> POWER_SUPPLY;
+    public static DeferredHolder<Block, ItemDisplayBlock> ITEM_DISPLAY;
+    
+    public static DeferredHolder<Block, ItemDisplayBlock> GLOW_ITEM_DISPLAY;
+    public static DeferredHolder<Block, ItemSupplierBlock> ITEM_SUPPLIER;
+    
+    public static DeferredHolder<Block, SlimItemSupplierBlock> SLIM_ITEM_SUPPLIER;
     public static DeferredHolder<Block, CosmeticHopper> COSMETIC_HOPPER;
     public static DeferredHolder<Block, CosmeticCampfireBlock> COSMETIC_CAMPFIRE;
-    public static DeferredHolder<Block,CosmeticCampfireBlock> COSMETIC_SOUL_CAMPFIRE;
+    public static DeferredHolder<Block, CosmeticCampfireBlock> COSMETIC_SOUL_CAMPFIRE;
     public static DeferredHolder<Block, CosmeticBeehive> COSMETIC_BEEHIVE;
     public static DeferredHolder<Block, CosmeticFurnace> COSMETIC_FURNACE;
     public static DeferredHolder<Block, CosmeticFurnace> COSMETIC_BLAST_FURNACE;
     public static DeferredHolder<Block, CosmeticFurnace> COSMETIC_SMOKER;
     public static DeferredHolder<Block, CosmeticBarrel> COSMETIC_BARREL;
-
+    
     public static DeferredHolder<Block, HolographicSignBlock> HOLOGRAPHIC_SIGN;
     public static DeferredHolder<Block, HolographicSignBlock> LINK_HOLOGRAPHIC_SIGN;
     public static DeferredHolder<Block, HolographicSignBlock> RAW_JSON_HOLOGRAPHIC_SIGN;
@@ -122,12 +122,12 @@ public class PowerToolBlocks {
     //public static DeferredHolder<Block, TrapDoorBlock> GRAY_TRASH_CAN_CAP;
     public static DeferredHolder<Block, TrashCanWithContainer> GREEN_TRASH_CAN;
     public static DeferredHolder<Block, TrapDoorBlock> GREEN_TRASH_CAN_CAP;
-
+    
     public static DeferredHolder<Block, RegisterBlock> REGISTER;
     public static DeferredHolder<Block, RegisterBlock> GORGEOUS_REGISTER;
     public static DeferredHolder<Block, RegisterBlock> MECHANICAL_REGISTER;
     public static DeferredHolder<Block, RegisterBlock> TECH_REGISTER;
-
+    
     public static DeferredHolder<Block, SafeBlock> SAFE;
     public static DeferredHolder<Block, SafeBlock> GORGEOUS_SAFE;
     public static DeferredHolder<Block, SafeBlock> MECHANICAL_SAFE;
@@ -138,22 +138,22 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, TimeObserverBlock> GAME_TIME_CYCLE_OBSERVER;
     public static DeferredHolder<Block, RedStoneDelayBlock> DELAYER;
     public static DeferredHolder<Block, BezierCurveBlock> BEZIER_CURVE_BLOCK;
-
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
-
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<ItemDisplayBlockEntity>> ITEM_DISPLAY_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<ItemSupplierBlockEntity>> ITEM_SUPPLIER_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<CommonHolographicSignBlockEntity>> HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<LinkHolographicSignBlockEntity>> LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RawJsonHolographicSignBlockEntity>> RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TrashCanWithContainerBlockEntity>> TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RegisterBlockEntity>> REGISTER_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<SafeBlockEntity>> SAFE_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TempleBlockEntity>> TEMPLE_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<TimeObserverBlockEntity>> TIME_OBSERVER_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<RedStoneDelayBlockEntity>> DELAYER_BLOCK_ENTITY;
-    public static DeferredHolder<BlockEntityType<?>,BlockEntityType<BezierCurveBlockEntity>> BEZIER_CURVE_BLOCK_ENTITY;
+    
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
+    
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemDisplayBlockEntity>> ITEM_DISPLAY_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<ItemSupplierBlockEntity>> ITEM_SUPPLIER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<CommonHolographicSignBlockEntity>> HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<LinkHolographicSignBlockEntity>> LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<RawJsonHolographicSignBlockEntity>> RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TrashCanWithContainerBlockEntity>> TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<RegisterBlockEntity>> REGISTER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<SafeBlockEntity>> SAFE_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TempleBlockEntity>> TEMPLE_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TimeObserverBlockEntity>> TIME_OBSERVER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<RedStoneDelayBlockEntity>> DELAYER_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<BezierCurveBlockEntity>> BEZIER_CURVE_BLOCK_ENTITY;
     
     public static DeferredHolder<Fluid, FakeWater> FAKE_WATER = FLUIDS.register("fake_water", FakeWater::new);
     public static DeferredHolder<Block, LiquidBlock> FAKE_WATER_BLOCK = BLOCKS.register("fake_water_block", () -> new LiquidBlock(
@@ -180,8 +180,8 @@ public class PowerToolBlocks {
         FLUIDS.register(bus);
         FLUID_TYPES.register(bus);
         COMMAND_BLOCK = BLOCKS.register("command_block", () -> new PeriodicCommandBlock(
-            BlockBehaviour.Properties.of().mapColor(DyeColor.PURPLE).requiresCorrectToolForDrops().strength(-1.0F, 3600000.0F).noLootTable(),
-            false
+                BlockBehaviour.Properties.of().mapColor(DyeColor.PURPLE).requiresCorrectToolForDrops().strength(-1.0F, 3600000.0F).noLootTable(),
+                false
         ));
         TRASH_CAN = BLOCKS.register("trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().strength(1000).noOcclusion()));
         POWER_SUPPLY = BLOCKS.register("power_supply", () -> new PowerSupplyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(1000)));
@@ -205,38 +205,38 @@ public class PowerToolBlocks {
                         BlockBehaviour.Properties.of().noCollision().noLootTable(),
                         SignType.RAW_JSON));
         WHITE_TRASH_CAN = BLOCKS.register("white_trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
-        WHITE_TRASH_CAN_CAP = BLOCKS.register("white_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
-        GRAY_TRASH_CAN = BLOCKS.register("gray_trash_can",() -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
+        WHITE_TRASH_CAN_CAP = BLOCKS.register("white_trash_can_cap", () -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
+        GRAY_TRASH_CAN = BLOCKS.register("gray_trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
         //GRAY_TRASH_CAN_CAP = BLOCKS.register("gray_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
-        GREEN_TRASH_CAN = BLOCKS.register("green_trash_can",() -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
-        GREEN_TRASH_CAN_CAP = BLOCKS.register("green_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
-
+        GREEN_TRASH_CAN = BLOCKS.register("green_trash_can", () -> new TrashCanWithContainer(BlockBehaviour.Properties.of().noOcclusion()));
+        GREEN_TRASH_CAN_CAP = BLOCKS.register("green_trash_can_cap", () -> new TrapDoorBlock(BlockSetType.COPPER, BlockBehaviour.Properties.of().noOcclusion()));
+        
         REGISTER = BLOCKS.register("register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
         GORGEOUS_REGISTER = BLOCKS.register("gorgeous_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
         MECHANICAL_REGISTER = BLOCKS.register("mechanical_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
         TECH_REGISTER = BLOCKS.register("tech_register", () -> new RegisterBlock(BlockBehaviour.Properties.of().noOcclusion()));
-
+        
         SAFE = BLOCKS.register("safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         GORGEOUS_SAFE = BLOCKS.register("gorgeous_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         MECHANICAL_SAFE = BLOCKS.register("mechanical_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         TECH_SAFE = BLOCKS.register("tech_safe", () -> new SafeBlock(BlockBehaviour.Properties.of().strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
-        TEMPLE = BLOCKS.register("temple",() -> new TempleBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        TEMPLE = BLOCKS.register("temple", () -> new TempleBlock(BlockBehaviour.Properties.of().noOcclusion()));
         
-        REAL_TIME_OBSERVER = BLOCKS.register("observer_realtime",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_TIME));
-        REAL_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_realtime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
-        GAME_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_gametime_cyl",() -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
-        DELAYER = BLOCKS.register("delayer",() -> new RedStoneDelayBlock(BlockBehaviour.Properties.of()));
-        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block",() -> new BezierCurveBlock(BlockBehaviour.Properties.of().noOcclusion()));
+        REAL_TIME_OBSERVER = BLOCKS.register("observer_realtime", () -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_TIME));
+        REAL_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_realtime_cyl", () -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
+        GAME_TIME_CYCLE_OBSERVER = BLOCKS.register("observer_gametime_cyl", () -> new TimeObserverBlock(BlockBehaviour.Properties.of(), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
+        DELAYER = BLOCKS.register("delayer", () -> new RedStoneDelayBlock(BlockBehaviour.Properties.of()));
+        BEZIER_CURVE_BLOCK = BLOCKS.register("bezier_curve_block", () -> new BezierCurveBlock(BlockBehaviour.Properties.of().noOcclusion()));
         
-        for(var dyeColor : DyeColor.values()) {
+        for (var dyeColor : DyeColor.values()) {
             var name = dyeColor.getName() + "_distant_horizon_cheating_block";
-            var block = BLOCKS.register(name,() -> new DistantHorizonCheatingBlock(BlockBehaviour.Properties.of().forceSolidOn().noOcclusion().mapColor(dyeColor)));
-            DH_CHEAT_BLOCKS.put(dyeColor,block);
-            ITEMS.register(name,() -> new PowerToolBlockItem(block.get(), new Item.Properties()));
+            var block = BLOCKS.register(name, () -> new DistantHorizonCheatingBlock(BlockBehaviour.Properties.of().forceSolidOn().noOcclusion().mapColor(dyeColor)));
+            DH_CHEAT_BLOCKS.put(dyeColor, block);
+            ITEMS.register(name, () -> new PowerToolBlockItem(block.get(), new Item.Properties()));
         }
         
         COMMAND_BLOCK_ENTITY = BLOCK_ENTITIES.register("command_block_entity", () -> new BlockEntityType<>(
-            PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
+                PeriodicCommandBlockEntity::new, COMMAND_BLOCK.get()
         ));
         POWER_SUPPLY_BLOCK_ENTITY = BLOCK_ENTITIES.register("power_supply", () -> new BlockEntityType<>(
                 PowerSupplyBlockEntity::new, POWER_SUPPLY.get()
@@ -250,14 +250,14 @@ public class PowerToolBlocks {
         HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("holographic_sign", () -> new BlockEntityType<>(
                 CommonHolographicSignBlockEntity::new, HOLOGRAPHIC_SIGN.get()
         ));
-        LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("link_holographic_sign",() -> new BlockEntityType<>(
-                LinkHolographicSignBlockEntity::new,LINK_HOLOGRAPHIC_SIGN.get()
+        LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("link_holographic_sign", () -> new BlockEntityType<>(
+                LinkHolographicSignBlockEntity::new, LINK_HOLOGRAPHIC_SIGN.get()
         ));
-        RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("raw_json_holographic_sign",() -> new BlockEntityType<>(
-                RawJsonHolographicSignBlockEntity::new,RAW_JSON_HOLOGRAPHIC_SIGN.get()
+        RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("raw_json_holographic_sign", () -> new BlockEntityType<>(
+                RawJsonHolographicSignBlockEntity::new, RAW_JSON_HOLOGRAPHIC_SIGN.get()
         ));
-        TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container",() -> new BlockEntityType<>(
-                TrashCanWithContainerBlockEntity::new,TRASH_CAN.get(),WHITE_TRASH_CAN.get(),GRAY_TRASH_CAN.get(),GREEN_TRASH_CAN.get()
+        TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container", () -> new BlockEntityType<>(
+                TrashCanWithContainerBlockEntity::new, TRASH_CAN.get(), WHITE_TRASH_CAN.get(), GRAY_TRASH_CAN.get(), GREEN_TRASH_CAN.get()
         ));
         REGISTER_BLOCK_ENTITY = BLOCK_ENTITIES.register("register", () -> new BlockEntityType<>(
                 RegisterBlockEntity::new, REGISTER.get(), GORGEOUS_REGISTER.get(), MECHANICAL_REGISTER.get(), TECH_REGISTER.get()
@@ -265,17 +265,17 @@ public class PowerToolBlocks {
         SAFE_BLOCK_ENTITY = BLOCK_ENTITIES.register("safe", () -> new BlockEntityType<>(
                 SafeBlockEntity::new, SAFE.get(), GORGEOUS_SAFE.get(), MECHANICAL_SAFE.get(), TECH_SAFE.get()
         ));
-        TEMPLE_BLOCK_ENTITY = BLOCK_ENTITIES.register("temple",() -> new BlockEntityType<>(
-                TempleBlockEntity::new,TEMPLE.get()
+        TEMPLE_BLOCK_ENTITY = BLOCK_ENTITIES.register("temple", () -> new BlockEntityType<>(
+                TempleBlockEntity::new, TEMPLE.get()
         ));
-        TIME_OBSERVER_BLOCK_ENTITY = BLOCK_ENTITIES.register("time_observer",() -> new BlockEntityType<>(
-                TimeObserverBlockEntity::new,REAL_TIME_OBSERVER.get(),REAL_TIME_CYCLE_OBSERVER.get(),GAME_TIME_CYCLE_OBSERVER.get()
+        TIME_OBSERVER_BLOCK_ENTITY = BLOCK_ENTITIES.register("time_observer", () -> new BlockEntityType<>(
+                TimeObserverBlockEntity::new, REAL_TIME_OBSERVER.get(), REAL_TIME_CYCLE_OBSERVER.get(), GAME_TIME_CYCLE_OBSERVER.get()
         ));
-        DELAYER_BLOCK_ENTITY = BLOCK_ENTITIES.register("delayer",() -> new BlockEntityType<>(
-                RedStoneDelayBlockEntity::new,DELAYER.get()
+        DELAYER_BLOCK_ENTITY = BLOCK_ENTITIES.register("delayer", () -> new BlockEntityType<>(
+                RedStoneDelayBlockEntity::new, DELAYER.get()
         ));
-        BEZIER_CURVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("bezier_curve_block",() -> new BlockEntityType<>(
-                BezierCurveBlockEntity::new,BEZIER_CURVE_BLOCK.get()
+        BEZIER_CURVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("bezier_curve_block", () -> new BlockEntityType<>(
+                BezierCurveBlockEntity::new, BEZIER_CURVE_BLOCK.get()
         ));
         
         regTrapDoors(Map.of(
@@ -294,21 +294,21 @@ public class PowerToolBlocks {
                 BlockSetType.CHERRY, Blocks.CHERRY_TRAPDOOR,
                 BlockSetType.IRON, Blocks.IRON_TRAPDOOR
         ));
-
-        regCosmetic(SIMPLE_BLOCKS,CosmeticSimpleBlock::new);
-        regCosmetic(List.of(Blocks.ENCHANTING_TABLE),CosmeticWaterloggedBlock::new);
+        
+        regCosmetic(SIMPLE_BLOCKS, CosmeticSimpleBlock::new);
+        regCosmetic(List.of(Blocks.ENCHANTING_TABLE), CosmeticWaterloggedBlock::new);
         regCosmetic(List.of(Blocks.STONECUTTER), CosmeticHorizontalDirectionalBlock::new);
         
         COSMETIC_BEEHIVE = BLOCKS.register("cosmetic_beehive", () -> new CosmeticBeehive(BlockBehaviour.Properties.ofFullCopy(Blocks.BEEHIVE)));
         COSMETIC_FURNACE = BLOCKS.register("cosmetic_furnace", () -> new CosmeticFurnace(BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE)));
         COSMETIC_BLAST_FURNACE = BLOCKS.register("cosmetic_blast_furnace", () -> new CosmeticFurnace(BlockBehaviour.Properties.ofFullCopy(Blocks.BLAST_FURNACE)));
-        COSMETIC_SMOKER = BLOCKS.register("cosmetic_smoker",() -> new CosmeticFurnace(BlockBehaviour.Properties.ofFullCopy(Blocks.SMOKER)));
+        COSMETIC_SMOKER = BLOCKS.register("cosmetic_smoker", () -> new CosmeticFurnace(BlockBehaviour.Properties.ofFullCopy(Blocks.SMOKER)));
         COSMETIC_BARREL = BLOCKS.register("cosmetic_barrel", () -> new CosmeticBarrel(BlockBehaviour.Properties.ofFullCopy(Blocks.BARREL)));
         
         ITEMS.register("cosmetic_beehive", () -> new PowerToolBlockItem(COSMETIC_BEEHIVE.get(), new Item.Properties()));
         ITEMS.register("cosmetic_furnace", () -> new PowerToolBlockItem(COSMETIC_FURNACE.get(), new Item.Properties()));
         ITEMS.register("cosmetic_blast_furnace", () -> new PowerToolBlockItem(COSMETIC_BLAST_FURNACE.get(), new Item.Properties()));
-        ITEMS.register("cosmetic_smoker",() -> new PowerToolBlockItem(COSMETIC_SMOKER.get(), new Item.Properties()));
+        ITEMS.register("cosmetic_smoker", () -> new PowerToolBlockItem(COSMETIC_SMOKER.get(), new Item.Properties()));
         ITEMS.register("cosmetic_barrel", () -> new PowerToolBlockItem(COSMETIC_BARREL.get(), new Item.Properties()));
         
         ITEMS.register("command_block", () -> new PowerToolBlockItem(COMMAND_BLOCK.get(), new Item.Properties().rarity(Rarity.EPIC)));
@@ -321,16 +321,16 @@ public class PowerToolBlocks {
         ITEMS.register("cosmetic_campfire", () -> new PowerToolBlockItem(COSMETIC_CAMPFIRE.get(), new Item.Properties()));
         ITEMS.register("cosmetic_soul_campfire", () -> new PowerToolBlockItem(COSMETIC_SOUL_CAMPFIRE.get(), new Item.Properties()));
         ITEMS.register("holographic_sign", () -> new PowerToolBlockItem(HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
-        ITEMS.register("link_holographic_sign",() -> new PowerToolBlockItem(LINK_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
-        ITEMS.register("raw_json_holographic_sign",() -> new PowerToolBlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("link_holographic_sign", () -> new PowerToolBlockItem(LINK_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
+        ITEMS.register("raw_json_holographic_sign", () -> new PowerToolBlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), new Item.Properties()));
         ITEMS.register("trash_can", () -> new PowerToolBlockItem(TRASH_CAN.get(), new Item.Properties()));
-        ITEMS.register("white_trash_can",() -> new PowerToolBlockItem(WHITE_TRASH_CAN.get(),new Item.Properties()));
-        ITEMS.register("white_trash_can_cap",() -> new PowerToolBlockItem(WHITE_TRASH_CAN_CAP.get(),new Item.Properties()));
-        ITEMS.register("gray_trash_can",() -> new PowerToolBlockItem(GRAY_TRASH_CAN.get(),new Item.Properties()));
+        ITEMS.register("white_trash_can", () -> new PowerToolBlockItem(WHITE_TRASH_CAN.get(), new Item.Properties()));
+        ITEMS.register("white_trash_can_cap", () -> new PowerToolBlockItem(WHITE_TRASH_CAN_CAP.get(), new Item.Properties()));
+        ITEMS.register("gray_trash_can", () -> new PowerToolBlockItem(GRAY_TRASH_CAN.get(), new Item.Properties()));
         //ITEMS.register("gray_trash_can_cap",() -> new PowerToolBlockItem(GRAY_TRASH_CAN_CAP.get(),new Item.Properties()));
-        ITEMS.register("green_trash_can",() -> new PowerToolBlockItem(GREEN_TRASH_CAN.get(),new Item.Properties()));
-        ITEMS.register("green_trash_can_cap",() -> new PowerToolBlockItem(GREEN_TRASH_CAN_CAP.get(),new Item.Properties()));
-
+        ITEMS.register("green_trash_can", () -> new PowerToolBlockItem(GREEN_TRASH_CAN.get(), new Item.Properties()));
+        ITEMS.register("green_trash_can_cap", () -> new PowerToolBlockItem(GREEN_TRASH_CAN_CAP.get(), new Item.Properties()));
+        
         ITEMS.register("register", () -> new PowerToolBlockItem(REGISTER.get(), new Item.Properties()));
         ITEMS.register("gorgeous_register", () -> new PowerToolBlockItem(GORGEOUS_REGISTER.get(), new Item.Properties()));
         ITEMS.register("mechanical_register", () -> new PowerToolBlockItem(MECHANICAL_REGISTER.get(), new Item.Properties()));
@@ -340,13 +340,13 @@ public class PowerToolBlocks {
         ITEMS.register("gorgeous_safe", () -> new PowerToolBlockItem(GORGEOUS_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
         ITEMS.register("mechanical_safe", () -> new PowerToolBlockItem(MECHANICAL_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
         ITEMS.register("tech_safe", () -> new PowerToolBlockItem(TECH_SAFE.get(), new Item.Properties().component(PowerToolDataComponents.COMMAND, "/ac safe")));
-        ITEMS.register("observer_realtime",() -> new PowerToolBlockItem(REAL_TIME_OBSERVER.get(), new Item.Properties()));
-        ITEMS.register("observer_realtime_cyl",() -> new PowerToolBlockItem(REAL_TIME_CYCLE_OBSERVER.get(),new Item.Properties()));
-        ITEMS.register("observer_gametime_cyl",() -> new PowerToolBlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
-        ITEMS.register("delayer",() -> new PowerToolBlockItem(DELAYER.get(), new Item.Properties()));
-        ITEMS.register("bezier_curve_block",() -> new PowerToolBlockItem(BEZIER_CURVE_BLOCK.get(), new Item.Properties()));
+        ITEMS.register("observer_realtime", () -> new PowerToolBlockItem(REAL_TIME_OBSERVER.get(), new Item.Properties()));
+        ITEMS.register("observer_realtime_cyl", () -> new PowerToolBlockItem(REAL_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
+        ITEMS.register("observer_gametime_cyl", () -> new PowerToolBlockItem(GAME_TIME_CYCLE_OBSERVER.get(), new Item.Properties()));
+        ITEMS.register("delayer", () -> new PowerToolBlockItem(DELAYER.get(), new Item.Properties()));
+        ITEMS.register("bezier_curve_block", () -> new PowerToolBlockItem(BEZIER_CURVE_BLOCK.get(), new Item.Properties()));
     }
-
+    
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {
         for (var type : existing.entrySet()) {
             var name = "cosmetic_" + type.getKey().name() + "_trapdoor";
@@ -355,12 +355,12 @@ public class PowerToolBlocks {
         }
     }
     
-    private static void regCosmetic(List<Block> existing, Function<BlockBehaviour.Properties,Block> factory) {
+    private static void regCosmetic(List<Block> existing, Function<BlockBehaviour.Properties, Block> factory) {
         for (var existingBlock : existing) {
             var name = "cosmetic_" + BuiltInRegistries.BLOCK.getKey(existingBlock).getPath();
             var flag = existingBlock.defaultBlockState().useShapeForLightOcclusion();
             var properties = BlockBehaviour.Properties.ofFullCopy(existingBlock);
-            if(flag) properties.noOcclusion();
+            if (flag) properties.noOcclusion();
             var block = BLOCKS.register(name, () -> factory.apply(properties));
             ITEMS.register(name, () -> new PowerToolBlockItem(block.get(), new Item.Properties()));
         }
@@ -371,12 +371,12 @@ public class PowerToolBlocks {
         event.registerBlockEntity(
                 Capabilities.Item.BLOCK,
                 ITEM_SUPPLIER_BLOCK_ENTITY.get(),
-                (be,context) -> be.getItemHandler()
+                (be, context) -> be.getItemHandler()
         );
         event.registerBlockEntity(
                 Capabilities.Energy.BLOCK,
                 POWER_SUPPLY_BLOCK_ENTITY.get(),
-                (be,context) -> be.getEnergyStore()
+                (be, context) -> be.getEnergyStore()
         );
     }
 }

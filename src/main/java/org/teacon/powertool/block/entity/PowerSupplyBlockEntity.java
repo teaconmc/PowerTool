@@ -20,10 +20,10 @@ import org.teacon.powertool.block.PowerToolBlocks;
 @NonNullByDefault
 public final class PowerSupplyBlockEntity extends BlockEntity {
     
-    private final EnergyHandler energyHandler = new SimpleEnergyHandler(Integer.MAX_VALUE,Integer.MAX_VALUE,Integer.MAX_VALUE){
+    private final EnergyHandler energyHandler = new SimpleEnergyHandler(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE) {
         @Override
         public int extract(int amount, TransactionContext transaction) {
-            return PowerSupplyBlockEntity.this.data.status == 1 ? Math.min(amount,PowerSupplyBlockEntity.this.data.power) : 0;
+            return PowerSupplyBlockEntity.this.data.status == 1 ? Math.min(amount, PowerSupplyBlockEntity.this.data.power) : 0;
         }
         
         @Override
@@ -38,7 +38,7 @@ public final class PowerSupplyBlockEntity extends BlockEntity {
     };
     
     public final PowerSupplyBlock.Data data = new PowerSupplyBlock.Data();
-
+    
     public PowerSupplyBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(PowerToolBlocks.POWER_SUPPLY_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
         this.data.markDirty = this::setChanged;
@@ -47,15 +47,15 @@ public final class PowerSupplyBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        this.data.status = input.getIntOr("status",0);
-        this.data.power = input.getIntOr("power",0);
+        this.data.status = input.getIntOr("status", 0);
+        this.data.power = input.getIntOr("power", 0);
     }
     
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.putInt("status",this.data.status);
-        output.putInt("power",this.data.power);
+        output.putInt("status", this.data.status);
+        output.putInt("power", this.data.power);
     }
     
     @Override

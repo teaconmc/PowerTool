@@ -20,14 +20,14 @@ public class TempleBlockEntity extends BlockEntity {
     
     public ItemStack theItem = ItemStack.EMPTY;
     
-    public TempleBlockEntity( BlockPos pos, BlockState blockState) {
+    public TempleBlockEntity(BlockPos pos, BlockState blockState) {
         super(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), pos, blockState);
     }
     
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        this.theItem = input.read("item",ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.theItem = input.read("item", ItemStack.CODEC).orElse(ItemStack.EMPTY);
     }
     
     @Override

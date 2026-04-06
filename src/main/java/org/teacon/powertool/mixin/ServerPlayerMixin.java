@@ -18,11 +18,11 @@ import java.util.function.Consumer;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerMixin {
-
+    
     @Inject(
-        method = "openMenu(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;",
-        at = @At("HEAD"),
-        cancellable = true
+            method = "openMenu(Lnet/minecraft/world/MenuProvider;Ljava/util/function/Consumer;)Ljava/util/OptionalInt;",
+            at = @At("HEAD"),
+            cancellable = true
     )
     private void onOpenMenu(MenuProvider menu, Consumer<RegistryFriendlyByteBuf> extraDataWriter, CallbackInfoReturnable<OptionalInt> cir) {
         ServerPlayer thiz = (ServerPlayer) (Object) this;
@@ -32,8 +32,8 @@ public abstract class ServerPlayerMixin {
             if (hitResult instanceof BlockHitResult blockHitResult) {
                 BlockPos pos = blockHitResult.getBlockPos();
                 PacketDistributor.sendToPlayer(
-                    thiz,
-                    new UpdateOpenMenuSourcePacket(pos)
+                        thiz,
+                        new UpdateOpenMenuSourcePacket(pos)
                 );
             }
             return;

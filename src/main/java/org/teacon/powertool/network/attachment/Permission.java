@@ -19,56 +19,56 @@ import java.util.Optional;
 public class Permission {
     
     public static final Identifier KEY = VanillaUtils.resourceLocationOf(PowerTool.MODID, "permission");
-
+    
     private Boolean canUseGameMasterBlock;
     private Boolean canSwitchGameMode;
     // canUseSelector is superseded by NeoForgeMod.USE_SELECTORS_PERMISSION
-
+    
     public Optional<Boolean> isCanUseGameMasterBlock() {
         return Optional.ofNullable(canUseGameMasterBlock);
     }
-
+    
     public void setCanUseGameMasterBlock(boolean canUseGameMasterBlock) {
         this.canUseGameMasterBlock = canUseGameMasterBlock;
     }
-
+    
     public Optional<Boolean> isCanSwitchGameMode() {
         return Optional.ofNullable(canSwitchGameMode);
     }
-
+    
     public void setCanSwitchGameMode(boolean canSwitchGameMode) {
         this.canSwitchGameMode = canSwitchGameMode;
     }
-
+    
     @EventBusSubscriber
-    public static class Provider  {
+    public static class Provider {
         
         private static final PermissionNode<Boolean> GAMEMODE = new PermissionNode<>(
-            "minecraft", "command.gamemode", PermissionTypes.BOOLEAN,
-            (player, uuid, context) -> player != null && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
+                "minecraft", "command.gamemode", PermissionTypes.BOOLEAN,
+                (player, uuid, context) -> player != null && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
         );
         private static final PermissionNode<Boolean> COMMAND_BLOCK = new PermissionNode<>(
-            "minecraft", "use_gamemaster_block", PermissionTypes.BOOLEAN,
-            (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
+                "minecraft", "use_gamemaster_block", PermissionTypes.BOOLEAN,
+                (player, uuid, context) -> player != null && player.getAbilities().instabuild && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
         );
         public static final PermissionNode<Boolean> SEE_COMMAND_FEEDBACK_FROM_OTHERS = new PermissionNode<>(
                 "powertool", "see_command_feedback_from_others", PermissionTypes.BOOLEAN,
                 ((player, playerUUID, context) -> player != null && player.permissions().hasPermission(Permissions.COMMANDS_OWNER))
         );
         // ENTITY_SELECTOR is replaced by NeoForgeMod.USE_SELECTORS_PERMISSION
-
+        
         @SubscribeEvent
         public static void on(PermissionGatherEvent.Nodes event) {
             event.addNodes(GAMEMODE, COMMAND_BLOCK, SEE_COMMAND_FEEDBACK_FROM_OTHERS);
         }
     }
-
+    
     public static void updatePermission(ServerPlayer player) {
         PacketDistributor.sendToPlayer(player,
-            new UpdatePermissionPacket(
-                PermissionAPI.getPermission(player, Provider.COMMAND_BLOCK),
-                PermissionAPI.getPermission(player, Provider.GAMEMODE)
-            )
+                new UpdatePermissionPacket(
+                        PermissionAPI.getPermission(player, Provider.COMMAND_BLOCK),
+                        PermissionAPI.getPermission(player, Provider.GAMEMODE)
+                )
         );
     }
 }

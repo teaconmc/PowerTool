@@ -38,8 +38,8 @@ public class BezierCurveBlock extends BaseEntityBlock {
     
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer,new OpenBlockScreen(pos,OpenBlockScreen.BEZIER_CURVE_BLOCK));
+        if (!level.isClientSide() && player.getAbilities().instabuild && player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenBlockScreen(pos, OpenBlockScreen.BEZIER_CURVE_BLOCK));
         }
         return InteractionResult.SUCCESS;
     }

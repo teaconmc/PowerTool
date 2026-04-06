@@ -20,7 +20,7 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     
     private static final Identifier BG = Identifier.fromNamespaceAndPath("powertool", "textures/gui/register.png");
     private static final int TEXT_COLOR = 16777215;
-
+    
     private RegisterBlockEntity rbe;
     private Checkbox matchData;
     private Checkbox displaySupply;
@@ -28,7 +28,7 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     public RegisterScreen(RegisterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
     }
-
+    
     @Override
     protected void init() {
         super.init();
@@ -39,14 +39,14 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
             }
         }
         this.matchData = Checkbox.builder(Component.translatable("powertool.gui.register.match_data"), this.font)
-                .pos(this.leftPos+80, this.topPos+25)
+                .pos(this.leftPos + 80, this.topPos + 25)
                 .build();
         this.displaySupply = Checkbox.builder(Component.translatable("powertool.gui.register.display_supply"), this.font)
-                .pos(this.leftPos+80, this.topPos+45)
+                .pos(this.leftPos + 80, this.topPos + 45)
                 .build();
-        if(rbe != null) {
-            if(rbe.matchDataComponents) matchData.onPress();
-            if(rbe.displaySupply) displaySupply.onPress();
+        if (rbe != null) {
+            if (rbe.matchDataComponents) matchData.onPress();
+            if (rbe.displaySupply) displaySupply.onPress();
         }
         matchData.textWidget.setColor(TEXT_COLOR);
         displaySupply.textWidget.setColor(TEXT_COLOR);
@@ -56,7 +56,7 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     
     @Override
     public void removed() {
-        if(rbe != null) {
+        if (rbe != null) {
             rbe.itemToAccept = menu.getSlot(0).getItem().copy();
             rbe.itemToSupply = menu.getSlot(1).getItem().copy();
             rbe.matchDataComponents = matchData.selected();
@@ -72,10 +72,10 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
         this.renderTooltip(guiGraphics, mouseX, mouseY);
         var rev = Component.translatable("powertool.gui.register.rev");
         var sup = Component.translatable("powertool.gui.register.sup");
-        guiGraphics.drawString(font,rev,leftPos+38-font.width(rev),topPos + 25+2,TEXT_COLOR,true);
-        guiGraphics.drawString(font,sup,leftPos+38-font.width(sup),topPos + 45+2,TEXT_COLOR,true);
+        guiGraphics.drawString(font, rev, leftPos + 38 - font.width(rev), topPos + 25 + 2, TEXT_COLOR, true);
+        guiGraphics.drawString(font, sup, leftPos + 38 - font.width(sup), topPos + 45 + 2, TEXT_COLOR, true);
     }
-
+    
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         guiGraphics.blit(BG, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);

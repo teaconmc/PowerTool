@@ -10,11 +10,11 @@ import org.teacon.powertool.PowerTool;
 public class PowerToolClientCommands {
     
     @SubscribeEvent
-    public static void onRegClientCommand(RegisterClientCommandsEvent event){
+    public static void onRegClientCommand(RegisterClientCommandsEvent event) {
         event.getDispatcher().register(
                 Commands.literal("powertool")
                         .redirect(event.getDispatcher().register(Commands.literal("pt")
-                    
+                                
                                 )
                         ));
     }

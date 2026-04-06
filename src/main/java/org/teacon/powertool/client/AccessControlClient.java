@@ -17,7 +17,7 @@ public class AccessControlClient {
     private final Map<ChunkPos, List<BlockPos>> displayModeData = new HashMap<>();
     private final Map<ChunkPos, List<BlockPos>> staticModeData = new HashMap<>();
     private BlockPos interactionSourcePos = null;
-
+    
     public boolean isDisplayModeEnabledOn(Screen screen) {
         Player player = Minecraft.getInstance().player;
         if (player == null || interactionSourcePos == null || player.getAbilities().instabuild) {
@@ -31,20 +31,20 @@ public class AccessControlClient {
         }
         return false;
     }
-
+    
     public void screenClosed() {
         interactionSourcePos = null;
     }
-
+    
     public void clear() {
         displayModeData.clear();
         staticModeData.clear();
     }
-
+    
     public void updateInteractionSource(BlockPos pos) {
         this.interactionSourcePos = pos;
     }
-
+    
     public void updateDisplayModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
         displayModeData.put(chunkPos, blockPosList);
     }
@@ -52,7 +52,7 @@ public class AccessControlClient {
     public void updateStaticModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
         staticModeData.put(chunkPos, blockPosList);
     }
-
+    
     public boolean isDisplayModeEnabledAt(BlockPos blockPos) {
         ChunkPos pos = new ChunkPos(blockPos);
         if (displayModeData.containsKey(pos)) {

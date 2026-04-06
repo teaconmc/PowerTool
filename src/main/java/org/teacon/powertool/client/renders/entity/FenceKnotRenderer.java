@@ -31,26 +31,26 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
     private static final Identifier KNOT_LOCATION = Identifier.withDefaultNamespace("textures/entity/lead_knot.png");
     private final LeashKnotModel<FenceKnotEntity> model;
-
+    
     public FenceKnotRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.model = new LeashKnotModel<>(context.bakeLayer(ModelLayers.LEASH_KNOT));
     }
-
+    
     @Override
     public Identifier getTextureLocation(FenceKnotEntity entity) {
         return KNOT_LOCATION;
     }
-
+    
     @Override
     public void render(FenceKnotEntity e, float yRot, float partialTick, PoseStack transform, MultiBufferSource buffers, int packedLight) {
         super.render(e, yRot, partialTick, transform, buffers, packedLight);
         transform.pushPose();
         transform.scale(-1.0F, -1.0F, 1.0F);
-        transform.translate(0,0.25f,0);
+        transform.translate(0, 0.25f, 0);
         this.model.setupAnim(e, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
         VertexConsumer vertexconsumer = buffers.getBuffer(this.model.renderType(KNOT_LOCATION));
-        this.model.renderToBuffer(transform, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, VanillaUtils.getColor(255,255,255,255));
+        this.model.renderToBuffer(transform, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY, VanillaUtils.getColor(255, 255, 255, 255));
         transform.popPose();
         for (var fromPos : e.getConnectTo()) {
             this.renderLeash(e, partialTick, transform, buffers, fromPos);
@@ -63,7 +63,7 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
             transform.scale(-0.025F, -0.025F, 0.025F);
             Component tip = Component.translatable("entity.powertool.fence_knot");
             Component tipLine2 = Component.translatable("entity.powertool.fence_knot.tooltip");
-            int transparency = ((int)(Minecraft.getInstance().options.getBackgroundOpacity(0.25F) * 255)) << 24;
+            int transparency = ((int) (Minecraft.getInstance().options.getBackgroundOpacity(0.25F) * 255)) << 24;
             Font font = this.getFont();
             font.drawInBatch(tip, -font.width(tip) / 2.0F, -15, 0xFFFFFFFF, false, transform.last().pose(), buffers, Font.DisplayMode.SEE_THROUGH, transparency, packedLight);
             font.drawInBatch(tipLine2, -font.width(tipLine2) / 2.0F, -5, 0xFFFFFFFF, false, transform.last().pose(), buffers, Font.DisplayMode.SEE_THROUGH, transparency, packedLight);
@@ -83,9 +83,9 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         double d4 = Mth.lerp(partialTick, to.yo, to.getY()) + vec31.y;
         double d5 = Mth.lerp(partialTick, to.zo, to.getZ()) + d2;
         transform.translate(d1, vec31.y, d2);
-        float f = (float)(vec3.x - d3);
-        float f1 = (float)(vec3.y - d4);
-        float f2 = (float)(vec3.z - d5);
+        float f = (float) (vec3.x - d3);
+        float f1 = (float) (vec3.y - d4);
+        float f2 = (float) (vec3.z - d5);
         float f3 = 0.025F;
         VertexConsumer vertexconsumer = buffers.getBuffer(RenderType.leash());
         Matrix4f matrix4f = transform.last().pose();
@@ -100,26 +100,26 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         int l = to.level().getBrightness(LightLayer.SKY, blockpos1);
         //并不是width 实际上我也不知道这个参数是什么含义 -- xkball
         var width = to.getTypeForRender().getWidth();
-        for(int i1 = 0; i1 <= 24; ++i1) {
+        for (int i1 = 0; i1 <= 24; ++i1) {
             addVertexPair(vertexconsumer, matrix4f, f, f1, f2,
                     i, j, k, l, width, width,
                     f5, f6, i1, false);
         }
-
-        for(int j1 = 24; j1 >= 0; --j1) {
+        
+        for (int j1 = 24; j1 >= 0; --j1) {
             addVertexPair(vertexconsumer, matrix4f, f, f1, f2,
                     i, j, k, l, width, 0.0F,
                     f5, f6, j1, true);
         }
-
+        
         transform.popPose();
     }
-
+    
     private static void addVertexPair(VertexConsumer vertexes, Matrix4f transform, float p_174310_, float p_174311_, float p_174312_, int blockLight0, int blockLight1, int skyLight0, int skyLight1, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int index, boolean p_174322_) {
         // Copied from MobRenderer::addVertexPair, TODO: Explain what it does, and what we can simplify
-        float f = (float)index / 24.0F;
-        int blockLight = (int)Mth.lerp(f, (float)blockLight0, (float)blockLight1);
-        int skyLight = (int)Mth.lerp(f, (float)skyLight0, (float)skyLight1);
+        float f = (float) index / 24.0F;
+        int blockLight = (int) Mth.lerp(f, (float) blockLight0, (float) blockLight1);
+        int skyLight = (int) Mth.lerp(f, (float) skyLight0, (float) skyLight1);
         int light = LightTexture.pack(blockLight, skyLight);
         float f1 = index % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
         float f2 = 0.5F * f1;
@@ -131,5 +131,5 @@ public class FenceKnotRenderer extends EntityRenderer<FenceKnotEntity> {
         vertexes.addVertex(transform, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setLight(light);
         vertexes.addVertex(transform, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F).setLight(light);
     }
-
+    
 }

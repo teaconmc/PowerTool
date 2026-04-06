@@ -2,8 +2,6 @@ package org.teacon.powertool.block.entity;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,14 +16,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
 @ParametersAreNonnullByDefault
-public class LinkHolographicSignBlockEntity extends BaseHolographicSignBlockEntity{
+public class LinkHolographicSignBlockEntity extends BaseHolographicSignBlockEntity {
     
     public Component displayContent = Component.empty();
     public String url = "";
     
     public LinkHolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
-        this.colorInARGB =  Objects.requireNonNullElse(ChatFormatting.BLUE.getColor(), VanillaUtils.getColor(255,255,255,255));
+        this.colorInARGB = Objects.requireNonNullElse(ChatFormatting.BLUE.getColor(), VanillaUtils.getColor(255, 255, 255, 255));
     }
     
     @Override
@@ -38,8 +36,8 @@ public class LinkHolographicSignBlockEntity extends BaseHolographicSignBlockEnti
     @Override
     public void readFrom(ValueInput input) {
         super.readFrom(input);
-        this.url = input.getStringOr("url","");
-        this.displayContent = input.read("content",ComponentSerialization.CODEC).orElse(Component.empty());
+        this.url = input.getStringOr("url", "");
+        this.displayContent = input.read("content", ComponentSerialization.CODEC).orElse(Component.empty());
     }
     
     @Override

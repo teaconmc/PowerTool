@@ -13,13 +13,13 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import org.teacon.powertool.PowerTool;
 
 public class FlyCommand {
-
+    
     public static final Identifier POWER_TOOL_FLY_MODIFIER = Identifier.fromNamespaceAndPath(PowerTool.MODID, "creative_flight");
-
+    
     public static void reg(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("fly").requires(p -> p.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)).executes(FlyCommand::fly0));
     }
-
+    
     private static int fly0(CommandContext<CommandSourceStack> sourceStack) {
         var p = sourceStack.getSource().getPlayer();
         if (p != null) {

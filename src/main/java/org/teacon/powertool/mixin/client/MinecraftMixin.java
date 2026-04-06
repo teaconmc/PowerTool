@@ -11,10 +11,10 @@ import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipe
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
     @Inject(
-        method = "updateLevelInEngines",
-        at = @At("HEAD")
+            method = "updateLevelInEngines",
+            at = @At("HEAD")
     )
-    void updateLevel(ClientLevel level, CallbackInfo ci){
+    void updateLevel(ClientLevel level, CallbackInfo ci) {
         CacheableBERenderingPipeline.updateLevel(level);
     }
 }

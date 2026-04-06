@@ -9,21 +9,21 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 
-public class CosmeticHorizontalDirectionalBlock extends CosmeticSimpleBlock{
-
+public class CosmeticHorizontalDirectionalBlock extends CosmeticSimpleBlock {
+    
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
-
+    
     public CosmeticHorizontalDirectionalBlock(Properties p) {
         super(p);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
-
+    
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
-
+    
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         pBuilder.add(FACING);
     }
-
+    
 }

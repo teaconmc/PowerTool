@@ -11,12 +11,11 @@ import org.teacon.powertool.block.ICosmeticBlock;
 import org.teacon.powertool.block.WithTooltip;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 public class CosmeticSimpleBlock extends Block implements ICosmeticBlock, WithTooltip {
-
+    
     public CosmeticSimpleBlock(Properties p) {
         super(p);
     }

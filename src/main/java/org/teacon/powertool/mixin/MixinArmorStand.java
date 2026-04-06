@@ -21,8 +21,8 @@ public abstract class MixinArmorStand extends LivingEntity {
         super(entityType, level);
     }
     
-    @Inject(method = "interactAt", at = @At("HEAD"), cancellable = true)
-    public void onItemUse(Player player, Vec3 vec, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    @Inject(method = "interact", at = @At("HEAD"), cancellable = true)
+    public void onItemUse(Player player, InteractionHand hand, Vec3 location, CallbackInfoReturnable<InteractionResult> cir) {
         var item = player.getItemInHand(hand);
         if (!(item.getItem() instanceof TransparentBrushItem)) return;
         if (player.isCrouching()) {

@@ -7,7 +7,6 @@
     "CommandBlockMixin",
     "CommandsMixin",
     "CommandSourceStackMixin",
-    "MixinAbstractBoat",
     "MixinArmorStand",
     "MixinEntity",
     "MixinItemFrame",
@@ -19,14 +18,11 @@
     "client.ClientRecipeBookMixin",
     "client.DebugScreenOverlayMixin",
     "client.GameModeSwitcherScreenMixin",
-    "client.GameRendererMixin",
     "client.KeyboardHandlerMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.PlayerMixin",
-    "client.SectionRenderDispatcherMixin",
-    "client.compat.EmbeddiumWorldRenderMixin",
-    "client.compat.SodiumWorldRenderMixin"
+    "client.SectionRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1

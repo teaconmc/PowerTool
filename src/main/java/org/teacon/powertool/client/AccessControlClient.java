@@ -24,7 +24,7 @@ public class AccessControlClient {
             return false;
         }
         if (screen instanceof AbstractContainerScreen<? extends AbstractContainerMenu> abstractContainerScreen) {
-            ChunkPos pos = new ChunkPos(interactionSourcePos);
+            ChunkPos pos = ChunkPos.containing(interactionSourcePos);
             if (displayModeData.containsKey(pos)) {
                 return displayModeData.get(pos).contains(interactionSourcePos);
             }
@@ -54,7 +54,7 @@ public class AccessControlClient {
     }
     
     public boolean isDisplayModeEnabledAt(BlockPos blockPos) {
-        ChunkPos pos = new ChunkPos(blockPos);
+        ChunkPos pos = ChunkPos.containing(blockPos);
         if (displayModeData.containsKey(pos)) {
             return displayModeData.get(pos).contains(blockPos);
         }
@@ -62,7 +62,7 @@ public class AccessControlClient {
     }
     
     public boolean isStaticModeEnabledAt(BlockPos blockPos) {
-        ChunkPos pos = new ChunkPos(blockPos);
+        ChunkPos pos = ChunkPos.containing(blockPos);
         if (staticModeData.containsKey(pos)) {
             return staticModeData.get(pos).contains(blockPos);
         }

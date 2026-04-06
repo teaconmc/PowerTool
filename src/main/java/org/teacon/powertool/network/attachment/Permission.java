@@ -16,6 +16,8 @@ import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.Optional;
 
+//权限检查的机制已经完全改变, 这里默认也只是检查是否有2级权限, 认为应该废弃.[xkball]
+@Deprecated
 public class Permission {
     
     public static final Identifier KEY = VanillaUtils.resourceLocationOf(PowerTool.MODID, "permission");

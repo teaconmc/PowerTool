@@ -65,7 +65,7 @@ public class ModBlockModelProvider extends ModelProvider {
     }
     
     private void simpleBlockWithItem(Block block) {
-        this.blockModelGenerators.create
+        
         this.blockModelGenerators.registerSimpleItemModel(block, modRL(name(block)));
     }
     

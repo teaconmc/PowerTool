@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -24,9 +25,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.teacon.powertool.block.ICosmeticBlock;
+import org.teacon.powertool.block.WithTooltip;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Special implementation of vanilla Hopper block that does not contain
@@ -35,7 +37,7 @@ import java.util.List;
  */
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class CosmeticHopper extends Block implements ICosmeticBlock {
+public class CosmeticHopper extends Block implements ICosmeticBlock, WithTooltip {
     private static final EnumProperty<Direction> FACING = BlockStateProperties.FACING_HOPPER;
     private static final VoxelShape TOP = Block.box(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape FUNNEL = Block.box(4.0D, 4.0D, 4.0D, 12.0D, 10.0D, 12.0D);
@@ -61,11 +63,6 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-    }
-    
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("block.powertool.cosmetic_hopper.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
     
     @Override
@@ -114,5 +111,10 @@ public class CosmeticHopper extends Block implements ICosmeticBlock {
     @Override
     protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
         return false;
+    }
+    
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("block.powertool.cosmetic_hopper.tooltip").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

@@ -1,17 +1,24 @@
 package org.teacon.powertool;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.debug.DebugEntryLookingAt;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Util;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -19,7 +26,11 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.attachment.PowerToolAttachments;
+import org.teacon.powertool.client.AccessControlClient;
+import org.teacon.powertool.client.CachedModeClient;
 import org.teacon.powertool.entity.AutoVanishBoat;
 import org.teacon.powertool.entity.AutoVanishMinecart;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
@@ -28,12 +39,12 @@ import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
 import org.teacon.powertool.utils.DelayServerExecutor;
 import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@NonNullByDefault
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolEvents {
     
@@ -171,5 +182,35 @@ public class PowerToolEvents {
                 event.setCanceled(true);
             }
         }
+    }
+    
+    @SubscribeEvent
+    public static void onRegDebugOverlayEntry(RegisterDebugEntriesEvent event) {
+        event.register(VanillaUtils.modRL("block_access_control_mode"), new DebugEntryLookingAt() {
+                    @Override
+                    public HitResult getHitResult(Entity cameraEntity) {
+                        return cameraEntity.pick(20.0, 0.0F, false);
+                    }
+                    
+                    @Override
+                    public void extractInfo(List<String> result, Level level, BlockPos pos) {
+                        boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(pos);
+                        boolean isCachedModeEnabled = CachedModeClient.INSTANCE.isCachedModeEnabledOn(pos);
+                        result.add(
+                                "Display Mode: "
+                                        + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                        );
+                        result.add(
+                                "Cached Mode: "
+                                        + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                        );
+                    }
+                    
+                    @Override
+                    public Identifier group() {
+                        return DebugEntryLookingAt.BLOCK_GROUP;
+                    }
+                }
+        );
     }
 }

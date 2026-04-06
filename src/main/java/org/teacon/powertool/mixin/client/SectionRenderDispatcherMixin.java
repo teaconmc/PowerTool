@@ -25,7 +25,7 @@ public class SectionRenderDispatcherMixin {
      * @param t The exception
      * @return The exception verbatim; we are only tracing it, not modifying it
      */
-    @ModifyArg(method = "lambda$runTask$3", at = @At(value = "INVOKE", target = "Lnet/minecraft/CrashReport;forThrowable(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/CrashReport;"))
+    @ModifyArg(method = "runTask", at = @At(value = "INVOKE", target = "Lnet/minecraft/CrashReport;forThrowable(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/CrashReport;"))
     private Throwable tracingStackTrace(Throwable t) {
         powerTool$LOGGER.error(powerTool$MARKER, "SectionRenderDispatcher encounters error!", t);
         return t;

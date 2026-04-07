@@ -1,16 +1,15 @@
 package org.teacon.powertool.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.client.gui.widget.ButtonWithHighlight;
 import org.teacon.powertool.client.gui.widget.InvisibleButton;
@@ -39,11 +38,11 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
     
     public void onToggled(Button toggle) {
         this.status = this.status == 0 ? 1 : 0;
-        PacketDistributor.sendToServer(new UpdatePowerSupplyData(0, this.status));
+        ClientPacketDistributor.sendToServer(new UpdatePowerSupplyData(0, this.status));
     }
     
     public void updatePowerOutput() {
-        PacketDistributor.sendToServer(new UpdatePowerSupplyData(1, this.power));
+        ClientPacketDistributor.sendToServer(new UpdatePowerSupplyData(1, this.power));
     }
     
     @Override
@@ -92,46 +91,28 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
     }
     
     @Override
-    public void resize(Minecraft mc, int pWidth, int pHeight) {
+    public void resize(int width, int height) {
         String s = this.input.getValue();
-        super.resize(mc, pWidth, pHeight);
+        super.resize(width, height);
         this.input.setValue(s);
     }
     
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        var keyCode = event.key();
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            var mc = this.minecraft;
-            if (mc != null) {
-                var p = mc.player;
-                if (p != null) {
-                    p.closeContainer();
-                }
+            var p = this.minecraft.player;
+            if (p != null) {
+                p.closeContainer();
             }
         }
-        return this.input.keyPressed(keyCode, scanCode, modifiers)
+        return this.input.keyPressed(event)
                 || this.input.canConsumeInput()
-                || super.keyPressed(keyCode, scanCode, modifiers);
+                || super.keyPressed(event);
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        //this.renderBackground(guiGraphics,mouseX,mouseY,partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        RenderSystem.disableBlend();
-        this.input.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-    
-    @Override
-    private void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.blit(BG_LOCATION, 125, 0, this.status == 0 ? 202 : 170, 0, 32, 44);
-    }
-    
-    @Override
-    private void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        guiGraphics.blit(BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+    protected void extractMenuBackground(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
     }
 }

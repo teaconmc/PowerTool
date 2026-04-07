@@ -2,7 +2,7 @@ package org.teacon.powertool.client.gui.widget;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -84,14 +84,15 @@ public class DelayCommandList extends EntryListWidget<SetCommandScreen, DelayCom
         }
         
         @Override
-        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             var sx = DelayCommandList.this.getX();
+            var top = this.getY();
             this.delay_.setPosition(sx + 20, top);
-            this.delay_.render(guiGraphics, mouseX, mouseY, partialTick);
+            this.delay_.extractWidgetRenderState(graphics, mouseX, mouseY, a);
             this.command_.setPosition(sx + 20, top + 20);
-            this.command_.render(guiGraphics, mouseX, mouseY, partialTick);
+            this.command_.extractWidgetRenderState(graphics, mouseX, mouseY, a);
             this.remove.setPosition(sx + DelayCommandList.this.getWidth() - 50, top);
-            this.remove.render(guiGraphics, mouseX, mouseY, partialTick);
+            this.remove.extractRenderState(graphics, mouseX, mouseY, a);
         }
         
         @Override

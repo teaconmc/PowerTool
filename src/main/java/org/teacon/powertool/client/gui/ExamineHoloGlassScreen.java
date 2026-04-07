@@ -1,8 +1,7 @@
 package org.teacon.powertool.client.gui;
 
-import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponentPatch;
@@ -11,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.client.gui.widget.BlockEntityList;
 import org.teacon.powertool.datagen.PowerToolBlockTagsProvider;
@@ -100,16 +99,14 @@ public class ExamineHoloGlassScreen extends Screen {
                 .set(PowerToolDataComponents.BLOCK_TAGS_DATA.get(), new ExamineHoloGlass.BlockTagsComponent(new ArrayList<>(tagsData)))
                 .set(PowerToolDataComponents.BLOCKS_DATA.get(), new ExamineHoloGlass.BlockComponents(new ArrayList<>(blocksData)))
                 .build();
-        PacketDistributor.sendToServer(new UpdateItemStackData(slot, patch));
+        ClientPacketDistributor.sendToServer(new UpdateItemStackData(slot, patch));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        Lighting.setupForFlatItems();
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        Lighting.setupFor3DItems();
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         var str = Component.translatable("powertool.gui.examine_holo_glass.warn");
-        guiGraphics.drawString(font, str, (int) (width * 0.55), (int) (height * 0.9 + 2), -1);
+        graphics.text(font, str, (int) (width * 0.55), (int) (height * 0.9 + 2), -1);
     }
     
     @Override

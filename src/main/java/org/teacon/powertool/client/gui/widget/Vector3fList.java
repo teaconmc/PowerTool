@@ -2,7 +2,7 @@ package org.teacon.powertool.client.gui.widget;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -91,8 +91,14 @@ public class Vector3fList extends EntryListWidget<BezierCurveBlockScreen, Vector
         }
         
         @Override
-        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public List<? extends GuiEventListener> children() {
+            return List.of(x, y, z, remove);
+        }
+        
+        @Override
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             var x = Vector3fList.this.getX();
+            var top = this.getY();
             width = Vector3fList.this.screen.width;
             var box_l = (int) (Vector3fList.this.screen.width * 0.08);
             width = (int) (width * 0.4);
@@ -100,15 +106,10 @@ public class Vector3fList extends EntryListWidget<BezierCurveBlockScreen, Vector
             this.y.setPosition(x + (width - box_l) / 2 - 12, top);
             this.z.setPosition(x + width - 50 - box_l - 5, top);
             this.remove.setPosition(x + width - 50, top);
-            this.x.render(guiGraphics, mouseX, mouseY, partialTick);
-            this.y.render(guiGraphics, mouseX, mouseY, partialTick);
-            this.z.render(guiGraphics, mouseX, mouseY, partialTick);
-            this.remove.render(guiGraphics, mouseX, mouseY, partialTick);
-        }
-        
-        @Override
-        public List<? extends GuiEventListener> children() {
-            return List.of(x, y, z, remove);
+            this.x.extractWidgetRenderState(graphics, mouseX, mouseY, a);
+            this.y.extractWidgetRenderState(graphics, mouseX, mouseY, a);
+            this.z.extractWidgetRenderState(graphics, mouseX, mouseY, a);
+            this.remove.extractRenderState(graphics, mouseX, mouseY, a);
         }
     }
 }

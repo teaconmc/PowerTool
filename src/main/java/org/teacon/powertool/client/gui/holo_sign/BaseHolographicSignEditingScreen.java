@@ -6,16 +6,20 @@
 package org.teacon.powertool.client.gui.holo_sign;
 
 import com.mojang.blaze3d.platform.Lighting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.NonNull;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
@@ -28,6 +32,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 import java.util.Objects;
 import java.util.Optional;
 
+@NonNullByDefault
 public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlockEntity> extends Screen {
     protected final T sign;
     
@@ -334,7 +339,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     public void removed() {
         //this.minecraft.keyboardHandler.setSendRepeatsToGui(false);
         this.writeBackToBE();
-        PacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
+        ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(sign));
     }
     
     @Override
@@ -352,12 +357,12 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     @Override
-    public boolean charTyped(char pCodePoint, int pModifiers) {
-        if (this.colorInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.yRotationInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.xRotationInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.zOffsetInput.charTyped(pCodePoint, pModifiers)) return true;
-        return super.charTyped(pCodePoint, pModifiers);
+    public boolean charTyped(CharacterEvent event) {
+        if (this.colorInput.charTyped(event)) return true;
+        if (this.yRotationInput.charTyped(event)) return true;
+        if (this.xRotationInput.charTyped(event)) return true;
+        if (this.zOffsetInput.charTyped(event)) return true;
+        return super.charTyped(event);
     }
     
     @Override
@@ -366,48 +371,46 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.colorInput.keyPressed(keyCode, scanCode, modifiers)
-                || this.yRotationInput.keyPressed(keyCode, scanCode, modifiers)
-                || this.xRotationInput.keyPressed(keyCode, scanCode, modifiers)
-                || this.zOffsetInput.keyPressed(keyCode, scanCode, modifiers)) {
+    public boolean keyPressed(KeyEvent event) {
+        if (this.colorInput.keyPressed(event)
+                || this.yRotationInput.keyPressed(event)
+                || this.xRotationInput.keyPressed(event)
+                || this.zOffsetInput.keyPressed(event)) {
             // If color input box is active, let that input box handle it
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
     
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!this.colorInput.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (!this.colorInput.mouseClicked(event, doubleClick)) {
             this.colorInput.setFocused(false);
         }
-        if (!this.yRotationInput.mouseClicked(mouseX, mouseY, button)) {
+        if (!this.yRotationInput.mouseClicked(event, doubleClick)) {
             this.yRotationInput.setFocused(false);
         }
-        if (!this.xRotationInput.mouseClicked(mouseX, mouseY, button)) {
+        if (!this.xRotationInput.mouseClicked(event, doubleClick)) {
             this.xRotationInput.setFocused(false);
         }
-        if (!this.zOffsetInput.mouseClicked(mouseX, mouseY, button)) {
+        if (!this.zOffsetInput.mouseClicked(event, doubleClick)) {
             this.zOffsetInput.setFocused(false);
         }
         this.setFocused(null);
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
     
     @Override
-    public void render(@NonNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        Lighting.setupForFlatItems();
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         int innerPadding = width / 100;
         var color = 0xFFFFFF;
-        guiGraphics.drawString(this.font, Component.translatable("powertool.gui.holographic_sign.scale", this.scale), 7, 7, color, true);
-        guiGraphics.drawString(font, Component.translatable("powertool.gui.holo_sign.x_rotation"), 17, 47 + innerPadding * 2, color, true);
-        guiGraphics.drawString(font, Component.translatable("powertool.gui.holo_sign.y_rotation"), 17, 67 + innerPadding * 3, color, true);
-        guiGraphics.drawString(font, Component.translatable("powertool.gui.holo_sign.z_offset"), 17, 87 + innerPadding * 4, color, true);
-        Lighting.setupFor3DItems();
-        
+        graphics.text(this.font, Component.translatable("powertool.gui.holographic_sign.scale", this.scale), 7, 7, color, true);
+        graphics.text(font, Component.translatable("powertool.gui.holo_sign.x_rotation"), 17, 47 + innerPadding * 2, color, true);
+        graphics.text(font, Component.translatable("powertool.gui.holo_sign.y_rotation"), 17, 67 + innerPadding * 3, color, true);
+        graphics.text(font, Component.translatable("powertool.gui.holo_sign.z_offset"), 17, 87 + innerPadding * 4, color, true);
     }
+    
     
     @Override
     public boolean isPauseScreen() {

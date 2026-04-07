@@ -1,11 +1,16 @@
 package org.teacon.powertool.client.gui.holo_sign;
 
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 
 import java.util.Objects;
 
+@NonNullByDefault
 public class LinkHolographicSignEditingScreen extends BaseHolographicSignEditingScreen<LinkHolographicSignBlockEntity> {
     
     String display = "";
@@ -53,35 +58,36 @@ public class LinkHolographicSignEditingScreen extends BaseHolographicSignEditing
     }
     
     @Override
-    public boolean charTyped(char pCodePoint, int pModifiers) {
-        if (super.charTyped(pCodePoint, pModifiers)) {
+    public boolean charTyped(CharacterEvent event) {
+        if (super.charTyped(event)) {
             return true;
         }
-        if (this.displayInput.charTyped(pCodePoint, pModifiers)) {
+            if (this.displayInput.charTyped(event)) {
             return true;
         }
-        return this.urlInput.charTyped(pCodePoint, pModifiers);
+        return this.urlInput.charTyped(event);
     }
     
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+    public boolean keyPressed(KeyEvent event) {
+        if (super.keyPressed(event)) {
             return true;
         }
-        if (this.displayInput.keyPressed(keyCode, scanCode, modifiers)) {
+        if (this.displayInput.keyPressed(event)) {
             return true;
         }
-        return this.urlInput.keyPressed(keyCode, scanCode, modifiers);
+        return this.urlInput.keyPressed(event);
     }
     
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (!this.displayInput.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (!this.displayInput.mouseClicked(event, doubleClick)) {
             this.displayInput.setFocused(false);
         }
-        if (!this.urlInput.mouseClicked(mouseX, mouseY, button)) {
+        if (!this.urlInput.mouseClicked(event, doubleClick)) {
             this.urlInput.setFocused(false);
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
+    
 }

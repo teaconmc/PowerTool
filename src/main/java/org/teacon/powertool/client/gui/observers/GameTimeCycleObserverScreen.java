@@ -2,14 +2,15 @@ package org.teacon.powertool.client.gui.observers;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.TimeObserverBlock;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
@@ -43,7 +44,7 @@ public class GameTimeCycleObserverScreen extends Screen {
                 .pos(this.width / 2 - 100, this.height / 4 + 120)
                 .size(200, 20).build());
         if (te.getBlockType() != TimeObserverBlock.Type.GAME_DAILY_CYCLE) {
-            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"), font).alignCenter());
+            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"), font));
         } else {
             var box_l = (int) Math.max(100, width * 0.2);
             this.startInput = new ObjectInputBox<>(font, width / 2 - box_l / 2, height / 2 - 60, box_l, 20, Component.literal("Start Time: "), ObjectInputBox.NORMALIZED_FLOAT_VALIDATOR, ObjectInputBox.FLOAT_RESPONDER);
@@ -83,30 +84,31 @@ public class GameTimeCycleObserverScreen extends Screen {
         var end = endInput.get();
         if (start == null || end == null) return;
         te.setTimeSection(new InWorldDailyCycleTimeSection(() -> Minecraft.getInstance().level, start, end));
-        PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
+        ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         var textColor = VanillaUtils.getColor(255, 255, 255, 255);
-        guiGraphics.blitSprite(SKY_COLOR_IMAGE, (int) (width / 2f - width * 0.2f), height / 2 - 110, (int) (width * 0.4f), 25);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SKY_COLOR_IMAGE, (int) (width / 2f - width * 0.2f), height / 2 - 110, (int) (width * 0.4f), 25);
         var text = Component.literal("Sky Color During Time Of Day: ");
-        guiGraphics.drawString(font, text, (int) (width / 2f - width * 0.2f - font.width(text)), height / 2 - 108, textColor);
-        guiGraphics.hLine((int) (width / 2f - width * 0.2f), (int) (width / 2f + width * 0.2f - 1), height / 2 - 85, textColor);
-        guiGraphics.drawString(font, "0.0", (int) (width / 2f - width * 0.2f - font.width("0.0") / 2f), height / 2 - 93, textColor);
-        guiGraphics.drawString(font, "1.0", (int) (width / 2f + width * 0.2f - font.width("1.0") / 2f), height / 2 - 93, textColor);
+        graphics.text(font, text, (int) (width / 2f - width * 0.2f - font.width(text)), height / 2 - 108, textColor);
+        graphics.horizontalLine((int) (width / 2f - width * 0.2f), (int) (width / 2f + width * 0.2f - 1), height / 2 - 85, textColor);
+        graphics.text(font, "0.0", (int) (width / 2f - width * 0.2f - font.width("0.0") / 2f), height / 2 - 93, textColor);
+        graphics.text(font, "1.0", (int) (width / 2f + width * 0.2f - font.width("1.0") / 2f), height / 2 - 93, textColor);
         if (startInput == null || endInput == null) return;
         var start = startInput.get();
         var end = endInput.get();
         var level = Minecraft.getInstance().level;
         if (start == null || end == null || level == null) return;
-        var current = level.getTimeOfDay(0);
-        guiGraphics.blitSprite(SLIDER, (int) (width / 2f - width * 0.2f + width * 0.4f * current - 4), height / 2 - 85, 8, 16);
-        guiGraphics.drawString(font, "current", (int) (width / 2f - width * 0.2f + width * 0.4f * current - font.width("current") / 2f), height / 2 - 70, 0x0000FFF0);
-        guiGraphics.blitSprite(SLIDER, (int) (width / 2f - width * 0.2f + width * 0.4f * start - 4), height / 2 - 85, 8, 16);
-        guiGraphics.blitSprite(SLIDER, (int) (width / 2f - width * 0.2f + width * 0.4f * end - 4), height / 2 - 85, 8, 16);
-        guiGraphics.drawString(font, "1", (int) (width / 2f - width * 0.2f + width * 0.4f * start - font.width("1") / 2f), height / 2 - 79, 0x0000FFF0);
-        guiGraphics.drawString(font, "2", (int) (width / 2f - width * 0.2f + width * 0.4f * end - font.width("2") / 2f), height / 2 - 79, 0x0000FFF0);
+        var current = level.getOverworldClockTime();
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED,SLIDER, (int) (width / 2f - width * 0.2f + width * 0.4f * current - 4), height / 2 - 85, 8, 16);
+        graphics.text(font, "current", (int) (width / 2f - width * 0.2f + width * 0.4f * current - font.width("current") / 2f), height / 2 - 70, 0x0000FFF0);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED,SLIDER, (int) (width / 2f - width * 0.2f + width * 0.4f * start - 4), height / 2 - 85, 8, 16);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED,SLIDER, (int) (width / 2f - width * 0.2f + width * 0.4f * end - 4), height / 2 - 85, 8, 16);
+        graphics.text(font, "1", (int) (width / 2f - width * 0.2f + width * 0.4f * start - font.width("1") / 2f), height / 2 - 79, 0x0000FFF0);
+        graphics.text(font, "2", (int) (width / 2f - width * 0.2f + width * 0.4f * end - font.width("2") / 2f), height / 2 - 79, 0x0000FFF0);
     }
+    
 }

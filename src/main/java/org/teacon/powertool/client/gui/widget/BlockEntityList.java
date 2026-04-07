@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, BlockEntityList.Entry> {
     
-    
     public BlockEntityList(ExamineHoloGlassScreen screen, int width, int height, int y, int itemHeight) {
         super(screen, width, height, y, itemHeight);
         this.setX((int) (screen.width * 0.55));
@@ -98,7 +97,6 @@ public class BlockEntityList extends EntryListWidget<ExamineHoloGlassScreen, Blo
         
         @Override
         public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
-            checkbox.setPosition(left, top);
             checkbox.extractContents(graphics, mouseX, mouseY, a);
         }
         

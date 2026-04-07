@@ -15,7 +15,7 @@ public abstract class EntryListWidget<S extends Screen, E extends EntryListWidge
     public EntryListWidget(S screen, int width, int height, int y, int itemHeight) {
         super(Minecraft.getInstance(), width, height, y, itemHeight);
         this.screen = screen;
-        this.setRenderHeader(true, 24);
+//        this.setRenderHeader(true, 24);
         this.init(screen);
     }
     
@@ -45,7 +45,7 @@ public abstract class EntryListWidget<S extends Screen, E extends EntryListWidge
     }
     
     @Override
-    protected void clearEntries() {
+    public void clearEntries() {
         super.clearEntries();
         id = 0;
     }

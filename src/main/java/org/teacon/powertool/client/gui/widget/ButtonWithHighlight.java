@@ -1,9 +1,9 @@
 package org.teacon.powertool.client.gui.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.resources.Identifier;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -45,14 +45,14 @@ public class ButtonWithHighlight extends Button {
     }
     
     @Override
-    public void onPress() {
-        super.onPress();
+    public void onPress(InputWithModifiers input) {
+        super.onPress(input);
         this.isBeingPressed = true;
     }
     
     @Override
-    public void onRelease(double pMouseX, double pMouseY) {
-        super.onRelease(pMouseX, pMouseY);
+    public void onRelease(MouseButtonEvent event) {
+        super.onRelease(event);
         this.isBeingPressed = false;
         this.pressElapsedTime = 0;
         if (this.onReleaseMoment != null) {
@@ -61,15 +61,13 @@ public class ButtonWithHighlight extends Button {
     }
     
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.enableDepthTest();
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         if (this.isBeingPressed) {
-            guiGraphics.blit(this.texture, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
+            graphics.blit(this.texture, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
         } else if (this.isHovered) {
-            guiGraphics.blit(this.texture, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
+            graphics.blit(this.texture, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
         } else {
-            guiGraphics.blit(this.texture, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
+            graphics.blit(this.texture, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
         }
     }
 }

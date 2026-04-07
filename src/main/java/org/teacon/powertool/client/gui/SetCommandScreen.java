@@ -1,7 +1,7 @@
 package org.teacon.powertool.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,7 +11,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.client.gui.widget.DelayCommandList;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.item.CommandRune;
@@ -113,15 +113,15 @@ public class SetCommandScreen extends Screen {
         if (!input.getValue().isEmpty()) patch.set(PowerToolDataComponents.COMMAND.get(), input.getValue());
         patch.set(PowerToolDataComponents.CONSUME.get(), consume.selected());
         patch.set(PowerToolDataComponents.DELAYED_COMMANDS.get(), delayedCommands);
-        PacketDistributor.sendToServer(new UpdateItemStackData(slot, patch.build()));
+        ClientPacketDistributor.sendToServer(new UpdateItemStackData(slot, patch.build()));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         var box_l = (int) Math.max(100, width * 0.4);
         var startY = (int) (height * 0.15);
         var text = "delayed commands";
-        guiGraphics.drawString(font, text, width / 2 - box_l / 2 - font.width(text) - 2, startY + 52, 0xFFFFFF);
+        graphics.text(font, text, width / 2 - box_l / 2 - font.width(text) - 2, startY + 52, 0xFFFFFF);
     }
 }

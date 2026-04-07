@@ -2,13 +2,13 @@ package org.teacon.powertool.client.gui.observers;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.TimeObserverBlock;
 import org.teacon.powertool.block.entity.TimeObserverBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
@@ -42,7 +42,7 @@ public class RealTimeObserverScreen extends Screen {
                 .pos(this.width / 2 - 100, this.height / 4 + 120)
                 .size(200, 20).build());
         if (te.getBlockType() != TimeObserverBlock.Type.REAL_TIME) {
-            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"), font).alignCenter());
+            this.addRenderableWidget(new StringWidget(Component.translatable("powertool.gui.error_and_close"), font));
         } else {
             var box_l = (int) Math.max(150, width * 0.3);
             var timeSection = te.getTimeSection() instanceof TimestampTimeSection ? (TimestampTimeSection) te.getTimeSection() : null;
@@ -78,27 +78,28 @@ public class RealTimeObserverScreen extends Screen {
         var end = endTimeInput.get();
         if (start == null || end == null) return;
         te.setTimeSection(new TimestampTimeSection(start, end));
-        PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
+        ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         if (startTimeInput == null || endTimeInput == null) return;
         var time = System.currentTimeMillis();
         var textColor = VanillaUtils.getColor(255, 255, 255, 255);
         var text = Component.translatable("powertool.realtime_observer.gui.current_time", time);
-        guiGraphics.drawString(font, text, width / 2 - font.width(text) / 2, height / 2 - 80, textColor);
+        graphics.text(font, text, width / 2 - font.width(text) / 2, height / 2 - 80, textColor);
         var box_l = (int) Math.max(150, width * 0.3);
         var startText = "Start Time:";
         var endText = "End Time:";
-        guiGraphics.drawString(font, startText, width / 2 - box_l / 2 - font.width(startText) - 12, height / 2 - 58, textColor);
-        guiGraphics.drawString(font, endText, width / 2 - box_l / 2 - font.width(endText) - 12, height / 2 - 33, textColor);
+        graphics.text(font, startText, width / 2 - box_l / 2 - font.width(startText) - 12, height / 2 - 58, textColor);
+        graphics.text(font, endText, width / 2 - box_l / 2 - font.width(endText) - 12, height / 2 - 33, textColor);
         var start = startTimeInput.get();
         var end = endTimeInput.get();
         if (start != null)
-            guiGraphics.drawString(font, "UTC+0 " + LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneOffset.UTC), width / 2 + box_l / 2, height / 2 - 50, textColor);
+            graphics.text(font, "UTC+0 " + LocalDateTime.ofInstant(Instant.ofEpochMilli(start), ZoneOffset.UTC), width / 2 + box_l / 2, height / 2 - 50, textColor);
         if (end != null)
-            guiGraphics.drawString(font, "UTC+0 " + LocalDateTime.ofInstant(Instant.ofEpochMilli(end), ZoneOffset.UTC), width / 2 + box_l / 2, height / 2 - 25, textColor);
+            graphics.text(font, "UTC+0 " + LocalDateTime.ofInstant(Instant.ofEpochMilli(end), ZoneOffset.UTC), width / 2 + box_l / 2, height / 2 - 25, textColor);
     }
+    
 }

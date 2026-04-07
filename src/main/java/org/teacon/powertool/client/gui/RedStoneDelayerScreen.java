@@ -2,15 +2,16 @@ package org.teacon.powertool.client.gui;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.entity.RedStoneDelayBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
@@ -99,18 +100,18 @@ public class RedStoneDelayerScreen extends Screen {
         te.delayTicks = Objects.requireNonNullElse(delayInput.get(), 0);
         te.mode = mode;
         te.checkRisingEdge = checkRisingEdge;
-        PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
+        ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         var currentMode1 = Component.translatable("powertool.gui.delayer.mode1");
         var currentMode2 = Component.translatable("powertool.gui.delayer.mode2");
-        guiGraphics.drawString(font, currentMode1, width / 2 - 50 - font.width(currentMode1), height / 2 - 50 + 6, -1);
-        guiGraphics.drawString(font, currentMode2, width / 2 - 50 - font.width(currentMode2), height / 2 - 25 + 6, -1);
-        guiGraphics.blitSprite(mode == RedStoneDelayBlockEntity.Mode.IGNORE ? TEXTURE_IGNORE : TEXTURE_RESET, width / 2 - 43, height / 2 - 25 + 2, 16, 16);
-        guiGraphics.blitSprite(checkRisingEdge ? TEXTURE_RISING_EDGE : TEXTURE_DESCENDING_EDGE, width / 2 - 43, height / 2 - 50 + 2, 16, 16);
+        graphics.text(font, currentMode1, width / 2 - 50 - font.width(currentMode1), height / 2 - 50 + 6, -1);
+        graphics.text(font, currentMode2, width / 2 - 50 - font.width(currentMode2), height / 2 - 25 + 6, -1);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, mode == RedStoneDelayBlockEntity.Mode.IGNORE ? TEXTURE_IGNORE : TEXTURE_RESET, width / 2 - 43, height / 2 - 25 + 2, 16, 16);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, checkRisingEdge ? TEXTURE_RISING_EDGE : TEXTURE_DESCENDING_EDGE, width / 2 - 43, height / 2 - 50 + 2, 16, 16);
     }
     
     @Override

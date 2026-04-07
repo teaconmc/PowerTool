@@ -1,13 +1,11 @@
 package org.teacon.powertool.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.BaseCommandBlock;
 import net.minecraft.world.level.block.entity.CommandBlockEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
 
@@ -43,20 +41,17 @@ public class PeriodicCommandBlockEditScreen extends CommandBlockEditScreen {
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
-        guiGraphics.drawString(this.font, PERIOD, this.width / 2 - 150 + (300 - 40), 95, 10526880);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+        graphics.text(this.font, PERIOD, this.width / 2 - 150 + (300 - 40), 95, 10526880);;
     }
     
-    //todo 修复命令方块使其正常工作
     @Override
-    protected void populateAndSendPacket(BaseCommandBlock baseCommandBlock) {
-        super.populateAndSendPacket(baseCommandBlock);
+    protected void populateAndSendPacket() {
+        super.populateAndSendPacket();
         try {
             var period = Integer.parseInt(this.periodBox.getValue());
-            PacketDistributor.sendToServer(new SetCommandBlockPacket(
-                    BlockPos.containing(baseCommandBlock.getPosition()), period
-            ));
+            ClientPacketDistributor.sendToServer(new SetCommandBlockPacket(this.autoCommandBlock.getBlockPos(), period));
         } catch (NumberFormatException ignored) {
         }
     }

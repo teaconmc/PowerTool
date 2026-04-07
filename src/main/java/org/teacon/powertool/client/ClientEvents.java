@@ -171,7 +171,7 @@ public class ClientEvents {
             event.registerBlockEntityRenderer(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), LinkHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
+//            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
             
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);

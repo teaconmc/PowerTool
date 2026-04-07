@@ -3,11 +3,12 @@ package org.teacon.powertool.client.gui.widget;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -95,18 +96,20 @@ public class TextureAtlasSpriteList extends EntryListWidget<TextureExtractorScre
         }
         
         @Override
-        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
-            var i = 0;
-            for (var button : spriteButtons) {
-                button.setPosition(left + i * 25, top);
-                button.render(guiGraphics, mouseX, mouseY, partialTick);
-                i += 1;
-            }
+        public List<? extends GuiEventListener> children() {
+            return spriteButtons;
         }
         
         @Override
-        public List<? extends GuiEventListener> children() {
-            return spriteButtons;
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+            var i = 0;
+            var left = this.getX();
+            var top = this.getY();
+            for (var button : spriteButtons) {
+                button.setPosition(left + i * 25, top);
+                button.extractRenderState(graphics, mouseX, mouseY, a);
+                i += 1;
+            }
         }
     }
     
@@ -118,22 +121,18 @@ public class TextureAtlasSpriteList extends EntryListWidget<TextureExtractorScre
             super(x, y, width, height, message, onPress, Button.DEFAULT_NARRATION);
             this.texture = texture;
             //noinspection deprecation
-            sprite = Minecraft.getInstance().getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getSprite(texture);
+            sprite = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(texture);
         }
         
         @Override
-        protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
             if (this.isHoveredOrFocused()) {
-                guiGraphics.hLine(getX(), getX() + getWidth(), getY(), -1);
-                guiGraphics.hLine(getX(), getX() + getWidth(), getY() + getHeight(), -1);
-                guiGraphics.vLine(getX(), getY(), getY() + getHeight(), -1);
-                guiGraphics.vLine(getX() + getWidth(), getY(), getY() + getHeight(), -1);
+                graphics.horizontalLine(getX(), getX() + getWidth(), getY(), -1);
+                graphics.horizontalLine(getX(), getX() + getWidth(), getY() + getHeight(), -1);
+                graphics.verticalLine(getX(), getY(), getY() + getHeight(), -1);
+                graphics.verticalLine(getX() + getWidth(), getY(), getY() + getHeight(), -1);
             }
-            guiGraphics.blitSprite(sprite, getX() + 1, getY() + 1, 0, getWidth() - 1, getHeight() - 1);
-        }
-        
-        @Override
-        public void renderString(GuiGraphics guiGraphics, Font font, int color) {
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, getX() + 1, getY() + 1, 0, getWidth() - 1, getHeight() - 1);
         }
     }
 }

@@ -1,7 +1,7 @@
 package org.teacon.powertool.client.gui;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Tooltip;
@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
 import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.client.gui.widget.Vector3fList;
@@ -122,19 +122,19 @@ public class BezierCurveBlockScreen extends Screen {
         te.worldCoordinate = useWorldCoordinate.selected();
         var points = vector3fList.entries().stream().map(Vector3fList.Entry::getResult).toList();
         te.setControlPoints(points);
-        PacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
+        ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }
     
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, a);
         var s1 = Component.translatable("powertool.gui.bezier_curve.control_points");
         var s2 = Component.translatable("powertool.gui.bezier_curve.control_points_warn");
         var startY = (int) (height * 0.05);
-        guiGraphics.drawString(font, s1, (int) (width * 0.55) + 5, startY + 20 + 5, -1);
-        guiGraphics.drawString(font, s2, (int) (width * 0.55) + 5, (int) (startY + 20 + height * 0.8) + 5, -1);
+        guiGraphics.text(font, s1, (int) (width * 0.55) + 5, startY + 20 + 5, -1);
+        guiGraphics.text(font, s2, (int) (width * 0.55) + 5, (int) (startY + 20 + height * 0.8) + 5, -1);
         if (te.bezierCurve != null)
-            guiGraphics.drawString(font, "length: " + te.bezierCurve.getLength(), (int) (width * 0.2), startY * 2 + 20 + 25 * 9, -1);
+            guiGraphics.text(font, "length: " + te.bezierCurve.getLength(), (int) (width * 0.2), startY * 2 + 20 + 25 * 9, -1);
     }
     
     @Override

@@ -2,7 +2,7 @@ package org.teacon.powertool.client.gui.widget;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -62,15 +62,6 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
         }
         
         @Override
-        public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
-            var sx = JsonComponentList.this.getX();
-            this.content.setPosition(sx + 20, top);
-            this.content.render(guiGraphics, mouseX, mouseY, partialTick);
-            this.remove.setPosition(sx + JsonComponentList.this.getWidth() - 50, top);
-            this.remove.render(guiGraphics, mouseX, mouseY, partialTick);
-        }
-        
-        @Override
         public List<? extends GuiEventListener> children() {
             return List.of(content, remove);
         }
@@ -97,6 +88,16 @@ public class JsonComponentList extends EntryListWidget<RawJsonHolographicSignEdi
         @Override
         public Entry copyWithID(int id) {
             return new Entry(id, contentString());
+        }
+        
+        @Override
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+            var sx = JsonComponentList.this.getX();
+            var top = this.getY();
+            this.content.setPosition(sx + 20, top);
+            this.content.extractWidgetRenderState(graphics, mouseX, mouseY, a);
+            this.remove.setPosition(sx + JsonComponentList.this.getWidth() - 50, top);
+            this.remove.extractRenderState(graphics, mouseX, mouseY, a);
         }
     }
 }

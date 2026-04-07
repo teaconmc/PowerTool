@@ -6,17 +6,20 @@
 package org.teacon.powertool.client.gui.holo_sign;
 
 import com.mojang.blaze3d.platform.Lighting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.font.TextFieldHelper;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 
 import java.util.Arrays;
 import java.util.Objects;
 
+@NonNullByDefault
 public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditingScreen<CommonHolographicSignBlockEntity> {
     
     public static final int MAXIMUM_LINE_COUNT = 10;
@@ -69,17 +72,18 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     }
     
     @Override
-    public boolean charTyped(char pCodePoint, int pModifiers) {
-        if (this.colorInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.yRotationInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.xRotationInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (this.zOffsetInput.charTyped(pCodePoint, pModifiers)) return true;
-        if (!colorInput.isFocused() && !yRotationInput.isFocused() && this.signField.charTyped(pCodePoint)) return true;
-        return super.charTyped(pCodePoint, pModifiers);
+    public boolean charTyped(CharacterEvent event) {
+        if (this.colorInput.charTyped(event)) return true;
+        if (this.yRotationInput.charTyped(event)) return true;
+        if (this.xRotationInput.charTyped(event)) return true;
+        if (this.zOffsetInput.charTyped(event)) return true;
+        if (!colorInput.isFocused() && !yRotationInput.isFocused() && this.signField.charTyped(event)) return true;
+        return super.charTyped(event);
     }
     
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        var keyCode = event.key();
         if (keyCode == GLFW.GLFW_KEY_UP) {
             // Move up one line
             this.line = (this.line - 1) % this.messages.length;
@@ -98,24 +102,23 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
             return true;
         } else {
             // Regular typing
-            return (!colorInput.isFocused() && !yRotationInput.isFocused() && !this.xRotationInput.isFocused() && !this.zOffsetInput.isFocused() && this.signField.keyPressed(keyCode)) || super.keyPressed(keyCode, scanCode, modifiers);
+            return (!colorInput.isFocused() && !yRotationInput.isFocused() && !this.xRotationInput.isFocused() && !this.zOffsetInput.isFocused() && this.signField.keyPressed(event)) || super.keyPressed(event);
         }
     }
     
     @Override
-    public void render(@NonNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        Lighting.setupForFlatItems();
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
         // I don't know, someone please explain why these transforms are necessary???
-        var transform = guiGraphics.pose();
-        transform.pushPose();
-        transform.translate(0.0F, 45.0F, 50.0F);
-        transform.scale(93.75F, -93.75F, 93.75F);
-        transform.translate(0.0, -1.625, 0.0);
+        var poseStack = graphics.pose();
+        poseStack.pushMatrix();
+        poseStack.translate(0.0F, 45.0F);
+        poseStack.scale(93.75F, -93.75F);
+        poseStack.translate(0.0F, -1.625F);
         // Render the text and cursor
         boolean showCursor = this.frame / 6 % 2 == 0;
-        transform.translate(0, 1.0 / 3.0, 7.0 / 15.0);
-        transform.scale(1F / 96F, -1F / 96F, 1F / 96F);
+        poseStack.translate(0, 1.0F / 3.0F);
+        poseStack.scale(1F / 96F, -1F / 96F);
         int cursorPos = this.signField.getCursorPos();
         int selectionPos = this.signField.getSelectionPos();
         int cursorY = this.line * 10 - this.messages.length * 5;
@@ -126,7 +129,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                     text = this.font.bidirectionalShaping(text);
                 }
                 int xStart = this.getLineXStart(text);
-                guiGraphics.drawString(this.font, text, xStart, line * 10 - this.messages.length * 5, 0xFFFFFF, false);
+                graphics.text(this.font, text, xStart, line * 10 - this.messages.length * 5, 0xFFFFFF, false);
                 if (line == this.line && cursorPos >= 0 && showCursor) {
                     int j1 = this.font.width(text.substring(0, Math.min(cursorPos, text.length())));
                     int cursorX = (int) switch (this.textAlign) {
@@ -135,7 +138,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                         case RIGHT -> this.width * 0.9F;
                     };
                     if (cursorPos >= text.length() && (!this.colorInput.isFocused() && !this.yRotationInput.isFocused())) {
-                        guiGraphics.drawString(this.font, "_", cursorX, cursorY, 0xFFFFFF, false);
+                        graphics.text(this.font, "_", cursorX, cursorY, 0xFFFFFF, false);
                     }
                 }
             }
@@ -149,7 +152,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                 int j3 = this.font.width(text.substring(0, Math.min(cursorPos, text.length())));
                 int k3 = j3 + xStart - 1;
                 if (showCursor && cursorPos < text.length()) {
-                    guiGraphics.fill(k3, cursorY - 1, k3 + 1, cursorY + 9, 0xFFFFFFFF);
+                    graphics.fill(k3, cursorY - 1, k3 + 1, cursorY + 9, 0xFFFFFFFF);
                 }
                 
                 if (selectionPos != cursorPos) {
@@ -159,14 +162,12 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                     int j2 = this.font.width(text.substring(0, l1)) - this.font.width(text) / 2;
                     int k2 = Math.min(i2, j2);
                     int l2 = Math.max(i2, j2);
-                    guiGraphics.fill(RenderType.guiTextHighlight(), k2, cursorY, l2, cursorY + 10, -16776961);
+                    graphics.fill(k2, cursorY, l2, cursorY + 10, -16776961);
                 }
             }
         }
         
-        transform.popPose();
-        Lighting.setupFor3DItems();
-        
+        poseStack.popMatrix();
     }
     
     protected int getLineXStart(String text) {

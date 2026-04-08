@@ -1,7 +1,5 @@
 package org.teacon.powertool.client.renders.entity.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -13,11 +11,12 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.entity.MartingCarEntity;
+import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
 
-public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityModel<T> {
+@NonNullByDefault
+public class MartingCarEntityModel extends EntityModel<MartingCarEntityRenderer.MartingCarState> {
     public static final ModelLayerLocation LAYER_RED = new ModelLayerLocation(Identifier.fromNamespaceAndPath(PowerTool.MODID, "marting_car_red"), "main");
     public static final ModelLayerLocation LAYER_BLUE = new ModelLayerLocation(Identifier.fromNamespaceAndPath(PowerTool.MODID, "marting_car_green"), "main");
     public static final ModelLayerLocation LAYER_GREEN = new ModelLayerLocation(Identifier.fromNamespaceAndPath(PowerTool.MODID, "marting_car_blue"), "main");
@@ -39,6 +38,7 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
     private final ModelPart player;
     
     public MartingCarEntityModel(ModelPart root) {
+        super(root);
         this.kart = root.getChild("kart");
         this.seat = this.kart.getChild("seat");
         this.steering = this.kart.getChild("steering");
@@ -150,26 +150,17 @@ public class MartingCarEntityModel<T extends MartingCarEntity> extends EntityMod
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
     
-    @Override
-    public void setupAnim(@NonNull MartingCarEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-    }
-    
-    @Override
-    public void renderToBuffer(@NonNull PoseStack poseStack, @NonNull VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        kart.render(poseStack, buffer, packedLight, packedOverlay, color);
-    }
-    
     private float prevSteeringRad = 0;
     private float prevWheelsRad = 0;
     
-    public void updateAnimate(@NonNull MartingCarEntity entity, float partialTicks) {
-        var steeringRad = entity.getSteeringRotateRadian();
+    public void updateAnimate(MartingCarEntityRenderer.MartingCarState state, float partialTicks) {
+        var steeringRad = state.steeringRotation;
         inner.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
         // Fixme: rotation vector to euler angles, needs some linear algebra staff.
 //        wheel.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
 //        wheel2.yRot = Mth.rotLerp(partialTicks, prevSteeringRad, steeringRad);
         
-        var wheelRad = entity.getWheelRotateRadian();
+        var wheelRad = state.wheelRotation;
         front_wheels.xRot = Mth.rotLerp(partialTicks, prevWheelsRad, wheelRad);
         rear_wheels.xRot = Mth.rotLerp(partialTicks, prevWheelsRad, wheelRad);
         

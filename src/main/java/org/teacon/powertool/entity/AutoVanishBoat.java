@@ -69,6 +69,9 @@ public class AutoVanishBoat extends AbstractBoat {
         super.tick();
     }
     
+    public EntityType<?  extends AbstractBoat> getBoatType() {
+        return this.boatType;
+    }
     
     public Item getDropItem_() {
         if (boatType.equals(EntityType.SPRUCE_BOAT)) return PowerToolItems.AV_SPRUCE_BOAT.get();

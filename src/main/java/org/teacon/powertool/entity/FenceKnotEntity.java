@@ -29,7 +29,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.datagen.PowerToolItemTagsProvider;
@@ -203,7 +202,6 @@ public class FenceKnotEntity extends HangingEntity {
         }
         
         @Override
-        @NonNull
         public String getSerializedName() {
             return name();
         }

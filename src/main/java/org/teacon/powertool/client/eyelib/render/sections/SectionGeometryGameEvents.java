@@ -6,7 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import org.teacon.powertool.PowerTool;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, modid = PowerTool.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = PowerTool.MODID, value = Dist.CLIENT)
 public class SectionGeometryGameEvents {
     @SubscribeEvent
     public static void addSectionGeometry(AddSectionGeometryEvent event) {

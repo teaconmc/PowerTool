@@ -15,8 +15,9 @@ import org.jspecify.annotations.NonNull;
  */
 public record SectionGeometryBlockEntityRenderDispatcher(
         BlockPos regionOrigin) implements AddSectionGeometryEvent.AdditionalSectionRenderer {
+    
     @Override
-    public void render(@NonNull AddSectionGeometryEvent.SectionRenderingContext context) {
+    public void render(AddSectionGeometryEvent.@NonNull SectionRenderingContext context) {
         BlockPos.betweenClosed(regionOrigin, regionOrigin.offset(15, 15, 15)).forEach(pos -> renderAt(pos, context));
     }
     

@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.entity.BoatRenderer;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -18,24 +17,21 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
-import org.teacon.powertool.client.fluid.WrappedClientFluidTypeExtension;
 import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
 import org.teacon.powertool.client.gui.PowerSupplyScreen;
 import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TextureExtractorScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
-import org.teacon.powertool.client.renders.BezierCurveBlockRenderer;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
+import org.teacon.powertool.client.renders.entity.AutoVanishBoatRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
 import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
@@ -175,8 +171,8 @@ public class ClientEvents {
             
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);
-            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(), (c) -> new BoatRenderer(c, false));
-            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer<>(c, ModelLayers.MINECART));
+            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(), AutoVanishBoatRenderer::new);
+            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer(c, ModelLayers.MINECART));
         }
         
         @SubscribeEvent
@@ -188,7 +184,7 @@ public class ClientEvents {
         
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onRegClientExtensions(RegisterClientExtensionsEvent event) {
-            event.registerFluidType(new WrappedClientFluidTypeExtension(IClientFluidTypeExtensions.of(NeoForgeMod.WATER_TYPE.value())), PowerToolBlocks.FAKE_WATER_TYPE.get());
+//            event.registerFluidType(new WrappedClientFluidTypeExtension(IClientFluidTypeExtensions.of(NeoForgeMod.WATER_TYPE.value())), PowerToolBlocks.FAKE_WATER_TYPE.get());
         }
         
     }

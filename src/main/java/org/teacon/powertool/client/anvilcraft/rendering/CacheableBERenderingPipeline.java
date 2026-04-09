@@ -70,10 +70,10 @@ public class CacheableBERenderingPipeline {
      */
     public void blockRemoved(BlockEntity be) {
         IBlockEntityRendererExtension<?> renderer = Minecraft.getInstance()
-            .getBlockEntityRenderDispatcher()
-            .getRenderer(be);
+                .getBlockEntityRenderDispatcher()
+                .getRenderer(be);
         if (renderer == null) return;
-        ChunkPos chunkPos = new ChunkPos(be.getBlockPos());
+        ChunkPos chunkPos = ChunkPos.containing(be.getBlockPos());
         getRenderRegion(chunkPos).blockRemoved(be);
     }
 
@@ -87,11 +87,11 @@ public class CacheableBERenderingPipeline {
      * @param be The updated {@link BlockEntity}
      */
     public void update(BlockEntity be) {
-        BlockEntityRenderer<?> renderer = Minecraft.getInstance()
-            .getBlockEntityRenderDispatcher()
-            .getRenderer(be);
+        BlockEntityRenderer<?, ?> renderer = Minecraft.getInstance()
+                .getBlockEntityRenderDispatcher()
+                .getRenderer(be);
         if (renderer == null) return;
-        ChunkPos chunkPos = new ChunkPos(be.getBlockPos());
+        ChunkPos chunkPos = ChunkPos.containing(be.getBlockPos());
         getRenderRegion(chunkPos).update(be);
     }
 
@@ -111,8 +111,8 @@ public class CacheableBERenderingPipeline {
         valid = false;
     }
 
-    public void render(Matrix4f frustumMatrix, Matrix4f projectionMatrix) {
-        regions.values().forEach(it -> it.render(frustumMatrix, projectionMatrix));
+    public void render() {
+        regions.values().forEach(CachedRegion::render);
     }
 
     /**
@@ -127,6 +127,6 @@ public class CacheableBERenderingPipeline {
     }
 
     public void forcedUpdate(BlockPos pos) {
-        getRenderRegion(new ChunkPos(pos)).forcedUpdate();
+        getRenderRegion(ChunkPos.containing(pos)).forcedUpdate();
     }
 }

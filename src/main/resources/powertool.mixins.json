@@ -16,12 +16,8 @@
   ],
   "client": [
     "client.ClientRecipeBookMixin",
-    "client.DebugScreenOverlayMixin",
-    "client.GameModeSwitcherScreenMixin",
-    "client.KeyboardHandlerMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
-    "client.PlayerMixin",
     "client.SectionRenderDispatcherMixin"
   ],
   "injectors": {

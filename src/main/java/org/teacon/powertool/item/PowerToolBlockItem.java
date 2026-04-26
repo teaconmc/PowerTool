@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 public class PowerToolBlockItem extends BlockItem {
     
     public PowerToolBlockItem(Block block, Properties properties) {
-        super(block, properties);
+        super(block, properties.useBlockDescriptionPrefix());
     }
     
     @SuppressWarnings("deprecation")
@@ -26,4 +26,6 @@ public class PowerToolBlockItem extends BlockItem {
             wt.appendHoverText(itemStack, context, display, builder, tooltipFlag);
         }
     }
+    
+    
 }

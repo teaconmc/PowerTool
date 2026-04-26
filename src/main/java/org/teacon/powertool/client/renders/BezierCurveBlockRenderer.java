@@ -13,19 +13,18 @@ import net.minecraft.core.BlockPos;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import org.joml.Vector3f;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
-import org.teacon.powertool.client.eyelib.render.sections.BlockEntitySectionGeometryRenderer;
+
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BezierCurveBlockRenderer implements BlockEntitySectionGeometryRenderer<BezierCurveBlockEntity> {
+public class BezierCurveBlockRenderer  {
     
     public BezierCurveBlockRenderer(BlockEntityRendererProvider.Context ignore) {
     }
     
     
-    @Override
     @SuppressWarnings("deprecation")
     public void renderSectionGeometry(BezierCurveBlockEntity te, AddSectionGeometryEvent.SectionRenderingContext context, PoseStack poseStack, BlockPos pos, BlockPos regionOrigin, int packedLight, MultiBufferSource bufferSource) {
         var model = te.line;

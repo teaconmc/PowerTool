@@ -15,14 +15,9 @@ import org.teacon.powertool.entity.AutoVanishBoat;
 @NonNullByDefault
 public class AutoVanishBoatItem extends BoatItem {
     
-    public AutoVanishBoatItem(EntityType<? extends AbstractBoat> type, Properties properties) {
+    public AutoVanishBoatItem(Properties properties, EntityType<? extends AbstractBoat> type) {
         super(type, properties);
     }
-    
-    public AutoVanishBoatItem(EntityType<? extends AbstractBoat> type) {
-        this(type, new Properties());
-    }
-    
     
     @Override
     public AutoVanishBoat getBoat(Level level, HitResult hitResult, ItemStack stack, Player player) {

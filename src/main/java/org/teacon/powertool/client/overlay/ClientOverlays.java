@@ -41,11 +41,9 @@ public class ClientOverlays {
         event.registerAbove(VanillaGuiLayers.HOTBAR, VanillaUtils.modRL("marting_car_info"), MartingCarOverlay::renderBoostBar);
         if (SharedConstants.IS_RUNNING_WITH_JDWP) {
             event.registerAboveAll(VanillaUtils.modRL("debug_charts"), (guiGraphics, partialTicks) -> {
-                var y = 80;
                 for (var value : ClientDebugCharts.DEBUG_CHARTS.values()) {
                     var chart = value.getFirst();
-                    chart.drawChart(guiGraphics, 0, y, chart.getWidth(guiGraphics.guiWidth() / 2));
-                    y += 80;
+                    chart.extractRenderState(guiGraphics, 0, chart.getWidth(guiGraphics.guiWidth() / 2));
                 }
             });
             

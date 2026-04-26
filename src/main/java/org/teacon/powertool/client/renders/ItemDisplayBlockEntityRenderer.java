@@ -58,7 +58,7 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
             case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90));
         }
         poseStack.mulPose(Axis.ZP.rotationDegrees(state.rotation));
-        state.itemState.submit(poseStack,submitNodeCollector,state.lightCoords, OverlayTexture.NO_OVERLAY,-1);
+        state.itemState.submit(poseStack,submitNodeCollector,state.lightCoords, OverlayTexture.NO_OVERLAY,0);
         poseStack.popPose();
     }
     

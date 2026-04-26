@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolItems {
     
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, PowerTool.MODID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems( PowerTool.MODID);
     
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PowerTool.MODID);
     
@@ -56,41 +56,41 @@ public class PowerToolItems {
     public static DeferredHolder<Item, AccessControlToolItem> CACHED_MODE_TOOL;
     public static DeferredHolder<Item, TextureExtractor> TEXTURE_EXTRACTOR;
     
-    public static Supplier<Item> MARTING_RED = ITEMS.register("marting_car_red", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.RED));
-    public static Supplier<Item> MARTING_GREEN = ITEMS.register("marting_car_green", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.GREEN));
-    public static Supplier<Item> MARTING_BLUE = ITEMS.register("marting_car_blue", () -> new MartingCarItem(new Item.Properties(), MartingCarEntity.Variant.BLUE));
+    public static Supplier<Item> MARTING_RED = ITEMS.registerItem("marting_car_red", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.RED));
+    public static Supplier<Item> MARTING_GREEN = ITEMS.registerItem("marting_car_green", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.GREEN));
+    public static Supplier<Item> MARTING_BLUE = ITEMS.registerItem("marting_car_blue", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.BLUE));
     
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
-        ITEMS.register("useless_stick", () -> new Item(new Item.Properties()) {
+        ITEMS.registerItem("useless_stick", (p) -> new Item(p) {
             @Override
             public boolean isFoil(ItemStack stack) {
                 return true;
             }
         });
-        ITEMS.register("clap", () -> new ClapItem(new Item.Properties()));
-        ITEMS.register("clap_but_sad", () -> new ClapItem(new Item.Properties()));
-        ITEMS.register("clap_but_angry", () -> new ClapItem(new Item.Properties()));
-        ITEMS.register("transparent_brush", TransparentBrushItem::new);
-        ITEMS.register("examine_holo_glass", ExamineHoloGlass::new);
-        ITEMS.register("command_rune", () -> new CommandRune(new Item.Properties()));
-        TONK = ITEMS.register("tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thin));
-        THICK_TONK = ITEMS.register("thick_tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Normal));
-        EXTRA_THICK_TONK = ITEMS.register("extra_thick_tonk", () -> new TonkItem(new Item.Properties(), FenceKnotEntity.Type.Thick));
-        AV_OAK_BOAT = ITEMS.register("auto_vanish_oak_boat", () -> new AutoVanishBoatItem(EntityType.OAK_BOAT));
-        AV_SPRUCE_BOAT = ITEMS.register("auto_vanish_spruce_boat", () -> new AutoVanishBoatItem(EntityType.SPRUCE_BOAT));
-        AV_BIRCH_BOAT = ITEMS.register("auto_vanish_birch_boat", () -> new AutoVanishBoatItem(EntityType.BIRCH_BOAT));
-        AV_JUNGLE_BOAT = ITEMS.register("auto_vanish_jungle_boat", () -> new AutoVanishBoatItem(EntityType.JUNGLE_BOAT));
-        AV_ACACIA_BOAT = ITEMS.register("auto_vanish_acacia_boat", () -> new AutoVanishBoatItem(EntityType.ACACIA_BOAT));
-        AV_CHERRY_BOAT = ITEMS.register("auto_vanish_cherry_boat", () -> new AutoVanishBoatItem(EntityType.CHERRY_BOAT));
-        AV_DARK_OAK_BOAT = ITEMS.register("auto_vanish_dark_oak_boat", () -> new AutoVanishBoatItem(EntityType.DARK_OAK_BOAT));
-        AV_MANGROVE_BOAT = ITEMS.register("auto_vanish_mangrove_boat", () -> new AutoVanishBoatItem(EntityType.MANGROVE_BOAT));
-        AV_BAMBOO_RAFT = ITEMS.register("auto_vanish_bamboo_raft", () -> new AutoVanishBoatItem(EntityType.BAMBOO_RAFT));
-        AV_MINE_CART = ITEMS.register("auto_vanish_minecart", () -> new AutoVanishMinecartItem(new Item.Properties()));
-        DISPLAY_MODE_TOOL = ITEMS.register("display_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.DISPLAY_MODE));
-        STATIC_MODE_TOOL = ITEMS.register("static_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.STATIC_MODE));
-        CACHED_MODE_TOOL = ITEMS.register("cached_mode_tool", () -> new AccessControlToolItem(new Item.Properties(), AccessControlToolItem.Type.CACHED_MODE));
-        TEXTURE_EXTRACTOR = ITEMS.register("texture_extractor", () -> new TextureExtractor(new Item.Properties()));
+        ITEMS.registerItem("clap", ClapItem::new);
+        ITEMS.registerItem("clap_but_sad", ClapItem::new);
+        ITEMS.registerItem("clap_but_angry", ClapItem::new);
+        ITEMS.registerItem("transparent_brush", TransparentBrushItem::new);
+        ITEMS.registerItem("examine_holo_glass", ExamineHoloGlass::new);
+        ITEMS.registerItem("command_rune", CommandRune::new);
+        TONK = ITEMS.registerItem("tonk", (p) -> new TonkItem(p, FenceKnotEntity.Type.Thin));
+        THICK_TONK = ITEMS.registerItem("thick_tonk", (p) -> new TonkItem(p, FenceKnotEntity.Type.Normal));
+        EXTRA_THICK_TONK = ITEMS.registerItem("extra_thick_tonk", (p) -> new TonkItem(p, FenceKnotEntity.Type.Thick));
+        AV_OAK_BOAT = ITEMS.registerItem("auto_vanish_oak_boat", (p) -> new AutoVanishBoatItem(p,EntityType.OAK_BOAT));
+        AV_SPRUCE_BOAT = ITEMS.registerItem("auto_vanish_spruce_boat", (p) -> new AutoVanishBoatItem(p,EntityType.SPRUCE_BOAT));
+        AV_BIRCH_BOAT = ITEMS.registerItem("auto_vanish_birch_boat", (p) -> new AutoVanishBoatItem(p,EntityType.BIRCH_BOAT));
+        AV_JUNGLE_BOAT = ITEMS.registerItem("auto_vanish_jungle_boat", (p) -> new AutoVanishBoatItem(p,EntityType.JUNGLE_BOAT));
+        AV_ACACIA_BOAT = ITEMS.registerItem("auto_vanish_acacia_boat", (p) -> new AutoVanishBoatItem(p,EntityType.ACACIA_BOAT));
+        AV_CHERRY_BOAT = ITEMS.registerItem("auto_vanish_cherry_boat", (p) -> new AutoVanishBoatItem(p,EntityType.CHERRY_BOAT));
+        AV_DARK_OAK_BOAT = ITEMS.registerItem("auto_vanish_dark_oak_boat", (p) -> new AutoVanishBoatItem(p,EntityType.DARK_OAK_BOAT));
+        AV_MANGROVE_BOAT = ITEMS.registerItem("auto_vanish_mangrove_boat", (p) -> new AutoVanishBoatItem(p,EntityType.MANGROVE_BOAT));
+        AV_BAMBOO_RAFT = ITEMS.registerItem("auto_vanish_bamboo_raft", (p) -> new AutoVanishBoatItem(p,EntityType.BAMBOO_RAFT));
+        AV_MINE_CART = ITEMS.registerItem("auto_vanish_minecart", AutoVanishMinecartItem::new);
+        DISPLAY_MODE_TOOL = ITEMS.registerItem("display_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.DISPLAY_MODE));
+        STATIC_MODE_TOOL = ITEMS.registerItem("static_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.STATIC_MODE));
+        CACHED_MODE_TOOL = ITEMS.registerItem("cached_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.CACHED_MODE));
+        TEXTURE_EXTRACTOR = ITEMS.registerItem("texture_extractor", TextureExtractor::new);
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);
     }

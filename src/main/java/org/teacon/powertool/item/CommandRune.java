@@ -13,8 +13,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.client.gui.SetCommandScreen;
@@ -85,7 +83,6 @@ public class CommandRune extends Item implements IScreenProviderItem {
     }
     
     @Override
-    @OnlyIn(Dist.CLIENT)
     public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
         return () -> new SetCommandScreen(stack, slot);
     }

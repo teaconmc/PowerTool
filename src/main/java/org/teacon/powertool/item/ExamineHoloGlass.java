@@ -25,8 +25,6 @@ import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.client.gui.ExamineHoloGlassScreen;
@@ -42,8 +40,8 @@ import java.util.function.Supplier;
 public class ExamineHoloGlass extends Item implements IScreenProviderItem {
     
     //TODO 头部模型渲染
-    public ExamineHoloGlass() {
-        super(new Properties().stacksTo(1).component(
+    public ExamineHoloGlass(Properties properties) {
+        super(properties.stacksTo(1).component(
                 DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.HEAD).setEquipSound(SoundEvents.ARMOR_EQUIP_CHAIN).setAsset(VanillaUtils.modResourceKey(EquipmentAssets.ROOT_ID, "holo_glass")).build()
         ));
     }
@@ -102,7 +100,6 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem {
     }
     
     @Override
-    @OnlyIn(Dist.CLIENT)
     public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
         return () -> new ExamineHoloGlassScreen(slot, stack.get(PowerToolDataComponents.BLOCK_TAGS_DATA), stack.get(PowerToolDataComponents.BLOCKS_DATA));
     }

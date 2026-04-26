@@ -16,8 +16,8 @@ import java.util.function.Consumer;
 @NonNullByDefault
 public class TransparentBrushItem extends Item {
     
-    public TransparentBrushItem() {
-        super(new Properties().stacksTo(1));
+    public TransparentBrushItem(Properties properties) {
+        super(properties.stacksTo(1));
     }
     
     @Override

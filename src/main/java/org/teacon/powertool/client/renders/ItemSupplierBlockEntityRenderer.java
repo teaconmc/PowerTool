@@ -47,7 +47,7 @@ public class ItemSupplierBlockEntityRenderer implements BlockEntityRenderer<Item
         poseStack.translate(0.5, 0.5, 0.5);
         poseStack.scale(0.625F, 0.625F, 0.625F);
         poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
-        state.itemState.submit(poseStack,submitNodeCollector,state.lightCoords, OverlayTexture.NO_OVERLAY,-1);
+        state.itemState.submit(poseStack,submitNodeCollector,state.lightCoords, OverlayTexture.NO_OVERLAY,0);
         poseStack.popPose();
     }
     

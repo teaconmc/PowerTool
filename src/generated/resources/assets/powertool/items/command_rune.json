@@ -1,0 +1,7 @@
+{
+  "hand_animation_on_swap": false,
+  "model": {
+    "type": "minecraft:model",
+    "model": "powertool:item/command_rune"
+  }
+}

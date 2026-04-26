@@ -53,6 +53,7 @@ public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity, M
         public MartingCarEntity.Variant variant = MartingCarEntity.Variant.BLUE;
         public float wheelRotation;
         public float steeringRotation;
+        public float yRot;
     }
     
     @Override
@@ -61,7 +62,7 @@ public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity, M
         var model = variantToModel.get(state.variant);
         poseStack.pushPose();
         poseStack.translate(0, 1.5, 0);
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - camera.yRot));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - state.yRot));
         poseStack.scale(1, -1, 1);
         model.updateAnimate(state,state.partialTick);
         submitNodeCollector.submitModel(model,state,poseStack,textures.get(state.variant),state.lightCoords, OverlayTexture.NO_OVERLAY,0,null);
@@ -79,6 +80,7 @@ public class MartingCarEntityRenderer extends EntityRenderer<MartingCarEntity, M
         state.variant = entity.getVariant();
         state.wheelRotation = entity.getWheelRotateRadian();
         state.steeringRotation = entity.getSteeringRotateRadian();
+        state.yRot = entity.getYRot(partialTicks);
     }
     
     public static ModelLayerLocation getModelLayer(MartingCarEntity.Variant variant) {

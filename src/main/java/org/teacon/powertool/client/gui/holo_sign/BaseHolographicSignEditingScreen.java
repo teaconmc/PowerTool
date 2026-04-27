@@ -5,39 +5,43 @@
  */
 package org.teacon.powertool.client.gui.holo_sign;
 
-import com.mojang.blaze3d.platform.Lighting;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
+import com.xkball.xklib.ui.render.IComponent;
+import com.xkball.xklib.ui.render.IGUIGraphics;
+import com.xkball.xklib.ui.widget.Label;
+import com.xkball.xklib.ui.widget.Widget;
+import com.xkball.xklib.ui.widget.container.ContainerWidget;
+import com.xkball.xklibmc.ui.XKLibBaseScreen;
+import com.xkball.xklibmc.ui.widget.NumberInputWidget;
+import com.xkball.xklibmc.ui.widget.WidgetWrapper;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 import org.teacon.powertool.block.holo_sign.SignType;
-import org.teacon.powertool.client.gui.widget.ObjectInputBox;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
-import org.teacon.powertool.utils.VanillaUtils;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @NonNullByDefault
-public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlockEntity> extends Screen {
+public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlockEntity> extends XKLibBaseScreen {
+    
+    private static final String layoutStr = "size: 60% 20rpx; margin-top: 2rpx; margin-bottom: 2rpx; flex-shrink: 0;";
+    
     protected final T sign;
     
     protected float scale;
-    protected int colorInARGB; // White by default
+    protected int colorA;
+    protected int colorR;
+    protected int colorG;
+    protected int colorB;
     protected BaseHolographicSignBlockEntity.Align textAlign;
     protected boolean locked;
     protected int xRotation;
@@ -46,18 +50,70 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected boolean renderBackground;
     protected boolean dropShadow;
     protected boolean lit;
+    protected float zOffset;
+    protected int xRotate;
+    protected int yRotate;
     
-    protected Button changeAlignment;
-    protected ObjectInputBox<Integer> colorInput;
-    protected Button zOffsetToggle;
-    protected EditBox xRotationInput;
-    protected EditBox yRotationInput;
-    protected ObjectInputBox<Float> zOffsetInput;
-    protected Button lockToggle;
-    protected Button bidButton;
-    protected Button shadowToggle;
-    protected Button backgroundToggle;
-    protected Button litToggle;
+    public BaseHolographicSignEditingScreen(Component title, T theSign) {
+        super(title);
+        this.sign = theSign;
+        this.readData(theSign);
+        this.addScreenLayer(XKLibBaseScreen.biPanelFrame(IComponent.literal(title.getString()), createLeftPanel(), createRightPanel()));
+    }
+    
+    protected void readData(T theSign) {
+        this.colorA = ARGB.alpha(theSign.colorInARGB);
+        this.colorR = ARGB.red(theSign.colorInARGB);
+        this.colorG = ARGB.green(theSign.colorInARGB);
+        this.colorB = ARGB.blue(theSign.colorInARGB);
+        this.scale = theSign.scale;
+        this.textAlign = theSign.align;
+        this.locked = theSign.lock;
+        this.yRotation = theSign.yRotate;
+        this.xRotation = theSign.xRotate;
+        this.bidirectional = theSign.bidirectional;
+        this.renderBackground = theSign.renderBackground;
+        this.dropShadow = theSign.dropShadow;
+        this.lit = theSign.lit;
+        this.zOffset = theSign.zOffset;
+        this.xRotate = theSign.xRotate;
+        this.yRotate = theSign.yRotate;
+    }
+    
+    protected Widget createRightPanel() {
+        return new Widget();
+    }
+    
+    protected Widget createLeftPanel(){
+        return new ContainerWidget().inlineStyle("""
+                        flex-direction: column;
+                        overflow-y: scroll;
+                        scrollbar-width: 8;
+                        align-items: center;
+                        """)
+                .addChild(createHorizontalSplit())
+                .addChild(createFloatInput(0, 100, 0.125f, () -> IComponent.translatable("powertool.gui.holographic_sign.scale"), () -> this.scale, (s) -> this.scale = s))
+                .addChild(createIntInput(-180, 180, 45, () -> IComponent.translatable("powertool.gui.holo_sign.x_rotation"), () -> this.xRotation, (s) -> this.xRotation = s))
+                .addChild(createIntInput(-180, 180, 45, () -> IComponent.translatable("powertool.gui.holo_sign.y_rotation"), () -> this.yRotation, (s) -> this.yRotation = s))
+                .addChild(createFloatInput(-2, 2, 0.125f, () -> IComponent.translatable("powertool.gui.holo_sign.z_offset"), () -> this.zOffset, zf -> this.zOffset = zf))
+                .addChild(createHorizontalSplit())
+                .addChild(createSelectionButton(() -> this.textAlign.displayName, () ->
+                        this.textAlign = switch (this.textAlign) {
+                            case LEFT -> BaseHolographicSignBlockEntity.Align.CENTER;
+                            case CENTER -> BaseHolographicSignBlockEntity.Align.RIGHT;
+                            case RIGHT -> BaseHolographicSignBlockEntity.Align.LEFT;
+                        }))
+                .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.shadow", dropShadow), () -> this.dropShadow = !dropShadow))
+                .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.background", renderBackground), () -> this.renderBackground = !renderBackground))
+                .addChild(createSelectionButton(() -> Component.translatable("powertool.gui.holographic_sign.lock." + this.locked),() -> this.locked = !this.locked))
+                .addChild(createSelectionButton(() -> Component.translatable("powertool.gui.holographic_sign.bidirectional." + bidirectional),() -> this.bidirectional = !this.bidirectional))
+                .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.lit",this.lit), () -> this.lit = !this.lit))
+                .addChild(createHorizontalSplit())
+                .addChild(createColorInput())
+                .addChild(createHorizontalSplit())
+                .addChild(WidgetWrapper.button(CommonComponents.GUI_DONE, (_) -> this.onDone()).inlineStyle(layoutStr))
+                .addChild(new Widget().inlineStyle(layoutStr));
+    }
     
     public static Screen creatHoloSignScreen(BlockEntity sign, SignType type) {
         return switch (type) {
@@ -70,224 +126,79 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         };
     }
     
-    public BaseHolographicSignEditingScreen(Component title, T theSign) {
-        super(title);
-        this.colorInARGB = theSign.colorInARGB;
-        this.scale = theSign.scale;
-        this.textAlign = theSign.align;
-        this.locked = theSign.lock;
-        this.yRotation = theSign.yRotate;
-        this.xRotation = theSign.xRotate;
-        this.bidirectional = theSign.bidirectional;
-        this.sign = theSign;
-        this.renderBackground = theSign.renderBackground;
-        this.dropShadow = theSign.dropShadow;
-        this.lit = theSign.lit;
+    protected Widget createColorInput(){
+        return new ContainerWidget().inlineStyle("""
+                        flex-direction: column;
+                        flex-shrink: 0;
+                        width: 100%;
+                        align-items: center;
+                        """)
+                .addChild(createALine(
+                        new Label(IComponent.translatable("powertool.gui.holographic_sign.color")),
+                        new Widget(){
+                            @Override
+                            public void doRender(IGUIGraphics graphics, int mouseX, int mouseY, float a) {
+                                super.doRender(graphics, mouseX, mouseY, a);
+                                var color = ARGB.color(colorA, colorR, colorG, colorB);
+                                graphics.fillRounded(this.x, this.y, this.getMaxX(), this.getMaxY(), color, 10);
+                            }
+                        }))
+                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("R: "), () -> this.colorR, i -> this.colorR = i))
+                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("G: "), () -> this.colorG, i -> this.colorG = i))
+                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("B: "), () -> this.colorB, i -> this.colorB = i))
+                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("A: "), () -> this.colorA, i -> this.colorA = i));
     }
     
-    public int getDoneButtonY() {
-        return (int) (this.height * 0.85F);
+    protected Widget createSelectionButton(Supplier<Component> text, Runnable callback) {
+        return WidgetWrapper.button(text.get(), b -> {
+            callback.run();
+            b.setMessage(text.get());
+        }).inlineStyle(layoutStr);
     }
     
-    @Override
-    protected void init() {
-        
-        this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, btn -> this.onDone())
-                .pos(this.width / 2 - 100, getDoneButtonY())
-                .size(200, 20).build());
-        
-        int innerPadding = width / 100;
-        
-        Button scaleDown = new Button.Builder(Component.literal("-"), btn -> this.scale = Math.max(0, this.scale - 0.125F))
-                .pos(80, 0)
-                .size(20, 20)
-                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.scale", displayed.get()))
-                .build();
-        
-        Button scaleUp = new Button.Builder(Component.literal("+"), btn -> this.scale += 0.125f)
-                .pos(100, 0)
-                .size(20, 20)
-                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.scale", displayed.get()))
-                .build();
-        
-        this.changeAlignment = new Button.Builder(this.textAlign.displayName, btn -> {
-            this.textAlign = switch (this.textAlign) {
-                case LEFT -> BaseHolographicSignBlockEntity.Align.CENTER;
-                case CENTER -> BaseHolographicSignBlockEntity.Align.RIGHT;
-                case RIGHT -> BaseHolographicSignBlockEntity.Align.LEFT;
-            };
-            this.changeAlignment.setMessage(this.textAlign.displayName);
-        }).pos(120 + innerPadding, 0)
-                .size(80, 20)
-                .createNarration(displayed -> Component.translatable("powertool.gui.holographic_sign.narration.text_align", displayed.get()))
-                .build();
-        
-        this.shadowToggle = new Button.Builder(toggleMessage("powertool.gui.holo_sign.shadow", dropShadow), btn -> {
-            this.dropShadow = !dropShadow;
-            this.shadowToggle.setMessage(toggleMessage("powertool.gui.holo_sign.shadow", dropShadow));
-        })
-                .pos(120 + innerPadding, 20 + innerPadding)
-                .size(80, 20)
-                .build();
-        
-        this.backgroundToggle = new Button.Builder(toggleMessage("powertool.gui.holo_sign.background", renderBackground), btn -> {
-            this.renderBackground = !renderBackground;
-            this.backgroundToggle.setMessage(toggleMessage("powertool.gui.holo_sign.background", renderBackground));
-        })
-                .pos(40, 20 + innerPadding)
-                .size(80, 20)
-                .build();
-        
-        this.colorInput = new ObjectInputBox<>(font, 290 + innerPadding * 3, 0, 50, 20, Component.empty(), ObjectInputBox.RGB_COLOR_VALIDATOR, ObjectInputBox.RGB_COLOR_RESPONDER);
-        this.colorInput.setValue(VanillaUtils.hexColorFromInt(colorInARGB));
-        this.colorInput.setFocused(false);
-        this.colorInput.setMaxLength(8);
-        this.colorInput.setTooltip(Tooltip.create(Component.translatable("powertool.gui.bezier_curve.color")));
-        this.colorInput.setCanLoseFocus(true);
-        
-        this.zOffsetInput = new ObjectInputBox<>(font, 70, 80 + innerPadding * 4, 50, 20, Component.empty(), ObjectInputBox.FLOAT_VALIDATOR, ObjectInputBox.FLOAT_RESPONDER);
-        this.zOffsetInput.setResponder(str -> {
-            if (zOffsetToggle != null) this.zOffsetToggle.setMessage(arrangeMessage());
+    protected Widget createFloatInput(float min, float max, float step, Supplier<IComponent> text, Supplier<Float> getter, Consumer<Float> setter) {
+        return createInput(NumberInputWidget.ofFloat(min, max, step), text, getter, setter);
+    }
+    
+    protected Widget createIntInput(int min, int max, int step, Supplier<IComponent> text, Supplier<Integer> getter, Consumer<Integer> setter) {
+        return createInput(NumberInputWidget.ofInt(min, max, step), text, getter, setter);
+    }
+    
+    protected <N extends Number> Widget createInput(NumberInputWidget<N> input, Supplier<IComponent> text, Supplier<N> getter, Consumer<N> setter) {
+        var label = new Label(text.get());
+        input.setValue(getter.get());
+        input.setCallback(n -> {
+            setter.accept(n.getValue());
+            label.setText(text.get());
         });
-        this.zOffsetInput.setValue(String.valueOf(sign.zOffset));
-        this.zOffsetInput.setFocused(false);
-        this.zOffsetInput.setMaxLength(10);
-        this.zOffsetInput.setCanLoseFocus(true);
-        
-        this.zOffsetToggle = new Button.Builder(arrangeMessage(), btn -> {
-            var arr = BaseHolographicSignBlockEntity.LayerArrange.formOffset(Objects.requireNonNullElse(zOffsetInput.get(), Float.NaN));
-            arr = switch (arr) {
-                case FRONT, CUSTOM -> BaseHolographicSignBlockEntity.LayerArrange.CENTER;
-                case CENTER -> BaseHolographicSignBlockEntity.LayerArrange.BACK;
-                case BACK -> BaseHolographicSignBlockEntity.LayerArrange.FRONT;
-            };
-            if (zOffsetInput != null) this.zOffsetInput.setValue(String.valueOf(arr.offsetValue));
-            this.zOffsetToggle.setMessage(arrangeMessage());
-        }).pos(140 + innerPadding, 80 + innerPadding * 4)
-                .size(40 + innerPadding * 3, 20)
-                .build();
-        
-        this.yRotationInput = new EditBox(font, 70, 60 + innerPadding * 3, 50, 20, Component.empty());
-        this.yRotationInput.setValue(Integer.toString(this.yRotation));
-        this.yRotationInput.setResponder((string) -> {
-            try {
-                var i = Integer.parseInt(string);
-                if (yRotation == i) return;
-                i = i % 360;
-                this.yRotation = i;
-            } catch (NumberFormatException ignored) {
-            }
-        });
-        this.yRotationInput.setFocused(false);
-        this.yRotationInput.setCanLoseFocus(true);
-        
-        this.xRotationInput = new EditBox(font, 70, 40 + innerPadding * 2, 50, 20, Component.empty());
-        this.xRotationInput.setValue(Integer.toString(this.xRotation));
-        this.xRotationInput.setResponder((string) -> {
-            try {
-                var i = Integer.parseInt(string);
-                if (xRotation == i) return;
-                i = i % 360;
-                this.xRotation = i;
-            } catch (NumberFormatException ignored) {
-            }
-        });
-        this.xRotationInput.setFocused(false);
-        this.xRotationInput.setCanLoseFocus(true);
-        
-        this.lockToggle = new Button.Builder(Component.translatable("powertool.gui.holographic_sign.lock." + this.locked), (btn) -> {
-            this.locked = !this.locked;
-            this.lockToggle.setMessage(Component.translatable("powertool.gui.holographic_sign.lock." + this.locked));
-        }).pos(200 + innerPadding * 2, 20 + innerPadding)
-                .size(80, 20)
-                .build();
-        
-        var rotateY90n = new Button.Builder(Component.literal("-90"), (btn) -> {
-            rotateY(-90);
-            this.yRotationInput.setValue(Integer.toString(this.yRotation));
-        }).pos(120 + innerPadding, 60 + innerPadding * 3)
-                .size(20, 20)
-                .build();
-        var rotateY45n = new Button.Builder(Component.literal("-45"), (btn) -> {
-            rotateY(-45);
-            this.yRotationInput.setValue(Integer.toString(this.yRotation));
-        }).pos(140 + innerPadding * 2, 60 + innerPadding * 3)
-                .size(20, 20)
-                .build();
-        var rotateY45p = new Button.Builder(Component.literal("+45"), (btn) -> {
-            rotateY(45);
-            this.yRotationInput.setValue(Integer.toString(this.yRotation));
-        }).pos(160 + innerPadding * 3, 60 + innerPadding * 3)
-                .size(20, 20)
-                .build();
-        var rotateY90p = new Button.Builder(Component.literal("+90"), (btn) -> {
-            rotateY(90);
-            this.yRotationInput.setValue(Integer.toString(this.yRotation));
-        }).pos(180 + innerPadding * 4, 60 + innerPadding * 3)
-                .size(20, 20)
-                .build();
-        
-        var rotateX90n = new Button.Builder(Component.literal("-90"), (btn) -> {
-            rotateX(-90);
-            this.xRotationInput.setValue(Integer.toString(this.xRotation));
-        }).pos(120 + innerPadding, 40 + innerPadding * 2)
-                .size(20, 20)
-                .build();
-        var rotateX45n = new Button.Builder(Component.literal("-45"), (btn) -> {
-            rotateX(-45);
-            this.xRotationInput.setValue(Integer.toString(this.xRotation));
-        }).pos(140 + innerPadding * 2, 40 + innerPadding * 2)
-                .size(20, 20)
-                .build();
-        var rotateX45p = new Button.Builder(Component.literal("+45"), (btn) -> {
-            rotateX(45);
-            this.xRotationInput.setValue(Integer.toString(this.xRotation));
-        }).pos(160 + innerPadding * 3, 40 + innerPadding * 2)
-                .size(20, 20)
-                .build();
-        var rotateX90p = new Button.Builder(Component.literal("+90"), (btn) -> {
-            rotateX(90);
-            this.xRotationInput.setValue(Integer.toString(this.xRotation));
-        }).pos(180 + innerPadding * 4, 40 + innerPadding * 2)
-                .size(20, 20)
-                .build();
-        
-        this.bidButton = new Button.Builder(Component.translatable("powertool.gui.holographic_sign.bidirectional." + bidirectional), (btn) -> {
-            this.bidirectional = !this.bidirectional;
-            this.bidButton.setMessage(Component.translatable("powertool.gui.holographic_sign.bidirectional." + bidirectional));
-        }).pos(200 + innerPadding * 2, 0)
-                .size(80, 20)
-                .build();
-        
-        this.litToggle = new Button.Builder(Component.translatable("powertool.gui.holo_sign.lit_" + (lit ? "on" : "off")), (btn) -> {
-            this.lit = !this.lit;
-            this.litToggle.setMessage(Component.translatable("powertool.gui.holo_sign.lit_" + (lit ? "on" : "off")));
-        }).pos(280 + innerPadding * 3, 20 + innerPadding)
-                .size(80, 20)
-                .build();
-        
-        this.addRenderableWidget(scaleUp);
-        this.addRenderableWidget(scaleDown);
-        this.addRenderableWidget(this.changeAlignment);
-        this.addRenderableWidget(this.shadowToggle);
-        this.addRenderableWidget(this.backgroundToggle);
-        this.addRenderableWidget(this.zOffsetToggle);
-        this.addRenderableWidget(this.zOffsetInput);
-        this.addRenderableWidget(this.zOffsetToggle);
-        this.addRenderableWidget(this.colorInput);
-        this.addRenderableWidget(this.yRotationInput);
-        this.addRenderableWidget(this.xRotationInput);
-        this.addRenderableWidget(this.lockToggle);
-        this.addRenderableWidget(rotateY90n);
-        this.addRenderableWidget(rotateY45n);
-        this.addRenderableWidget(rotateY45p);
-        this.addRenderableWidget(rotateY90p);
-        this.addRenderableWidget(rotateX90n);
-        this.addRenderableWidget(rotateX45n);
-        this.addRenderableWidget(rotateX45p);
-        this.addRenderableWidget(rotateX90p);
-        this.addRenderableWidget(this.bidButton);
-        this.addRenderableWidget(this.litToggle);
+        return createALine(label, input);
+    }
+    
+    protected Widget createALine(Widget left, Widget right) {
+        return new ContainerWidget()
+                .inlineStyle("""
+                        size: 80% 20rpx;
+                        margin-top: 2rpx;
+                        margin-bottom: 2rpx;
+                        flex-shrink: 0;
+                        """)
+                .addChild(left.inlineStyle("""
+                        width: 45%;
+                        text-align: left;
+                        text-height: 10rpx;
+                        text-color: -1;
+                        """))
+                .addChild(right.inlineStyle("width: 50%; margin-left: 2rpx;"));
+    }
+    
+    protected Widget createHorizontalSplit() {
+        return new Widget().inlineStyle("""
+                size: 100% 2rpx;
+                margin-top: 2rpx;
+                margin-bottom: 2rpx;
+                background-color: rgb(50,56,68);
+                flex-shrink: 0;
+                """);
     }
     
     private void rotateY(int degree) {
@@ -309,13 +220,13 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     protected void writeBackToBE() {
-        this.sign.colorInARGB = Optional.ofNullable(colorInput.get()).orElse(0xffffff);
+        this.sign.colorInARGB = ARGB.color(this.colorA,  this.colorR, this.colorG, this.colorB);
         this.sign.scale = this.scale;
         this.sign.align = this.textAlign;
         this.sign.lock = this.locked;
         this.sign.yRotate = this.yRotation;
         this.sign.xRotate = this.xRotation;
-        this.sign.zOffset = Objects.requireNonNullElse(this.zOffsetInput.get(), 0f);
+        this.sign.zOffset = this.zOffset;
         this.sign.bidirectional = this.bidirectional;
         this.sign.renderBackground = this.renderBackground;
         this.sign.dropShadow = this.dropShadow;
@@ -324,15 +235,6 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     
     protected Component toggleMessage(String key, boolean state) {
         return Component.translatable(key + (state ? "_on" : "_off"));
-    }
-    
-    public Component arrangeMessage() {
-        var value = this.zOffsetInput.get();
-        if (value == null) return BaseHolographicSignBlockEntity.LayerArrange.CUSTOM.displayName;
-        if (value == 0f) return BaseHolographicSignBlockEntity.LayerArrange.CENTER.displayName;
-        if (value == -0.45f) return BaseHolographicSignBlockEntity.LayerArrange.FRONT.displayName;
-        if (value == 0.45f) return BaseHolographicSignBlockEntity.LayerArrange.BACK.displayName;
-        return BaseHolographicSignBlockEntity.LayerArrange.CUSTOM.displayName;
     }
     
     @Override
@@ -349,7 +251,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         }
     }
     
-    protected void onDone() {
+    public void onDone() {
         this.sign.setChanged();
         if (this.minecraft != null) {
             this.minecraft.setScreen(null);
@@ -357,63 +259,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     @Override
-    public boolean charTyped(CharacterEvent event) {
-        if (this.colorInput.charTyped(event)) return true;
-        if (this.yRotationInput.charTyped(event)) return true;
-        if (this.xRotationInput.charTyped(event)) return true;
-        if (this.zOffsetInput.charTyped(event)) return true;
-        return super.charTyped(event);
-    }
-    
-    @Override
     public void onClose() {
         this.onDone();
     }
     
-    @Override
-    public boolean keyPressed(KeyEvent event) {
-        if (this.colorInput.keyPressed(event)
-                || this.yRotationInput.keyPressed(event)
-                || this.xRotationInput.keyPressed(event)
-                || this.zOffsetInput.keyPressed(event)) {
-            // If color input box is active, let that input box handle it
-            return true;
-        }
-        return super.keyPressed(event);
-    }
-    
-    @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (!this.colorInput.mouseClicked(event, doubleClick)) {
-            this.colorInput.setFocused(false);
-        }
-        if (!this.yRotationInput.mouseClicked(event, doubleClick)) {
-            this.yRotationInput.setFocused(false);
-        }
-        if (!this.xRotationInput.mouseClicked(event, doubleClick)) {
-            this.xRotationInput.setFocused(false);
-        }
-        if (!this.zOffsetInput.mouseClicked(event, doubleClick)) {
-            this.zOffsetInput.setFocused(false);
-        }
-        this.setFocused(null);
-        return super.mouseClicked(event, doubleClick);
-    }
-    
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        super.extractRenderState(graphics, mouseX, mouseY, a);
-        int innerPadding = width / 100;
-        var color = 0xFFFFFF;
-        graphics.text(this.font, Component.translatable("powertool.gui.holographic_sign.scale", this.scale), 7, 7, color, true);
-        graphics.text(font, Component.translatable("powertool.gui.holo_sign.x_rotation"), 17, 47 + innerPadding * 2, color, true);
-        graphics.text(font, Component.translatable("powertool.gui.holo_sign.y_rotation"), 17, 67 + innerPadding * 3, color, true);
-        graphics.text(font, Component.translatable("powertool.gui.holo_sign.z_offset"), 17, 87 + innerPadding * 4, color, true);
-    }
-    
-    
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
 }

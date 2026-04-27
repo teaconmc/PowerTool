@@ -58,7 +58,8 @@ public class RawJsonHolographicSignBlockEntity extends BaseHolographicSignBlockE
         for (var i = 0; i < forRenderSize; i++) {
             forRender.add(input.read("forRender_" + i, ComponentSerialization.CODEC).orElse(Component.empty()));
         }
-        var registries = this.level.registryAccess();
+        @SuppressWarnings("deprecation")
+        var registries = input.lookup();
         forFilter.clear();
         try {
             for (var ct : content) {

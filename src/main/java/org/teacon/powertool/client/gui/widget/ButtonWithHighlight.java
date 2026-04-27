@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -63,11 +64,11 @@ public class ButtonWithHighlight extends Button {
     @Override
     protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         if (this.isBeingPressed) {
-            graphics.blit(this.texture, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, this.texture, this.getX(), this.getY(), this.pressedU, this.pressedV, this.width, this.height, this.texWidth, this.texHeight);
         } else if (this.isHovered) {
-            graphics.blit(this.texture, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, this.texture, this.getX(), this.getY(), this.highlightU, this.highlightV, this.width, this.height, this.texWidth, this.texHeight);
         } else {
-            graphics.blit(this.texture, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, this.texture, this.getX(), this.getY(), this.normalU, this.normalV, this.width, this.height, this.texWidth, this.texHeight);
         }
     }
 }

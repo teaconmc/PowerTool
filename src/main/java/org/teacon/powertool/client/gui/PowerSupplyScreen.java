@@ -74,12 +74,13 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
             try {
                 this.power = Integer.parseInt(newValue);
                 this.input.setTextColor(-1);
+                this.updatePowerOutput();
             } catch (Exception e) {
                 this.input.setTextColor(0xFFFF0000);
             }
         });
         this.input.setValue(Integer.toString(this.power));
-        this.addWidget(this.input);
+        this.addRenderableWidget(this.input);
         this.setInitialFocus(this.input);
     }
     
@@ -112,7 +113,21 @@ public final class PowerSupplyScreen extends AbstractContainerScreen<PowerSupply
     }
     
     @Override
-    protected void extractMenuBackground(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BG_LOCATION, this.leftPos+125, this.topPos+16, this.status == 0 ? 202 : 170, 16, 32, 26, 256, 256);
+        graphics.text(this.font, Component.translatable("block.powertool.power_supply"), this.leftPos + 8, this.topPos + 6, -12566464, false);
     }
+    
+    @Override
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {
+    
+    }
+    
+    @Override
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
+    }
+    
 }

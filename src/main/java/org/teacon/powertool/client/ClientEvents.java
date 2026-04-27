@@ -78,7 +78,7 @@ public class ClientEvents {
         if (!componentTop.getString().isEmpty()) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().scale(0.75F, 0.75F);
-            guiGraphics.text(mc.font, componentTop, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xB0B0B0, false);
+            guiGraphics.text(mc.font, componentTop, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xFFB0B0B0, false);
             guiGraphics.pose().popMatrix();
         }
         
@@ -89,12 +89,12 @@ public class ClientEvents {
                 .copy()
                 .withStyle(item.getRarity().getStyleModifier())
                 .append(" × " + item.getCount());
-        guiGraphics.text(mc.font, itemDisplayName, x + 28, y + 14, 0xFFFFFF, false);
+        guiGraphics.text(mc.font, itemDisplayName, x + 28, y + 14, 0xFFFFFFFF, false);
         
         if (!componentBottom.getString().isEmpty()) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().scale(0.75F, 0.75F);
-            guiGraphics.text(mc.font, componentBottom, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xB0B0B0, false);
+            guiGraphics.text(mc.font, componentBottom, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xFFB0B0B0, false);
             guiGraphics.pose().popMatrix();
         }
         

@@ -80,8 +80,9 @@ public class RegisterScreen extends AbstractContainerScreen<RegisterMenu> {
     }
     
     @Override
-    protected void extractMenuBackground(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, BG, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BG, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight,256,256);
     }
     
 }

@@ -33,12 +33,6 @@ public class RawJsonHolographicSignEditingScreen extends BaseHolographicSignEdit
     }
     
     @Override
-    public int getDoneButtonY() {
-        var startY = (int) (height * 0.15);
-        return (int) (startY + height * 0.7 + 15);
-    }
-    
-    @Override
     protected void writeBackToBE() {
         super.writeBackToBE();
         sign.content = new ArrayList<>(jsonComponentList.entries().stream().map(JsonComponentList.Entry::contentString).toList());

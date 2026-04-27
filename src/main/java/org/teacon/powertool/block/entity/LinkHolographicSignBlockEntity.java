@@ -23,7 +23,7 @@ public class LinkHolographicSignBlockEntity extends BaseHolographicSignBlockEnti
     
     public LinkHolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
-        this.colorInARGB = Objects.requireNonNullElse(ChatFormatting.BLUE.getColor(), VanillaUtils.getColor(255, 255, 255, 255));
+        this.colorInARGB = Objects.requireNonNull(ChatFormatting.BLUE.getColor()) | 0xff000000;
     }
     
     @Override

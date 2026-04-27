@@ -140,7 +140,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
     
     public static void renderText(PoseStack poseStack, SubmitNodeCollector nodeCollector,Component text,boolean dropShadow,int color, int backgroundColor, int packedLightCoords, float x, float y, int width){
         renderBackground(poseStack,nodeCollector,backgroundColor,packedLightCoords,x,y,width);
-        nodeCollector.submitText(poseStack,x,y,text.getVisualOrderText(),dropShadow, Font.DisplayMode.POLYGON_OFFSET,packedLightCoords,color,0,-1);
+        nodeCollector.submitText(poseStack,x,y,text.getVisualOrderText(),dropShadow, Font.DisplayMode.POLYGON_OFFSET,packedLightCoords,color,0,0);
     }
 
     

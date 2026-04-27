@@ -140,6 +140,7 @@ public class FenceKnotEntity extends HangingEntity {
     
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
         builder.define(CONNECT_TO, new LinkedHashSet<>());
         builder.define(TYPE, Type.Normal);
     }

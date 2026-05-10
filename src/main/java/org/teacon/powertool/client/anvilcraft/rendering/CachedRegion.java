@@ -34,10 +34,10 @@ import java.util.function.Consumer;
  */
 public class CachedRegion {
     private final ChunkPos chunkPos;
-    private Map<net.minecraft.client.renderer.rendertype.RenderType, GpuBuffer> buffers = new HashMap<>();
-    private final Map<net.minecraft.client.renderer.rendertype.RenderType, ByteBufferBuilder> sortBuffers = new HashMap<>();
-    private Map<net.minecraft.client.renderer.rendertype.RenderType, MeshData.SortState> meshSortings = new HashMap<>();
-    private Reference2IntMap<net.minecraft.client.renderer.rendertype.RenderType> indexCountMap = new Reference2IntOpenHashMap<>();
+    private Map<RenderType, GpuBuffer> buffers = new HashMap<>();
+    private final Map<RenderType, ByteBufferBuilder> sortBuffers = new HashMap<>();
+    private Map<RenderType, MeshData.SortState> meshSortings = new HashMap<>();
+    private Reference2IntMap<RenderType> indexCountMap = new Reference2IntOpenHashMap<>();
     private final Set<BlockEntity> blockEntities = new HashSet<>();
     private final CacheableBERenderingPipeline pipeline;
     private final Minecraft minecraft = Minecraft.getInstance();
@@ -100,7 +100,7 @@ public class CachedRegion {
         renderInternal(buffers.keySet());
     }
 
-    public GpuBuffer getBuffer(net.minecraft.client.renderer.rendertype.RenderType renderType, long size) {
+    public GpuBuffer getBuffer(RenderType renderType, long size) {
         if (buffers.containsKey(renderType)) {
             GpuBuffer buffer = buffers.get(renderType);
 
@@ -116,7 +116,7 @@ public class CachedRegion {
         return vb;
     }
 
-    private ByteBufferBuilder requestSortBuffer(net.minecraft.client.renderer.rendertype.RenderType renderType) {
+    private ByteBufferBuilder requestSortBuffer(RenderType renderType) {
         if (sortBuffers.containsKey(renderType)) {
             return sortBuffers.get(renderType);
         }
@@ -125,7 +125,7 @@ public class CachedRegion {
         return builder;
     }
 
-    private void renderInternal(Collection<net.minecraft.client.renderer.rendertype.RenderType> renderTypes) {
+    private void renderInternal(Collection<RenderType> renderTypes) {
         if (isEmpty) return;
 
         Vec3 cameraPosition = minecraft.gameRenderer.getMainCamera().position();
@@ -135,10 +135,10 @@ public class CachedRegion {
             return;
         }
 
-        List<net.minecraft.client.renderer.rendertype.RenderType> renderingOrders = new ArrayList<>(renderTypes);
+        List<RenderType> renderingOrders = new ArrayList<>(renderTypes);
         renderingOrders.sort(Comparator.comparingInt(a -> (a.sortOnUpload() ? 1 : 0)));
 
-        for (net.minecraft.client.renderer.rendertype.RenderType renderType : renderingOrders) {
+        for (RenderType renderType : renderingOrders) {
             GpuBuffer vb = buffers.get(renderType);
             if (vb == null) continue;
             renderLayer(renderType, vb, cameraPosition);
@@ -151,7 +151,7 @@ public class CachedRegion {
     }
 
     private void renderLayer(
-            net.minecraft.client.renderer.rendertype.RenderType renderType,
+            RenderType renderType,
             GpuBuffer vertexBuffer,
             Vec3 cameraPosition
     ) {

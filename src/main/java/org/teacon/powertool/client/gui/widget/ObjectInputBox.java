@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.Identifier;
@@ -103,7 +104,7 @@ public class ObjectInputBox<T> extends EditBox implements Renderable {
     public static final Predicate<String> TEXTURE_VALIDATOR = (str) -> {
         var rl = Identifier.tryParse(str);
         if (rl == null) return false;
-        var texture = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(rl);
+        var texture = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS).getSprite(rl);
         return !VanillaUtils.MISSING_TEXTURE.equals(texture.atlasLocation());
     };
     

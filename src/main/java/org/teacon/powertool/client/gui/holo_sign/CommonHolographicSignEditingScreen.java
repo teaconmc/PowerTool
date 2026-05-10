@@ -9,7 +9,11 @@ import com.xkball.xklib.ui.widget.Widget;
 import com.xkball.xklib.ui.widget.container.ContainerWidget;
 import com.xkball.xklibmc.ui.widget.WidgetWrapper;
 import com.xkball.xklibmc.ui.widget.mc.XKLibMultiLineEditBox;
+import dev.vfyjxf.taffy.geometry.TaffySize;
+import dev.vfyjxf.taffy.style.TaffyDimension;
+import dev.vfyjxf.taffy.style.TextAlign;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 
@@ -21,6 +25,8 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     public static final int MAXIMUM_LINE_COUNT = 10;
     
     private String[] messages;
+    private @Nullable WidgetWrapper editBoxWrapper;
+    private @Nullable XKLibMultiLineEditBox editBox;
     
     public CommonHolographicSignEditingScreen(CommonHolographicSignBlockEntity theSign) {
         super(Component.translatable("sign.edit"), theSign);
@@ -39,14 +45,14 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     
     @Override
     protected Widget createRightPanel() {
-        var textWidget = WidgetWrapper.multiLineTextWidget();
-        var multiLineWidget = ((XKLibMultiLineEditBox) textWidget.getWidget());
-        multiLineWidget.setValue(String.join("\n", messages));
-        multiLineWidget.setValueListener(s -> {
+        this.editBoxWrapper = WidgetWrapper.multiLineTextWidget();
+        this.editBox = ((XKLibMultiLineEditBox) editBoxWrapper.getWidget());
+        editBox.setValue(String.join("\n", messages));
+        editBox.setValueListener(s -> {
             var array = s.split("\n");
             if(array.length > MAXIMUM_LINE_COUNT){
                 this.messages = Arrays.copyOf(array, MAXIMUM_LINE_COUNT);
-                multiLineWidget.setValue(String.join("\n", messages));
+                editBox.setValue(String.join("\n", messages));
             }
             else {
                 this.messages = array;
@@ -57,7 +63,20 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
                         align-items: center;
                         justify-content: center;
                         """)
-                .addChild(textWidget.inlineStyle("size: 60% 60%"));
+                .addChild(editBoxWrapper.inlineStyle("width: 60%;"));
+    }
+    
+    @Override
+    public void tick() {
+        super.tick();
+        if(this.editBox != null && this.editBoxWrapper != null) {
+            var newH = TaffyDimension.length((editBox.getLineCount() * 9 + 12) * this.guiScale);
+            if(!this.editBoxWrapper.getStyle().size.height.equals(newH)){
+                this.editBoxWrapper.setStyle(s -> s.size = new TaffySize<>(s.size.width, newH));
+                this.editBox.setScrollAmount(0);
+            }
+
+        }
     }
     
     @Override
@@ -67,4 +86,13 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
         this.sign.contents = Arrays.stream(toSend).map(Component::literal).limit(MAXIMUM_LINE_COUNT).toList();
     }
     
+    @Override
+    public void onTextAlignChange() {
+        if(this.editBox == null) return;
+        this.editBox.textAlign = switch (this.textAlign){
+            case LEFT -> TextAlign.LEFT;
+            case CENTER -> TextAlign.CENTER;
+            case RIGHT -> TextAlign.RIGHT;
+        };
+    }
 }

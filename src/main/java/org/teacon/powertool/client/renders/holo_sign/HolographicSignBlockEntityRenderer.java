@@ -17,8 +17,10 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -26,7 +28,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<CommonHolographicSignBlockEntity, HolographicSignBlockEntityRenderer.HoloSignBEState> {
     
     private Font font;
@@ -154,5 +156,10 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
             });
 
         }
+    }
+    
+    @Override
+    public AABB getRenderBoundingBox(CommonHolographicSignBlockEntity blockEntity) {
+        return new AABB(blockEntity.getBlockPos()).inflate(8,8,8);
     }
 }

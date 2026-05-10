@@ -75,6 +75,7 @@ public class RawJsonHolographicSignBlockEntity extends BaseHolographicSignBlockE
         var taskList = new ArrayList<CompletableFuture<?>>();
         //不用processMessageBundle 因为没有处理后list size和顺序不变的保证
         for (var i = 0; i < forFilter.size(); i++) {
+            
             var task = player.getTextFilter()
                     .processStreamMessage(forFilter.get(i).getString());
             int finalI = i;

@@ -12,14 +12,17 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRenderer<LinkHolographicSignBlockEntity, LinkHolographicSignBlockEntityRenderer.LinkSignBEState> {
     
     private static final Style LINK_STYLE = Style.EMPTY.withUnderlined(true);
@@ -65,5 +68,10 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
         int w = this.font.width(component);
         HolographicSignBlockEntityRenderer.renderText(poseStack,nodeCollector,component, theSign.dropShadow, theSign.colorInARGB , bgColor, packedLight,(float) -w / 2, yOffset, w);
         poseStack.popPose();
+    }
+    
+    @Override
+    public AABB getRenderBoundingBox(LinkHolographicSignBlockEntity blockEntity) {
+        return new AABB(blockEntity.getBlockPos()).inflate(8,8,8);
     }
 }

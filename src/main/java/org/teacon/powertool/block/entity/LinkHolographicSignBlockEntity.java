@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.block.PowerToolBlocks;
-import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;

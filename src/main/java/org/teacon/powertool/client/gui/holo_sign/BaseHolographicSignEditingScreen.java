@@ -1,8 +1,3 @@
-/*
- * Parts of this Java source file are from GlowCase project, maintained by ModFest team,
- * licensed under CC0-1.0 per its repository.
- * You may find the original code at https://github.com/ModFest/glowcase
- */
 package org.teacon.powertool.client.gui.holo_sign;
 
 import com.xkball.xklib.ui.render.IComponent;
@@ -59,6 +54,18 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.sign = theSign;
         this.readData(theSign);
         this.addScreenLayer(XKLibBaseScreen.biPanelFrame(IComponent.literal(title.getString()), createLeftPanel(), createRightPanel()));
+        this.onTextAlignChange();
+    }
+    
+    public static Screen creatHoloSignScreen(BlockEntity sign, SignType type) {
+        return switch (type) {
+            case COMMON ->
+                    sign instanceof CommonHolographicSignBlockEntity be ? new CommonHolographicSignEditingScreen(be) : null;
+            case URL ->
+                    sign instanceof LinkHolographicSignBlockEntity be ? new LinkHolographicSignEditingScreen(be) : null;
+            case RAW_JSON ->
+                    sign instanceof RawJsonHolographicSignBlockEntity be ? new RawJsonHolographicSignEditingScreen(be) : null;
+        };
     }
     
     protected void readData(T theSign) {
@@ -84,7 +91,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         return new Widget();
     }
     
-    protected Widget createLeftPanel(){
+    protected Widget createLeftPanel() {
         return new ContainerWidget().inlineStyle("""
                         flex-direction: column;
                         overflow-y: scroll;
@@ -97,36 +104,32 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .addChild(createIntInput(-180, 180, 45, () -> IComponent.translatable("powertool.gui.holo_sign.y_rotation"), () -> this.yRotation, (s) -> this.yRotation = s))
                 .addChild(createFloatInput(-2, 2, 0.125f, () -> IComponent.translatable("powertool.gui.holo_sign.z_offset"), () -> this.zOffset, zf -> this.zOffset = zf))
                 .addChild(createHorizontalSplit())
-                .addChild(createSelectionButton(() -> this.textAlign.displayName, () ->
-                        this.textAlign = switch (this.textAlign) {
-                            case LEFT -> BaseHolographicSignBlockEntity.Align.CENTER;
-                            case CENTER -> BaseHolographicSignBlockEntity.Align.RIGHT;
-                            case RIGHT -> BaseHolographicSignBlockEntity.Align.LEFT;
-                        }))
+                .addChild(createSelectionButton(() -> this.textAlign.displayName, () -> {
+                            this.textAlign = switch (this.textAlign) {
+                                case LEFT -> BaseHolographicSignBlockEntity.Align.CENTER;
+                                case CENTER -> BaseHolographicSignBlockEntity.Align.RIGHT;
+                                case RIGHT -> BaseHolographicSignBlockEntity.Align.LEFT;
+                            };
+                            this.onTextAlignChange();
+                        }
+                ))
                 .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.shadow", dropShadow), () -> this.dropShadow = !dropShadow))
                 .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.background", renderBackground), () -> this.renderBackground = !renderBackground))
-                .addChild(createSelectionButton(() -> Component.translatable("powertool.gui.holographic_sign.lock." + this.locked),() -> this.locked = !this.locked))
-                .addChild(createSelectionButton(() -> Component.translatable("powertool.gui.holographic_sign.bidirectional." + bidirectional),() -> this.bidirectional = !this.bidirectional))
-                .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.lit",this.lit), () -> this.lit = !this.lit))
+                .addChild(createSelectionButton(() -> Component.translatable("powertool.gui.holographic_sign.lock." + this.locked), () -> this.locked = !this.locked))
+                .addChild(createSelectionButton(() -> Component.translatable("powertool.gui.holographic_sign.bidirectional." + bidirectional), () -> this.bidirectional = !this.bidirectional))
+                .addChild(createSelectionButton(() -> toggleMessage("powertool.gui.holo_sign.lit", this.lit), () -> this.lit = !this.lit))
                 .addChild(createHorizontalSplit())
                 .addChild(createColorInput())
                 .addChild(createHorizontalSplit())
                 .addChild(WidgetWrapper.button(CommonComponents.GUI_DONE, (_) -> this.onDone()).inlineStyle(layoutStr))
-                .addChild(new Widget().inlineStyle(layoutStr));
+                .addChild(new Widget().inlineStyle("size: 60% 10rpx; flex-shrink: 0;"));
     }
     
-    public static Screen creatHoloSignScreen(BlockEntity sign, SignType type) {
-        return switch (type) {
-            case COMMON ->
-                    sign instanceof CommonHolographicSignBlockEntity be ? new CommonHolographicSignEditingScreen(be) : null;
-            case URL ->
-                    sign instanceof LinkHolographicSignBlockEntity be ? new LinkHolographicSignEditingScreen(be) : null;
-            case RAW_JSON ->
-                    sign instanceof RawJsonHolographicSignBlockEntity be ? new RawJsonHolographicSignEditingScreen(be) : null;
-        };
+    public void onTextAlignChange() {
+    
     }
     
-    protected Widget createColorInput(){
+    protected Widget createColorInput() {
         return new ContainerWidget().inlineStyle("""
                         flex-direction: column;
                         flex-shrink: 0;
@@ -135,7 +138,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                         """)
                 .addChild(createALine(
                         new Label(IComponent.translatable("powertool.gui.holographic_sign.color")),
-                        new Widget(){
+                        new Widget() {
                             @Override
                             public void doRender(IGUIGraphics graphics, int mouseX, int mouseY, float a) {
                                 super.doRender(graphics, mouseX, mouseY, a);
@@ -220,7 +223,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     protected void writeBackToBE() {
-        this.sign.colorInARGB = ARGB.color(this.colorA,  this.colorR, this.colorG, this.colorB);
+        this.sign.colorInARGB = ARGB.color(this.colorA, this.colorR, this.colorG, this.colorB);
         this.sign.scale = this.scale;
         this.sign.align = this.textAlign;
         this.sign.lock = this.locked;

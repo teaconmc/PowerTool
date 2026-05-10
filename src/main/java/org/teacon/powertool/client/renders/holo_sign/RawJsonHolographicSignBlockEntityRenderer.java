@@ -14,15 +14,17 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-@ParametersAreNonnullByDefault
+@NonNullByDefault
 public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRenderer<RawJsonHolographicSignBlockEntity, RawJsonHolographicSignBlockEntityRenderer.RawJsonSignBEState> {
     
     private  Font font;
@@ -102,5 +104,10 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
         int yOffset = (int) -(0.5 * this.font.lineHeight);
         renderComponentList(theSign.forRender, 0, yOffset, poseStack, nodeCollector, theSign.dropShadow, packedLight, theSign.colorInARGB, HolographicSignBlockEntityRenderer.getBackgroundColor(theSign), renderHoverText);
         poseStack.popPose();
+    }
+    
+    @Override
+    public AABB getRenderBoundingBox(RawJsonHolographicSignBlockEntity blockEntity) {
+        return new AABB(blockEntity.getBlockPos()).inflate(8,8,8);
     }
 }

@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.resource.ResourceHandle;
 import net.minecraft.client.Camera;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
@@ -20,7 +21,9 @@ import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.teacon.powertool.CreativeNoClip;
 import org.teacon.powertool.client.CachedModeClient;
 import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
 
@@ -63,5 +66,13 @@ public abstract class LevelRendererMixin {
 		}
 
 		return original.call(instance, blockEntity, partialTicks, breakProgress, frustum);
+	}
+	
+	@Redirect(
+			method = "update",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isSpectator()Z")
+	)
+	private boolean poseTreatsCreativeNoClipAsSpectator(LocalPlayer player) {
+		return CreativeNoClip.canNoClip(player);
 	}
 }

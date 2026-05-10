@@ -140,6 +140,7 @@ public class ClientEvents {
     @SubscribeEvent
     static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         AccessControlClient.INSTANCE.clear();
+        CreativeNoClipClient.setEnabled(false);
     }
     
     @SubscribeEvent

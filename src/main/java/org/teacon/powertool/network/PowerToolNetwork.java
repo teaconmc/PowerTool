@@ -9,6 +9,7 @@ import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.network.client.RecordDebugData;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateCreativeNoClipPacket;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateOpenMenuSourcePacket;
 import org.teacon.powertool.network.client.UpdatePermissionPacket;
@@ -35,6 +36,11 @@ public class PowerToolNetwork {
                 OpenHolographicSignEditor.TYPE,
                 OpenHolographicSignEditor.STREAM_CODEC,
                 OpenHolographicSignEditor::handle
+        );
+        register.commonToClient(
+                UpdateCreativeNoClipPacket.TYPE,
+                UpdateCreativeNoClipPacket.STREAM_CODEC,
+                UpdateCreativeNoClipPacket::handle
         );
         register.playToClient(
                 OpenItemScreen.TYPE,

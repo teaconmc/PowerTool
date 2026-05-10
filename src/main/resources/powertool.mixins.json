@@ -4,6 +4,7 @@
   "package": "org.teacon.powertool.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BlockItemCreativeNoClipMixin",
     "CommandBlockMixin",
     "CommandsMixin",
     "CommandSourceStackMixin",
@@ -11,6 +12,7 @@
     "MixinEntity",
     "MixinItemFrame",
     "MixinThrownEgg",
+    "PlayerCreativeNoClipMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerMixin"
   ],

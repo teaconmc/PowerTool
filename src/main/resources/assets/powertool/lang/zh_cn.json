@@ -224,5 +224,9 @@
   "tooltip.powertool.cached_mode_tool": "右键方块以启用缓存渲染模式，左键方块重建此方块所在区块的缓存.",
   "powertool.gui.cached_mode_enabled": "已在%s上启用缓存渲染模式",
   "powertool.gui.cached_mode_disabled": "已在%s上禁用缓存渲染模式",
-  "powertool.gui.cache_updated": "已更新本区块的缓存"
+  "powertool.gui.cache_updated": "已更新本区块的缓存",
+  "powertool.command.creative_no_clip.enabled": "创造穿墙已开启",
+  "powertool.command.creative_no_clip.disabled": "创造穿墙已关闭",
+  "powertool.command.creative_no_clip.enabled.targets": "已为 %s 名玩家开启创造穿墙",
+  "powertool.command.creative_no_clip.disabled.targets": "已为 %s 名玩家关闭创造穿墙"
 }

@@ -1,5 +1,6 @@
 package org.teacon.powertool.attachment;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -18,6 +19,14 @@ public class PowerToolAttachments {
     
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Permission>> PERMISSION = ATTACHMENT_TYPE.register(Permission.KEY.getPath(),
             () -> AttachmentType.builder(Permission::new).build());
+    
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CREATIVE_NO_CLIP = ATTACHMENT_TYPE.register(
+            "creative_no_clip",
+            () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL.fieldOf("enabled"))
+                    .copyOnDeath()
+                    .build()
+    );
     
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> DISPLAY_MODE = ATTACHMENT_TYPE.register(
             "display_mode",

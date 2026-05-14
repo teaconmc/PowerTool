@@ -25,6 +25,7 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.attachment.PowerToolAttachments;
+import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
@@ -174,8 +175,7 @@ public class AccessControlToolItem extends Item {
             }
             
             private static void forceUpdate(BlockPos pos) {
-                //todo 修这个TE渲染缓存[xkball]
-//                CacheableBERenderingPipeline.getInstance().forcedUpdate(pos);
+                CacheableBERenderingPipeline.getInstance().forcedUpdate(pos);
             }
         };
         

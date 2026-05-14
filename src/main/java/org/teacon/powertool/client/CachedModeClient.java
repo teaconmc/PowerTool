@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,6 @@ public class CachedModeClient {
     
     public void updateCachedModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
         cachedModeData.put(chunkPos, blockPosList);
-        //todo
-//        CacheableBERenderingPipeline.getInstance().updateFromNetwork(chunkPos, blockPosList);
+        CacheableBERenderingPipeline.getInstance().updateFromNetwork(chunkPos, blockPosList);
     }
 }

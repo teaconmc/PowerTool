@@ -6,9 +6,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension;
 import org.jspecify.annotations.Nullable;
-import org.joml.Matrix4f;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -19,20 +23,23 @@ import java.util.Queue;
 /**
  * @author ZhuRuoLing
  */
+@EventBusSubscriber(Dist.CLIENT)
 public class CacheableBERenderingPipeline {
     @Nullable
     private static CacheableBERenderingPipeline instance;
     private final ClientLevel level;
     private final Queue<Runnable> pendingCompiles = new ArrayDeque<>();
     private final Queue<Runnable> pendingUploads = new ArrayDeque<>();
-    private final Map<ChunkPos, CachedRegion> regions = new HashMap<>();
+    private final Map<ChunkPos, CachedChunk> regions = new HashMap<>();
     private boolean valid = true;
+    private static Vec3 cameraOldPosition = null;
+    private static boolean cameraMoved = true;
 
-    public CachedRegion getRenderRegion(ChunkPos chunkPos) {
+    public CachedChunk getRenderRegion(ChunkPos chunkPos) {
         if (regions.containsKey(chunkPos)) {
             return regions.get(chunkPos);
         }
-        CachedRegion region = new CachedRegion(chunkPos, this);
+        CachedChunk region = new CachedChunk(chunkPos, this);
         regions.put(chunkPos, region);
         return region;
     }
@@ -107,12 +114,12 @@ public class CacheableBERenderingPipeline {
      * Releases all buffers in use and mark current pipeline instance as invalid.
      */
     public void releaseBuffers() {
-        regions.values().forEach(CachedRegion::releaseBuffers);
+        regions.values().forEach(CachedChunk::releaseBuffers);
         valid = false;
     }
 
     public void render() {
-        regions.values().forEach(CachedRegion::render);
+        regions.values().forEach(CachedChunk::render);
     }
 
     /**
@@ -128,5 +135,20 @@ public class CacheableBERenderingPipeline {
 
     public void forcedUpdate(BlockPos pos) {
         getRenderRegion(ChunkPos.containing(pos)).forcedUpdate();
+    }
+
+    public static boolean isCameraMoved() {
+        return cameraMoved;
+    }
+
+    @SubscribeEvent
+    public static void on(RenderLevelStageEvent.AfterSky event) {
+        Vec3 pos = event.getLevelRenderState().cameraRenderState.pos;
+        if (pos.equals(cameraOldPosition)) {
+            cameraMoved = false;
+            return;
+        }
+        cameraOldPosition = new Vec3(pos.x, pos.y, pos.z);
+        cameraMoved = true;
     }
 }

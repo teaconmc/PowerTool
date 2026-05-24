@@ -140,10 +140,10 @@ repositories {
 dependencies {
 //    localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
 //
-    jarJar(implementation files("libs/xklib-3d-0.0.1.jar"))
-    jarJar(implementation files("libs/xklib-ap-0.0.1.jar"))
-    jarJar(implementation files("libs/xklib-ui-0.0.1.jar"))
-    jarJar(implementation files("libs/xklibmc-1.0.0.jar"))
+    jarJar(implementation "com.xkball:xklib-3d:0.0.2")
+    jarJar(implementation "com.xkball:xklib-ap:0.0.2")
+    jarJar(implementation "com.xkball:xklib-ui:0.0.2")
+    jarJar(implementation "com.xkball:xklib-mc:0.0.2")
     jarJar(implementation "dev.vfyjxf:taffy:1.1.4")
     jarJar(implementation "org.antlr:antlr4-runtime:4.13.2")
     jarJar(implementation "net.lenni0451:LambdaEvents:2.4.2")

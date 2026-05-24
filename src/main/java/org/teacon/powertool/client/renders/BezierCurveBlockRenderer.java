@@ -40,7 +40,6 @@ public class BezierCurveBlockRenderer  {
         BlockPos centerPos = null;
         if (level != null) centerPos = level.getChunkAt(selfPos).getPos().getMiddleBlockPosition(0);
         if (vertexList.size() < (steps - 1) * sideCount * 4) return;
-        poseStack = context.getPoseStack();
         poseStack.pushPose();
         if (useWorldCoordinate) poseStack.translate(-selfPos.getX(), -selfPos.getY(), -selfPos.getZ());
         

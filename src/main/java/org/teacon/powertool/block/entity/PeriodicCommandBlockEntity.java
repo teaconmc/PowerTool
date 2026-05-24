@@ -48,7 +48,7 @@ public class PeriodicCommandBlockEntity extends CommandBlockEntity {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        input.getIntOr("period", 10);
+        this.period = input.getIntOr("period", 10);
     }
     
     @Override

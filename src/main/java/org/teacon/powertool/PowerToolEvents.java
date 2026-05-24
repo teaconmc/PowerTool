@@ -23,9 +23,9 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
@@ -154,7 +154,7 @@ public class PowerToolEvents {
     }
     
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+    public static void onBlockBreak(BreakBlockEvent event) {
         ServerLevel level = (ServerLevel) event.getLevel();
         BlockPos pos = event.getPos();
         removeAccessControl(level, pos, (ServerPlayer) event.getPlayer());
@@ -177,8 +177,8 @@ public class PowerToolEvents {
                 DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newBoat));
                 event.setCanceled(true);
             }
-            if (entity instanceof Minecart minecart && !(entity instanceof AutoVanishMinecart)) {
-                var newMinecart = AutoVanishMinecart.fromMinecart(minecart);
+            if (entity.getClass().equals(Minecart.class)) {
+                var newMinecart = AutoVanishMinecart.fromMinecart((Minecart) entity);
                 DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newMinecart));
                 event.setCanceled(true);
             }

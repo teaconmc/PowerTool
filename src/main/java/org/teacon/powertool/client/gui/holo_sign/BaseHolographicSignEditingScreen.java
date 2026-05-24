@@ -1,17 +1,16 @@
 package org.teacon.powertool.client.gui.holo_sign;
 
 import com.xkball.xklib.ui.render.IComponent;
-import com.xkball.xklib.ui.render.IGUIGraphics;
 import com.xkball.xklib.ui.widget.Label;
 import com.xkball.xklib.ui.widget.Widget;
 import com.xkball.xklib.ui.widget.container.ContainerWidget;
 import com.xkball.xklibmc.ui.XKLibBaseScreen;
+import com.xkball.xklibmc.ui.widget.ColorInputWidget;
 import com.xkball.xklibmc.ui.widget.NumberInputWidget;
 import com.xkball.xklibmc.ui.widget.WidgetWrapper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
@@ -33,10 +32,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected final T sign;
     
     protected float scale;
-    protected int colorA;
-    protected int colorR;
-    protected int colorG;
-    protected int colorB;
+    protected int color;
     protected BaseHolographicSignBlockEntity.Align textAlign;
     protected boolean locked;
     protected int xRotation;
@@ -69,10 +65,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     protected void readData(T theSign) {
-        this.colorA = ARGB.alpha(theSign.colorInARGB);
-        this.colorR = ARGB.red(theSign.colorInARGB);
-        this.colorG = ARGB.green(theSign.colorInARGB);
-        this.colorB = ARGB.blue(theSign.colorInARGB);
+        this.color = theSign.colorInARGB;
         this.scale = theSign.scale;
         this.textAlign = theSign.align;
         this.locked = theSign.lock;
@@ -97,6 +90,11 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                         overflow-y: scroll;
                         scrollbar-width: 8;
                         align-items: center;
+                        """)
+                .asRootStyle("""
+                        Label{
+                            text-height: 10rpx;
+                        }
                         """)
                 .addChild(createHorizontalSplit())
                 .addChild(createFloatInput(0, 100, 0.125f, () -> IComponent.translatable("powertool.gui.holographic_sign.scale"), () -> this.scale, (s) -> this.scale = s))
@@ -130,26 +128,35 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     protected Widget createColorInput() {
-        return new ContainerWidget().inlineStyle("""
+//        return new ContainerWidget().inlineStyle("""
+//                        flex-direction: column;
+//                        flex-shrink: 0;
+//                        width: 100%;
+//                        align-items: center;
+//                        """)
+//                .addChild(createALine(
+//                        new Label(IComponent.translatable("powertool.gui.holographic_sign.color")),
+//                        new Widget() {
+//                            @Override
+//                            public void doRender(IGUIGraphics graphics, int mouseX, int mouseY, float a) {
+//                                super.doRender(graphics, mouseX, mouseY, a);
+//                                var color = ARGB.color(colorA, colorR, colorG, colorB);
+//                                graphics.fillRounded(this.x, this.y, this.getMaxX(), this.getMaxY(), color, 10);
+//                            }
+//                        }))
+//                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("R: "), () -> this.colorR, i -> this.colorR = i))
+//                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("G: "), () -> this.colorG, i -> this.colorG = i))
+//                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("B: "), () -> this.colorB, i -> this.colorB = i))
+//                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("A: "), () -> this.colorA, i -> this.colorA = i));
+        ColorInputWidget result = (ColorInputWidget) new ColorInputWidget()
+                .setCallback(c -> this.color = c.getValue())
+                .inlineStyle("""
                         flex-direction: column;
                         flex-shrink: 0;
-                        width: 100%;
-                        align-items: center;
-                        """)
-                .addChild(createALine(
-                        new Label(IComponent.translatable("powertool.gui.holographic_sign.color")),
-                        new Widget() {
-                            @Override
-                            public void doRender(IGUIGraphics graphics, int mouseX, int mouseY, float a) {
-                                super.doRender(graphics, mouseX, mouseY, a);
-                                var color = ARGB.color(colorA, colorR, colorG, colorB);
-                                graphics.fillRounded(this.x, this.y, this.getMaxX(), this.getMaxY(), color, 10);
-                            }
-                        }))
-                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("R: "), () -> this.colorR, i -> this.colorR = i))
-                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("G: "), () -> this.colorG, i -> this.colorG = i))
-                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("B: "), () -> this.colorB, i -> this.colorB = i))
-                .addChild(createIntInput(0, 255, 1, () -> IComponent.literal("A: "), () -> this.colorA, i -> this.colorA = i));
+                        size: 100% 100rpx;
+                        """);
+        result.setValue(this.color);
+        return result;
     }
     
     protected Widget createSelectionButton(Supplier<Component> text, Runnable callback) {
@@ -223,7 +230,7 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     }
     
     protected void writeBackToBE() {
-        this.sign.colorInARGB = ARGB.color(this.colorA, this.colorR, this.colorG, this.colorB);
+        this.sign.colorInARGB = this.color;
         this.sign.scale = this.scale;
         this.sign.align = this.textAlign;
         this.sign.lock = this.locked;

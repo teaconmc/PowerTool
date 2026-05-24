@@ -2,7 +2,6 @@ package org.teacon.powertool.item;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,12 +14,9 @@ import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
-import org.teacon.powertool.client.gui.SetCommandScreen;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.utils.DelayServerExecutor;
 import org.teacon.powertool.utils.VanillaUtils;
-
-import java.util.function.Supplier;
 
 @NonNullByDefault
 public class CommandRune extends Item implements IScreenProviderItem {
@@ -80,11 +76,6 @@ public class CommandRune extends Item implements IScreenProviderItem {
             
         }
         return stack;
-    }
-    
-    @Override
-    public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
-        return () -> new SetCommandScreen(stack, slot);
     }
     
     public record DelayedCommandData(int delay, String command) {

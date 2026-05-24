@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -27,14 +26,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
-import org.teacon.powertool.client.gui.ExamineHoloGlassScreen;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
 
 @NonNullByDefault
 public class ExamineHoloGlass extends Item implements IScreenProviderItem {
@@ -97,11 +94,6 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem {
                         .toList());
             }
         }
-    }
-    
-    @Override
-    public Supplier<Screen> getScreenSupplier(ItemStack stack, EquipmentSlot slot) {
-        return () -> new ExamineHoloGlassScreen(slot, stack.get(PowerToolDataComponents.BLOCK_TAGS_DATA), stack.get(PowerToolDataComponents.BLOCKS_DATA));
     }
     
     public record BlockTagsComponent(List<TagKey<Block>> tags) {

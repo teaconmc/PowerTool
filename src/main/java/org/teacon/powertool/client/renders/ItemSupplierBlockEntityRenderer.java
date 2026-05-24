@@ -16,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
-import org.teacon.powertool.client.ClientEvents;
+import org.teacon.powertool.client.PowerToolClientEvents;
 
 @NonNullByDefault
 public class ItemSupplierBlockEntityRenderer implements BlockEntityRenderer<ItemSupplierBlockEntity, ItemSupplierBlockEntityRenderer.ItemSupplierBEState> {
@@ -42,7 +42,7 @@ public class ItemSupplierBlockEntityRenderer implements BlockEntityRenderer<Item
     
     @Override
     public void submit(ItemSupplierBEState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-        float rotation = ClientEvents.tickCount + state.partialTicks;
+        float rotation = PowerToolClientEvents.tickCount + state.partialTicks;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
         poseStack.scale(0.625F, 0.625F, 0.625F);

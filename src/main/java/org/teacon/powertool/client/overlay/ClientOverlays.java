@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.entity.RegisterBlockEntity;
-import org.teacon.powertool.client.ClientEvents;
+import org.teacon.powertool.client.PowerToolClientEvents;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
@@ -27,11 +27,11 @@ public class ClientOverlays {
             if (mc.level != null && res instanceof BlockHitResult hit) {
                 BlockEntity be = mc.level.getBlockEntity(hit.getBlockPos());
                 if (be instanceof RegisterBlockEntity theBE && !theBE.itemToAccept.isEmpty()) {
-                    var offset = ClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept, 0, 0,
+                    var offset = PowerToolClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToAccept, 0, 0,
                             Component.translatable("block.powertool.register.hud.prompt.1").withStyle(ChatFormatting.ITALIC),
                             Component.translatable("block.powertool.register.hud.prompt.2", Component.keybind("key.use")).withStyle(ChatFormatting.ITALIC));
                     if (theBE.displaySupply && !theBE.itemToSupply.isEmpty()) {
-                        ClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToSupply, offset.x + 8, 0,
+                        PowerToolClientEvents.drawRegisterInfo(mc, guiGraphics, theBE.itemToSupply, offset.x + 8, 0,
                                 Component.translatable("block.powertool.register.hud.prompt.3").withStyle(ChatFormatting.ITALIC),
                                 Component.empty());
                     }

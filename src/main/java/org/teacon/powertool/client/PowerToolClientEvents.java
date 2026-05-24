@@ -1,13 +1,20 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.platform.Window;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.debug.DebugEntryLookingAt;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -15,12 +22,14 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
 import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
@@ -41,9 +50,13 @@ import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlock
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
+import org.teacon.powertool.utils.VanillaUtils;
 
+import java.util.List;
+
+@NonNullByDefault
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
-public class ClientEvents {
+public class PowerToolClientEvents {
     
     public static int tickCount = 0;
     
@@ -148,6 +161,36 @@ public class ClientEvents {
         var p1 = event.getOldPlayer();
         var p2 = event.getNewPlayer();
         if (p1.level().dimension() != p2.level().dimension()) AccessControlClient.INSTANCE.clear();
+    }
+    
+    @SubscribeEvent
+    public static void onRegDebugOverlayEntry(RegisterDebugEntriesEvent event) {
+        event.register(VanillaUtils.modRL("block_access_control_mode"), new DebugEntryLookingAt() {
+                    @Override
+                    public HitResult getHitResult(Entity cameraEntity) {
+                        return cameraEntity.pick(20.0, 0.0F, false);
+                    }
+                    
+                    @Override
+                    public void extractInfo(List<String> result, Level level, BlockPos pos) {
+                        boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(pos);
+                        boolean isCachedModeEnabled = CachedModeClient.INSTANCE.isCachedModeEnabledOn(pos);
+                        result.add(
+                                "Display Mode: "
+                                        + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                        );
+                        result.add(
+                                "Cached Mode: "
+                                        + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                        );
+                    }
+                    
+                    @Override
+                    public Identifier group() {
+                        return DebugEntryLookingAt.BLOCK_GROUP;
+                    }
+                }
+        );
     }
     
     @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)

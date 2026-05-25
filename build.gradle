@@ -140,13 +140,49 @@ repositories {
 dependencies {
 //    localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
 //
-    jarJar(implementation "com.xkball:xklib-3d:0.0.2")
-    jarJar(implementation "com.xkball:xklib-ap:0.0.2")
-    jarJar(implementation "com.xkball:xklib-ui:0.0.2")
-    jarJar(implementation "com.xkball:xklib-mc:0.0.2")
-    jarJar(implementation "dev.vfyjxf:taffy:1.1.4")
-    jarJar(implementation "org.antlr:antlr4-runtime:4.13.2")
-    jarJar(implementation "net.lenni0451:LambdaEvents:2.4.2")
+    jarJar(implementation "com.xkball:xklib-3d:$xklib_version"){
+        version {
+            strictly '[0.0.2, 1.0.0)'
+            prefer xklib_version
+        }
+    }
+
+    jarJar(implementation "com.xkball:xklib-ap:$xklib_version"){
+        version {
+            strictly '[0.0.2, 1.0.0)'
+            prefer xklib_version
+        }
+    }
+    jarJar(implementation "com.xkball:xklib-ui:$xklib_version"){
+        version {
+            strictly '[0.0.2, 1.0.0)'
+            prefer xklib_version
+        }
+    }
+    jarJar(implementation "com.xkball:xklib-mc:$xklib_version"){
+        version {
+            strictly '[0.0.2, 1.0.0)'
+            prefer xklib_version
+        }
+    }
+    jarJar(implementation "dev.vfyjxf:taffy:1.1.4"){
+        version {
+            strictly '[1.1.4, 2.0.0)'
+            prefer '1.1.4'
+        }
+    }
+    jarJar(implementation "org.antlr:antlr4-runtime:4.13.2"){
+        version {
+            strictly '[4.13.2, 5.0.0)'
+            prefer '4.13.2'
+        }
+    }
+    jarJar(implementation "net.lenni0451:LambdaEvents:2.4.2"){
+        version {
+            strictly '[2.4.2, 3.0.0)'
+            prefer '2.4.2'
+        }
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

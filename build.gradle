@@ -231,7 +231,7 @@ publishing { PublishingExtension it ->
             // noinspection GroovyAssignabilityCheck
             groupId = "org.teacon"
             // noinspection GroovyAssignabilityCheck
-            artifactId = 'PowerTool-NeoForge-1.21'
+            artifactId = 'PowerTool-NeoForge-26.1'
             // noinspection GroovyAssignabilityCheck
             version = mod_version
             pom {
@@ -244,7 +244,7 @@ publishing { PublishingExtension it ->
                         // noinspection GroovyAssignabilityCheck
                         name = 'GPLv3'
                         // noinspection GroovyAssignabilityCheck
-                        url = "https://github.com/teaconmc/PowerTool/blob/1.21-neoforge/LICENSE"
+                        url = "https://github.com/teaconmc/PowerTool/blob/26.1-neoforge/LICENSE"
                     }
                 }
                 organization {

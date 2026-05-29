@@ -20,7 +20,9 @@
     "client.ClientRecipeBookMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
-    "client.SectionRenderDispatcherMixin"
+    "client.MixinObjectInputWidget",
+    "client.SectionRenderDispatcherMixin",
+    "client.debug.MixinGlProgram"
   ],
   "injectors": {
     "defaultRequire": 1

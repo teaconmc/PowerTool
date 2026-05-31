@@ -3,6 +3,8 @@ package org.teacon.powertool.client.anvilcraft.rendering;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeStorage;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.core.BlockPos;
@@ -18,6 +20,7 @@ public class RebuildTask implements Runnable {
         this.cachedChunk = cachedChunk;
     }
 
+    @SuppressWarnings("ConstantValue")
     @Override
     public void run() {
         cachedChunk.setLastRebuildTask(this);
@@ -40,10 +43,25 @@ public class RebuildTask implements Runnable {
             );
 
             SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
-            BlockEntityRenderState renderState = Minecraft.getInstance().levelRenderer.blockEntityRenderDispatcher.tryExtractRenderState(be, 0, null, null);
+            BlockEntityRenderDispatcher renderDispatcher = Minecraft.getInstance().levelRenderer.blockEntityRenderDispatcher;
+
+            BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = renderDispatcher.getRenderer(be);
+            BlockEntityRenderState renderState = renderer.createRenderState();
+            renderer.extractRenderState(
+                be,
+                renderState,
+                0,
+                Minecraft.getInstance().gameRenderer.getMainCamera().position(),
+                null
+            );
 
             if (renderState != null) {
-                Minecraft.getInstance().levelRenderer.blockEntityRenderDispatcher.submit(renderState, poseStack, submitNodeStorage, Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState);
+                renderDispatcher.submit(
+                    renderState,
+                    poseStack,
+                    submitNodeStorage,
+                    Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState
+                );
             }
 
             FeatureRenderDispatcher dispatcher = new FeatureRenderDispatcher(

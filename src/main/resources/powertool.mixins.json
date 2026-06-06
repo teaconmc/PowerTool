@@ -8,6 +8,7 @@
     "CommandBlockMixin",
     "CommandsMixin",
     "CommandSourceStackMixin",
+    "DedicatedServerPropertiesMixin",
     "MixinArmorStand",
     "MixinEntity",
     "MixinItemFrame",

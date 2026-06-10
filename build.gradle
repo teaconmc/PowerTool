@@ -138,8 +138,11 @@ repositories {
 }
 
 dependencies {
-//    localRuntime "mezz.jei:jei-1.21-neoforge:${jei_version}"
-//
+
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
     jarJar(implementation "com.xkball:xklib-3d:$xklib_version"){
         version {
             strictly '[0.0.6, 1.0.0)'

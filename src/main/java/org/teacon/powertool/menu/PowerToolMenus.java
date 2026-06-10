@@ -21,7 +21,8 @@ public class PowerToolMenus {
     public static DeferredHolder<MenuType<?>, MenuType<RegisterMenu>> REGISTER_MENU;
     
     public static DeferredHolder<MenuType<?>, MenuType<TextureExtractorMenu>> TEXTURE_EXTRACTOR_MENU;
-    
+    public static DeferredHolder<MenuType<?>, MenuType<JEIRecipeDisplayMenu>> JEI_RECIPE_DISPLAY_MENU;
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
         POWER_SUPPLY_MENU = MENUS.register("power_supply", () -> IMenuTypeExtension.create(((windowId, inv, data) -> {
@@ -35,6 +36,9 @@ public class PowerToolMenus {
                 new RegisterMenu(windowId, inv, new SimpleContainer(2), data.readBlockPos()))));
         TEXTURE_EXTRACTOR_MENU = MENUS.register("texture_extractor", () -> IMenuTypeExtension.create(
                 (windowId, inv, data) -> new TextureExtractorMenu(windowId, inv)
+        ));
+        JEI_RECIPE_DISPLAY_MENU = MENUS.register("jei_recipe_display", () -> IMenuTypeExtension.create(
+                (windowId, inv, data) -> new JEIRecipeDisplayMenu(windowId, inv)
         ));
     }
 }

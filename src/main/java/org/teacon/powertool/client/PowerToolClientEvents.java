@@ -32,6 +32,7 @@ import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
+import org.teacon.powertool.client.gui.JEIRecipeDisplayScreen;
 import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
 import org.teacon.powertool.client.gui.PowerSupplyScreen;
 import org.teacon.powertool.client.gui.RegisterScreen;
@@ -39,6 +40,7 @@ import org.teacon.powertool.client.gui.TextureExtractorScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
+import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
 import org.teacon.powertool.client.renders.entity.AutoVanishBoatRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
@@ -201,8 +203,9 @@ public class PowerToolClientEvents {
             event.register(PowerToolMenus.TRASH_CAN_MENU.get(), TrashCanWithContainerScreen::new);
             event.register(PowerToolMenus.REGISTER_MENU.get(), RegisterScreen::new);
             event.register(PowerToolMenus.TEXTURE_EXTRACTOR_MENU.get(), TextureExtractorScreen::new);
+            event.register(PowerToolMenus.JEI_RECIPE_DISPLAY_MENU.get(), JEIRecipeDisplayScreen::new);
         }
-        
+
         @SubscribeEvent
         public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(), ItemDisplayBlockEntityRenderer::new);
@@ -211,6 +214,7 @@ public class PowerToolClientEvents {
             event.registerBlockEntityRenderer(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), LinkHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
+            event.registerBlockEntityRenderer(PowerToolBlocks.JEI_RECIPE_DISPLAY_BLOCK_ENTITY.get(), JEIRecipeDisplayBlockEntityRenderer::new);
 //            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
             
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);

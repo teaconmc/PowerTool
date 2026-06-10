@@ -1,0 +1,64 @@
+package org.teacon.powertool.block;
+
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
+
+@NonNullByDefault
+public class JEIRecipeDisplayBlock extends BaseEntityBlock {
+
+    private static final MapCodec<JEIRecipeDisplayBlock> CODEC = simpleCodec(JEIRecipeDisplayBlock::new);
+
+    protected JEIRecipeDisplayBlock(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new JEIRecipeDisplayBlockEntity(pos, state);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        return use(level, pos, player);
+    }
+
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        return use(level, pos, player);
+    }
+
+    private InteractionResult use(Level level, BlockPos pos, Player player) {
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            if (level.getBlockEntity(pos) instanceof JEIRecipeDisplayBlockEntity be) {
+                player.openMenu(be);
+            }
+            return InteractionResult.CONSUME;
+        }
+    }
+}

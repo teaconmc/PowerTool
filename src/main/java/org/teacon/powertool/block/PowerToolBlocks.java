@@ -43,6 +43,7 @@ import org.teacon.powertool.block.cosmetical.CosmeticWaterloggedBlock;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
+import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
 import org.teacon.powertool.block.entity.ItemSupplierBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
@@ -138,7 +139,8 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, TimeObserverBlock> GAME_TIME_CYCLE_OBSERVER;
     public static DeferredHolder<Block, RedStoneDelayBlock> DELAYER;
     public static DeferredHolder<Block, BezierCurveBlock> BEZIER_CURVE_BLOCK;
-    
+    public static DeferredHolder<Block, JEIRecipeDisplayBlock> JEI_RECIPE_DISPLAY_BLOCK;
+
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<PeriodicCommandBlockEntity>> COMMAND_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<PowerSupplyBlockEntity>> POWER_SUPPLY_BLOCK_ENTITY;
     
@@ -154,7 +156,8 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TimeObserverBlockEntity>> TIME_OBSERVER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<RedStoneDelayBlockEntity>> DELAYER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<BezierCurveBlockEntity>> BEZIER_CURVE_BLOCK_ENTITY;
-    
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<JEIRecipeDisplayBlockEntity>> JEI_RECIPE_DISPLAY_BLOCK_ENTITY;
+
     public static DeferredHolder<Fluid, FakeWater> FAKE_WATER = FLUIDS.register("fake_water", FakeWater::new);
     public static DeferredHolder<Block, LiquidBlock> FAKE_WATER_BLOCK = BLOCKS.registerBlock("fake_water_block", (p) -> new LiquidBlock(
             FAKE_WATER.get(), p),() -> BlockBehaviour.Properties.ofFullCopy(Blocks.WATER));
@@ -216,7 +219,8 @@ public class PowerToolBlocks {
         GAME_TIME_CYCLE_OBSERVER = BLOCKS.registerBlock("observer_gametime_cyl", (p) -> new TimeObserverBlock(p, TimeObserverBlock.Type.GAME_DAILY_CYCLE));
         DELAYER = BLOCKS.registerBlock("delayer", RedStoneDelayBlock::new);
         BEZIER_CURVE_BLOCK = BLOCKS.registerBlock("bezier_curve_block", (p) -> new BezierCurveBlock(p.noOcclusion()));
-        
+        JEI_RECIPE_DISPLAY_BLOCK = BLOCKS.registerBlock("jei_recipe_display_block", (p) -> new JEIRecipeDisplayBlock(p.noOcclusion()));
+
         for (var dyeColor : DyeColor.values()) {
             var name = dyeColor.getName() + "_distant_horizon_cheating_block";
             var block = BLOCKS.registerBlock(name, (p) -> new DistantHorizonCheatingBlock(p.forceSolidOn().noOcclusion().mapColor(dyeColor)));
@@ -266,7 +270,10 @@ public class PowerToolBlocks {
         BEZIER_CURVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("bezier_curve_block", () -> new BlockEntityType<>(
                 BezierCurveBlockEntity::new, BEZIER_CURVE_BLOCK.get()
         ));
-        
+        JEI_RECIPE_DISPLAY_BLOCK_ENTITY = BLOCK_ENTITIES.register("jei_recipe_display_block", () -> new BlockEntityType<>(
+                JEIRecipeDisplayBlockEntity::new, JEI_RECIPE_DISPLAY_BLOCK.get()
+        ));
+
         regTrapDoors(Map.of(
                 BlockSetType.OAK, Blocks.OAK_TRAPDOOR,
                 BlockSetType.BIRCH, Blocks.BIRCH_TRAPDOOR,
@@ -334,8 +341,9 @@ public class PowerToolBlocks {
         ITEMS.registerItem("observer_gametime_cyl", (p) -> new PowerToolBlockItem(GAME_TIME_CYCLE_OBSERVER.get(), p));
         ITEMS.registerItem("delayer", (p) -> new PowerToolBlockItem(DELAYER.get(), p));
         ITEMS.registerItem("bezier_curve_block", (p) -> new PowerToolBlockItem(BEZIER_CURVE_BLOCK.get(), p));
+        ITEMS.registerItem("jei_recipe_display_block", (p) -> new PowerToolBlockItem(JEI_RECIPE_DISPLAY_BLOCK.get(), p));
     }
-    
+
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {
         for (var type : existing.entrySet()) {
             var name = "cosmetic_" + type.getKey().name() + "_trapdoor";

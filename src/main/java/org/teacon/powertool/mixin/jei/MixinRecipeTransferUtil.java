@@ -23,7 +23,7 @@ public class MixinRecipeTransferUtil {
     @Inject(method = "transferRecipe(Lmezz/jei/api/recipe/transfer/IRecipeTransferManager;Lnet/minecraft/world/inventory/AbstractContainerMenu;Lmezz/jei/api/gui/IRecipeLayoutDrawable;Lnet/minecraft/world/entity/player/Player;ZZ)Ljava/util/Optional;",
     at = @At(value = "INVOKE", target = "Lmezz/jei/api/recipe/transfer/IRecipeTransferHandler;transferRecipe(Lnet/minecraft/world/inventory/AbstractContainerMenu;Ljava/lang/Object;Lmezz/jei/api/gui/ingredient/IRecipeSlotsView;Lnet/minecraft/world/entity/player/Player;ZZ)Lmezz/jei/api/recipe/transfer/IRecipeTransferError;"))
     private static <C extends AbstractContainerMenu, R> void onTransferRecipe(IRecipeTransferManager recipeTransferManager, C container, IRecipeLayoutDrawable<R> recipeLayout, Player player, boolean maxTransfer, boolean doTransfer, CallbackInfoReturnable<Optional<IRecipeTransferError>> cir, @Local(name = "transferHandler") IRecipeTransferHandler<C, R> transferHandler){
-        if(transferHandler instanceof JEIRecipeTransferHandler handler && container instanceof JEIRecipeDisplayMenu menu){
+        if(doTransfer && transferHandler instanceof JEIRecipeTransferHandler handler && container instanceof JEIRecipeDisplayMenu menu){
             handler.customTransfer(menu, player, recipeLayout);
         }
     }

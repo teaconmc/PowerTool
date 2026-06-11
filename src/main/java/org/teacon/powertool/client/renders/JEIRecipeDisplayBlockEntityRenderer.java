@@ -1,23 +1,45 @@
 package org.teacon.powertool.client.renders;
 
+import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
+import com.xkball.xklibmc.api.client.b3d.SamplerCacheCache;
+import com.xkball.xklibmc.client.b3d.pipeline.ExtendedRenderPipeline;
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
 import org.teacon.powertool.client.gui.JEIRecipeDisplayScreen;
+import org.teacon.powertool.compat.jei.PowerToolJEIPlugin;
+import org.teacon.powertool.utils.SizedCache;
+import org.teacon.powertool.utils.VanillaUtils;
+
+import java.util.Objects;
 
 @NonNullByDefault
 public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<JEIRecipeDisplayBlockEntity, JEIRecipeDisplayBlockEntityRenderer.RenderState> {
+    
+    @Nullable
+    public static SizedCache<RecipeKey, RecipeRenderCache> recipeLayoutCache;
+
+    private final SizedCache<RecipeKey, RecipeRenderCache> cache;
+    
 
     public JEIRecipeDisplayBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+        this.cache = new SizedCache<>();
+        recipeLayoutCache = this.cache;
     }
 
     @Override
@@ -28,16 +50,56 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
     @Override
     public void extractRenderState(JEIRecipeDisplayBlockEntity blockEntity, RenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        state.recipeLayout = JEIRecipeDisplayScreen.updateRecipeLayout(blockEntity.recipeType, blockEntity.recipeId);
+        if(PowerToolJEIPlugin.runtime != null && blockEntity.recipeType != null && blockEntity.recipeId != null){
+            var key = new RecipeKey(blockEntity.recipeType, blockEntity.recipeId);
+            state.cacheEntry = cache.getOrCreate(key, RecipeRenderCache::create);
+        }
     }
 
     @Override
     public void submit(RenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-    
+        var entry = state.cacheEntry;
+        if (entry == null || entry.layout == null) {
+            return;
+        }
+        assert entry.renderType != null && entry.textureTarget != null;
+        poseStack.pushPose();
+        poseStack.scale(0.01f, 0.01f, 0.01f);
+        submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
+            var w = entry.textureTarget.width;
+            var h = entry.textureTarget.height;
+            consumer.addVertex(pose,-w / 2f, h, 0).setUv(1, 1).setColor(-1);
+            consumer.addVertex(pose,w / 2f, h, 0).setUv(0, 1).setColor(-1);
+            consumer.addVertex(pose,w / 2f, 0, 0).setUv(0, 0).setColor(-1);
+            consumer.addVertex(pose,-w / 2f, 0, 0).setUv(1, 0).setColor(-1);
+        });
+        poseStack.popPose();
     }
 
     public static class RenderState extends BlockEntityRenderState {
-        @Nullable
-        IRecipeLayoutDrawable<?> recipeLayout;
+        @Nullable RecipeRenderCache cacheEntry;
+    }
+    
+    public record RecipeKey(Identifier recipeType, Identifier recipeId){
+    
+    }
+    
+    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout,@Nullable TextureTarget textureTarget,@Nullable RenderType renderType){
+    
+        public static RecipeRenderCache create(RecipeKey key){
+            var layout = JEIRecipeDisplayScreen.updateRecipeLayout(key.recipeType, key.recipeId);
+            if(layout == null){
+                return new RecipeRenderCache(null, null, null);
+            }
+            var rect = layout.getRect();
+            var target = new TextureTarget(key.recipeId.getPath(), rect.getWidth(), rect.getHeight(), true);
+            var pipeline = ExtendedRenderPipeline.extendedbuilder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+                    .withLocation(VanillaUtils.modRL(key.recipeId.getPath()))
+                    .withDepthStencilState(DepthStencilState.DEFAULT)
+                    .bindSampler("Sampler0", () -> Pair.of(Objects.requireNonNull(target.getColorTextureView()), SamplerCacheCache.NEAREST_CLAMP))
+                    .buildExtended();
+            var renderType = RenderType.create("jei_recipe_display_ber", RenderSetup.builder(pipeline).createRenderSetup());
+            return new RecipeRenderCache(layout, target, renderType);
+        }
     }
 }

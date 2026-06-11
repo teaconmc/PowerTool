@@ -23,6 +23,7 @@
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",
+    "client.GameRendererMixin",
     "client.SectionRenderDispatcherMixin",
     "client.debug.MixinGlProgram"
   ],

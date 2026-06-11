@@ -2,7 +2,10 @@ package org.teacon.powertool.client.gui;
 
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.recipe.vanilla.IJeiBrewingRecipe;
+import mezz.jei.api.recipe.vanilla.IJeiCompostingRecipe;
+import mezz.jei.api.recipe.vanilla.IJeiGrindstoneRecipe;
 import mezz.jei.library.plugins.jei.tags.ITagInfoRecipe;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -84,7 +87,8 @@ public class JEIRecipeDisplayScreen extends AbstractContainerScreen<JEIRecipeDis
         if (recipeId == null || recipeType == null) {
             return null;
         }
-        var runtime = Objects.requireNonNull(PowerToolJEIPlugin.runtime);
+        var runtime = PowerToolJEIPlugin.runtime;
+        if(runtime == null) return null;
         var recipeManager = runtime.getRecipeManager();
         var type_ = recipeManager.getRecipeType(recipeType);
         if (type_.isEmpty()) return null;
@@ -102,6 +106,10 @@ public class JEIRecipeDisplayScreen extends AbstractContainerScreen<JEIRecipeDis
             case RecipeHolder<?> holder -> holder.id().identifier();
             case IJeiBrewingRecipe brewingRecipe -> brewingRecipe.getUid();
             case ITagInfoRecipe tagInfoRecipe -> tagInfoRecipe.getTag().location();
+            case IJeiAnvilRecipe anvilRecipe -> anvilRecipe.getUid();
+            case IJeiCompostingRecipe compostingRecipe -> compostingRecipe.getUid();
+            case IJeiGrindstoneRecipe grindstoneRecipe -> grindstoneRecipe.getUid();
+            
             default -> null;
         };
     }

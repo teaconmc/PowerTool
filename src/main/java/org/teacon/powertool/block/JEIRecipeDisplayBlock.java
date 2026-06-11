@@ -56,7 +56,7 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         } else {
             if (level.getBlockEntity(pos) instanceof JEIRecipeDisplayBlockEntity be) {
-                player.openMenu(be);
+                player.openMenu(be,buf -> buf.writeBlockPos(pos));
             }
             return InteractionResult.CONSUME;
         }

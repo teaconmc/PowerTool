@@ -1,11 +1,13 @@
 package org.teacon.powertool.menu;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -13,16 +15,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class JEIRecipeDisplayMenu extends AbstractContainerMenu {
 
-    public JEIRecipeDisplayMenu(int containerId, Inventory playerInventory) {
+    private final BlockPos blockPos;
+
+    public JEIRecipeDisplayMenu(int containerId, Inventory playerInventory, BlockPos blockPos) {
         super(PowerToolMenus.JEI_RECIPE_DISPLAY_MENU.get(), containerId);
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-            }
-        }
-        for (int k = 0; k < 9; k++) {
-            this.addSlot(new Slot(playerInventory, k, 8 + k * 18, 142));
-        }
+        this.blockPos = blockPos;
+    }
+
+    public BlockPos getBlockPos() {
+        return blockPos;
     }
 
     @Override
@@ -32,6 +33,8 @@ public class JEIRecipeDisplayMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        var level = player.level();
+        return level.getBlockEntity(blockPos) instanceof JEIRecipeDisplayBlockEntity
+                && player.distanceToSqr(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5) <= 64.0;
     }
 }

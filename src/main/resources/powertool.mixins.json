@@ -15,7 +15,8 @@
     "MixinThrownEgg",
     "PlayerCreativeNoClipMixin",
     "ServerGamePacketListenerImplMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerMixin",
+    "jei.MixinRecipeTransferUtil"
   ],
   "client": [
     "client.ClientRecipeBookMixin",

@@ -38,7 +38,7 @@ public class PowerToolMenus {
                 (windowId, inv, data) -> new TextureExtractorMenu(windowId, inv)
         ));
         JEI_RECIPE_DISPLAY_MENU = MENUS.register("jei_recipe_display", () -> IMenuTypeExtension.create(
-                (windowId, inv, data) -> new JEIRecipeDisplayMenu(windowId, inv)
+                (windowId, inv, data) -> new JEIRecipeDisplayMenu(windowId, inv, data.readBlockPos())
         ));
     }
 }

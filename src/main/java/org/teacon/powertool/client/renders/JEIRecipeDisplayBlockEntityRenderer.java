@@ -4,9 +4,12 @@ import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Axis;
 import com.xkball.xklibmc.api.client.b3d.SamplerCacheCache;
 import com.xkball.xklibmc.client.b3d.pipeline.ExtendedRenderPipeline;
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -16,6 +19,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -27,6 +31,7 @@ import org.teacon.powertool.utils.SizedCache;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @NonNullByDefault
 public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<JEIRecipeDisplayBlockEntity, JEIRecipeDisplayBlockEntityRenderer.RenderState> {
@@ -60,10 +65,26 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
     public void submit(RenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var entry = state.cacheEntry;
         if (entry == null || entry.layout == null) {
+            var text = Component.translatable("powertool.jei_recipe_display.init_jei");
+            var w = Minecraft.getInstance().font.width(text);
+            poseStack.pushPose();
+            poseStack.translate(0.5f,0.6f,0);
+            poseStack.scale(0.025f, -0.025f, 0.025f);
+            poseStack.translate(-w/2f,0,0);
+            submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
+            poseStack.popPose();
+            poseStack.pushPose();
+            poseStack.translate(0.5f,0.6f,0);
+            poseStack.scale(0.025f, -0.025f, 0.025f);
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
+            poseStack.translate(-w/2f,0,0);
+            submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
+            poseStack.popPose();
             return;
         }
         assert entry.renderType != null && entry.textureTarget != null;
         poseStack.pushPose();
+        poseStack.translate(0.5f,(1-entry.textureTarget.height * 0.01f)/2f,0.5f);
         poseStack.scale(0.01f, 0.01f, 0.01f);
         submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
             var w = entry.textureTarget.width;
@@ -72,6 +93,10 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             consumer.addVertex(pose,w / 2f, h, 0).setUv(0, 1).setColor(-1);
             consumer.addVertex(pose,w / 2f, 0, 0).setUv(0, 0).setColor(-1);
             consumer.addVertex(pose,-w / 2f, 0, 0).setUv(1, 0).setColor(-1);
+            consumer.addVertex(pose, -w / 2f, 0, 0).setUv(0, 0).setColor(-1);
+            consumer.addVertex(pose,  w / 2f, 0, 0).setUv(1, 0).setColor(-1);
+            consumer.addVertex(pose,  w / 2f, h, 0).setUv(1, 1).setColor(-1);
+            consumer.addVertex(pose, -w / 2f, h, 0).setUv(0, 1).setColor(-1);
         });
         poseStack.popPose();
     }
@@ -84,12 +109,12 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
     
     }
     
-    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout,@Nullable TextureTarget textureTarget,@Nullable RenderType renderType){
+    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout, @Nullable TextureTarget textureTarget, @Nullable RenderType renderType, AtomicBoolean dirty){
     
         public static RecipeRenderCache create(RecipeKey key){
             var layout = JEIRecipeDisplayScreen.updateRecipeLayout(key.recipeType, key.recipeId);
             if(layout == null){
-                return new RecipeRenderCache(null, null, null);
+                return new RecipeRenderCache(null, null, null, new AtomicBoolean(false));
             }
             var rect = layout.getRect();
             var target = new TextureTarget(key.recipeId.getPath(), rect.getWidth(), rect.getHeight(), true);
@@ -99,7 +124,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
                     .bindSampler("Sampler0", () -> Pair.of(Objects.requireNonNull(target.getColorTextureView()), SamplerCacheCache.NEAREST_CLAMP))
                     .buildExtended();
             var renderType = RenderType.create("jei_recipe_display_ber", RenderSetup.builder(pipeline).createRenderSetup());
-            return new RecipeRenderCache(layout, target, renderType);
+            return new RecipeRenderCache(layout, target, renderType, new AtomicBoolean(true));
         }
     }
 }

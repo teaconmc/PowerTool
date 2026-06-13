@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.OffScreenGuiRenderer;
 
+import java.util.Objects;
+
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
@@ -25,11 +27,12 @@ public class GameRendererMixin {
         var cache = JEIRecipeDisplayBlockEntityRenderer.recipeLayoutCache;
         if (cache != null) {
             for(var v : cache.getMap().values()){
-                if(v.layout() == null) continue;
-                OffScreenGuiRenderer.getInstance().render(v.textureTarget(), guiGraphicsExtractor -> {
+                if(v.layout() == null || !v.dirty().get()) continue;
+                OffScreenGuiRenderer.getInstance().render(Objects.requireNonNull(v.textureTarget()), guiGraphicsExtractor -> {
                     v.layout().drawRecipe(guiGraphicsExtractor, 0, 0);
                     v.layout().drawOverlays(guiGraphicsExtractor, 0 ,0);
                 } );
+                v.dirty().set(false);
             }
             cache.tick();
         }

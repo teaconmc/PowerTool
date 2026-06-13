@@ -8,6 +8,7 @@ import com.mojang.math.Axis;
 import com.xkball.xklibmc.api.client.b3d.SamplerCacheCache;
 import com.xkball.xklibmc.client.b3d.pipeline.ExtendedRenderPipeline;
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -60,26 +61,33 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             state.cacheEntry = cache.getOrCreate(key, RecipeRenderCache::create);
         }
     }
+    
+    private void renderText(Component text, PoseStack poseStack, SubmitNodeCollector submitNodeCollector){
+        var w = Minecraft.getInstance().font.width(text);
+        poseStack.pushPose();
+        poseStack.translate(0.5f,0.6f,0);
+        poseStack.scale(0.025f, -0.025f, 0.025f);
+        poseStack.translate(-w/2f,0,0);
+        submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
+        poseStack.popPose();
+        poseStack.pushPose();
+        poseStack.translate(0.5f,0.6f,0);
+        poseStack.scale(0.025f, -0.025f, 0.025f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180));
+        poseStack.translate(-w/2f,0,0);
+        submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
+        poseStack.popPose();
+    }
 
     @Override
     public void submit(RenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var entry = state.cacheEntry;
-        if (entry == null || entry.layout == null) {
-            var text = Component.translatable("powertool.jei_recipe_display.init_jei");
-            var w = Minecraft.getInstance().font.width(text);
-            poseStack.pushPose();
-            poseStack.translate(0.5f,0.6f,0);
-            poseStack.scale(0.025f, -0.025f, 0.025f);
-            poseStack.translate(-w/2f,0,0);
-            submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
-            poseStack.popPose();
-            poseStack.pushPose();
-            poseStack.translate(0.5f,0.6f,0);
-            poseStack.scale(0.025f, -0.025f, 0.025f);
-            poseStack.mulPose(Axis.YP.rotationDegrees(180));
-            poseStack.translate(-w/2f,0,0);
-            submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
-            poseStack.popPose();
+        if (PowerToolJEIPlugin.runtime == null) {
+            renderText(Component.translatable("powertool.jei_recipe_display.init_jei"), poseStack, submitNodeCollector);
+            return;
+        }
+        if(entry == null || entry.layout == null){
+            renderText(Component.translatable("powertool.jei_recipe_display.unrecognized_recipe").withStyle(ChatFormatting.RED), poseStack, submitNodeCollector);
             return;
         }
         assert entry.renderType != null && entry.textureTarget != null;

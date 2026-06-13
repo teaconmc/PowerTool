@@ -1,5 +1,6 @@
 package org.teacon.powertool.client.gui;
 
+import com.mojang.logging.LogUtils;
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
@@ -14,6 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
 import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
 import org.teacon.powertool.compat.jei.PowerToolJEIPlugin;
 import org.teacon.powertool.menu.JEIRecipeDisplayMenu;
@@ -23,6 +25,8 @@ import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 public class JEIRecipeDisplayScreen extends AbstractContainerScreen<JEIRecipeDisplayMenu> {
+    
+    private static final Logger LOGGER = LogUtils.getLogger();
     
     @Nullable
     private IRecipeLayoutDrawable<?> recipeLayout;
@@ -109,8 +113,19 @@ public class JEIRecipeDisplayScreen extends AbstractContainerScreen<JEIRecipeDis
             case IJeiAnvilRecipe anvilRecipe -> anvilRecipe.getUid();
             case IJeiCompostingRecipe compostingRecipe -> compostingRecipe.getUid();
             case IJeiGrindstoneRecipe grindstoneRecipe -> grindstoneRecipe.getUid();
-            
-            default -> null;
+            default -> {
+                try {
+                    var getUidMethod = recipe.getClass().getMethod("getUid");
+                    var uid = (Identifier) getUidMethod.invoke(recipe);
+                    LOGGER.info("Obtained UID via reflection for unknown recipe type: class={}, recipe={}", recipe.getClass().getName(), recipe);
+                    yield uid;
+                } catch (NoSuchMethodException e) {
+                    LOGGER.warn("Unrecognized recipe type without getUid method: class={}, recipe={}", recipe.getClass().getName(), recipe);
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to invoke getUid via reflection: class={}, recipe={}, error={}", recipe.getClass().getName(), recipe, e.toString());
+                }
+                yield null;
+            }
         };
     }
 }

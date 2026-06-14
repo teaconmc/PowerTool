@@ -94,6 +94,7 @@
   "block.powertool.cosmetic_beacon": "Beacon(Cosmetic)",
   "block.powertool.cosmetic_enchanting_table": "Enchanting Table(Cosmetic)",
   "block.powertool.cosmetic_stonecutter": "StoneCutter(Cosmetic)",
+  "block.powertool.cosmetic_ice": "Unmelting Ice",
   "block.powertool.jei_recipe_display_block": "JEI Recipe Display Block",
   "block.powertool.jei_recipe_display_block.tooltip": "If a recipe type is unrecognized, check the log and submit a compatibility issue",
   "powertool.jei_recipe_display.init_jei": "Open inventory to initialize JEI",

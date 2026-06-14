@@ -147,6 +147,7 @@
   "block.powertool.cosmetic_beacon": "信标（装饰品）",
   "block.powertool.cosmetic_enchanting_table": "附魔台（装饰品）",
   "block.powertool.cosmetic_stonecutter": "切石机（装饰品）",
+  "block.powertool.cosmetic_ice": "不会融化的冰",
   "block.powertool.jei_recipe_display_block": "JEI配方展示方块",
   "block.powertool.jei_recipe_display_block.tooltip": "如果无法识别配方类型, 请查看日志并提交请求兼容issue",
   "powertool.jei_recipe_display.init_jei": "请打开物品栏以初始化JEI",

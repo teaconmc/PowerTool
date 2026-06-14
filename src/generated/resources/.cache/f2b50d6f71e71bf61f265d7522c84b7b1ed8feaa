@@ -1,4 +1,4 @@
-// 26.1	2026-04-26T23:18:23.3906325	Model Definitions - powertool
+// 26.1.2	2026-06-14T22:13:40.0642434	Model Definitions - powertool
 8ea8f7958a6d3eb49c2e3750c50b8c4cf1b2ea78 assets/powertool/items/auto_vanish_acacia_boat.json
 05e9e4bd8b74fd0ae65ff5047d1bf36a36e5d5b3 assets/powertool/items/auto_vanish_bamboo_raft.json
 49f5b6218b25736e0ea25adbe2ca71534b347c25 assets/powertool/items/auto_vanish_birch_boat.json
@@ -41,6 +41,7 @@ aa79cfcbf300d1d9c695ddf608b6b1860cecb3f5 assets/powertool/items/cosmetic_furnace
 1aacaf20b6c2045d0d53e5f2985b140f733eb3eb assets/powertool/items/cosmetic_gravel.json
 db4feb0298c8561ccf0a89b44994b858af7448d8 assets/powertool/items/cosmetic_hopper.json
 74b32076b78872754fe5e87594362e428d7dd891 assets/powertool/items/cosmetic_horn_coral_block.json
+46835f0f7a2c6c00a254fa25b19ea5b63ff6324c assets/powertool/items/cosmetic_ice.json
 4d770dffc53c5e1bec7aee658aed1ca9f5f8eafd assets/powertool/items/cosmetic_iron_trapdoor.json
 0958eb69eb509b4452b21ad646dd20d430419776 assets/powertool/items/cosmetic_jungle_trapdoor.json
 a2fcf3795dfead2aa2d4689abda215dd3cecd8ac assets/powertool/items/cosmetic_mangrove_trapdoor.json
@@ -72,6 +73,7 @@ b07aaf0de64bb483aaec95eda941be67a8f70c1b assets/powertool/items/green_trash_can_
 a11f252ad653cdd8690637c43e99724533c086b4 assets/powertool/items/holographic_sign.json
 2c5705aa6cc9b504fbdc993f3e9a6a3cd6c026a4 assets/powertool/items/item_display.json
 bdb884cfe68ea9de3e37d4f7e49a3df7b88fd360 assets/powertool/items/item_supplier.json
+8092783b22ed797920498a6fcf95bed23468b591 assets/powertool/items/jei_recipe_display_block.json
 5b6856742d407a3921f60058512071a1680f8d41 assets/powertool/items/light_blue_distant_horizon_cheating_block.json
 99e8867345e437f6b37e7f8ebb3868e6c43f04e7 assets/powertool/items/light_gray_distant_horizon_cheating_block.json
 e719d3e139a3f11ca3a85ec167101d20f06ba15e assets/powertool/items/lime_distant_horizon_cheating_block.json

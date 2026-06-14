@@ -1,4 +1,4 @@
-// 26.1	2026-04-26T23:18:23.3906325	Tags for minecraft:block mod id powertool
+// 26.1.2	2026-06-14T22:13:40.0642434	Tags for minecraft:block mod id powertool
 38dfae216b5dfc4bded03a5ab1d88646866621ef data/minecraft/tags/block/dragon_immune.json
 38dfae216b5dfc4bded03a5ab1d88646866621ef data/minecraft/tags/block/wither_immune.json
 d92293d44806b5026effc3ef39db0c27287b3f2a data/powertool/tags/block/command_block.json

@@ -12,6 +12,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.HalfTransparentBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -292,6 +293,7 @@ public class PowerToolBlocks {
         ));
         
         regCosmetic(SIMPLE_BLOCKS, CosmeticSimpleBlock::new);
+        regCosmetic(List.of(Blocks.ICE), HalfTransparentBlock::new);
         regCosmetic(List.of(Blocks.ENCHANTING_TABLE), CosmeticWaterloggedBlock::new);
         regCosmetic(List.of(Blocks.STONECUTTER), CosmeticHorizontalDirectionalBlock::new);
         

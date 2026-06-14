@@ -108,26 +108,32 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
             var w = entry.getWidth();
             var h = entry.getHeight();
-            consumer.addVertex(pose,-w / 2f, h, 0).setUv(1, 1).setColor(-1);
-            consumer.addVertex(pose,w / 2f, h, 0).setUv(0, 1).setColor(-1);
-            consumer.addVertex(pose,w / 2f, 0, 0).setUv(0, 0).setColor(-1);
-            consumer.addVertex(pose,-w / 2f, 0, 0).setUv(1, 0).setColor(-1);
-            consumer.addVertex(pose, -w / 2f, 0, 0).setUv(0, 0).setColor(-1);
-            consumer.addVertex(pose,  w / 2f, 0, 0).setUv(1, 0).setColor(-1);
-            consumer.addVertex(pose,  w / 2f, h, 0).setUv(1, 1).setColor(-1);
-            consumer.addVertex(pose, -w / 2f, h, 0).setUv(0, 1).setColor(-1);
+            var l = -w/2f - w/4f;
+            var r =  w/2f + w/4f;
+            var t = h + h/4f;
+            var b = 0 - h/4f;
+            consumer.addVertex(pose,l, t, 0).setUv(1, 1).setColor(-1);
+            consumer.addVertex(pose,r, t, 0).setUv(0, 1).setColor(-1);
+            consumer.addVertex(pose,r, b, 0).setUv(0, 0).setColor(-1);
+            consumer.addVertex(pose,l, b, 0).setUv(1, 0).setColor(-1);
+            consumer.addVertex(pose,l, b, 0).setUv(0, 0).setColor(-1);
+            consumer.addVertex(pose,r, b, 0).setUv(1, 0).setColor(-1);
+            consumer.addVertex(pose,r, t, 0).setUv(1, 1).setColor(-1);
+            consumer.addVertex(pose,l, t, 0).setUv(0, 1).setColor(-1);
         });
         poseStack.popPose();
         var cameraEntity = Minecraft.getInstance().getCameraEntity();
-        if(state.hit && cameraEntity != null){
+        if(cameraEntity != null){
             var eye = cameraEntity.getEyePosition(state.partialTicks);
             var dir = cameraEntity.getViewVector(state.partialTicks);
             var mouse = entry.getWorldCorners(state.blockPos, 0).raycast(eye.toVector3f(), dir.toVector3f());
             var mouseXOld = entry.renderState.mouseX;
             var mouseYOld = entry.renderState.mouseY;
-            entry.renderState.mouseX = mouse == null ? 0 : (int) (mouse.x * entry.getWidth());
-            entry.renderState.mouseY = mouse == null ? 0 : (int) (mouse.y * entry.getHeight());
-            entry.renderState.dirty = mouseXOld != entry.renderState.mouseX || mouseYOld != entry.renderState.mouseY;
+            var mouseX = mouse == null ? 0 : (int) (mouse.x * entry.getWidth() + entry.getWidth() / 4f);
+            var mouseY = mouse == null ? 0 : (int) (mouse.y * entry.getHeight() + entry.getHeight() / 4f);
+            entry.renderState.mouseX = mouseX;
+            entry.renderState.mouseY = mouseY;
+            entry.renderState.dirty = mouseX != 0 || mouseY != 0 || mouseXOld != mouseX || mouseYOld != mouseY;
         }
         else{
             if(entry.renderState.mouseX != 0 || entry.renderState.mouseY != 0){
@@ -162,7 +168,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
                 return new RecipeRenderCache(null, null, null, new RecipeRenderCacheState());
             }
             var rect = layout.getRect();
-            var target = new TextureTarget(key.recipeId.getPath(), rect.getWidth() * 2, rect.getHeight() * 2, true);
+            var target = new TextureTarget(key.recipeId.getPath(), (int) (rect.getWidth() * 6f), (int) (rect.getHeight() * 6f), true);
             var pipeline = ExtendedRenderPipeline.extendedbuilder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation(VanillaUtils.modRL(key.recipeId.getPath()))
                     .withDepthStencilState(DepthStencilState.DEFAULT)
@@ -179,11 +185,11 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         }
         
         public int getWidth(){
-            return textureTarget == null ? 0 : textureTarget.width / 2;
+            return layout == null ? 0 : layout.getRect().getWidth();
         }
         
         public int getHeight(){
-            return textureTarget == null ? 0 : textureTarget.height / 2;
+            return layout == null ? 0 : layout.getRect().getHeight();
         }
         
         public WorldQuad getWorldCorners(BlockPos pos, float yRotationDegrees) {

@@ -33,9 +33,10 @@ public class GameRendererMixin {
                 if(v.layout() == null || !v.renderState().dirty) continue;
                 OffScreenGuiRenderer.getInstance().render(Objects.requireNonNull(v.textureTarget()), guiGraphicsExtractor -> {
                     guiGraphicsExtractor.pose().pushMatrix();
-                    guiGraphicsExtractor.pose().scale(2);
+                    guiGraphicsExtractor.pose().scale(4);
                     var mouseX = v.renderState().mouseX;
                     var mouseY = v.renderState().mouseY;
+                    v.layout().setPosition(v.getWidth()/4, v.getHeight()/4);
                     v.layout().drawRecipe(guiGraphicsExtractor, mouseX, mouseY);
                     v.layout().drawOverlays(guiGraphicsExtractor, mouseX, mouseY);
                     guiGraphicsExtractor.extractDeferredElements(mouseX, mouseY, deltaTracker.getGameTimeDeltaPartialTick(false));

@@ -60,7 +60,12 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
         }
         return super.getShape(state, level, pos, context);
     }
-
+    
+    @Override
+    public boolean hasDynamicShape() {
+        return true;
+    }
+    
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
@@ -102,7 +107,7 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
                         var key = new JEIRecipeDisplayBlockEntityRenderer.RecipeKey(be.recipeType, be.recipeId);
                         var entry = cache.getMap().get(key);
                         if (entry != null && entry.valid()) {
-                            return Shapes.create(entry.getWorldCorners(BlockPos.ZERO, 0).getAABB().inflate(0.02f));
+                            return Shapes.create(entry.getWorldCorners(BlockPos.ZERO, 0).getAABB().inflate(0.04f));
                         }
                     }
                 }

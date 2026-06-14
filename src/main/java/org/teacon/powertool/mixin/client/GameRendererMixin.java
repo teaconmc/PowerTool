@@ -1,7 +1,10 @@
 package org.teacon.powertool.mixin.client;
 
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,12 +30,18 @@ public class GameRendererMixin {
         var cache = JEIRecipeDisplayBlockEntityRenderer.recipeLayoutCache;
         if (cache != null) {
             for(var v : cache.getMap().values()){
-                if(v.layout() == null || !v.dirty().get()) continue;
+                if(v.layout() == null || !v.renderState().dirty) continue;
                 OffScreenGuiRenderer.getInstance().render(Objects.requireNonNull(v.textureTarget()), guiGraphicsExtractor -> {
-                    v.layout().drawRecipe(guiGraphicsExtractor, 0, 0);
-                    v.layout().drawOverlays(guiGraphicsExtractor, 0 ,0);
+                    guiGraphicsExtractor.pose().pushMatrix();
+                    guiGraphicsExtractor.pose().scale(2);
+                    var mouseX = v.renderState().mouseX;
+                    var mouseY = v.renderState().mouseY;
+                    v.layout().drawRecipe(guiGraphicsExtractor, mouseX, mouseY);
+                    v.layout().drawOverlays(guiGraphicsExtractor, mouseX, mouseY);
+                    guiGraphicsExtractor.extractDeferredElements(mouseX, mouseY, deltaTracker.getGameTimeDeltaPartialTick(false));
+                    guiGraphicsExtractor.pose().popMatrix();
                 } );
-                v.dirty().set(false);
+                v.renderState().dirty = false;
             }
             cache.tick();
         }

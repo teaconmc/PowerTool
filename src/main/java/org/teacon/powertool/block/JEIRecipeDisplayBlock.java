@@ -11,15 +11,21 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
+import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
 
 import java.util.function.Consumer;
 
@@ -40,6 +46,19 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (level instanceof Level l && l.isClientSide) {
+            return ClientShapeHelper.getShape(level, pos);
+        }
+        return super.getShape(state, level, pos, context);
     }
 
     @Nullable
@@ -72,5 +91,23 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
         builder.accept(Component.translatable("block.powertool.jei_recipe_display_block.tooltip").withStyle(ChatFormatting.DARK_GRAY));
+    }
+
+    private static class ClientShapeHelper {
+        private static VoxelShape getShape(BlockGetter level, BlockPos pos) {
+            if (level.getBlockEntity(pos) instanceof JEIRecipeDisplayBlockEntity be) {
+                if (be.recipeType != null && be.recipeId != null) {
+                    var cache = JEIRecipeDisplayBlockEntityRenderer.recipeLayoutCache;
+                    if (cache != null) {
+                        var key = new JEIRecipeDisplayBlockEntityRenderer.RecipeKey(be.recipeType, be.recipeId);
+                        var entry = cache.getMap().get(key);
+                        if (entry != null && entry.valid()) {
+                            return Shapes.create(entry.getWorldCorners(BlockPos.ZERO, 0).getAABB().inflate(0.02f));
+                        }
+                    }
+                }
+            }
+            return Shapes.block();
+        }
     }
 }

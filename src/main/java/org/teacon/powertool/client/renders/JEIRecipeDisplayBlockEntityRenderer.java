@@ -20,9 +20,16 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
@@ -32,7 +39,6 @@ import org.teacon.powertool.utils.SizedCache;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @NonNullByDefault
 public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<JEIRecipeDisplayBlockEntity, JEIRecipeDisplayBlockEntityRenderer.RenderState> {
@@ -59,19 +65,24 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         if(PowerToolJEIPlugin.runtime != null && blockEntity.recipeType != null && blockEntity.recipeId != null){
             var key = new RecipeKey(blockEntity.recipeType, blockEntity.recipeId);
             state.cacheEntry = cache.getOrCreate(key, RecipeRenderCache::create);
+            if(Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult){
+                state.hit = blockHitResult.getBlockPos().equals(blockEntity.getBlockPos());
+            }
+            else state.hit = false;
+            state.partialTicks = partialTicks;
         }
     }
     
     private void renderText(Component text, PoseStack poseStack, SubmitNodeCollector submitNodeCollector){
         var w = Minecraft.getInstance().font.width(text);
         poseStack.pushPose();
-        poseStack.translate(0.5f,0.6f,0);
+        poseStack.translate(0.5f,0.6f,0.5f);
         poseStack.scale(0.025f, -0.025f, 0.025f);
         poseStack.translate(-w/2f,0,0);
         submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(0.5f,0.6f,0);
+        poseStack.translate(0.5f,0.6f,0.5f);
         poseStack.scale(0.025f, -0.025f, 0.025f);
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.translate(-w/2f,0,0);
@@ -86,17 +97,17 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             renderText(Component.translatable("powertool.jei_recipe_display.init_jei"), poseStack, submitNodeCollector);
             return;
         }
-        if(entry == null || entry.layout == null){
+        if(entry == null || !entry.valid()){
             renderText(Component.translatable("powertool.jei_recipe_display.unrecognized_recipe").withStyle(ChatFormatting.RED), poseStack, submitNodeCollector);
             return;
         }
         assert entry.renderType != null && entry.textureTarget != null;
         poseStack.pushPose();
-        poseStack.translate(0.5f,(1-entry.textureTarget.height * 0.01f)/2f,0.5f);
+        poseStack.translate(0.5f,(1-entry.getHeight() * 0.01f)/2f,0.5f);
         poseStack.scale(0.01f, 0.01f, 0.01f);
         submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
-            var w = entry.textureTarget.width;
-            var h = entry.textureTarget.height;
+            var w = entry.getWidth();
+            var h = entry.getHeight();
             consumer.addVertex(pose,-w / 2f, h, 0).setUv(1, 1).setColor(-1);
             consumer.addVertex(pose,w / 2f, h, 0).setUv(0, 1).setColor(-1);
             consumer.addVertex(pose,w / 2f, 0, 0).setUv(0, 0).setColor(-1);
@@ -107,32 +118,144 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             consumer.addVertex(pose, -w / 2f, h, 0).setUv(0, 1).setColor(-1);
         });
         poseStack.popPose();
+        var cameraEntity = Minecraft.getInstance().getCameraEntity();
+        if(state.hit && cameraEntity != null){
+            var eye = cameraEntity.getEyePosition(state.partialTicks);
+            var dir = cameraEntity.getViewVector(state.partialTicks);
+            var mouse = entry.getWorldCorners(state.blockPos, 0).raycast(eye.toVector3f(), dir.toVector3f());
+            var mouseXOld = entry.renderState.mouseX;
+            var mouseYOld = entry.renderState.mouseY;
+            entry.renderState.mouseX = mouse == null ? 0 : (int) (mouse.x * entry.getWidth());
+            entry.renderState.mouseY = mouse == null ? 0 : (int) (mouse.y * entry.getHeight());
+            entry.renderState.dirty = mouseXOld != entry.renderState.mouseX || mouseYOld != entry.renderState.mouseY;
+        }
+        else{
+            if(entry.renderState.mouseX != 0 || entry.renderState.mouseY != 0){
+                entry.renderState.mouseX = 0;
+                entry.renderState.mouseY = 0;
+                entry.renderState.dirty = true;
+            }
+        }
     }
 
     public static class RenderState extends BlockEntityRenderState {
         @Nullable RecipeRenderCache cacheEntry;
+        boolean hit;
+        float partialTicks;
     }
     
     public record RecipeKey(Identifier recipeType, Identifier recipeId){
     
     }
     
-    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout, @Nullable TextureTarget textureTarget, @Nullable RenderType renderType, AtomicBoolean dirty){
+    public static class RecipeRenderCacheState{
+        public boolean dirty = false;
+        public int mouseX = 0;
+        public int mouseY = 0;
+    }
+    
+    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout, @Nullable TextureTarget textureTarget, @Nullable RenderType renderType, RecipeRenderCacheState renderState){
     
         public static RecipeRenderCache create(RecipeKey key){
             var layout = JEIRecipeDisplayScreen.updateRecipeLayout(key.recipeType, key.recipeId);
             if(layout == null){
-                return new RecipeRenderCache(null, null, null, new AtomicBoolean(false));
+                return new RecipeRenderCache(null, null, null, new RecipeRenderCacheState());
             }
             var rect = layout.getRect();
-            var target = new TextureTarget(key.recipeId.getPath(), rect.getWidth(), rect.getHeight(), true);
+            var target = new TextureTarget(key.recipeId.getPath(), rect.getWidth() * 2, rect.getHeight() * 2, true);
             var pipeline = ExtendedRenderPipeline.extendedbuilder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                     .withLocation(VanillaUtils.modRL(key.recipeId.getPath()))
                     .withDepthStencilState(DepthStencilState.DEFAULT)
                     .bindSampler("Sampler0", () -> Pair.of(Objects.requireNonNull(target.getColorTextureView()), SamplerCacheCache.NEAREST_CLAMP))
                     .buildExtended();
             var renderType = RenderType.create("jei_recipe_display_ber", RenderSetup.builder(pipeline).createRenderSetup());
-            return new RecipeRenderCache(layout, target, renderType, new AtomicBoolean(true));
+            var renderState = new RecipeRenderCacheState();
+            renderState.dirty = true;
+            return new RecipeRenderCache(layout, target, renderType, renderState);
+        }
+        
+        public boolean valid(){
+            return layout != null;
+        }
+        
+        public int getWidth(){
+            return textureTarget == null ? 0 : textureTarget.width / 2;
+        }
+        
+        public int getHeight(){
+            return textureTarget == null ? 0 : textureTarget.height / 2;
+        }
+        
+        public WorldQuad getWorldCorners(BlockPos pos, float yRotationDegrees) {
+            if(this.textureTarget == null){
+                return new WorldQuad();
+            }
+            Matrix4f mat = new Matrix4f()
+                    .translation(pos.getX() + 0.5f, pos.getY() + (1 - this.getHeight() * 0.01f) / 2f, pos.getZ() + 0.5f)
+                    .rotateY((float) Math.toRadians(yRotationDegrees))
+                    .scale(0.01f);
+            
+            float w = this.getWidth();
+            float h = this.getHeight();
+            
+            return new WorldQuad(
+                    transform(mat, -w / 2f, h, 0),
+                    transform(mat,  w / 2f, h, 0),
+                    transform(mat,  w / 2f, 0, 0),
+                    transform(mat, -w / 2f, 0, 0)
+            );
+        }
+        
+        private static Vector3f transform(Matrix4f mat, float x, float y, float z) {
+            Vector4f v = new Vector4f(x, y, z, 1);
+            v.mul(mat);
+            return new Vector3f(v.x(), v.y(), v.z());
         }
     }
+    
+    public record WorldQuad(
+            Vector3f topLeft,
+            Vector3f topRight,
+            Vector3f bottomRight,
+            Vector3f bottomLeft
+    ) {
+        public WorldQuad(){
+            this(new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f());
+        }
+        
+        public AABB getAABB() {
+            float minX = Math.min(Math.min(topLeft.x, topRight.x), Math.min(bottomLeft.x, bottomRight.x));
+            float minY = Math.min(Math.min(topLeft.y, topRight.y), Math.min(bottomLeft.y, bottomRight.y));
+            float minZ = Math.min(Math.min(topLeft.z, topRight.z), Math.min(bottomLeft.z, bottomRight.z));
+            float maxX = Math.max(Math.max(topLeft.x, topRight.x), Math.max(bottomLeft.x, bottomRight.x));
+            float maxY = Math.max(Math.max(topLeft.y, topRight.y), Math.max(bottomLeft.y, bottomRight.y));
+            float maxZ = Math.max(Math.max(topLeft.z, topRight.z), Math.max(bottomLeft.z, bottomRight.z));
+            return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
+        }
+        
+        public @Nullable Vector2f raycast(Vector3f rayOrigin, Vector3f rayDir) {
+            Vector3f p0 = topLeft;
+            Vector3f uAxis = new Vector3f(topRight).sub(p0);
+            Vector3f vAxis = new Vector3f(bottomLeft).sub(p0);
+            Vector3f normal = new Vector3f(uAxis).cross(vAxis);
+            float denom = normal.dot(rayDir);
+            // 平行
+            if (Math.abs(denom) < 1e-6f) return null;
+            // 射线与平面求交
+            float t = new Vector3f(p0).sub(rayOrigin).dot(normal) / denom;
+            // 交点在射线反方向
+            if (t < 0) return null;
+            // 交点
+            Vector3f hit = new Vector3f(rayDir).mul(t).add(rayOrigin);
+            Vector3f local = new Vector3f(hit).sub(p0);
+            float u = local.dot(uAxis) / uAxis.lengthSquared();
+            float v = local.dot(vAxis) / vAxis.lengthSquared();
+            if (u < 0 || u > 1 || v < 0 || v > 1) {
+                return null;
+            }
+            float texU = denom < 0 ? 1 - u : u;
+            return new Vector2f(texU, v);
+        }
+    }
+    
 }

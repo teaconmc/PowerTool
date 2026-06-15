@@ -1,52 +1,64 @@
 package org.teacon.powertool.client.gui;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import com.xkball.xklib.ui.widget.Widget;
+import com.xkball.xklib.ui.widget.container.ContainerWidget;
+import com.xkball.xklibmc.ui.XKLibBaseContainerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.model.data.ModelData;
-import org.teacon.powertool.client.gui.widget.TextureAtlasSpriteList;
+import org.teacon.powertool.client.gui.widget.SpriteList;
 import org.teacon.powertool.menu.TextureExtractorMenu;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashSet;
+import java.util.Comparator;
 import java.util.List;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtractorMenu> {
+public class TextureExtractorScreen extends XKLibBaseContainerScreen<TextureExtractorMenu> {
     
     private static final Identifier BG_LOCATION = VanillaUtils.modRL("textures/gui/texture_extractor.png");
     
-    protected TextureAtlasSpriteList textureAtlasSpriteList;
+    protected SpriteList spriteList;
     private EditBox searchBar;
     
     public TextureExtractorScreen(TextureExtractorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
+        this.addScreenLayer(this.createLayout());
+    }
+    
+    private Widget createLayout() {
+        this.spriteList = new SpriteList(this);
+        return new ContainerWidget()
+                .inlineStyle("""
+                        size: 100% 100%;
+                        align-items: center;
+                        justify-content: center;
+                        """)
+                .addChild(this.spriteList.inlineStyle("""
+                        size: 33% 80%;
+                        flex-shrink: 0;
+                        """));
     }
     
     @Override
     protected void init() {
         super.init();
-        this.textureAtlasSpriteList = new TextureAtlasSpriteList(this, (int) (width * 0.3), (int) (height * 0.8), (int) (height * 0.1), 30);
         this.searchBar = new EditBox(font, (int) (10 + width * 0.1), (int) (height * 0.9 + 5), (int) (width * 0.2), 20, Component.empty());
         this.searchBar.setResponder((str) -> menu.needRefreshFilter = true);
         this.searchBar.setMaxLength(1000);
-        this.addRenderableWidget(textureAtlasSpriteList);
-        this.addRenderableWidget(searchBar);
     }
     
     @Override
-    protected void containerTick() {
+    public void containerTick() {
         super.containerTick();
         if (menu.needRefreshFilter) {
-            textureAtlasSpriteList.update();
+            spriteList.update();
             menu.needRefreshFilter = false;
         }
     }
@@ -70,7 +82,14 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
 //            if (str.isEmpty()) return true;
 //            return rl.toString().contains(str);
 //        }).sorted(Comparator.comparing(Identifier::toString)).toList();
-        return List.of();
+        var mc = Minecraft.getInstance();
+        var filteredTexturesSet = mc.getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS).getTextures().keySet();
+        return filteredTexturesSet.stream().filter(rl -> {
+            if (searchBar == null) return true;
+            var str = searchBar.getValue().toLowerCase();
+            if (str.isEmpty()) return true;
+            return rl.toString().contains(str);
+        }).sorted(Comparator.comparing(Identifier::toString)).toList();
     }
 //
 //    @Override

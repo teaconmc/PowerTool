@@ -1,4 +1,4 @@
-// 26.1.2	2026-06-14T22:13:40.0642434	Model Definitions - powertool
+// 26.1.2	2026-06-16T02:27:59.4656895	Model Definitions - powertool
 8ea8f7958a6d3eb49c2e3750c50b8c4cf1b2ea78 assets/powertool/items/auto_vanish_acacia_boat.json
 05e9e4bd8b74fd0ae65ff5047d1bf36a36e5d5b3 assets/powertool/items/auto_vanish_bamboo_raft.json
 49f5b6218b25736e0ea25adbe2ca71534b347c25 assets/powertool/items/auto_vanish_birch_boat.json
@@ -18,7 +18,7 @@ d339deb2c918e08af9bc567028ecf8a4c1bc813a assets/powertool/items/cached_mode_tool
 888945a6e1c0e73e2d05fe32c91d5252177de11c assets/powertool/items/clap_but_angry.json
 fdc644f8c7c305019dc8df0a8b84db29c12248c1 assets/powertool/items/clap_but_sad.json
 5f656320bcd3e956e34542bc07fafe2f0e18f91d assets/powertool/items/command_block.json
-5a818587477c261c2f38caa11ef39476767c79ea assets/powertool/items/command_rune.json
+96f7f79d7e1ab0aeb22f1eea724e1ddf4d5a95b4 assets/powertool/items/command_rune.json
 b746bbab84b62fd7380627daf38f8ba2a79b2198 assets/powertool/items/cosmetic_acacia_trapdoor.json
 8a892ce419c0d890b7c45f3a46c24a5d9125459b assets/powertool/items/cosmetic_bamboo_trapdoor.json
 b4b36b260aa1ae77117316db9c6e351865f0d881 assets/powertool/items/cosmetic_barrel.json

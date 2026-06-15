@@ -1,7 +1,19 @@
 {
   "hand_animation_on_swap": false,
   "model": {
-    "type": "minecraft:model",
-    "model": "powertool:item/command_rune"
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:model",
+        "model": "powertool:item/command_rune"
+      },
+      {
+        "type": "minecraft:special",
+        "base": "powertool:item/command_rune",
+        "model": {
+          "type": "powertool:command_rune"
+        }
+      }
+    ]
   }
 }

@@ -3,6 +3,8 @@ package org.teacon.powertool.item;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.teacon.powertool.PowerTool;
@@ -28,6 +30,13 @@ public class PowerToolDataComponents {
     
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> COMMAND = DATA_COMPONENTS.register(
             "command", () -> DataComponentType.<String>builder().persistent(Codec.STRING).build()
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Identifier>> COMMAND_RUNE_LABEL = DATA_COMPONENTS.register(
+            "command_rune_label", () -> DataComponentType.<Identifier>builder()
+                    .persistent(Identifier.CODEC)
+                    .networkSynchronized(ByteBufCodecs.fromCodec(Identifier.CODEC))
+                    .build()
     );
     
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ExamineHoloGlass.BlockComponents>> BLOCKS_DATA = DATA_COMPONENTS.register(

@@ -24,6 +24,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.joml.Vector2i;
@@ -49,6 +50,7 @@ import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
 import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.LinkHolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlockEntityRenderer;
+import org.teacon.powertool.client.renders.item.CommandRuneSpecialRenderer;
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
@@ -204,6 +206,11 @@ public class PowerToolClientEvents {
             event.register(PowerToolMenus.REGISTER_MENU.get(), RegisterScreen::new);
             event.register(PowerToolMenus.TEXTURE_EXTRACTOR_MENU.get(), TextureExtractorScreen::new);
             event.register(PowerToolMenus.JEI_RECIPE_DISPLAY_MENU.get(), JEIRecipeDisplayScreen::new);
+        }
+
+        @SubscribeEvent
+        public static void specialModelRenderers(RegisterSpecialModelRendererEvent event) {
+            event.register(VanillaUtils.modRL("command_rune"), CommandRuneSpecialRenderer.Unbaked.MAP_CODEC);
         }
 
         @SubscribeEvent

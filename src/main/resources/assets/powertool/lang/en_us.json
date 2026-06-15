@@ -234,6 +234,8 @@
   "powertool.setcommand.gui.name": "name:",
   "powertool.setcommand.gui.command": "command:",
   "powertool.setcommand.gui.delayed_commands": "delayed commands:",
+  "powertool.setcommand.gui.label": "label:",
+  "powertool.setcommand.gui.label.empty": "empty",
   "powertool.setcommand.gui.tick_delay": "tick delay:",
   "powertool.setcommand.gui.consumable": "consumable"
 }

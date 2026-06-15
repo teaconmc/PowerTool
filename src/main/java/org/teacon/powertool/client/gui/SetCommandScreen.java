@@ -12,15 +12,18 @@ import com.xkball.xklibmc.ui.widget.WidgetWrapper;
 import com.xkball.xklibmc.ui.widget.mc.ObjectInputBox;
 import com.xkball.xklibmc.x3d.backend.b3d.gui.ComponentConverter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.teacon.powertool.client.gui.widget.ItemStackButton;
 import org.teacon.powertool.item.CommandRune;
 import org.teacon.powertool.item.PowerToolDataComponents;
 import org.teacon.powertool.network.server.UpdateItemStackData;
@@ -38,6 +41,8 @@ public class SetCommandScreen extends XKLibBaseScreen {
     protected EditBox name;
     protected EditBox input;
     protected Checkbox consume;
+    protected ItemStack labelStack = ItemStack.EMPTY;
+    protected ItemStackButton labelButton;
     protected ListInputWidget<CommandRune.DelayedCommandData, DelayedCommandInputWidget> commandList;
     public final List<CommandRune.DelayedCommandData> delayedCommands = new ArrayList<>();
     
@@ -53,6 +58,12 @@ public class SetCommandScreen extends XKLibBaseScreen {
         delayedCommands.clear();
         if (itemStack.has(PowerToolDataComponents.DELAYED_COMMANDS))
             delayedCommands.addAll(Objects.requireNonNull(itemStack.get(PowerToolDataComponents.DELAYED_COMMANDS)));
+        var labelId = itemStack.get(PowerToolDataComponents.COMMAND_RUNE_LABEL);
+        if (labelId == null) {
+            this.labelStack = ItemStack.EMPTY;
+        } else {
+            this.labelStack = BuiltInRegistries.ITEM.getValue(labelId).getDefaultInstance();
+        }
     }
     
     protected Widget createLayout() {
@@ -62,6 +73,9 @@ public class SetCommandScreen extends XKLibBaseScreen {
         this.name = (EditBox) nameWrapper.getWidget();
         this.input = (EditBox) inputWrapper.getWidget();
         this.applyInitialInputValues();
+        this.labelButton = (ItemStackButton) Button.builder(this.labelButtonText(), _ -> this.openLabelSelector())
+                .build(ItemStackButton::new);
+        this.labelButton.setStack(this.labelStack);
         this.commandList = new ListInputWidget<>(DelayedCommandInputWidget::new, (t, c) -> WidgetWrapper.button(ComponentConverter.toComponent(t), _ -> c.run()));
         this.commandList.setValue(this.delayedCommands);
         this.consume = Checkbox.builder(Component.translatable("powertool.setcommand.gui.consumable"), font)
@@ -154,6 +168,7 @@ public class SetCommandScreen extends XKLibBaseScreen {
                         text-align: left;
                         """))
                 .addChild(this.commandList.setCSSClassName("delayed_command_list"))
+                .addChild(labeledLine(IComponent.translatable("powertool.setcommand.gui.label"), new WidgetWrapper(this.labelButton).inlineStyle("size: 20rpx 20rpx; flex-shrink: 0;")).setCSSClassName("top_input_row").inlineStyle("margin-top: 5rpx;"))
                 .addChild(consumeWrapper.setCSSClassName("consume"))
                 .addChild(doneButton.setCSSClassName("done"));
         return new ContainerWidget()
@@ -170,6 +185,24 @@ public class SetCommandScreen extends XKLibBaseScreen {
         return new ContainerWidget()
                 .addChild(new Label(label).setCSSClassName("top_input_label"))
                 .addChild(input);
+    }
+
+    protected void openLabelSelector() {
+        this.minecraft.setScreen(new CommandRuneLabelSelectScreen(this, this::setLabelStack));
+    }
+
+    protected void setLabelStack(ItemStack stack) {
+        this.labelStack = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
+        if (this.labelButton != null) {
+            this.labelButton.setStack(this.labelStack);
+        }
+    }
+
+    protected Component labelButtonText() {
+        if (this.labelStack.isEmpty()) {
+            return Component.translatable("powertool.setcommand.gui.label.empty");
+        }
+        return this.labelStack.getHoverName();
     }
     
     protected void applyInitialInputValues() {
@@ -197,9 +230,7 @@ public class SetCommandScreen extends XKLibBaseScreen {
     }
     
     protected void onDone() {
-        if (this.minecraft != null) {
-            this.minecraft.setScreen(null);
-        }
+        this.minecraft.setScreen(null);
     }
     
     @Override
@@ -210,6 +241,11 @@ public class SetCommandScreen extends XKLibBaseScreen {
         if (!input.getValue().isEmpty()) patch.set(PowerToolDataComponents.COMMAND.get(), input.getValue());
         patch.set(PowerToolDataComponents.CONSUME.get(), consume.selected());
         patch.set(PowerToolDataComponents.DELAYED_COMMANDS.get(), delayedCommands);
+        if (this.labelStack.isEmpty()) {
+            patch.remove(PowerToolDataComponents.COMMAND_RUNE_LABEL.get());
+        } else {
+            patch.set(PowerToolDataComponents.COMMAND_RUNE_LABEL.get(), BuiltInRegistries.ITEM.getKey(this.labelStack.getItem()));
+        }
         ClientPacketDistributor.sendToServer(new UpdateItemStackData(slot, patch.build()));
     }
     

@@ -238,6 +238,8 @@
   "powertool.setcommand.gui.name": "名称：",
   "powertool.setcommand.gui.command": "命令：",
   "powertool.setcommand.gui.delayed_commands": "延迟命令：",
+  "powertool.setcommand.gui.label": "标签：",
+  "powertool.setcommand.gui.label.empty": "空",
   "powertool.setcommand.gui.tick_delay": "延迟刻：",
   "powertool.setcommand.gui.consumable": "会被消耗"
 }

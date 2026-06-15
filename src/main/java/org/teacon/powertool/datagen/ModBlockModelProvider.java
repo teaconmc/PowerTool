@@ -5,7 +5,9 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.renderer.item.ClientItem;
+import net.minecraft.client.renderer.item.CompositeModel;
 import net.minecraft.client.renderer.item.CuboidItemModelWrapper;
+import net.minecraft.client.renderer.item.SpecialModelWrapper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -13,13 +15,16 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.client.model.CompositeUnbakedModel;
 import org.apache.commons.compress.utils.Lists;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.cosmetical.CosmeticFurnace;
+import org.teacon.powertool.client.renders.item.CommandRuneSpecialRenderer;
 import org.teacon.powertool.item.PowerToolItems;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -40,8 +45,14 @@ public class ModBlockModelProvider extends ModelProvider {
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         this.blockModelGenerators = blockModels;
         this.itemModelGenerators = itemModels;
+        this.itemModelGenerators.itemModelOutput.register(PowerToolItems.COMMAND_RUNE.get(), new ClientItem(new CompositeModel.Unbaked(
+                List.of(
+                        new CuboidItemModelWrapper.Unbaked(ModelLocationUtils.getModelLocation(PowerToolItems.COMMAND_RUNE.get()), Optional.empty(), Collections.emptyList()),
+                        new SpecialModelWrapper.Unbaked(ModelLocationUtils.getModelLocation(PowerToolItems.COMMAND_RUNE.get()), Optional.empty(), new CommandRuneSpecialRenderer.Unbaked())
+                ),Optional.empty()),new ClientItem.Properties(false, false, 1.0F)));
         for(var entry : PowerToolItems.ITEMS.getEntries()) {
-            itemModelGenerators.itemModelOutput.register(entry.get(), new ClientItem(
+            if(entry.get() == PowerToolItems.COMMAND_RUNE.get()) continue;
+            this.itemModelGenerators.itemModelOutput.register(entry.get(), new ClientItem(
                     new CuboidItemModelWrapper.Unbaked(ModelLocationUtils.getModelLocation(entry.get()), Optional.empty(), Collections.emptyList()),
                     new ClientItem.Properties(false, false, 1.0F)
                     ));

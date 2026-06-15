@@ -29,6 +29,7 @@ public class JEIRecipeDisplayBlockEntity extends BlockEntity implements MenuProv
     public Identifier recipeType;
     @Nullable
     public Identifier recipeId;
+    public int yRotation;
 
     public JEIRecipeDisplayBlockEntity(BlockPos pos, BlockState blockState) {
         super(PowerToolBlocks.JEI_RECIPE_DISPLAY_BLOCK_ENTITY.get(), pos, blockState);
@@ -39,6 +40,7 @@ public class JEIRecipeDisplayBlockEntity extends BlockEntity implements MenuProv
         super.loadAdditional(input);
         this.recipeType = input.read("recipeType", Identifier.CODEC).orElse(null);
         this.recipeId = input.read("recipeId", Identifier.CODEC).orElse(null);
+        this.yRotation = input.getIntOr("yRotation", 0);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class JEIRecipeDisplayBlockEntity extends BlockEntity implements MenuProv
         if (this.recipeType != null) {
             output.store("recipeType", Identifier.CODEC, this.recipeType);
         }
+        output.putInt("yRotation", this.yRotation);
     }
 
     @Override
@@ -60,12 +63,14 @@ public class JEIRecipeDisplayBlockEntity extends BlockEntity implements MenuProv
         if (this.recipeType != null) {
             output.store("recipeType", Identifier.CODEC, this.recipeType);
         }
+        output.putInt("yRotation", this.yRotation);
     }
 
     @Override
     public void updateFromClient(ValueInput input) {
         this.recipeType = input.read("recipeType", Identifier.CODEC).orElse(null);
         this.recipeId = input.read("recipeId", Identifier.CODEC).orElse(null);
+        this.yRotation = input.getIntOr("yRotation", this.yRotation);
         if (this.level != null) {
             this.setChanged();
             var state = this.getBlockState();

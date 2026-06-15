@@ -107,7 +107,7 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
                         var key = new JEIRecipeDisplayBlockEntityRenderer.RecipeKey(be.recipeType, be.recipeId);
                         var entry = cache.getMap().get(key);
                         if (entry != null && entry.valid()) {
-                            return Shapes.create(entry.getWorldCorners(BlockPos.ZERO, 0).getAABB().inflate(0.04f));
+                            return Shapes.create(entry.getWorldCorners(BlockPos.ZERO, be.yRotation).getAABB().inflate(0.04f));
                         }
                     }
                 }

@@ -70,6 +70,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             }
             else state.hit = false;
             state.partialTicks = partialTicks;
+            state.yRotation = blockEntity.yRotation;
         }
     }
     
@@ -104,6 +105,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         assert entry.renderType != null && entry.textureTarget != null;
         poseStack.pushPose();
         poseStack.translate(0.5f,(1-entry.getHeight() * 0.01f)/2f,0.5f);
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRotation));
         poseStack.scale(0.01f, 0.01f, 0.01f);
         submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
             var w = entry.getWidth();
@@ -126,7 +128,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         if(cameraEntity != null){
             var eye = cameraEntity.getEyePosition(state.partialTicks);
             var dir = cameraEntity.getViewVector(state.partialTicks);
-            var mouse = entry.getWorldCorners(state.blockPos, 0).raycast(eye.toVector3f(), dir.toVector3f());
+            var mouse = entry.getWorldCorners(state.blockPos, state.yRotation).raycast(eye.toVector3f(), dir.toVector3f());
             var mouseXOld = entry.renderState.mouseX;
             var mouseYOld = entry.renderState.mouseY;
             var mouseX = mouse == null ? 0 : (int) (mouse.x * entry.getWidth() + entry.getWidth() / 4f);
@@ -148,6 +150,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         @Nullable RecipeRenderCache cacheEntry;
         boolean hit;
         float partialTicks;
+        int yRotation;
     }
     
     public record RecipeKey(Identifier recipeType, Identifier recipeId){
@@ -243,6 +246,11 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             Vector3f p0 = topLeft;
             Vector3f uAxis = new Vector3f(topRight).sub(p0);
             Vector3f vAxis = new Vector3f(bottomLeft).sub(p0);
+            Vector3f originLocal = new Vector3f(rayOrigin).sub(p0);
+            float closestU = Math.clamp(originLocal.dot(uAxis) / uAxis.lengthSquared(), 0, 1);
+            float closestV = Math.clamp(originLocal.dot(vAxis) / vAxis.lengthSquared(), 0, 1);
+            Vector3f closest = new Vector3f(p0).add(new Vector3f(uAxis).mul(closestU)).add(new Vector3f(vAxis).mul(closestV));
+            if (closest.distanceSquared(rayOrigin) > 64) return null;
             Vector3f normal = new Vector3f(uAxis).cross(vAxis);
             float denom = normal.dot(rayDir);
             // 平行

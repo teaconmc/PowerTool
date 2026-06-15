@@ -145,26 +145,26 @@ dependencies {
 
     jarJar(implementation "com.xkball:xklib-3d:$xklib_version"){
         version {
-            strictly '[0.0.6, 1.0.0)'
+            strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
 
     jarJar(implementation "com.xkball:xklib-ap:$xklib_version"){
         version {
-            strictly '[0.0.6, 1.0.0)'
+            strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
     jarJar(implementation "com.xkball:xklib-ui:$xklib_version"){
         version {
-            strictly '[0.0.6, 1.0.0)'
+            strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
     jarJar(implementation "com.xkball:xklib-mc:$xklib_version"){
         version {
-            strictly '[0.0.6, 1.0.0)'
+            strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }

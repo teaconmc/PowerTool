@@ -230,5 +230,10 @@
   "powertool.gui.holo_sign.z_offset": "Z Axis Offset:",
   "powertool.gui.holo_sign.lit_on": "Light Emission: On",
   "powertool.gui.holo_sign.lit_off": "Light Emission: Off",
-  "powertool.gui.cache_updated": "Cache for current chunk successfully updated."
+  "powertool.gui.cache_updated": "Cache for current chunk successfully updated.",
+  "powertool.setcommand.gui.name": "name:",
+  "powertool.setcommand.gui.command": "command:",
+  "powertool.setcommand.gui.delayed_commands": "delayed commands:",
+  "powertool.setcommand.gui.tick_delay": "tick delay:",
+  "powertool.setcommand.gui.consumable": "consumable"
 }

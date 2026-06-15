@@ -234,4 +234,10 @@
   "powertool.command.creative_no_clip.disabled": "创造穿墙已关闭",
   "powertool.command.creative_no_clip.enabled.targets": "已为 %s 名玩家开启创造穿墙",
   "powertool.command.creative_no_clip.disabled.targets": "已为 %s 名玩家关闭创造穿墙"
+,
+  "powertool.setcommand.gui.name": "名称：",
+  "powertool.setcommand.gui.command": "命令：",
+  "powertool.setcommand.gui.delayed_commands": "延迟命令：",
+  "powertool.setcommand.gui.tick_delay": "延迟刻：",
+  "powertool.setcommand.gui.consumable": "会被消耗"
 }

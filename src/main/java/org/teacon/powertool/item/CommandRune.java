@@ -39,7 +39,7 @@ public class CommandRune extends Item implements IScreenProviderItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
         String command = held.get(PowerToolDataComponents.COMMAND);
-        if ((command == null || (player.getAbilities().instabuild && player.isCrouching())) && player instanceof ServerPlayer serverPlayer) {
+        if (player.getAbilities().instabuild && (command == null || player.isCrouching()) && player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer,
                     new OpenItemScreen(player.getItemInHand(hand), hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
             return InteractionResult.PASS;

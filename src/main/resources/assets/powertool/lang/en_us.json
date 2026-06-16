@@ -124,6 +124,7 @@
   "item.powertool.static_mode_tool": "Static Mode Tool",
   "item.powertool.cached_mode_tool": "Cached Rendering Mode Tool",
   "item.powertool.texture_extractor": "Texture Extractor",
+  "item.powertool.fake_water_bucket": "Fake Water Bucket",
 
   "entity.powertool.fence_knot": "Knot On Fence",
   "entity.powertool.fence_knot.tooltip": "Like vanilla leash, but between fences",

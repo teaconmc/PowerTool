@@ -7,7 +7,9 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.debug.DebugEntryLookingAt;
 import net.minecraft.client.gui.screens.inventory.CommandBlockEditScreen;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -23,10 +25,13 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
+import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.fluid.FluidTintSources;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
@@ -239,7 +244,22 @@ public class PowerToolClientEvents {
         
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onRegClientExtensions(RegisterClientExtensionsEvent event) {
-//            event.registerFluidType(new WrappedClientFluidTypeExtension(IClientFluidTypeExtensions.of(NeoForgeMod.WATER_TYPE.value())), PowerToolBlocks.FAKE_WATER_TYPE.get());
+            event.registerFluidType(new IClientFluidTypeExtensions() {
+                @Override
+                public Identifier getRenderOverlayTexture(Minecraft mc) {
+                    return Identifier.withDefaultNamespace("textures/misc/underwater.png");
+                }
+            }, PowerToolBlocks.FAKE_WATER_TYPE.get());
+        }
+
+        @SubscribeEvent
+        public static void onRegisterFluidModels(RegisterFluidModelsEvent event) {
+            event.register(new FluidModel.Unbaked(
+                    new Material(Identifier.withDefaultNamespace("block/water_still"), false),
+                    new Material(Identifier.withDefaultNamespace("block/water_flow"), false),
+                    null,
+                    FluidTintSources.water()
+            ), PowerToolBlocks.FAKE_WATER);
         }
         
     }

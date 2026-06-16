@@ -63,6 +63,7 @@
   "item.powertool.transparent_brush":"透明刷",
   "item.powertool.command_wand": "命令方块魔杖",
   "item.powertool.display_mode_tool": "展示模式工具",
+  "item.powertool.fake_water_bucket": "假水 桶",
 
   "entity.powertool.fence_knot": "拴栅栏上的结",
   "entity.powertool.fence_knot.tooltip": "跟原版拴绳儿一样，但是是连着俩栅栏儿的",

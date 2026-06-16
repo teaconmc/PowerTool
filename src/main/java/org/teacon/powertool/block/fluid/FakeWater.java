@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.WaterFluid;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.teacon.powertool.block.PowerToolBlocks;
@@ -24,7 +24,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class FakeWater extends FlowingFluid {
+public class FakeWater extends WaterFluid {
     
     @Override
     public Item getBucket() {
@@ -32,7 +32,7 @@ public class FakeWater extends FlowingFluid {
     }
     
     @Override
-    protected boolean canBeReplacedWith(FluidState state, BlockGetter level, BlockPos pos, Fluid fluid, Direction direction) {
+    public boolean canBeReplacedWith(FluidState state, BlockGetter level, BlockPos pos, Fluid fluid, Direction direction) {
         return false;
     }
     
@@ -52,7 +52,7 @@ public class FakeWater extends FlowingFluid {
     }
     
     @Override
-    protected BlockState createLegacyBlock(FluidState state) {
+    public BlockState createLegacyBlock(FluidState state) {
         return PowerToolBlocks.FAKE_WATER_BLOCK.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
     }
     
@@ -70,6 +70,11 @@ public class FakeWater extends FlowingFluid {
     public Fluid getSource() {
         return PowerToolBlocks.FAKE_WATER.get();
     }
+
+    @Override
+    public boolean isSame(Fluid fluid) {
+        return fluid == PowerToolBlocks.FAKE_WATER.get();
+    }
     
     @Override
     protected boolean canConvertToSource(ServerLevel level) {
@@ -83,7 +88,7 @@ public class FakeWater extends FlowingFluid {
     }
     
     @Override
-    protected int getSlopeFindDistance(LevelReader level) {
+    public int getSlopeFindDistance(LevelReader level) {
         return 0;
     }
     
@@ -93,7 +98,7 @@ public class FakeWater extends FlowingFluid {
     }
     
     @Override
-    protected int getDropOff(LevelReader level) {
+    public int getDropOff(LevelReader level) {
         return 8;
     }
     

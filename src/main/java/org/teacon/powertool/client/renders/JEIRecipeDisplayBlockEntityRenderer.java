@@ -157,6 +157,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
     
     }
     
+    //todo 动态大小
     public static class RecipeRenderCacheState{
         public boolean dirty = false;
         public int mouseX = 0;

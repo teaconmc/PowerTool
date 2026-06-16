@@ -36,6 +36,7 @@ import org.teacon.powertool.block.cosmetical.CosmeticBarrel;
 import org.teacon.powertool.block.cosmetical.CosmeticBeehive;
 import org.teacon.powertool.block.cosmetical.CosmeticCampfireBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticFurnace;
+import org.teacon.powertool.block.cosmetical.CosmeticHalfTransparentBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticHopper;
 import org.teacon.powertool.block.cosmetical.CosmeticHorizontalDirectionalBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticSimpleBlock;
@@ -293,7 +294,7 @@ public class PowerToolBlocks {
         ));
         
         regCosmetic(SIMPLE_BLOCKS, CosmeticSimpleBlock::new);
-        regCosmetic(List.of(Blocks.ICE), HalfTransparentBlock::new);
+        regCosmetic(List.of(Blocks.ICE), CosmeticHalfTransparentBlock::new);
         regCosmetic(List.of(Blocks.ENCHANTING_TABLE), CosmeticWaterloggedBlock::new);
         regCosmetic(List.of(Blocks.STONECUTTER), CosmeticHorizontalDirectionalBlock::new);
         

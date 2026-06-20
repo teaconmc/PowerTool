@@ -86,7 +86,7 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         } else {
-            if (level.getBlockEntity(pos) instanceof JEIRecipeDisplayBlockEntity be) {
+            if (player.getAbilities().instabuild && level.getBlockEntity(pos) instanceof JEIRecipeDisplayBlockEntity be) {
                 player.openMenu(be,buf -> buf.writeBlockPos(pos));
             }
             return InteractionResult.CONSUME;
@@ -104,7 +104,7 @@ public class JEIRecipeDisplayBlock extends BaseEntityBlock implements WithToolti
                 if (be.recipeType != null && be.recipeId != null) {
                     var cache = JEIRecipeDisplayBlockEntityRenderer.recipeLayoutCache;
                     if (cache != null) {
-                        var key = new JEIRecipeDisplayBlockEntityRenderer.RecipeKey(be.recipeType, be.recipeId);
+                        var key = new JEIRecipeDisplayBlockEntityRenderer.RecipeKey(be.recipeType, be.recipeId, pos);
                         var entry = cache.getMap().get(key);
                         if (entry != null && entry.valid()) {
                             return Shapes.create(entry.getWorldCorners(BlockPos.ZERO, be.yRotation).getAABB().inflate(0.04f));

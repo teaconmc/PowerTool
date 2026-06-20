@@ -30,7 +30,10 @@ public class GameRendererMixin {
         var cache = JEIRecipeDisplayBlockEntityRenderer.recipeLayoutCache;
         if (cache != null) {
             for(var v : cache.getMap().values()){
-                if(v.layout() == null || !v.renderState().dirty) continue;
+                if(v.layout() == null || v.textureTarget() == null || !v.renderState().dirty) continue;
+                if(v.textureTarget().width != v.renderState().sizeX || v.textureTarget().height != v.renderState().sizeY){
+                    v.textureTarget().resize(v.renderState().sizeX, v.renderState().sizeY);
+                }
                 OffScreenGuiRenderer.getInstance().render(Objects.requireNonNull(v.textureTarget()), guiGraphicsExtractor -> {
                     guiGraphicsExtractor.pose().pushMatrix();
                     guiGraphicsExtractor.pose().scale(4);

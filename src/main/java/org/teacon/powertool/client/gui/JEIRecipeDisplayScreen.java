@@ -23,6 +23,7 @@ import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.Nullable;
@@ -201,33 +202,9 @@ public class JEIRecipeDisplayScreen extends XKLibBaseContainerScreen<JEIRecipeDi
         IRecipeCategory category = recipeManager.getRecipeCategory(type);
         var focusGroup = runtime.getJeiHelpers().getFocusFactory().getEmptyFocusGroup();
         var recipeLookup = recipeManager.createRecipeLookup(type);
-        var recipe = recipeLookup.get().filter(recipe_ -> Objects.equals(getRecipeId(recipe_), recipeId)).findFirst().orElse(null);
+        var recipe = recipeLookup.get().filter(recipe_ -> Objects.equals(category.getIdentifier(recipe_), recipeId)).findFirst().orElse(null);
         if (recipe == null)  return null;
         return (IRecipeLayoutDrawable<?>) recipeManager.createRecipeLayoutDrawable(category, recipe, focusGroup).orElse(null);
-    }
-    
-    public static @Nullable Identifier getRecipeId(Object recipe) {
-        return switch (recipe) {
-            case RecipeHolder<?> holder -> holder.id().identifier();
-            case IJeiBrewingRecipe brewingRecipe -> brewingRecipe.getUid();
-            case ITagInfoRecipe tagInfoRecipe -> tagInfoRecipe.getTag().location();
-            case IJeiAnvilRecipe anvilRecipe -> anvilRecipe.getUid();
-            case IJeiCompostingRecipe compostingRecipe -> compostingRecipe.getUid();
-            case IJeiGrindstoneRecipe grindstoneRecipe -> grindstoneRecipe.getUid();
-            default -> {
-                try {
-                    var getUidMethod = recipe.getClass().getMethod("getUid");
-                    var uid = (Identifier) getUidMethod.invoke(recipe);
-                    LOGGER.info("Obtained UID via reflection for unknown recipe type: class={}, recipe={}", recipe.getClass().getName(), recipe);
-                    yield uid;
-                } catch (NoSuchMethodException e) {
-                    LOGGER.warn("Unrecognized recipe type without getUid method: class={}, recipe={}", recipe.getClass().getName(), recipe);
-                } catch (Exception e) {
-                    LOGGER.warn("Failed to invoke getUid via reflection: class={}, recipe={}, error={}", recipe.getClass().getName(), recipe, e.toString());
-                }
-                yield null;
-            }
-        };
     }
     
     private interface IntValueConsumer {

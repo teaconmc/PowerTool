@@ -103,32 +103,45 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             return;
         }
         assert entry.renderType != null && entry.textureTarget != null;
-        poseStack.pushPose();
-        poseStack.translate(0.5f,(1-entry.getHeight() * 0.01f)/2f,0.5f);
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRotation));
-        poseStack.scale(0.01f, 0.01f, 0.01f);
-        submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
-            var w = entry.getWidth();
-            var h = entry.getHeight();
-            var l = -w/2f - w/4f;
-            var r =  w/2f + w/4f;
-            var t = h + h/4f;
-            var b = 0 - h/4f;
-            consumer.addVertex(pose,l, t, 0).setUv(1, 1).setColor(-1);
-            consumer.addVertex(pose,r, t, 0).setUv(0, 1).setColor(-1);
-            consumer.addVertex(pose,r, b, 0).setUv(0, 0).setColor(-1);
-            consumer.addVertex(pose,l, b, 0).setUv(1, 0).setColor(-1);
-            consumer.addVertex(pose,l, b, 0).setUv(0, 0).setColor(-1);
-            consumer.addVertex(pose,r, b, 0).setUv(1, 0).setColor(-1);
-            consumer.addVertex(pose,r, t, 0).setUv(1, 1).setColor(-1);
-            consumer.addVertex(pose,l, t, 0).setUv(0, 1).setColor(-1);
-        });
-        poseStack.popPose();
         var cameraEntity = Minecraft.getInstance().getCameraEntity();
         if(cameraEntity != null){
             var eye = cameraEntity.getEyePosition(state.partialTicks);
             var dir = cameraEntity.getViewVector(state.partialTicks);
-            var mouse = entry.getWorldCorners(state.blockPos, state.yRotation).raycast(eye.toVector3f(), dir.toVector3f());
+            var pair = entry.getWorldCorners(state.blockPos, state.yRotation).raycast(eye.toVector3f(), dir.toVector3f());
+            var revDir = entry.renderState.revDir;
+            poseStack.pushPose();
+            poseStack.translate(0.5f,(1-entry.getHeight() * 0.01f)/2f,0.5f);
+            poseStack.mulPose(Axis.YP.rotationDegrees(state.yRotation));
+            poseStack.scale(0.01f, 0.01f, 0.01f);
+            submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
+                var w = entry.getWidth();
+                var h = entry.getHeight();
+                float l,r,t,b;
+                if(entry.extraSize()){
+                    l = -w/2f - w/4f - (revDir ? 256 : 0);
+                    r =  w/2f + w/4f + (revDir ? 0 : 256);
+                    t = h + h/4f;
+                    b = 0 - h/4f - 256;
+                }
+                else {
+                    l = -w/2f - w/4f;
+                    r =  w/2f + w/4f;
+                    t = h + h/4f;
+                    b = 0 - h/4f;
+                }
+                
+                consumer.addVertex(pose,l, t, 0).setUv(1, 1).setColor(-1);
+                consumer.addVertex(pose,r, t, 0).setUv(0, 1).setColor(-1);
+                consumer.addVertex(pose,r, b, 0).setUv(0, 0).setColor(-1);
+                consumer.addVertex(pose,l, b, 0).setUv(1, 0).setColor(-1);
+                consumer.addVertex(pose,l, b, 0).setUv(0, 0).setColor(-1);
+                consumer.addVertex(pose,r, b, 0).setUv(1, 0).setColor(-1);
+                consumer.addVertex(pose,r, t, 0).setUv(1, 1).setColor(-1);
+                consumer.addVertex(pose,l, t, 0).setUv(0, 1).setColor(-1);
+            });
+            poseStack.popPose();
+            
+            var mouse = pair == null ? null : pair.getFirst();
             var mouseXOld = entry.renderState.mouseX;
             var mouseYOld = entry.renderState.mouseY;
             var mouseX = mouse == null ? 0 : (int) (mouse.x * entry.getWidth() + entry.getWidth() / 4f);
@@ -136,6 +149,8 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             entry.renderState.mouseX = mouseX;
             entry.renderState.mouseY = mouseY;
             entry.renderState.dirty = mouseX != 0 || mouseY != 0 || mouseXOld != mouseX || mouseYOld != mouseY;
+            entry.updateTextureSize(mouseX != 0 || mouseY != 0);
+            entry.renderState.revDir = pair != null && pair.getSecond();
         }
         else{
             if(entry.renderState.mouseX != 0 || entry.renderState.mouseY != 0){
@@ -160,8 +175,11 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
     //todo 动态大小
     public static class RecipeRenderCacheState{
         public boolean dirty = false;
+        public boolean revDir = false;
         public int mouseX = 0;
         public int mouseY = 0;
+        public int sizeX = 0;
+        public int sizeY = 0;
     }
     
     public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout, @Nullable TextureTarget textureTarget, @Nullable RenderType renderType, RecipeRenderCacheState renderState){
@@ -181,7 +199,28 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             var renderType = RenderType.create("jei_recipe_display_ber", RenderSetup.builder(pipeline).createRenderSetup());
             var renderState = new RecipeRenderCacheState();
             renderState.dirty = true;
-            return new RecipeRenderCache(layout, target, renderType, renderState);
+            var result = new RecipeRenderCache(layout, target, renderType, renderState);
+            result.updateTextureSize(false);
+            return result;
+        }
+        
+        public boolean extraSize(){
+            if(this.textureTarget == null) return false;
+            return this.textureTarget.width != (int) (this.getWidth() * 6f) && this.textureTarget.height != (int) (this.getHeight() * 6f);
+        }
+        
+        public void updateTextureSize(boolean extraSize){
+            if(this.layout == null) return;
+            var rect = this.layout.getRect();
+            if(extraSize){
+                this.renderState.sizeX = (int) (rect.getWidth() * 6f + 1024);
+                this.renderState.sizeY = (int) (rect.getHeight() * 6f + 1024);
+            }
+            else {
+                this.renderState.sizeX = (int) (rect.getWidth() * 6f);
+                this.renderState.sizeY = (int) (rect.getHeight() * 6f);
+            }
+            
         }
         
         public boolean valid(){
@@ -243,7 +282,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
         }
         
-        public @Nullable Vector2f raycast(Vector3f rayOrigin, Vector3f rayDir) {
+        public @Nullable Pair<Vector2f,Boolean> raycast(Vector3f rayOrigin, Vector3f rayDir) {
             Vector3f p0 = topLeft;
             Vector3f uAxis = new Vector3f(topRight).sub(p0);
             Vector3f vAxis = new Vector3f(bottomLeft).sub(p0);
@@ -269,7 +308,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
                 return null;
             }
             float texU = denom < 0 ? 1 - u : u;
-            return new Vector2f(texU, v);
+            return Pair.of(new Vector2f(texU, v), denom < 0);
         }
     }
     

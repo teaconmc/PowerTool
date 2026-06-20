@@ -36,27 +36,27 @@ public class ItemSupplierBlockEntity extends BlockEntity {
         
         @Override
         public long getAmountAsLong(int index) {
-            return 64;
+            return theItem.isEmpty() ? 0 : Integer.MAX_VALUE - 1;
         }
         
         @Override
         public long getCapacityAsLong(int index, ItemResource resource) {
-            return 64;
+            return isValid(index, resource) ? Integer.MAX_VALUE - 1 : 0;
         }
         
         @Override
         public boolean isValid(int index, ItemResource resource) {
-            return resource.is(theItem.getItem());
+            return resource.is(theItem.getItem()) && !theItem.isEmpty();
         }
         
         @Override
         public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
-            return 0;
+            return isValid(index, resource) ? 0 : amount;
         }
         
         @Override
         public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
-            return amount;
+            return isValid(index, resource) ? amount : 0;
         }
     };
     

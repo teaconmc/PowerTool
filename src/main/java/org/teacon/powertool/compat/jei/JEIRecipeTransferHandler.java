@@ -2,6 +2,7 @@ package org.teacon.powertool.compat.jei;
 
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.types.IRecipeType;
@@ -44,12 +45,13 @@ public class JEIRecipeTransferHandler implements IRecipeTransferHandler<JEIRecip
         return (IRecipeType<Object>) Constants.UNIVERSAL_RECIPE_TRANSFER_TYPE;
     }
     
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void customTransfer(JEIRecipeDisplayMenu container, Player player, IRecipeLayoutDrawable<?> recipeLayout){
         var typeId = recipeLayout.getRecipeCategory().getRecipeType().getUid();
         var level = player.level();
         var pos = container.getBlockPos();
         var recipe = recipeLayout.getRecipe();
-        var recipeId = JEIRecipeDisplayScreen.getRecipeId(recipe);
+        var recipeId = ((IRecipeCategory)recipeLayout.getRecipeCategory()).getIdentifier(recipe);
         if (level.getBlockEntity(pos) instanceof JEIRecipeDisplayBlockEntity be) {
             be.recipeId = recipeId;
             be.recipeType = typeId;

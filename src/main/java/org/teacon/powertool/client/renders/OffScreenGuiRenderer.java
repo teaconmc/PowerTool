@@ -40,7 +40,7 @@ public class OffScreenGuiRenderer {
     private final FogRenderer fogRenderer;
     private final GuiRenderState guiRenderState;
     private final GuiRenderer guiRenderer;
-
+    
     public OffScreenGuiRenderer(Minecraft minecraft) {
         this.minecraft = minecraft;
         var bufferSource = minecraft.renderBuffers().bufferSource();

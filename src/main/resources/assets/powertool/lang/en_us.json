@@ -125,12 +125,16 @@
   "item.powertool.cached_mode_tool": "Cached Rendering Mode Tool",
   "item.powertool.texture_extractor": "Texture Extractor",
   "item.powertool.fake_water_bucket": "Fake Water Bucket",
+  "item.powertool.regular_exhibition_humanoid": "Exhibition Humanoid (Regular)",
+  "item.powertool.slim_exhibition_humanoid": "Exhibition Humanoid (Slim)",
 
   "entity.powertool.fence_knot": "Knot On Fence",
   "entity.powertool.fence_knot.tooltip": "Like vanilla leash, but between fences",
   "entity.powertool.fence_knot.connecting": "Start connection from %s",
   "entity.powertool.fence_knot.connected": "Connected %1$s and %2$s",
   "entity.powertool.fence_knot.disconnected": "Disconnected leashes between %1$s and %2$s",
+  "entity.powertool.regular_exhibition_humanoid": "Exhibition Humanoid (Regular)",
+  "entity.powertool.slim_exhibition_humanoid": "Exhibition Humanoid (Slim)",
 
   "itemGroup.powertool": "PowerTool",
 

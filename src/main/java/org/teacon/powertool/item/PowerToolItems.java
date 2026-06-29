@@ -4,11 +4,7 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,6 +17,7 @@ import org.teacon.powertool.block.ICosmeticBlock;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.entity.FenceKnotEntity;
 import org.teacon.powertool.entity.MartingCarEntity;
+import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -57,11 +54,15 @@ public class PowerToolItems {
     public static DeferredHolder<Item, TextureExtractor> TEXTURE_EXTRACTOR;
     public static DeferredHolder<Item, ExamineHoloGlass> EXAMINE_HOLO_GLASS;
     public static DeferredHolder<Item, CommandRune> COMMAND_RUNE;
+
+    public static DeferredHolder<Item, SpawnEggItem> REGULAR_EXHIBITION_HUMANOID;
+    public static DeferredHolder<Item, SpawnEggItem> SLIM_EXHIBITION_HUMANOID;
     
     public static Supplier<Item> MARTING_RED = ITEMS.registerItem("marting_car_red", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.RED));
     public static Supplier<Item> MARTING_GREEN = ITEMS.registerItem("marting_car_green", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.GREEN));
     public static Supplier<Item> MARTING_BLUE = ITEMS.registerItem("marting_car_blue", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.BLUE));
-    
+
+
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
         ITEMS.registerItem("useless_stick", (p) -> new Item(p) {
@@ -93,6 +94,10 @@ public class PowerToolItems {
         STATIC_MODE_TOOL = ITEMS.registerItem("static_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.STATIC_MODE));
         CACHED_MODE_TOOL = ITEMS.registerItem("cached_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.CACHED_MODE));
         TEXTURE_EXTRACTOR = ITEMS.registerItem("texture_extractor", TextureExtractor::new);
+
+        REGULAR_EXHIBITION_HUMANOID = ITEMS.registerItem("regular_exhibition_humanoid", (p) -> new SpawnEggItem(p.spawnEgg(PowerToolEntities.REGULAR_EXHIBITION_HUMANOID.get())));
+        SLIM_EXHIBITION_HUMANOID    = ITEMS.registerItem("slim_exhibition_humanoid", (p) -> new SpawnEggItem(p.spawnEgg(PowerToolEntities.SLIM_EXHIBITION_HUMANOID.get())));
+
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);
     }

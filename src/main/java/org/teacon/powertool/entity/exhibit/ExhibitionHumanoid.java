@@ -38,7 +38,7 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
             final boolean                           slim
     ) {
         super(type, level);
-        this.slim = slim;
+        this.slim       = slim;
     }
 
     @Override
@@ -47,6 +47,11 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
     ) {
         super.defineSynchedData(entityData);
         entityData.define(DATA_PROFILE, Mannequin.DEFAULT_PROFILE);
+    }
+
+    @Override
+    public void push(final double xa, final double ya, final double za) {
+        return;
     }
 
     public static AttributeSupplier.@NonNull Builder createAttributes() {

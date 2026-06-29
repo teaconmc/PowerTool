@@ -12,6 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayDeque;
@@ -150,5 +151,13 @@ public class CacheableBERenderingPipeline {
         }
         cameraOldPosition = new Vec3(pos.x, pos.y, pos.z);
         cameraMoved = true;
+    }
+    
+    @SubscribeEvent
+    public static void onChunkUnload(ChunkEvent.Unload event) {
+        if(getInstance() == null) return;
+        var chunkPos = event.getChunk().getPos();
+        if(getInstance().regions.containsKey(chunkPos))
+            getInstance().regions.remove(chunkPos).releaseBuffers();
     }
 }

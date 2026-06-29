@@ -149,7 +149,6 @@ dependencies {
             prefer xklib_version
         }
     }
-
     jarJar(implementation "com.xkball:xklib-ap:$xklib_version"){
         version {
             strictly "[$xklib_version, 1.0.0)"

@@ -48,5 +48,7 @@ public class ClientOverlays {
             });
             
         }
+
+        event.registerAboveAll(VanillaUtils.modRL("inspector"), InspectorOverlay.INSTANCE);
     }
 }

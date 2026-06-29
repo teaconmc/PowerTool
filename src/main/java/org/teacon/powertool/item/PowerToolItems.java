@@ -55,6 +55,7 @@ public class PowerToolItems {
     public static DeferredHolder<Item, ExamineHoloGlass> EXAMINE_HOLO_GLASS;
     public static DeferredHolder<Item, CommandRune> COMMAND_RUNE;
 
+    public static DeferredHolder<Item, ExhibitionEntityEditor> EXHIBITION_ENTITY_EDITOR;
     public static DeferredHolder<Item, SpawnEggItem> REGULAR_EXHIBITION_HUMANOID;
     public static DeferredHolder<Item, SpawnEggItem> SLIM_EXHIBITION_HUMANOID;
     
@@ -94,6 +95,8 @@ public class PowerToolItems {
         STATIC_MODE_TOOL = ITEMS.registerItem("static_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.STATIC_MODE));
         CACHED_MODE_TOOL = ITEMS.registerItem("cached_mode_tool", (p) -> new AccessControlToolItem(p, AccessControlToolItem.Type.CACHED_MODE));
         TEXTURE_EXTRACTOR = ITEMS.registerItem("texture_extractor", TextureExtractor::new);
+
+        EXHIBITION_ENTITY_EDITOR    = ITEMS.registerItem("exhibition_entity_editor", ExhibitionEntityEditor::new);
 
         REGULAR_EXHIBITION_HUMANOID = ITEMS.registerItem("regular_exhibition_humanoid", (p) -> new SpawnEggItem(p.spawnEgg(PowerToolEntities.REGULAR_EXHIBITION_HUMANOID.get())));
         SLIM_EXHIBITION_HUMANOID    = ITEMS.registerItem("slim_exhibition_humanoid", (p) -> new SpawnEggItem(p.spawnEgg(PowerToolEntities.SLIM_EXHIBITION_HUMANOID.get())));

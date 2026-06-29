@@ -4,17 +4,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.teacon.powertool.PowerTool;
-import org.teacon.powertool.network.client.OpenBlockScreen;
-import org.teacon.powertool.network.client.OpenHolographicSignEditor;
-import org.teacon.powertool.network.client.OpenItemScreen;
-import org.teacon.powertool.network.client.RecordDebugData;
-import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
-import org.teacon.powertool.network.client.UpdateCreativeNoClipPacket;
-import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
-import org.teacon.powertool.network.client.UpdateOpenMenuSourcePacket;
-import org.teacon.powertool.network.client.UpdatePermissionPacket;
-import org.teacon.powertool.network.client.UpdatePlayerMovement;
-import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
+import org.teacon.powertool.network.client.*;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.network.server.UpdateItemStackData;
@@ -81,6 +71,11 @@ public class PowerToolNetwork {
                 UpdateStaticModeChunkDataPacket.TYPE,
                 UpdateStaticModeChunkDataPacket.STREAM_CODEC,
                 UpdateStaticModeChunkDataPacket::handle
+        );
+        register.playToClient(
+                OpenExhibitionEntityEditor.TYPE,
+                OpenExhibitionEntityEditor.STREAM_CODEC,
+                OpenExhibitionEntityEditor::handle
         );
         
         register.commonToServer(

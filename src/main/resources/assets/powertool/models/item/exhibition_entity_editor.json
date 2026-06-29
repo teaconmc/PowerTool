@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "powertool:item/exhibition_entity_editor"
+  }
+}

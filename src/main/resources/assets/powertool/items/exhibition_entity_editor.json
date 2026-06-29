@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "powertool:item/exhibition_entity_editor"
+  }
+}

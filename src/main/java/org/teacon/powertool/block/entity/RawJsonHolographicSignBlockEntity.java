@@ -75,13 +75,21 @@ public class RawJsonHolographicSignBlockEntity extends BaseHolographicSignBlockE
         var taskList = new ArrayList<CompletableFuture<?>>();
         //不用processMessageBundle 因为没有处理后list size和顺序不变的保证
         for (var i = 0; i < forFilter.size(); i++) {
-            
+            // In vanilla, only /say, /msg, /me, /teammsg, item name editing, book content editing, and sign editing
+            // will have text filter applied, and for all of those, player can only edit them with plain text.
+            // In our case, however, involves raw json which will be much more complicated.
+            // If we handle them component by component, this filtering can be easily attacked when the player break
+            // an illegal word into siblings of components.
+            // If we stringify the component, we will lose the arguments of more complex component and can hardly,
+            // if not never, recover the component tree.
+            // For simplicity, we return the original component if the filtering will not mask anything,
+            // and construct a literal component if, unfortunately, something will be masked out.
             var task = player.getTextFilter()
                     .processStreamMessage(forFilter.get(i).getString());
             int finalI = i;
             task.thenAccept(filtered -> {
                 if (player.isTextFilteringEnabled()) {
-                    this.forRender.add(finalI, Component.literal(filtered.filteredOrEmpty()).withStyle(forFilter.get(finalI).getStyle()));
+                    this.forRender.add(finalI, !filtered.isFiltered() ? forFilter.get(finalI) : Component.literal(filtered.filteredOrEmpty()).withStyle(forFilter.get(finalI).getStyle()));
                 } else {
                     this.forRender.add(finalI, forFilter.get(finalI));
                 }

@@ -6,13 +6,18 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.entity.exhibit.ExhibitionHumanoid;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.HashSet;
@@ -50,13 +55,27 @@ public class PowerToolEntities {
                     .passengerAttachments(new Vec3(0, 0.2, -0.2))
                     .clientTrackingRange(8)
                     .build(VanillaUtils.modResourceKey(BuiltInRegistries.ENTITY_TYPE.key(), "marting_car")));
-    
+
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<Set<BlockPos>>> BLOCK_POS_LIST = ENTITY_DATA_SERIALIZER.register(
             "block_pos_list", () -> EntityDataSerializer.forValueType(BlockPos.STREAM_CODEC.apply(ByteBufCodecs.collection(HashSet::new))));
     
     public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<FenceKnotEntity.Type>> FENCE_KNOT_TYPE = ENTITY_DATA_SERIALIZER.register(
             "fence_knot_type", () -> EntityDataSerializer.forValueType(FenceKnotEntity.Type.STREAM_CODEC)
     );
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ExhibitionHumanoid>> REGULAR_EXHIBITION_HUMANOID = ENTITIES.register("regular_exhibition_huamnoid",
+            () -> EntityType.Builder.of(ExhibitionHumanoid::regular, MobCategory.MISC)
+                    .sized(0.6F, 1.8F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(8)
+                    .build(VanillaUtils.modResourceKey(BuiltInRegistries.ENTITY_TYPE.key(), "regular_exhibition_humanoid")));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ExhibitionHumanoid>> SLIM_EXHIBITION_HUMANOID = ENTITIES.register("slim_exhibition_huamnoid",
+            () -> EntityType.Builder.of(ExhibitionHumanoid::slim, MobCategory.MISC)
+                    .sized(0.6F, 1.8F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(8)
+                    .build(VanillaUtils.modResourceKey(BuiltInRegistries.ENTITY_TYPE.key(), "slim_exhibition_humanoid")));
     
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);

@@ -49,6 +49,7 @@ import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
 import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
 import org.teacon.powertool.client.renders.entity.AutoVanishBoatRenderer;
+import org.teacon.powertool.client.renders.entity.ExhibitionHumanoidRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
 import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
@@ -233,6 +234,8 @@ public class PowerToolClientEvents {
             event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(), AutoVanishBoatRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer(c, ModelLayers.MINECART));
+            event.registerEntityRenderer(PowerToolEntities.REGULAR_EXHIBITION_HUMANOID.get(), ExhibitionHumanoidRenderer::regular);
+            event.registerEntityRenderer(PowerToolEntities.SLIM_EXHIBITION_HUMANOID.get(), ExhibitionHumanoidRenderer::slim);
         }
         
         @SubscribeEvent

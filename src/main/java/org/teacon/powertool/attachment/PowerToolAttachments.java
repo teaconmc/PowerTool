@@ -48,6 +48,14 @@ public class PowerToolAttachments {
                     .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
                     .build()
     );
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> FLY_NO_DRIFT = ATTACHMENT_TYPE.register(
+        "fly_no_drift",
+        () -> AttachmentType.builder(() -> false)
+            .serialize(Codec.BOOL.fieldOf("enabled"))
+            .copyOnDeath()
+            .build()
+    );
     
     public static void register(IEventBus bus) {
         ATTACHMENT_TYPE.register(bus);

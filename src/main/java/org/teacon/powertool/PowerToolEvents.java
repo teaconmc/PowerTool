@@ -19,6 +19,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
@@ -195,6 +196,18 @@ public class PowerToolEvents {
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             CreativeNoClip.sync(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void postPlayTick(PlayerTickEvent.Post event) {
+        var player = event.getEntity();
+        if (FlyNoDrift.canNoDrift(player)) {
+            if (player.getAbilities().flying) {
+                if (player.zza == 0 && player.xxa == 0) {
+                    player.setDeltaMovement(player.getDeltaMovement().multiply(0.25, 1, 0.25));
+                }
+            }
         }
     }
 }

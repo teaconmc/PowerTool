@@ -11,6 +11,7 @@ import org.teacon.powertool.network.client.RecordDebugData;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateCreativeNoClipPacket;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateFlyNoDriftPacket;
 import org.teacon.powertool.network.client.UpdateOpenMenuSourcePacket;
 import org.teacon.powertool.network.client.UpdatePermissionPacket;
 import org.teacon.powertool.network.client.UpdatePlayerMovement;
@@ -41,6 +42,11 @@ public class PowerToolNetwork {
                 UpdateCreativeNoClipPacket.TYPE,
                 UpdateCreativeNoClipPacket.STREAM_CODEC,
                 UpdateCreativeNoClipPacket::handle
+        );
+        register.playToClient(
+                UpdateFlyNoDriftPacket.TYPE,
+                UpdateFlyNoDriftPacket.STREAM_CODEC,
+                UpdateFlyNoDriftPacket::handle
         );
         register.playToClient(
                 OpenItemScreen.TYPE,

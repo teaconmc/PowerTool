@@ -24,8 +24,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     public static final int MAXIMUM_LINE_LENGTH = 256;
     private static final int MINIMUM_EDIT_BOX_WIDTH = 120;
     
-    private String[] messages;
-    private @Nullable AutoWidthMultiLineEditBoxWrapper editBoxWrapper;
+    private String @Nullable [] messages;
     private @Nullable MultiLineEditBox editBox;
     
     public CommonHolographicSignEditingScreen(CommonHolographicSignBlockEntity theSign) {
@@ -47,8 +46,8 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
         this.editBox = new MultiLineEditBox();
         this.editBox.setMaxLines(MAXIMUM_LINE_COUNT);
         this.editBox.setMaxLineLength(MAXIMUM_LINE_LENGTH);
-        this.editBoxWrapper = new AutoWidthMultiLineEditBoxWrapper(this.editBox, MINIMUM_EDIT_BOX_WIDTH);
-        editBox.setValue(String.join("\n", messages));
+        var editBoxWrapper = new AutoWidthMultiLineEditBoxWrapper(this.editBox, MINIMUM_EDIT_BOX_WIDTH);
+        if(this.messages != null) editBox.setValue(String.join("\n", messages));
         editBoxWrapper.setValueListener(s -> {
             if (s.isEmpty()) {
                 this.messages = new String[0];
@@ -70,7 +69,7 @@ public class CommonHolographicSignEditingScreen extends BaseHolographicSignEditi
     @Override
     protected void writeBackToBE() {
         super.writeBackToBE();
-        var toSend = Arrays.copyOfRange(this.messages, 0, this.messages.length);
+        var toSend = this.messages == null ? new String[0] : Arrays.copyOfRange(this.messages, 0, this.messages.length);
         this.sign.contents = Arrays.stream(toSend).map(Component::literal).limit(MAXIMUM_LINE_COUNT).toList();
     }
     

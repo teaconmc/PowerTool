@@ -4,9 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -21,7 +19,6 @@ import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 @NonNullByDefault

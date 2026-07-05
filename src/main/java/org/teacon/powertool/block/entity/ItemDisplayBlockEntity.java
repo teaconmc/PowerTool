@@ -37,7 +37,7 @@ public class ItemDisplayBlockEntity extends BlockEntity {
     
     @Override
     protected void saveAdditional(ValueOutput output) {
-        output.store("item", ItemStack.CODEC, this.itemToDisplay);
+        if(!this.itemToDisplay.isEmpty()) output.store("item", ItemStack.CODEC, this.itemToDisplay);
         output.putInt("rotation", this.rotation);
         super.saveAdditional(output);
     }

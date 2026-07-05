@@ -89,8 +89,8 @@ public class RegisterBlockEntity extends BlockEntity implements IClientUpdateBlo
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.store("item", ItemStack.CODEC, this.itemToAccept);
-        output.store("itemSupply", ItemStack.CODEC, this.itemToSupply);
+        if(!this.itemToAccept.isEmpty()) output.store("item", ItemStack.CODEC, this.itemToAccept);
+        if(!this.itemToSupply.isEmpty()) output.store("itemSupply", ItemStack.CODEC, this.itemToSupply);
         output.putBoolean("matchDataComponents", this.matchDataComponents);
         output.putBoolean("displaySupply", this.displaySupply);
     }

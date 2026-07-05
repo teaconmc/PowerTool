@@ -73,7 +73,7 @@ public class ItemSupplierBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.store("item", ItemStack.CODEC, this.theItem);
+        if(!this.theItem.isEmpty()) output.store("item", ItemStack.CODEC, this.theItem);
     }
     
     @Override

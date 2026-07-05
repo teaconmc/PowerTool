@@ -19,6 +19,7 @@
     "jei.MixinRecipeTransferUtil"
   ],
   "client": [
+    "client.BeaconRendererMixin",
     "client.ClientRecipeBookMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",

@@ -1,5 +1,6 @@
 package org.teacon.powertool.block.holo_sign;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Minecraft;
@@ -44,6 +45,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.WithTooltip;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
@@ -58,6 +60,7 @@ import java.util.function.Consumer;
 @NonNullByDefault
 public class HolographicSignBlock extends BaseEntityBlock implements SimpleWaterloggedBlock, WithTooltip {
     
+    private static final Logger LOGGER = LogUtils.getLogger();
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     
@@ -202,7 +205,11 @@ public class HolographicSignBlock extends BaseEntityBlock implements SimpleWater
         
         public static boolean tryUseAdditional(Level level, BlockPos pos) {
             if (level.isClientSide() && level.getBlockEntity(pos) instanceof LinkHolographicSignBlockEntity be) {
-                return tryOpenURL(URI.create(be.url));
+                try {
+                    return tryOpenURL(URI.create(be.url));
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to open link holographic sign block", e);
+                }
             }
             if (level.isClientSide() && level.getBlockEntity(pos) instanceof RawJsonHolographicSignBlockEntity be) {
                 for (var component : be.forRender) {

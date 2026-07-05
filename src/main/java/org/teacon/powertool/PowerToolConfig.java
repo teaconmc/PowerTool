@@ -7,6 +7,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.motd.MotDHandler;
 
 import java.util.HashSet;
@@ -14,11 +15,14 @@ import java.util.List;
 import java.util.Set;
 
 @EventBusSubscriber(modid = PowerTool.MODID)
+@NonNullByDefault
 public class PowerToolConfig {
     
     public static ModConfigSpec.ConfigValue<String> motdContent;
     
     public static ModConfigSpec.ConfigValue<Boolean> disableTeleportToEnd;
+    
+    public static ModConfigSpec.ConfigValue<Boolean> disableBeaconRender;
     
     public static ModConfigSpec.ConfigValue<Boolean> vehicleAutoVanish;
     
@@ -32,6 +36,7 @@ public class PowerToolConfig {
         var builder = new ModConfigSpec.Builder();
         motdContent = builder.comment("Message-of-the-day content.").define("motd", "");
         disableTeleportToEnd = builder.comment("Disable the access of the End.").define("disableTeleportToEnd", true);
+        disableBeaconRender = builder.comment("Disable beacon beam rendering.").define("disableBeaconRender", true);
         vehicleAutoVanish = builder.comment("Replace boat and minecart as auto banish version when placing.(Not include chest boat.)").define("vehicleAutoVanish", true);
         noLittleChicken = builder.comment("Disable thrown egg create little chickens.").define("noLittleChicken", true);
         recipeBookWhiteListConfig = builder.comment("A list of namespace that allows build recipe book.").defineListAllowEmpty("recipeBookWhiteList", List.of("anomaly_delight"), null, (obj) -> true);

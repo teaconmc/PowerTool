@@ -74,28 +74,28 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
             renderComponent(component, x, y, transform, nodeCollector, dropShadow, packedLight, fontColorDefault, bgColor);
             y += this.font.lineHeight + 1;
             if (renderHoverText) {
-                y += renderHoverText(component, x, y, transform, nodeCollector, dropShadow, packedLight, bgColor);
+                y += renderHoverText(component, x, y, transform, nodeCollector, dropShadow, packedLight, fontColorDefault, bgColor);
             }
         }
         return y - yr;
     }
     
-    public float renderHoverText(Component component, float x, float y, PoseStack transform, SubmitNodeCollector nodeCollector, boolean dropShadow, int packedLight, int bgColor) {
+    public float renderHoverText(Component component, float x, float y, PoseStack transform, SubmitNodeCollector nodeCollector, boolean dropShadow, int packedLight,int fontColorDefault, int bgColor) {
         var yr = y;
         var hoverEvent = component.getStyle().getHoverEvent();
         if (hoverEvent != null) {
             if (hoverEvent instanceof HoverEvent.ShowText(Component text)) {
-                renderComponent(text, x, y, transform, nodeCollector, dropShadow, packedLight, 0xffffff, bgColor);
+                renderComponent(text, x, y, transform, nodeCollector, dropShadow, packedLight, fontColorDefault, bgColor);
                 y += this.font.lineHeight + 1;
             }
             if (hoverEvent instanceof HoverEvent.ShowEntity(HoverEvent.EntityTooltipInfo entity)) {
-                y += renderComponentList(entity.getTooltipLines(), x, y, transform, nodeCollector, dropShadow, packedLight, 0xffffff, bgColor, true);
+                y += renderComponentList(entity.getTooltipLines(), x, y, transform, nodeCollector, dropShadow, packedLight, fontColorDefault, bgColor, true);
             }
             if (hoverEvent instanceof HoverEvent.ShowItem(ItemStackTemplate item)) {
-                y += renderComponentList(Screen.getTooltipFromItem(Minecraft.getInstance(), item.create()), x, y, transform, nodeCollector, dropShadow, packedLight, 0xffffff, bgColor, true);
+                y += renderComponentList(Screen.getTooltipFromItem(Minecraft.getInstance(), item.create()), x, y, transform, nodeCollector, dropShadow, packedLight, fontColorDefault, bgColor, true);
             }
         }
-        return yr - y;
+        return y - yr;
     }
     
     public void renderInternal(RawJsonSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, int yRotation, int xRotation, CameraRenderState camera, boolean renderHoverText) {

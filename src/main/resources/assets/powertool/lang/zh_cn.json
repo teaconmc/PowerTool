@@ -234,8 +234,12 @@
   "powertool.command.creative_no_clip.enabled": "创造穿墙已开启",
   "powertool.command.creative_no_clip.disabled": "创造穿墙已关闭",
   "powertool.command.creative_no_clip.enabled.targets": "已为 %s 名玩家开启创造穿墙",
-  "powertool.command.creative_no_clip.disabled.targets": "已为 %s 名玩家关闭创造穿墙"
-,
+  "powertool.command.creative_no_clip.disabled.targets": "已为 %s 名玩家关闭创造穿墙",
+  "powertool.command.fly_no_drift.enabled": "飞行惯性移除已开启",
+  "powertool.command.fly_no_drift.disabled": "飞行惯性移除已关闭",
+  "powertool.command.fly_no_drift.enabled.targets": "已为 %s 名玩家开启飞行惯性移除",
+  "powertool.command.fly_no_drift.disabled.targets": "已为 %s 名玩家关闭飞行惯性移除",
+
   "powertool.setcommand.gui.name": "名称：",
   "powertool.setcommand.gui.command": "命令：",
   "powertool.setcommand.gui.delayed_commands": "延迟命令：",

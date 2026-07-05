@@ -13,5 +13,6 @@ public class PowerToolCommands {
         FlyCommand.reg(event.getDispatcher());
         AccelerateCommand.register(event.getDispatcher());
         CreativeNoClipCommand.register(event.getDispatcher());
+        FlyNoDriftCommand.register(event.getDispatcher());
     }
 }

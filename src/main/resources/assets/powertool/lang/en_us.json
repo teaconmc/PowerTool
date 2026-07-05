@@ -170,6 +170,10 @@
   "powertool.command.creative_no_clip.disabled": "Creative no-clip disabled",
   "powertool.command.creative_no_clip.enabled.targets": "Creative no-clip enabled for %s player(s)",
   "powertool.command.creative_no_clip.disabled.targets": "Creative no-clip disabled for %s player(s)",
+  "powertool.command.fly_no_drift.enabled": "Fly no-drift enabled",
+  "powertool.command.fly_no_drift.disabled": "Fly no-drift disabled",
+  "powertool.command.fly_no_drift.enabled.targets": "Fly no-drift enabled for %s player(s)",
+  "powertool.command.fly_no_drift.disabled.targets": "Fly no-drift disabled for %s player(s)",
 
   "tooltip.powertool.transparent_brush": "Make block display block transparent",
   "powertool.realtime_observer.gui.current_time": "Current Time: %d",

@@ -1,10 +1,12 @@
 package org.teacon.powertool.client.anvilcraft.rendering;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -14,6 +16,8 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -26,6 +30,7 @@ import java.util.Queue;
  */
 @EventBusSubscriber(Dist.CLIENT)
 public class CacheableBERenderingPipeline {
+    private static final Logger log = LoggerFactory.getLogger(CacheableBERenderingPipeline.class);
     @Nullable
     private static CacheableBERenderingPipeline instance;
     private final ClientLevel level;
@@ -37,12 +42,15 @@ public class CacheableBERenderingPipeline {
     private static boolean cameraMoved = true;
 
     public CachedChunk getRenderRegion(ChunkPos chunkPos) {
-        if (regions.containsKey(chunkPos)) {
-            return regions.get(chunkPos);
+        mayWarnForNonRenderThread();
+        synchronized (regions) {
+            if (regions.containsKey(chunkPos)) {
+                return regions.get(chunkPos);
+            }
+            CachedChunk region = new CachedChunk(chunkPos, this);
+            regions.put(chunkPos, region);
+            return region;
         }
-        CachedChunk region = new CachedChunk(chunkPos, this);
-        regions.put(chunkPos, region);
-        return region;
     }
 
     public CacheableBERenderingPipeline(ClientLevel level) {
@@ -78,8 +86,8 @@ public class CacheableBERenderingPipeline {
      */
     public void blockRemoved(BlockEntity be) {
         IBlockEntityRendererExtension<?> renderer = Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher()
-                .getRenderer(be);
+            .getBlockEntityRenderDispatcher()
+            .getRenderer(be);
         if (renderer == null) return;
         ChunkPos chunkPos = ChunkPos.containing(be.getBlockPos());
         getRenderRegion(chunkPos).blockRemoved(be);
@@ -96,8 +104,8 @@ public class CacheableBERenderingPipeline {
      */
     public void update(BlockEntity be) {
         BlockEntityRenderer<?, ?> renderer = Minecraft.getInstance()
-                .getBlockEntityRenderDispatcher()
-                .getRenderer(be);
+            .getBlockEntityRenderDispatcher()
+            .getRenderer(be);
         if (renderer == null) return;
         ChunkPos chunkPos = ChunkPos.containing(be.getBlockPos());
         getRenderRegion(chunkPos).update(be);
@@ -115,19 +123,25 @@ public class CacheableBERenderingPipeline {
      * Releases all buffers in use and mark current pipeline instance as invalid.
      */
     public void releaseBuffers() {
-        regions.values().forEach(CachedChunk::releaseBuffers);
-        valid = false;
+        mayWarnForNonRenderThread();
+        synchronized (regions) {
+            regions.values().forEach(CachedChunk::releaseBuffers);
+            valid = false;
+        }
     }
 
     public void render() {
-        regions.values().forEach(CachedChunk::render);
+        mayWarnForNonRenderThread();
+        synchronized (regions) {
+            regions.values().forEach(CachedChunk::render);
+        }
     }
 
     /**
      * Retrieves the current instance of the CacheableBERenderingPipeline.
      *
      * @return The current instance of the CacheableBERenderingPipeline,
-     *         or null if there has no {@link ClientLevel} in current {@link Minecraft} client.
+     * or null if there has no {@link ClientLevel} in current {@link Minecraft} client.
      */
     @Nullable
     public static CacheableBERenderingPipeline getInstance() {
@@ -152,12 +166,22 @@ public class CacheableBERenderingPipeline {
         cameraOldPosition = new Vec3(pos.x, pos.y, pos.z);
         cameraMoved = true;
     }
-    
+
+    private static void mayWarnForNonRenderThread() {
+        if (!RenderSystem.isOnRenderThread()) {
+            log.warn("CacheableBERenderingPipeline called from wrong thread!", new IllegalStateException());
+        }
+    }
+
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
-        if(getInstance() == null) return;
-        var chunkPos = event.getChunk().getPos();
-        if(getInstance().regions.containsKey(chunkPos))
-            getInstance().regions.remove(chunkPos).releaseBuffers();
+        if (getInstance() == null) return;
+        mayWarnForNonRenderThread();
+        synchronized (getInstance().regions) {
+            ChunkPos chunkPos = event.getChunk().getPos();
+            if (getInstance().regions.containsKey(chunkPos)) {
+                getInstance().regions.remove(chunkPos).releaseBuffers();
+            }
+        }
     }
 }

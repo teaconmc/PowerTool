@@ -178,8 +178,9 @@ public class CacheableBERenderingPipeline {
         mayWarnForNonRenderThread();
         synchronized (getInstance().regions) {
             ChunkPos chunkPos = event.getChunk().getPos();
-            if (getInstance().regions.containsKey(chunkPos)) {
-                getInstance().regions.remove(chunkPos).releaseBuffers();
+            CachedChunk removed = getInstance().regions.remove(chunkPos);
+            if (removed != null) {
+                removed.releaseBuffers();
             }
         }
     }

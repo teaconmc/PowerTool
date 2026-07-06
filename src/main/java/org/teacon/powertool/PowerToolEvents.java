@@ -5,6 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Util;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.level.ChunkPos;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -22,6 +24,8 @@ import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.entity.AutoVanishBoat;
@@ -36,10 +40,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @NonNullByDefault
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolEvents {
+    
+    private static final Logger CMD_TRACING_LOGGER = LoggerFactory.getLogger("COMMAND_TRACING");
+
+    @SubscribeEvent
+    public static void onCommand(CommandEvent event) {
+        var parsed = event.getParseResults();
+        var rawString = parsed.getReader().getString();
+        var source = parsed.getContext().getSource();
+        Object executorName = source.getTextName();
+        Entity maybeEntity = source.getEntity();
+        UUID uuid = null;
+        if (maybeEntity != null) {
+            uuid = maybeEntity.getUUID();
+        }
+        CMD_TRACING_LOGGER.info("Command is executed. Command: '{}', executor: {} (UUID = {})", rawString, executorName, uuid);
+    }
     
     @SubscribeEvent
     public static void onChunkSent(ChunkWatchEvent.Sent event) {

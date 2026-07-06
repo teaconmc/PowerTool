@@ -14,7 +14,7 @@ public final class FlyNoDrift {
     }
 
     public static boolean canNoDrift(Player player) {
-        return player.isSpectator() || enabled(player) && player.getAbilities().flying;
+        return enabled(player) && player.getAbilities().flying;
     }
 
     public static boolean enabled(Player player) {

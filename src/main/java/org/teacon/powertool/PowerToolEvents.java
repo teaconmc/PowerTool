@@ -1,5 +1,6 @@
 package org.teacon.powertool;
 
+import net.minecraft.commands.CommandSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,13 +54,14 @@ public class PowerToolEvents {
         var parsed = event.getParseResults();
         var rawString = parsed.getReader().getString();
         var source = parsed.getContext().getSource();
+        CommandSource realSource = source.source;
         Object executorName = source.getTextName();
         Entity maybeEntity = source.getEntity();
         UUID uuid = null;
         if (maybeEntity != null) {
             uuid = maybeEntity.getUUID();
         }
-        CMD_TRACING_LOGGER.info("Command is executed. Command: '{}', executor: {} (UUID = {})", rawString, executorName, uuid);
+        CMD_TRACING_LOGGER.info("Command is executed. Command: '{}', executor: {} (Display Name = {}, UUID = {})", rawString, realSource, executorName, uuid);
     }
     
     @SubscribeEvent

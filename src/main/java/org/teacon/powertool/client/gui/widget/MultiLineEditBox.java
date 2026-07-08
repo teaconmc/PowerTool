@@ -111,7 +111,7 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
         int result = 0;
         String value = this.textField.value();
         for (MultilineTextField.StringView lineView : this.textField.iterateLines()) {
-            result = Math.max(result, this.font.width(value.substring(lineView.beginIndex(), lineView.endIndex())));
+            result = Math.max(result, this.font.width(value.substring(lineView.beginIndex(), this.visibleEndIndex(value, lineView))));
         }
         return result;
     }
@@ -208,13 +208,13 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
             }
             case 264 -> {
                 if (!event.hasControlDownWithQuirk()) {
-                    this.textField.seekCursorLine(1);
+                    this.seekCursorVisualLine(1);
                 }
                 yield true;
             }
             case 265 -> {
                 if (!event.hasControlDownWithQuirk()) {
-                    this.textField.seekCursorLine(-1);
+                    this.seekCursorVisualLine(-1);
                 }
                 yield true;
             }
@@ -230,7 +230,7 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
                 if (event.hasControlDownWithQuirk()) {
                     this.textField.seekCursor(Whence.ABSOLUTE, 0);
                 } else {
-                    this.textField.seekCursor(Whence.ABSOLUTE, this.textField.getLineView(this.textField.getLineAtCursor()).beginIndex());
+                    this.textField.seekCursor(Whence.ABSOLUTE, this.getCursorLineView().beginIndex());
                 }
                 yield true;
             }
@@ -238,7 +238,9 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
                 if (event.hasControlDownWithQuirk()) {
                     this.textField.seekCursor(Whence.END, 0);
                 } else {
-                    this.textField.seekCursor(Whence.ABSOLUTE, this.textField.getLineView(this.textField.getLineAtCursor()).endIndex());
+                    String value = this.textField.value();
+                    MultilineTextField.StringView lineView = this.getCursorLineView();
+                    this.textField.seekCursor(Whence.ABSOLUTE, this.visibleEndIndex(value, lineView));
                 }
                 yield true;
             }
@@ -283,10 +285,11 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
             int lineWidth = this.lineWidth(value, lineView);
             int textLeft = this.getInnerLeft() + this.getAlignOffset(lineWidth);
             boolean lineWithinVisibleBounds = this.withinContentAreaTopBottom(drawTop, drawTop + LINE_HEIGHT);
-            if (!hasDrawnCursor && (needsValidCursorPos || showCursor) && insertCursor && cursor >= lineView.beginIndex() && cursor <= lineView.endIndex()) {
+            int visibleEnd = this.visibleEndIndex(value, lineView);
+            if (!hasDrawnCursor && (needsValidCursorPos || showCursor) && insertCursor && cursor >= lineView.beginIndex() && cursor <= visibleEnd) {
                 if (lineWithinVisibleBounds) {
                     String textBeforeCursor = value.substring(lineView.beginIndex(), cursor);
-                    String textAfterCursor = value.substring(cursor, lineView.endIndex());
+                    String textAfterCursor = value.substring(cursor, visibleEnd);
                     int textBeforeCursorPosRight = textLeft + this.font.width(textBeforeCursor);
                     graphics.text(this.font, textBeforeCursor, textLeft, drawTop, this.textColor, this.textShadow);
                     graphics.text(this.font, textAfterCursor, textBeforeCursorPosRight, drawTop, this.textColor, this.textShadow);
@@ -298,7 +301,7 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
                     hasDrawnCursor = true;
                 }
             } else if (lineWithinVisibleBounds) {
-                String substring = value.substring(lineView.beginIndex(), lineView.endIndex());
+                String substring = value.substring(lineView.beginIndex(), visibleEnd);
                 graphics.text(this.font, substring, textLeft, drawTop, this.textColor, this.textShadow);
                 if ((needsValidCursorPos || showCursor) && !insertCursor) {
                     cursorX = textLeft + this.font.width(substring);
@@ -378,7 +381,8 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
         MultilineTextField.StringView selection = this.textField.getSelected();
         int drawTop = this.getContentTop();
         for (MultilineTextField.StringView lineView : this.textField.iterateLines()) {
-            if (selection.beginIndex() > lineView.endIndex()) {
+            int visibleEnd = this.visibleEndIndex(value, lineView);
+            if (selection.beginIndex() > visibleEnd) {
                 drawTop += LINE_HEIGHT;
                 continue;
             }
@@ -397,7 +401,7 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
                     drawBegin = textLeft + this.font.width(value.substring(lineView.beginIndex(), selection.beginIndex()));
                 }
                 int drawEnd;
-                if (selection.endIndex() > lineView.endIndex()) {
+                if (selection.endIndex() > visibleEnd) {
                     drawEnd = contentRight;
                 } else {
                     drawEnd = textLeft + this.font.width(value.substring(lineView.beginIndex(), selection.endIndex()));
@@ -422,7 +426,7 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
     }
     
     private int lineWidth(String value, MultilineTextField.StringView lineView) {
-        return this.font.width(value.substring(lineView.beginIndex(), lineView.endIndex()));
+        return this.font.width(value.substring(lineView.beginIndex(), this.visibleEndIndex(value, lineView)));
     }
     
     private int getAlignOffset(int lineWidth) {
@@ -447,8 +451,58 @@ public class MultiLineEditBox extends AbstractTextAreaWidget {
         double mouseY = y - this.getContentTop() + this.scrollAmount();
         int lineIndex = Mth.clamp(Mth.floor(mouseY / LINE_HEIGHT), 0, this.textField.getLineCount() - 1);
         MultilineTextField.StringView lineView = this.textField.getLineView(lineIndex);
-        int lineWidth = this.lineWidth(this.textField.value(), lineView);
+        String value = this.textField.value();
+        int lineWidth = this.lineWidth(value, lineView);
         double mouseX = x - this.getInnerLeft() - this.getAlignOffset(lineWidth);
-        this.textField.seekCursorToPoint(mouseX, lineIndex * LINE_HEIGHT);
+        int visibleEnd = this.visibleEndIndex(value, lineView);
+        String visibleLine = value.substring(lineView.beginIndex(), visibleEnd);
+        int clickedColumn = this.font.plainSubstrByWidth(visibleLine, Math.max(0, Mth.floor(mouseX))).length();
+        this.textField.seekCursor(Whence.ABSOLUTE, lineView.beginIndex() + clickedColumn);
+    }
+    
+    private void seekCursorVisualLine(int lineOffset) {
+        if (lineOffset == 0) {
+            return;
+        }
+        String value = this.textField.value();
+        int currentLineIndex = this.getCursorLineIndex(value);
+        int targetLineIndex = Mth.clamp(currentLineIndex + lineOffset, 0, this.textField.getLineCount() - 1);
+        if (targetLineIndex == currentLineIndex) {
+            return;
+        }
+        MultilineTextField.StringView currentLine = this.textField.getLineView(currentLineIndex);
+        int currentVisibleEnd = this.visibleEndIndex(value, currentLine);
+        int cursor = Mth.clamp(this.textField.cursor(), currentLine.beginIndex(), currentVisibleEnd);
+        int cursorLeft = this.font.width(value.substring(currentLine.beginIndex(), cursor)) + 2;
+        MultilineTextField.StringView targetLine = this.textField.getLineView(targetLineIndex);
+        int targetVisibleEnd = this.visibleEndIndex(value, targetLine);
+        String targetText = value.substring(targetLine.beginIndex(), targetVisibleEnd);
+        int targetColumn = this.font.plainSubstrByWidth(targetText, cursorLeft).length();
+        this.textField.seekCursor(Whence.ABSOLUTE, targetLine.beginIndex() + targetColumn);
+    }
+    
+    private MultilineTextField.StringView getCursorLineView() {
+        String value = this.textField.value();
+        return this.textField.getLineView(this.getCursorLineIndex(value));
+    }
+    
+    private int getCursorLineIndex(String value) {
+        int cursor = this.textField.cursor();
+        for (int i = 0; i < this.textField.getLineCount(); i++) {
+            MultilineTextField.StringView lineView = this.textField.getLineView(i);
+            int visibleEnd = this.visibleEndIndex(value, lineView);
+            if (cursor >= lineView.beginIndex() && cursor <= visibleEnd) {
+                return i;
+            }
+        }
+        return this.textField.getLineCount() - 1;
+    }
+    
+    private int visibleEndIndex(String value, MultilineTextField.StringView lineView) {
+        int endIndex = lineView.endIndex();
+        if (endIndex > lineView.beginIndex() && endIndex <= value.length() && value.charAt(endIndex - 1) == '\n') {
+            return endIndex - 1;
+        }
+        return endIndex;
     }
 }

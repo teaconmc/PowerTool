@@ -62,12 +62,6 @@ public class PeriodicCommandBlockEntity extends CommandBlockEntity {
         return this.saveWithoutMetadata(registries);
     }
     
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-    
     @Override
     public BlockEntityType<?> getType() {
         return PowerToolBlocks.COMMAND_BLOCK_ENTITY.get();

@@ -1,4 +1,4 @@
-package org.teacon.powertool.client.gui.exhibition;
+package org.teacon.powertool.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -8,16 +8,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import org.teacon.powertool.client.gui.widget.ConfigurationHierarchy;
 import org.teacon.powertool.client.gui.widget.Inspector;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
-import org.teacon.powertool.exhibition.node.ExhibitionNode;
 import org.teacon.powertool.inspection.Inspectable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 public class ExhibitionEntityEditorScreen extends Screen {

@@ -7,7 +7,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.teacon.powertool.client.gui.exhibition.ExhibitionEntityEditorScreen;
+import org.teacon.powertool.client.gui.ExhibitionEntityEditorScreen;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 import org.teacon.powertool.utils.VanillaUtils;
 

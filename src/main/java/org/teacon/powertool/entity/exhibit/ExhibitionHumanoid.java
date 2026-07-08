@@ -1,31 +1,33 @@
 package org.teacon.powertool.entity.exhibit;
 
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.decoration.Mannequin;
-import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
+import org.teacon.powertool.exhibition.node.ExhibitionNode;
+import org.teacon.powertool.exhibition.node.PoseNode;
+import org.teacon.powertool.exhibition.node.SkinNode;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ExhibitionHumanoid extends ExhibitionEntity {
-
-    protected static final EntityDataAccessor<ResolvableProfile> DATA_PROFILE;
 
     private final boolean slim;
 
-    public static @NonNull ExhibitionHumanoid regular(
+    public static ExhibitionHumanoid regular(
             final EntityType<ExhibitionHumanoid>    type,
             final Level                             level
     ) {
         return new ExhibitionHumanoid(type, level, false);
     }
 
-    public static @NonNull ExhibitionHumanoid slim(
+    public static ExhibitionHumanoid slim(
             final EntityType<ExhibitionHumanoid>    type,
             final Level                             level
     ) {
@@ -41,20 +43,8 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
         this.slim       = slim;
     }
 
-    @Override
-    protected void defineSynchedData(
-            final SynchedEntityData.@NonNull Builder entityData
-    ) {
-        super.defineSynchedData(entityData);
-        entityData.define(DATA_PROFILE, Mannequin.DEFAULT_PROFILE);
-    }
 
-    @Override
-    public void push(final double xa, final double ya, final double za) {
-        return;
-    }
-
-    public static AttributeSupplier.@NonNull Builder createAttributes() {
+    public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.ARMOR_TOUGHNESS, 0.0F)
                 .add(Attributes.ARMOR, 0.0F)
@@ -68,12 +58,15 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
                 .add(Attributes.SPAWN_REINFORCEMENTS_CHANCE, 0.0F);
     }
 
+    @Override
+    protected void onCreateExhibitionNode(final Consumer<ExhibitionNode> consumer) {
+        super.onCreateExhibitionNode(consumer);
+
+        consumer.accept(new SkinNode());
+        consumer.accept(PoseNode.of("head", "body", "left_arm", "right_arm", "left_leg", "right_leg"));
+    }
+
     public boolean isSlim() {
         return this.slim;
     }
-
-    static {
-        DATA_PROFILE = SynchedEntityData.defineId(ExhibitionHumanoid.class, EntityDataSerializers.RESOLVABLE_PROFILE);
-    }
-
 }

@@ -2,8 +2,10 @@ package org.teacon.powertool.inspection.constraint;
 
 import org.jetbrains.annotations.Nullable;
 
-public interface InputConstraint {
+public interface InputConstraint<T> {
 
     boolean isValid(final @Nullable String input);
+
+    T parse(final @Nullable String input);
 
 }

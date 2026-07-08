@@ -29,9 +29,8 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
     ) {
         super(36, message, property);
 
-        final var constraint    = property.getConstraint();
-        this.min                = constraint.min();
-        this.max                = constraint.max();
+        this.min                = 0;
+        this.max                = 1;
 
         this.step               = step;
     }

@@ -247,5 +247,16 @@
   "powertool.setcommand.gui.label": "标签：",
   "powertool.setcommand.gui.label.empty": "空",
   "powertool.setcommand.gui.tick_delay": "延迟刻：",
-  "powertool.setcommand.gui.consumable": "会被消耗"
+  "powertool.setcommand.gui.consumable": "会被消耗",
+
+  "powertool.exhibition.name": "名称",
+  "powertool.exhibition.yaw": "偏航角",
+  "powertool.exhibition.pitch": "俯仰角",
+  "powertool.exhibition.rot_x": "X轴旋转",
+  "powertool.exhibition.rot_y": "Y轴旋转",
+  "powertool.exhibition.rot_z": "Z轴旋转",
+  "powertool.exhibition.scale_x": "X轴缩放",
+  "powertool.exhibition.scale_y": "Y轴缩放",
+  "powertool.exhibition.scale_z": "Z轴缩放",
+  "powertool.exhibition.slim": "纤细模型"
 }

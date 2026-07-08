@@ -2,8 +2,8 @@ package org.teacon.powertool.inspection;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.Contract;
+import org.teacon.powertool.inspection.property.BooleanProperty;
 import org.teacon.powertool.inspection.property.FloatProperty;
 import org.teacon.powertool.inspection.property.IntegerProperty;
 import org.teacon.powertool.inspection.property.Property;

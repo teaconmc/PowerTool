@@ -232,6 +232,8 @@
   "powertool.gui.holo_sign.background_off": "Background: Off",
   "powertool.gui.holo_sign.x_rotation": "X Axis Rotation:",
   "powertool.gui.holo_sign.y_rotation": "Y Axis Rotation:",
+  "powertool.gui.holo_sign.x_offset": "X Axis Offset:",
+  "powertool.gui.holo_sign.y_offset": "Y Axis Offset:",
   "powertool.gui.holo_sign.z_offset": "Z Axis Offset:",
   "powertool.gui.holo_sign.lit_on": "Light Emission: On",
   "powertool.gui.holo_sign.lit_off": "Light Emission: Off",

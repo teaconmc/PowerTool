@@ -41,6 +41,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
     protected boolean renderBackground;
     protected boolean dropShadow;
     protected boolean lit;
+    protected float xOffset;
+    protected float yOffset;
     protected float zOffset;
     protected int xRotate;
     protected int yRotate;
@@ -75,6 +77,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.renderBackground = theSign.renderBackground;
         this.dropShadow = theSign.dropShadow;
         this.lit = theSign.lit;
+        this.xOffset = theSign.xOffset;
+        this.yOffset = theSign.yOffset;
         this.zOffset = theSign.zOffset;
         this.xRotate = theSign.xRotate;
         this.yRotate = theSign.yRotate;
@@ -100,6 +104,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                 .addChild(createFloatInput(0, 100, 0.125f, () -> IComponent.translatable("powertool.gui.holographic_sign.scale"), () -> this.scale, (s) -> this.scale = s))
                 .addChild(createIntInput(-180, 180, 45, () -> IComponent.translatable("powertool.gui.holo_sign.x_rotation"), () -> this.xRotation, (s) -> this.xRotation = s))
                 .addChild(createIntInput(-180, 180, 45, () -> IComponent.translatable("powertool.gui.holo_sign.y_rotation"), () -> this.yRotation, (s) -> this.yRotation = s))
+                .addChild(createFloatInput(-2, 2, 0.125f, () -> IComponent.translatable("powertool.gui.holo_sign.x_offset"), () -> this.xOffset, xf -> this.xOffset = xf))
+                .addChild(createFloatInput(-2, 2, 0.125f, () -> IComponent.translatable("powertool.gui.holo_sign.y_offset"), () -> this.yOffset, yf -> this.yOffset = yf))
                 .addChild(createFloatInput(-2, 2, 0.125f, () -> IComponent.translatable("powertool.gui.holo_sign.z_offset"), () -> this.zOffset, zf -> this.zOffset = zf))
                 .addChild(createHorizontalSplit())
                 .addChild(createSelectionButton(() -> this.textAlign.displayName, () -> {
@@ -236,6 +242,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
         this.sign.lock = this.locked;
         this.sign.yRotate = this.yRotation;
         this.sign.xRotate = this.xRotation;
+        this.sign.xOffset = this.xOffset;
+        this.sign.yOffset = this.yOffset;
         this.sign.zOffset = this.zOffset;
         this.sign.bidirectional = this.bidirectional;
         this.sign.renderBackground = this.renderBackground;

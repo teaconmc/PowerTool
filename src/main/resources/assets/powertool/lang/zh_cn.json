@@ -222,6 +222,8 @@
   "powertool.gui.holo_sign.background_off": "文字背景: 关闭",
   "powertool.gui.holo_sign.x_rotation": "X轴旋转:",
   "powertool.gui.holo_sign.y_rotation": "Y轴旋转:",
+  "powertool.gui.holo_sign.x_offset": "X轴偏移:",
+  "powertool.gui.holo_sign.y_offset": "Y轴偏移:",
   "powertool.gui.holo_sign.z_offset": "Z轴偏移:",
   "powertool.gui.holo_sign.lit_on": "发光: 开启",
   "powertool.gui.holo_sign.lit_off": "发光: 关闭",

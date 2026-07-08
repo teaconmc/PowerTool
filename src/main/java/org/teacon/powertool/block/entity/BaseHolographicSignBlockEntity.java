@@ -145,6 +145,8 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
     public boolean lock = false;
     public int yRotate = 0;
     public int xRotate = 0;
+    public float xOffset = 0F;
+    public float yOffset = 0F;
     public float zOffset = 0F;
     
     public boolean bidirectional = false;
@@ -164,6 +166,8 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         output.putBoolean("renderBackground", renderBackground);
         output.putBoolean("dropShadow", dropShadow);
         output.putInt("xRotate", xRotate);
+        output.putFloat("xOffset", xOffset);
+        output.putFloat("yOffset", yOffset);
         output.putFloat("zOffset", zOffset);
         output.putBoolean("lit", lit);
     }
@@ -178,6 +182,8 @@ public class BaseHolographicSignBlockEntity extends BlockEntity implements HoloS
         this.renderBackground = input.getBooleanOr("renderBackground", false);
         this.dropShadow = input.getBooleanOr("dropShadow", false);
         this.xRotate = input.getIntOr("xRotate", 0);
+        this.xOffset = input.getFloatOr("xOffset", 0F);
+        this.yOffset = input.getFloatOr("yOffset", 0F);
         this.zOffset = input.getFloatOr("zOffset", 0F);
         this.lit = input.getBooleanOr("lit", false);
         if (this.getLevel() != null) {

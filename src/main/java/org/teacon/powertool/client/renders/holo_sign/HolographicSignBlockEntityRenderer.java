@@ -45,6 +45,8 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         public int xRotate;
         public int yRotate;
         public int colorInARGB;
+        public float xOffset;
+        public float yOffset;
         public float zOffset;
         public float scale;
         public BaseHolographicSignBlockEntity.Align align;
@@ -53,6 +55,8 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
             this.bidirectional = be.bidirectional;
             this.xRotate = be.xRotate;
             this.yRotate = be.yRotate;
+            this.xOffset = be.xOffset;
+            this.yOffset = be.yOffset;
             this.zOffset = be.zOffset;
             this.dropShadow = be.dropShadow;
             this.renderBackground = be.renderBackground;
@@ -130,6 +134,7 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
             transform.mulPose(camera.orientation);
             transform.mulPose(Axis.YP.rotationDegrees(180));
         }
+        transform.translate(theSign.xOffset, theSign.yOffset, 0.0);
         transform.scale(-0.025F * theSign.scale, -0.025F * theSign.scale, -0.25F);
         transform.translate(0.0, 0.0, -theSign.zOffset * 4);
     }

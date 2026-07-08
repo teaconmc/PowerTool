@@ -73,6 +73,8 @@ public class ConfigurationHierarchy extends EditorWindow {
         if (this.root != null) {
             this.collect(this.root, 0);
         }
+        var height = this.visible.size() * Entry.HEIGHT;
+        this.updateScrollHeight(height);
     }
 
     private void collect(ExhibitionNode config, int depth) {

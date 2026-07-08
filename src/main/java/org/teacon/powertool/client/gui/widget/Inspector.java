@@ -84,16 +84,14 @@ public class Inspector extends EditorWindow {
 
         for (InspectorWidget widget : this.widgets) {
 
-            if (height > offset && height < maxHeight) {
-                widget.render(
-                        graphics,
-                        innerWidth,
-                        localMouseX,
-                        localMouseY - height,
-                        partialTick,
-                        this.isHovered && localMouseY > height && localMouseY < height + widget.getHeight()
-                );
-            }
+            widget.render(
+                    graphics,
+                    innerWidth,
+                    localMouseX,
+                    localMouseY - height,
+                    partialTick,
+                    this.isHovered && localMouseY > height && localMouseY < height + widget.getHeight()
+            );
 
             pose.translate(0f, widget.getHeight());
             height += widget.getHeight();

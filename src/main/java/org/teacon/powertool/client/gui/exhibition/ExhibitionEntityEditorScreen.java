@@ -10,16 +10,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.teacon.powertool.client.gui.widget.ConfigurationHierarchy;
 import org.teacon.powertool.client.gui.widget.Inspector;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
+import org.teacon.powertool.exhibition.node.ExhibitionNode;
+import org.teacon.powertool.inspection.Inspectable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 public class ExhibitionEntityEditorScreen extends Screen {
 
-    private final Inspector         inspector;
-    private final ExhibitionEntity  entity;
+    private final ConfigurationHierarchy    hierarchy;
+    private final Inspector                 inspector;
+    private final ExhibitionEntity          entity;
 
     private ExhibitionEntityEditorScreen(final ExhibitionEntity entity) {
         super(Component.literal("ExhibitionEntityEditor"));
@@ -27,13 +32,20 @@ public class ExhibitionEntityEditorScreen extends Screen {
         final var minecraft = Minecraft.getInstance();
         final var window    = minecraft.getWindow();
 
+        this.hierarchy      = new ConfigurationHierarchy(150, window.getGuiScaledHeight());
         this.inspector      = new Inspector(150, window.getGuiScaledHeight());
         this.inspector      .setX(window.getGuiScaledWidth() - this.inspector.getWidth());
 
+        this.addRenderableWidget(this.hierarchy);
         this.addRenderableWidget(this.inspector);
 
-
         this.entity         = entity;
+        this.hierarchy.setRoot(entity.getExhibitionNode());
+        this.hierarchy.setOnSelect(exhibitionNode -> {
+            if (exhibitionNode instanceof Inspectable inspectable) {
+                ExhibitionEntityEditorScreen.this.inspector.setInspectObject(inspectable);
+            }
+        });
     }
 
     public static Screen of(final ExhibitionEntity entity) {
@@ -49,7 +61,7 @@ public class ExhibitionEntityEditorScreen extends Screen {
     ) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
-        EntityRenderState state = extractRenderState(this.entity);
+        /*EntityRenderState state = extractRenderState(this.entity);
         Quaternionf rotation = (new Quaternionf()).rotateZ((float)Math.PI);
         Vector3f translation = new Vector3f(0.0F, state.boundingBoxHeight / 2.0F, 0.0F);
 
@@ -61,7 +73,7 @@ public class ExhibitionEntityEditorScreen extends Screen {
                 new Quaternionf(),
                 mouseX - 50, mouseY - 50,
                 mouseX + 50, mouseY + 50
-        );
+        );*/
 
     }
 

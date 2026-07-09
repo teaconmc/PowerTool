@@ -75,10 +75,13 @@ public class ExhibitionEntityEditorScreen extends Screen {
 
     @Override
     public void resize(final int width, final int height) {
-        super.resize(width, height);
+        this.width = width;
+        this.height = height;
 
         this.inspector.setHeight(height);
         this.inspector.setX(width - this.inspector.getWidth());
+
+        this.hierarchy.setHeight(height);
     }
 
     private static EntityRenderState extractRenderState(

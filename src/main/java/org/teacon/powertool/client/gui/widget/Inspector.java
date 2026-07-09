@@ -50,6 +50,7 @@ public class Inspector extends EditorWindow {
         int height = 0;
         for (InspectorWidget widget : this.widgets) {
             height += widget.getHeight();
+            widget.resize(this.getFrameWidth());
         }
         this.updateScrollHeight(height);
     }

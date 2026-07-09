@@ -146,23 +146,12 @@ public abstract class EditorWindow extends AbstractWidget {
 
     }
 
-    private void updateFrame() {
-        this.frameWidth = this.width - 16;
-        this.frameHeight = this.height - HEAD_HEIGHT - 8;
-        this.channelHeight = this.frameHeight - 4;
-
-        this.resizeFrame(this.frameWidth, this.frameHeight);
-    }
-
     protected void updateScrollHeight(int scrollHeight) {
-        float sh = Math.max(scrollHeight + HEAD_HEIGHT, 1e-8f);
+        float sh = Math.max(scrollHeight, 1e-8f);
         float fh = Math.max(this.frameHeight, 1e-8f);
 
         this.ratio = Math.min(sh / fh, 1.0f);
-
-        this.sliderHeight = Math.min((int) ((fh / sh) * this.channelHeight), this.channelHeight);
-        this.available = Math.max(this.channelHeight - this.sliderHeight, 0);
-        this.scroll = Math.clamp(this.scroll, 0, this.available);
+        this.updateScroll();
     }
 
     protected void resizeFrame(
@@ -178,5 +167,20 @@ public abstract class EditorWindow extends AbstractWidget {
 
     protected int getFrameHeight() {
         return this.frameHeight;
+    }
+
+    private void updateFrame() {
+        this.frameWidth = this.width - 16;
+        this.frameHeight = this.height - HEAD_HEIGHT - 8;
+        this.channelHeight = this.frameHeight - 4;
+
+        this.resizeFrame(this.frameWidth, this.frameHeight);
+        this.updateScroll();
+    }
+
+    private void updateScroll() {
+        this.sliderHeight = Math.min((int) ((1.0f / this.ratio) * this.channelHeight), this.channelHeight);
+        this.available = Math.max(this.channelHeight - this.sliderHeight, 0);
+        this.scroll = Math.clamp(this.scroll, 0, this.available);
     }
 }

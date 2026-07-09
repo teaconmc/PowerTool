@@ -40,6 +40,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
             final Level                                     level
     ) {
         super(type, level);
+        this.createExhibitionNode();
     }
 
     public ExhibitionNodeManager getExhibitionNode() {

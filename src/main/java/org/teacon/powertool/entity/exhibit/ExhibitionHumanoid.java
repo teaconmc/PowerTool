@@ -70,7 +70,7 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
     public ResolvableProfile getProfile() {
         final var node = this.getExhibitionNode();
         final var skinNode = node.getUnique(SkinNode.UNIQUE_KEY);
-        return skinNode.getProfile();
+        return skinNode == null ? SkinNode.DEFAULT_PROFILE : skinNode.getProfile();
     }
 
     static {

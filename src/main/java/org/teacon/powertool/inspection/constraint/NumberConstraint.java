@@ -10,7 +10,7 @@ public interface NumberConstraint<T extends Number> extends InputConstraint<T> {
     NumberConstraint<Integer>   INTEGER = integer(Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
     NumberConstraint<Float>     NUMBER  = number(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0);
 
-    NumberConstraint<Float>     DEGREES = number(180f, -180f, 0f);
+    NumberConstraint<Float>     DEGREES = number(-180f, 180f, 0f);
 
     static NumberConstraint<Integer> integer(
             final int min,

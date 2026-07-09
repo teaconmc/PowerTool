@@ -17,6 +17,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.exhibit.ExhibitionHumanoid;
+import org.teacon.powertool.exhibition.node.SkinNode;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -61,6 +62,10 @@ public class ClientExhibitionHumanoid extends ExhibitionHumanoid {
         var node = this.getExhibitionNode();
         if (node.isEditing()) { // preview
             node.apply(this);
+
+            if (this.tickCount % 80 == 0) {
+                this.updateSkin();
+            }
         }
 
     }

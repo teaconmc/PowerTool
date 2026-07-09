@@ -11,6 +11,8 @@ import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.client.gui.widget.TextField;
 import org.teacon.powertool.inspection.property.Property;
 
+import java.util.function.Predicate;
+
 public class InspectorEditBox extends InspectorModificationWidget<String> {
     private final TextField editBox;
 
@@ -19,7 +21,10 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
 
         this.editBox = new TextField(Minecraft.getInstance().font, 0, 16, 100, 20, message);
         this.editBox.setValue(property.get(), false);
-        this.editBox.setResponder(property::set);
+        this.editBox.setConfirm(s -> {
+            property.set(s);
+            return true;
+        });
     }
 
     @Override

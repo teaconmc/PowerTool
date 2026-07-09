@@ -48,6 +48,8 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
             EntityNode::new
     );
 
+    public static final float RANGE = 256f;
+
     private final FloatProperty x       = FloatProperty.simple(0);
     private final FloatProperty y       = FloatProperty.simple(0);
     private final FloatProperty z       = FloatProperty.simple(0);
@@ -55,13 +57,17 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
     private final FloatProperty yaw     = FloatProperty.simple(0);
     private final FloatProperty pitch   = FloatProperty.simple(0);
 
+    private final NumberConstraint<Float> cx;
+    private final NumberConstraint<Float> cy;
+    private final NumberConstraint<Float> cz;
+
     public static EntityNode of(Entity entity) {
         return new EntityNode(
                 (float) entity.getX(),
                 (float) entity.getY(),
                 (float) entity.getZ(),
-                entity.getYRot() * Mth.RAD_TO_DEG,
-                entity.getXRot() * Mth.RAD_TO_DEG
+                Mth.wrapDegrees(entity.getYRot()),
+                Mth.wrapDegrees(entity.getXRot())
         );
     }
 
@@ -73,6 +79,10 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
             float pitch
     ) {
         this.setup(x, y, z, yaw, pitch);
+
+        this.cx = NumberConstraint.number(x - RANGE, x + RANGE, x);
+        this.cy = NumberConstraint.number(y - RANGE, y + RANGE, y);
+        this.cz = NumberConstraint.number(z - RANGE, z + RANGE, z);
     }
 
     @Override
@@ -80,9 +90,9 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
         builder .title(Component.literal(this.name()))
 
                 .title(Component.literal("Position"))
-                .inputFloat(Component.literal("X"), this.x)
-                .inputFloat(Component.literal("Y"), this.y)
-                .inputFloat(Component.literal("Z"), this.z)
+                .inputFloat(Component.literal("X"), this.x, this.cx)
+                .inputFloat(Component.literal("Y"), this.y, this.cy)
+                .inputFloat(Component.literal("Z"), this.z, this.cz)
 
                 .separator()
                 .title(Component.literal("Rotation"))
@@ -146,10 +156,11 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
                 this.z.getNumber()
         );
 
-        final var yaw   = this.yaw.getValue() * Mth.DEG_TO_RAD;
-        final var pitch = this.pitch.getValue() * Mth.DEG_TO_RAD;
+        final var yaw   = this.yaw.getValue();
+        final var pitch = this.pitch.getValue();
         entity.setYRot(yaw);
-        entity.setYBodyRot(yaw);
+        entity.setYHeadRot(entity.getYRot());
+        entity.setYBodyRot(entity.getYRot());
         entity.setXRot(pitch);
     }
 
@@ -163,8 +174,8 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
         this.x      .setValue(x);
         this.y      .setValue(y);
         this.z      .setValue(z);
-        this.yaw    .setValue(yaw * Mth.RAD_TO_DEG);
-        this.pitch  .setValue(pitch * Mth.RAD_TO_DEG);
+        this.yaw    .setValue(yaw);
+        this.pitch  .setValue(pitch);
     }
 
     public float getX() {

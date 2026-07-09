@@ -27,7 +27,7 @@ public class InspectorSeparator extends InspectorWidget {
         graphics.horizontalLine(
                 left,
                 right,
-                padding,
+                2 + padding,
                 0xffffffff
         );
     }

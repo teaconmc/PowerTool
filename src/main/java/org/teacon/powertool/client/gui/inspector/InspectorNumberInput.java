@@ -56,7 +56,7 @@ public class InspectorNumberInput<T extends Number> extends InspectorWidget {
             boolean hovered
     ) {
         Font font = Minecraft.getInstance().font;
-        graphics.text(font, this.message, 0, 8, 0xffffffff);
+        graphics.text(font, this.message, 0, 6, 0xffffffff);
 
         this.input.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }

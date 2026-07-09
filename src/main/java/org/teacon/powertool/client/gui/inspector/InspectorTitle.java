@@ -18,7 +18,7 @@ public class InspectorTitle extends InspectorWidget {
         var pose = graphics.pose();
         pose.pushMatrix();
         pose.scale(1.1f, 1.1f);
-        graphics.text(Minecraft.getInstance().font, this.message, 0, this.getHeight() / 2, 0xffffffff);
+        graphics.text(Minecraft.getInstance().font, this.message, 0, this.getHeight() / 2 - 4, 0xffffffff);
         pose.popMatrix();
     }
 }

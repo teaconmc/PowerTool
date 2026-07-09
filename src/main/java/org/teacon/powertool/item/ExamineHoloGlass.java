@@ -3,12 +3,14 @@ package org.teacon.powertool.item;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +21,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.Level;
@@ -32,6 +36,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 @NonNullByDefault
 public class ExamineHoloGlass extends Item implements IScreenProviderItem {
@@ -45,12 +50,19 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem {
     
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer && !player.isShiftKeyDown()) {
             PacketDistributor.sendToPlayer(serverPlayer,
                     new OpenItemScreen(player.getItemInHand(hand), hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND));
             return InteractionResult.SUCCESS;
         }
-        return super.use(level, player, hand);
+        return player.isShiftKeyDown() ? super.use(level, player, hand) : InteractionResult.CONSUME;
+    }
+    
+    @Override
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+        builder.accept(Component.translatable("tooltip.powertool.examine_holo_glass").withStyle(ChatFormatting.GRAY));
+        super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
     }
     
     public static Collection<TagKey<Block>> getOutLinedBlockTags() {

@@ -55,6 +55,10 @@ public class SkinNode extends ExhibitionNode implements Inspectable {
     @Override
     public void onInspect(InspectorBuilder builder) {
         builder.title(Component.literal(this.name()));
+        builder.inputString(
+                Component.literal("Skin"),
+                this.skin
+        );
     }
 
     @Override

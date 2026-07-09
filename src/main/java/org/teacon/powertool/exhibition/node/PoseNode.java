@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import org.teacon.powertool.exhibition.HierarchyEntry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class PoseNode extends ExhibitionNode {
     }
 
     @Override
-    public Collection<ExhibitionNode> children() {
+    public Collection<HierarchyEntry> children() {
         return List.copyOf(this.parts);
     }
 

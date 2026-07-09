@@ -3,12 +3,10 @@ package org.teacon.powertool.client.gui.widget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.teacon.powertool.exhibition.node.ExhibitionNode;
 
+import org.teacon.powertool.exhibition.HierarchyEntry;
 import org.teacon.powertool.exhibition.node.ModelPartNode;
 import org.teacon.powertool.exhibition.node.SkinNode;
 
@@ -33,36 +31,36 @@ public class ConfigurationHierarchy extends EditorWindow {
 
     private static final int COLOR_BAR_WIDTH = 3;
 
-    private ExhibitionNode root;
-    private ExhibitionNode selected;
+    private HierarchyEntry root;
+    private HierarchyEntry selected;
 
     private final List<Entry> visible = new ArrayList<>();
-    private final Set<ExhibitionNode> expanded = new HashSet<>();
+    private final Set<HierarchyEntry> expanded = new HashSet<>();
 
-    private Consumer<ExhibitionNode> onSelect;
+    private Consumer<HierarchyEntry> onSelect;
 
     public ConfigurationHierarchy(int width, int height) {
         super(0, 0, width, height, Component.literal("Hierarchy"));
     }
 
-    public void setRoot(ExhibitionNode root) {
+    public void setRoot(HierarchyEntry root) {
         this.root = root;
         this.rebuildFlatList();
     }
 
-    public ExhibitionNode getRoot() {
+    public HierarchyEntry getRoot() {
         return this.root;
     }
 
-    public void setOnSelect(Consumer<ExhibitionNode> onSelect) {
+    public void setOnSelect(Consumer<HierarchyEntry> onSelect) {
         this.onSelect = onSelect;
     }
 
-    public ExhibitionNode getSelected() {
+    public HierarchyEntry getSelected() {
         return this.selected;
     }
 
-    private static int typeColor(ExhibitionNode node) {
+    private static int typeColor(HierarchyEntry node) {
         if (node instanceof ModelPartNode) return COLOR_MODEL_PART;
         if (node instanceof SkinNode) return COLOR_SKIN;
         return COLOR_DEFAULT;
@@ -77,11 +75,11 @@ public class ConfigurationHierarchy extends EditorWindow {
         this.updateScrollHeight(height);
     }
 
-    private void collect(ExhibitionNode config, int depth) {
+    private void collect(HierarchyEntry config, int depth) {
         boolean hasChildren = !config.children().isEmpty();
         this.visible.add(new Entry(config, depth, hasChildren));
         if (hasChildren && this.expanded.contains(config)) {
-            for (ExhibitionNode child : config.children()) {
+            for (HierarchyEntry child : config.children()) {
                 this.collect(child, depth + 1);
             }
         }
@@ -202,7 +200,7 @@ public class ConfigurationHierarchy extends EditorWindow {
         return false;
     }
 
-    public record Entry(ExhibitionNode configuration, int depth, boolean hasChildren) {
+    public record Entry(HierarchyEntry configuration, int depth, boolean hasChildren) {
         public static final int HEIGHT = 12;
     }
 }

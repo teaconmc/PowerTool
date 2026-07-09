@@ -6,21 +6,23 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jspecify.annotations.NonNull;
+import org.teacon.powertool.exhibition.HierarchyEntry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public final class RootNode extends ExhibitionNode {
 
     public static final MapCodec<RootNode> CODEC
             = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    ExhibitionNode.CODEC.listOf().fieldOf("nodes").forGetter(RootNode::children)
+                    ExhibitionNode.CODEC.listOf().fieldOf("nodes").forGetter(RootNode::nodes)
             ).apply(instance, RootNode::new));
 
     public static final StreamCodec<ByteBuf, RootNode> STREAM_CODEC
             = StreamCodec.composite(
                     ByteBufCodecs.collection(ArrayList::new, ExhibitionNode.STREAM_CODEC),
-                    RootNode::children,
+                    RootNode::nodes,
                     RootNode::new
             );
 
@@ -47,7 +49,11 @@ public final class RootNode extends ExhibitionNode {
     }
 
     @Override
-    public @NonNull List<ExhibitionNode> children() {
+    public Collection<HierarchyEntry> children() {
+        return List.copyOf(this.nodes);
+    }
+
+    private List<ExhibitionNode> nodes() {
         return this.nodes;
     }
 }

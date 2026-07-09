@@ -44,8 +44,8 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
     );
 
     private static final NumberConstraint<Float> POSITION = NumberConstraint.number(
-            Float.MIN_VALUE,
-            Float.MAX_VALUE,
+            Float.NEGATIVE_INFINITY,
+            Float.POSITIVE_INFINITY,
             0
     );
 
@@ -95,6 +95,7 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
                 .inputFloat(Component.literal("Y"), this.y, POSITION)
                 .inputFloat(Component.literal("Z"), this.z, POSITION)
 
+                .separator()
                 .title(Component.literal("Rotation"))
                 .inputFloat(Component.literal("Yaw"), this.yaw, DEGREES)
                 .inputFloat(Component.literal("Pitch"), this.pitch, DEGREES);

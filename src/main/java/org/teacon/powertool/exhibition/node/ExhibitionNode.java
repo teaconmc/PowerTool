@@ -11,13 +11,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.exhibition.HierarchyEntry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class ExhibitionNode {
+public abstract class ExhibitionNode implements HierarchyEntry {
 
     private static Map<String, Serializer> SERIALIZERS = new HashMap<>();
 
@@ -32,11 +33,10 @@ public abstract class ExhibitionNode {
             type -> SERIALIZERS.get(type).streamCodec()
     );
 
-    public abstract String name();
-
     public abstract String type();
 
-    public Collection<ExhibitionNode> children() {
+    @Override
+    public Collection<HierarchyEntry> children() {
         return Collections.emptyList();
     }
 

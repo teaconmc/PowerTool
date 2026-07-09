@@ -74,20 +74,19 @@ public class Inspector extends EditorWindow {
         int offset = (int) this.getOffset();
         pose.translate(0, -offset);
 
-        int innerWidth = this.getFrameWidth();
         int height = 0;
 
-        localMouseX -= this.getX() + 8;
-        localMouseY -= this.getY() - offset;
+        int mouseX = localMouseX + 8;
+        int mouseY = localMouseY - offset;
 
         for (InspectorWidget widget : this.widgets) {
 
             widget.render(
                     graphics,
-                    localMouseX,
-                    localMouseY - height,
+                    mouseX,
+                    mouseY - height,
                     partialTick,
-                    this.isHovered && localMouseY > height && localMouseY < height + widget.getHeight()
+                    this.isHovered && mouseX > height && mouseY < height + widget.getHeight()
             );
 
             pose.translate(0f, widget.getHeight());

@@ -26,9 +26,20 @@ public interface InspectorBuilder {
             final int                   pixels
     );
 
+    @Contract(" -> this")
+    default InspectorBuilder separator() {
+        return this.separator(2, 2);
+    }
+
+    @Contract("_, _ -> this")
+    InspectorBuilder separator(
+            final int                       top,
+            final int                       bottom
+    );
+
     @Contract("_ -> this")
     InspectorBuilder title(
-            final Component             component
+            final Component                 component
     );
 
     @Contract("_, _, _, _ -> this")

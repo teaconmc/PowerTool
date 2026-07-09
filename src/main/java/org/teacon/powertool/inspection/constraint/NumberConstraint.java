@@ -8,7 +8,7 @@ public interface NumberConstraint<T extends Number> extends InputConstraint<T> {
 
     // default constraints not allow to drag input
     NumberConstraint<Integer>   INTEGER = integer(Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
-    NumberConstraint<Float>     NUMBER  = number(Float.MAX_VALUE, Float.MIN_VALUE, 0);
+    NumberConstraint<Float>     NUMBER  = number(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0);
 
     static NumberConstraint<Integer> integer(
             final int min,

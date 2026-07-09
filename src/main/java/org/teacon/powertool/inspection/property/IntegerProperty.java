@@ -75,12 +75,12 @@ public interface IntegerProperty extends NumberProperty<Integer> {
     }
 
     @Override
-    default float getNumber() {
+    default double getNumber() {
         return this.getValue();
     }
 
     @Override
-    default void setNumber(float value) {
+    default void setNumber(double value) {
         this.setValue((int) value);
     }
 }

@@ -35,6 +35,16 @@ public class InspectorBuilderImpl implements InspectorBuilder {
     }
 
     @Override
+    public InspectorBuilder separator(
+            final int               top,
+            final int               bottom
+    ) {
+        this.builder.add(new InspectorSeparator(top, bottom));
+        return this;
+    }
+
+
+    @Override
     public InspectorBuilder title(
             final Component         component
     ) {
@@ -80,7 +90,7 @@ public class InspectorBuilderImpl implements InspectorBuilder {
             final IntegerProperty           property,
             final NumberConstraint<Integer> constraint
     ) {
-        this.builder.add(new InspectorVectorInput<>(
+        this.builder.add(new InspectorNumberInput<>(
                 component,
                 property,
                 constraint
@@ -94,7 +104,7 @@ public class InspectorBuilderImpl implements InspectorBuilder {
             final FloatProperty             property,
             final NumberConstraint<Float>   constraint
     ) {
-        this.builder.add(new InspectorVectorInput<>(
+        this.builder.add(new InspectorNumberInput<>(
                 component,
                 property,
                 constraint

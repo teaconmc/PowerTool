@@ -19,6 +19,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.exhibit.ExhibitionHumanoid;
+import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
 import org.teacon.powertool.utils.VanillaUtils;
 
@@ -79,8 +80,8 @@ public class PowerToolEntities {
                     .clientTrackingRange(8)
                     .build(VanillaUtils.modResourceKey(BuiltInRegistries.ENTITY_TYPE.key(), "slim_exhibition_humanoid")));
 
-    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<ExhibitionNode>> EXHIBITION_NODE = ENTITY_DATA_SERIALIZER.register(
-            "exhibition_node", () -> EntityDataSerializer.forValueType(ExhibitionNode.STREAM_CODEC)
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<ExhibitionNodeManager>> EXHIBITION_NODE = ENTITY_DATA_SERIALIZER.register(
+            "exhibition_node", () -> EntityDataSerializer.forValueType(ExhibitionNodeManager.STREAM_CODEC)
     );
 
     public static void register(IEventBus bus) {

@@ -12,9 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.entity.PowerToolEntities;
+import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 import org.teacon.powertool.exhibition.node.EntityNode;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
-import org.teacon.powertool.exhibition.node.RootNode;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 public abstract class ExhibitionEntity extends PathfinderMob {
 
-    private static final EntityDataAccessor<ExhibitionNode> DATA_NODE;
+    private static final EntityDataAccessor<ExhibitionNodeManager> DATA_NODE;
 
     protected ExhibitionEntity(
             final EntityType<? extends ExhibitionEntity>    type,
@@ -38,7 +38,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
 
 
-    public ExhibitionNode getExhibitionNode() {
+    public ExhibitionNodeManager getExhibitionNode() {
         return this.entityData.get(DATA_NODE);
     }
 
@@ -47,7 +47,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
         var list = new ArrayList<ExhibitionNode>();
         onCreateExhibitionNode(list::add);
 
-        var root = new RootNode(list);
+        var root = new ExhibitionNodeManager(list);
         this.entityData.set(DATA_NODE, root);
 
     }
@@ -94,14 +94,14 @@ public abstract class ExhibitionEntity extends PathfinderMob {
     protected void addAdditionalSaveData(final ValueOutput output) {
         super.addAdditionalSaveData(output);
 
-        output.store("exhibition_node", ExhibitionNode.CODEC, this.getExhibitionNode());
+        output.store("exhibition_node", ExhibitionNodeManager.CODEC, this.getExhibitionNode());
     }
 
     @Override
     protected void readAdditionalSaveData(final ValueInput input) {
         super.readAdditionalSaveData(input);
 
-        final var node = input.read("exhibition_node", ExhibitionNode.CODEC);
+        final var node = input.read("exhibition_node", ExhibitionNodeManager.CODEC);
         if (node.isPresent()) {
             this.entityData.set(DATA_NODE, node.get());
         } else {
@@ -112,7 +112,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
     @Override
     protected void defineSynchedData(final SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(DATA_NODE, new RootNode(List.of()));
+        builder.define(DATA_NODE, new ExhibitionNodeManager(List.of()));
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.Stack;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -15,6 +17,7 @@ import org.teacon.powertool.exhibition.HierarchyEntry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -40,11 +43,30 @@ public abstract class ExhibitionNode implements HierarchyEntry {
         return Collections.emptyList();
     }
 
+    public static void walk(
+            ExhibitionNode root,
+            Consumer<ExhibitionNode> consumer
+    ) {
+        // dfs
+        final Stack<ExhibitionNode> stack = new ObjectArrayList<>();
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            var node = stack.pop();
+            consumer.accept(node);
+
+            for (var child : node.children()) {
+                if (child instanceof ExhibitionNode exhibition) {
+                    stack.push(exhibition);
+                }
+            }
+        }
+    }
+
     private static void setup() {
 
         var builder = ImmutableMap.<String, Serializer>builder();
 
-        builder.put("root", Serializer.of(RootNode.CODEC, RootNode.STREAM_CODEC));
         builder.put("entity", Serializer.of(EntityNode.CODEC, EntityNode.STREAM_CODEC));
         builder.put("skin", Serializer.of(SkinNode.CODEC, SkinNode.STREAM_CODEC));
         builder.put("pose", Serializer.of(PoseNode.CODEC, PoseNode.STREAM_CODEC));

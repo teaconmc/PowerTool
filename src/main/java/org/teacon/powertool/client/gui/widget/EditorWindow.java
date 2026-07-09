@@ -61,7 +61,7 @@ public abstract class EditorWindow extends AbstractWidget {
             return;
         }
 
-        int innerTop = top + 1;
+        int innerTop = top + 4;
         int innerLeft = this.getX() + 8;
         int innerWidth = this.getWidth() - 16;
         int innerHeight = this.frameHeight;
@@ -139,7 +139,7 @@ public abstract class EditorWindow extends AbstractWidget {
     protected MouseButtonEvent remap(final MouseButtonEvent event) {
         return new MouseButtonEvent(
                 event.x() - this.getX() - 8,
-                event.y() - this.getY() - this.getOffset() - HEAD_HEIGHT - 1,
+                event.y() - this.getY() - HEAD_HEIGHT - 4 + this.getOffset(),
                 event.buttonInfo()
         );
     }
@@ -160,7 +160,7 @@ public abstract class EditorWindow extends AbstractWidget {
 
         this.ratio = Math.min(sh / fh, 1.0f);
 
-        this.sliderHeight = (int) ((fh / sh) * this.channelHeight);
+        this.sliderHeight = Math.min((int) ((fh / sh) * this.channelHeight), this.channelHeight);
         this.available = Math.max(this.channelHeight - this.sliderHeight, 0);
         this.scroll = Math.clamp(this.scroll, 0, this.available);
     }

@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.context.ContextKey;
+import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
 
 import java.util.ArrayList;
@@ -29,15 +29,44 @@ public class ExhibitionNodeManager implements HierarchyEntry {
     );
 
     private final List<ExhibitionNode> nodes;
-    private final Map<String, ExhibitionNode> unique;
+    private final Map<ContextKey<? extends ExhibitionNode>, ExhibitionNode> unique;
+
+    private boolean dirty;
+    private int id;
 
     public ExhibitionNodeManager(final List<ExhibitionNode> nodes) {
         this.nodes  = nodes;
         this.unique = collectUnique(nodes);
     }
 
-    public ExhibitionNode get(final String name) {
-        return this.unique.get(name);
+    public void setup(final ExhibitionEntity entity) {
+
+        this.id = entity.getId();
+        ExhibitionNode.walk(this.nodes, node -> node.init(entity));
+
+    }
+
+    public void apply(final ExhibitionEntity entity) {
+
+        this.id = entity.getId();
+        ExhibitionNode.walk(this.nodes, node -> node.apply(entity));
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ExhibitionNode> T getUnique(final ContextKey<T> key) {
+        if (this.unique.containsKey(key)) {
+            return (T) this.unique.get(key);
+        }
+        return null;
+    }
+
+    public ExhibitionNodeManager duplicate() {
+        final var nodes = new ArrayList<ExhibitionNode>();
+        for (final var node : this.nodes) {
+            nodes.add(node.duplicate());
+        }
+        return new ExhibitionNodeManager(nodes);
     }
 
     @Override
@@ -54,35 +83,28 @@ public class ExhibitionNodeManager implements HierarchyEntry {
         return this.nodes;
     }
 
-    private static Map<String, ExhibitionNode> collectUnique(final List<ExhibitionNode> nodes) {
+    private static Map<ContextKey<? extends ExhibitionNode>, ExhibitionNode> collectUnique(final List<ExhibitionNode> nodes) {
 
-        final var counts    = new Object2IntOpenHashMap<String>();
-        final var mapping   = new Object2ObjectOpenHashMap<String, ExhibitionNode>();
+        final var builder   = ImmutableMap.<ContextKey<? extends ExhibitionNode>, ExhibitionNode>builder();
 
         final Consumer<ExhibitionNode> collector = (node) -> {
-            final var name = node.name();
-            // if already exist, then count + 1, but do not add it to the map
-            final var count = counts.getOrDefault(name, 0);
-            if (count == 0) {
-                mapping.put(name, node);
+            final var key = node.uniqueKey();
+            if (key != null) {
+                builder.put(key, node);
             }
-            counts.mergeInt(name, 1, Integer::sum);
         };
 
-        for (var node : nodes) {
-            ExhibitionNode.walk(node, collector);
-        }
-
-        final var builder   = ImmutableMap.<String, ExhibitionNode>builder();
-        for (var entry : mapping.entrySet()) {
-            final var name  = entry.getKey();
-
-            if (counts.getInt(name) == 1) {
-                builder.put(name, entry.getValue());
-            }
-        }
+        ExhibitionNode.walk(nodes, collector);
 
         return builder.build();
 
+    }
+
+    public boolean isDirty() {
+        return this.dirty;
+    }
+
+    public void setDirty(final boolean dirty) {
+        this.dirty = dirty;
     }
 }

@@ -9,12 +9,16 @@ import it.unimi.dsi.fastutil.Stack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.context.ContextKey;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 import org.teacon.powertool.exhibition.HierarchyEntry;
+import org.teacon.powertool.utils.VanillaUtils;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Consumer;
@@ -38,6 +42,16 @@ public abstract class ExhibitionNode implements HierarchyEntry {
 
     public abstract String type();
 
+    public abstract ExhibitionNode duplicate();
+
+    public @Nullable ContextKey<? extends ExhibitionNode> uniqueKey() {
+        return null;
+    }
+
+    public void init(final ExhibitionEntity entity) { }
+
+    public void apply(final ExhibitionEntity entity) { }
+
     @Override
     public Collection<HierarchyEntry> children() {
         return Collections.emptyList();
@@ -47,10 +61,26 @@ public abstract class ExhibitionNode implements HierarchyEntry {
             ExhibitionNode root,
             Consumer<ExhibitionNode> consumer
     ) {
-        // dfs
         final Stack<ExhibitionNode> stack = new ObjectArrayList<>();
         stack.push(root);
 
+        _walk(stack, consumer);
+    }
+
+    public static void walk(
+            Collection<ExhibitionNode> nodes,
+            Consumer<ExhibitionNode> consumer
+    ) {
+        final Stack<ExhibitionNode> stack = new ObjectArrayList<>();
+        nodes.forEach(stack::push);
+
+        _walk(stack, consumer);
+    }
+
+    private static void _walk(
+            Stack<ExhibitionNode> stack,
+            Consumer<ExhibitionNode> consumer
+    ) {
         while (!stack.isEmpty()) {
             var node = stack.pop();
             consumer.accept(node);
@@ -73,6 +103,10 @@ public abstract class ExhibitionNode implements HierarchyEntry {
 
         SERIALIZERS = builder.build();
 
+    }
+
+    protected static <T extends ExhibitionNode> ContextKey<T> createUniqueKey(String name) {
+        return new ContextKey<>(VanillaUtils.modRL(name));
     }
 
     @EventBusSubscriber(modid = PowerTool.MODID)

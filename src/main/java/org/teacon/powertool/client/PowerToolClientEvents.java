@@ -229,8 +229,8 @@ public class PowerToolClientEvents {
             event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(), AutoVanishBoatRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer(c, ModelLayers.MINECART));
-            event.registerEntityRenderer(PowerToolEntities.REGULAR_EXHIBITION_HUMANOID.get(), ExhibitionHumanoidRenderer::regular);
-            event.registerEntityRenderer(PowerToolEntities.SLIM_EXHIBITION_HUMANOID.get(), ExhibitionHumanoidRenderer::slim);
+            event.registerEntityRenderer(PowerToolEntities.EXHIBITION_HUMANOID.get(), ExhibitionHumanoidRenderer::regular);
+//            event.registerEntityRenderer(PowerToolEntities.SLIM_EXHIBITION_HUMANOID.get(), ExhibitionHumanoidRenderer::slim);
         }
         
         @SubscribeEvent

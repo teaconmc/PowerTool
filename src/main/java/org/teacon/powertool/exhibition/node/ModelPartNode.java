@@ -88,7 +88,9 @@ public class ModelPartNode extends ExhibitionNode implements Inspectable {
 
     @Override
     public void onInspect(final InspectorBuilder builder) {
-        builder.title(Component.literal(this.partName));
+        builder     .title(Component.literal(this.partName));
+
+
 
     }
 
@@ -100,6 +102,16 @@ public class ModelPartNode extends ExhibitionNode implements Inspectable {
     @Override
     public String type() {
         return "part";
+    }
+
+    @Override
+    public ModelPartNode duplicate() {
+        return new ModelPartNode(
+                this.partName,
+                this.position.get(),
+                this.rotation.get(),
+                this.scale.get()
+        );
     }
 
 }

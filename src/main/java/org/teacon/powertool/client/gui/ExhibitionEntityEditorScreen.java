@@ -8,10 +8,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.client.gui.widget.ConfigurationHierarchy;
 import org.teacon.powertool.client.gui.widget.Inspector;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 import org.teacon.powertool.inspection.Inspectable;
+import org.teacon.powertool.network.server.UpdateExhibitionEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -93,5 +95,22 @@ public class ExhibitionEntityEditorScreen extends Screen {
         renderState.shadowPieces.clear();
         renderState.outlineColor = 0;
         return renderState;
+    }
+
+    @Override
+    public void onClose() {
+        ClientPacketDistributor.sendToServer(
+                UpdateExhibitionEntity.of(this.entity)
+        );
+        super.onClose();
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+
+    @Override
+    protected void extractBlurredBackground(final GuiGraphicsExtractor graphics) {
     }
 }

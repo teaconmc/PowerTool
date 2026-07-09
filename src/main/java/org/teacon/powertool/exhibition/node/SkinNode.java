@@ -8,8 +8,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.entity.decoration.Mannequin;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.item.component.ResolvableProfile;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.inspection.Inspectable;
 import org.teacon.powertool.inspection.InspectorBuilder;
 import org.teacon.powertool.inspection.property.StringProperty;
@@ -19,6 +20,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class SkinNode extends ExhibitionNode implements Inspectable {
+
+    public static final ContextKey<SkinNode> UNIQUE_KEY = ExhibitionNode.createUniqueKey("skin");
 
     public static final MapCodec<SkinNode> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(SkinNode::getSkin)
@@ -50,11 +53,14 @@ public class SkinNode extends ExhibitionNode implements Inspectable {
                 },
                 skin
         );
+
+        if (!skin.isBlank()) {
+            this.profile = ResolvableProfile.createUnresolved(skin);
+        }
     }
 
     @Override
     public void onInspect(InspectorBuilder builder) {
-        builder.title(Component.literal(this.name()));
         builder.inputString(
                 Component.literal("Skin"),
                 this.skin
@@ -71,8 +77,22 @@ public class SkinNode extends ExhibitionNode implements Inspectable {
         return "skin";
     }
 
+    @Override
+    public ExhibitionNode duplicate() {
+        return new SkinNode(this.getSkin());
+    }
+
+    @Override
+    public @Nullable ContextKey<? extends ExhibitionNode> uniqueKey() {
+        return UNIQUE_KEY;
+    }
+
     public String getSkin() {
         return this.skin.get();
+    }
+
+    public ResolvableProfile getProfile() {
+        return this.profile;
     }
 
 }

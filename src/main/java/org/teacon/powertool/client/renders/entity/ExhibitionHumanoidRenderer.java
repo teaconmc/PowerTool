@@ -8,8 +8,14 @@ import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.item.component.ResolvableProfile;
 import org.jspecify.annotations.NonNull;
+import org.teacon.powertool.client.entity.ClientExhibitionHumanoid;
 import org.teacon.powertool.entity.exhibit.ExhibitionHumanoid;
+import org.teacon.powertool.exhibition.ExhibitionNodeManager;
+import org.teacon.powertool.exhibition.node.ExhibitionNode;
+import org.teacon.powertool.exhibition.node.SkinNode;
 
 public class ExhibitionHumanoidRenderer extends HumanoidMobRenderer<ExhibitionHumanoid, AvatarRenderState, PlayerModel> {
 
@@ -55,6 +61,8 @@ public class ExhibitionHumanoidRenderer extends HumanoidMobRenderer<ExhibitionHu
             final float                 partialTicks
     ) {
         super.extractRenderState(entity, state, partialTicks);
+        state.skin = ((ClientExhibitionHumanoid) entity).getSkin();
+
     }
 
     @Override

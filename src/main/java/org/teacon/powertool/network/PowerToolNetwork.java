@@ -5,10 +5,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.network.client.*;
-import org.teacon.powertool.network.server.SetCommandBlockPacket;
-import org.teacon.powertool.network.server.UpdateBlockEntityData;
-import org.teacon.powertool.network.server.UpdateItemStackData;
-import org.teacon.powertool.network.server.UpdatePowerSupplyData;
+import org.teacon.powertool.network.server.*;
 
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolNetwork {
@@ -76,6 +73,11 @@ public class PowerToolNetwork {
                 OpenExhibitionEntityEditor.TYPE,
                 OpenExhibitionEntityEditor.STREAM_CODEC,
                 OpenExhibitionEntityEditor::handle
+        );
+        register.playToServer(
+                UpdateExhibitionEntity.TYPE,
+                UpdateExhibitionEntity.STREAM_CODEC,
+                UpdateExhibitionEntity::handle
         );
         
         register.commonToServer(

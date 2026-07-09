@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.context.ContextKey;
+import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.exhibition.HierarchyEntry;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,6 +18,8 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class PoseNode extends ExhibitionNode {
+
+    public static final ContextKey<PoseNode> UNIQUE_KEY = ExhibitionNode.createUniqueKey("pose");
 
     public static final MapCodec<PoseNode> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ModelPartNode.CODEC.codec().listOf(1, 16).fieldOf("parts").forGetter(PoseNode::getParts)
@@ -49,6 +53,20 @@ public class PoseNode extends ExhibitionNode {
     @Override
     public String type() {
         return "pose";
+    }
+
+    @Override
+    public ExhibitionNode duplicate() {
+        List<ModelPartNode> parts = new ArrayList<>(this.parts.size());
+        for (final var part : this.parts) {
+            parts.add(part.duplicate());
+        }
+        return new PoseNode(parts);
+    }
+
+    @Override
+    public @Nullable ContextKey<? extends ExhibitionNode> uniqueKey() {
+        return UNIQUE_KEY;
     }
 
     @Override

@@ -8,9 +8,14 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 import org.teacon.powertool.exhibition.node.EntityNode;
@@ -25,7 +30,10 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 public abstract class ExhibitionEntity extends PathfinderMob {
 
-    private static final EntityDataAccessor<ExhibitionNodeManager> DATA_NODE;
+    protected static final EntityDataAccessor<ExhibitionNodeManager> DATA_NODE;
+    private static final Logger log = LoggerFactory.getLogger(ExhibitionEntity.class);
+
+    private @Nullable Player editingPlayer;
 
     protected ExhibitionEntity(
             final EntityType<? extends ExhibitionEntity>    type,
@@ -35,8 +43,6 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
         this.createExhibitionNode();
     }
-
-
 
     public ExhibitionNodeManager getExhibitionNode() {
         return this.entityData.get(DATA_NODE);
@@ -48,10 +54,12 @@ public abstract class ExhibitionEntity extends PathfinderMob {
         onCreateExhibitionNode(list::add);
 
         var root = new ExhibitionNodeManager(list);
+        root.setup(this);
         this.entityData.set(DATA_NODE, root);
 
     }
 
+    @Contract(pure = true)
     protected void onCreateExhibitionNode(Consumer<ExhibitionNode> consumer) {
         consumer.accept(EntityNode.of(this));
     }
@@ -103,7 +111,9 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
         final var node = input.read("exhibition_node", ExhibitionNodeManager.CODEC);
         if (node.isPresent()) {
-            this.entityData.set(DATA_NODE, node.get());
+            final var manager = node.get();
+            manager.setup(this);
+            this.entityData.set(DATA_NODE, manager);
         } else {
             this.createExhibitionNode();
         }
@@ -116,10 +126,35 @@ public abstract class ExhibitionEntity extends PathfinderMob {
     }
 
     @Override
-    public void aiStep() {}
+    public void onSyncedDataUpdated(final EntityDataAccessor<?> accessor) {
+        super.onSyncedDataUpdated(accessor);
+
+        if (DATA_NODE.equals(accessor)) {
+            log.info("Exhibition node updated.");
+        }
+    }
+
+    @Override
+    public void aiStep() {
+        if (this.editingPlayer != null && this.editingPlayer.isRemoved()) {
+            this.editingPlayer = null;
+        }
+    }
+
+    public @Nullable Player getEditingPlayer() {
+        return this.editingPlayer;
+    }
+
+    public void setEditingPlayer(@Nullable Player editingPlayer) {
+        this.editingPlayer = editingPlayer;
+    }
 
     static {
         DATA_NODE = SynchedEntityData.defineId(ExhibitionEntity.class, PowerToolEntities.EXHIBITION_NODE.get());
     }
 
+    public void update(final ExhibitionNodeManager manager) {
+        manager.apply(this);
+        this.entityData.set(DATA_NODE, manager);
+    }
 }

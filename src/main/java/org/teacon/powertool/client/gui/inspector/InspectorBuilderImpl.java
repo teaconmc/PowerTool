@@ -119,4 +119,13 @@ public class InspectorBuilderImpl implements InspectorBuilder {
     ) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public InspectorBuilder button(
+            final Component         component,
+            final Runnable          action
+    ) {
+        this.builder.add(new InspectorButton(component, action));
+        return this;
+    }
 }

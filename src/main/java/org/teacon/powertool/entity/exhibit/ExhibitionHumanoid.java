@@ -5,8 +5,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.entity.PowerToolEntities;
+import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
 import org.teacon.powertool.exhibition.node.PoseNode;
 import org.teacon.powertool.exhibition.node.SkinNode;
@@ -18,31 +22,27 @@ import java.util.function.Consumer;
 @MethodsReturnNonnullByDefault
 public class ExhibitionHumanoid extends ExhibitionEntity {
 
-    private final boolean slim;
+    protected static EntityType.EntityFactory<ExhibitionHumanoid> constructor;
 
-    public static ExhibitionHumanoid regular(
+    public static @Nullable ExhibitionHumanoid create(
             final EntityType<ExhibitionHumanoid>    type,
             final Level                             level
     ) {
-        return new ExhibitionHumanoid(type, level, false);
+        return constructor.create(type, level);
     }
 
-    public static ExhibitionHumanoid slim(
+    public ExhibitionHumanoid(
             final EntityType<ExhibitionHumanoid>    type,
             final Level                             level
-    ) {
-        return new ExhibitionHumanoid(type, level, true);
-    }
-
-    private ExhibitionHumanoid(
-            final EntityType<ExhibitionHumanoid>    type,
-            final Level                             level,
-            final boolean                           slim
     ) {
         super(type, level);
-        this.slim       = slim;
     }
 
+    protected ExhibitionHumanoid(
+            final Level                             level
+    ) {
+        this(PowerToolEntities.EXHIBITION_HUMANOID.get(), level);
+    }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
@@ -59,6 +59,7 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
     }
 
     @Override
+    @Contract(pure = true)
     protected void onCreateExhibitionNode(final Consumer<ExhibitionNode> consumer) {
         super.onCreateExhibitionNode(consumer);
 
@@ -66,7 +67,13 @@ public class ExhibitionHumanoid extends ExhibitionEntity {
         consumer.accept(PoseNode.of("head", "body", "left_arm", "right_arm", "left_leg", "right_leg"));
     }
 
-    public boolean isSlim() {
-        return this.slim;
+    public ResolvableProfile getProfile() {
+        final var node = this.getExhibitionNode();
+        final var skinNode = node.getUnique(SkinNode.UNIQUE_KEY);
+        return skinNode.getProfile();
+    }
+
+    static {
+        constructor = ExhibitionHumanoid::new;
     }
 }

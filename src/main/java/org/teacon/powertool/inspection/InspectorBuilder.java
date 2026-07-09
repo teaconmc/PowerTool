@@ -149,4 +149,10 @@ public interface InspectorBuilder {
             final BooleanProperty   property
     );
 
+    @Contract("_, _ -> this")
+    InspectorBuilder button(
+            final Component         component,
+            final Runnable          action
+    );
+
 }

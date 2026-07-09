@@ -92,7 +92,7 @@ public class NumberInputField extends AbstractWidget {
                 graphics.outline(
                         left, top,
                         width, height,
-                        0xffbbbbff
+                        0xffffffff
                 );
             }
         }

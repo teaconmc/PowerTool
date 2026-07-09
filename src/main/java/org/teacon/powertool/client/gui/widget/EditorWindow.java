@@ -150,7 +150,7 @@ public abstract class EditorWindow extends AbstractWidget {
         float sh = Math.max(scrollHeight, 1e-8f);
         float fh = Math.max(this.frameHeight, 1e-8f);
 
-        this.ratio = Math.min(sh / fh, 1.0f);
+        this.ratio = Math.max(sh / fh, 1.0f);
         this.updateScroll();
     }
 

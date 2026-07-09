@@ -117,7 +117,8 @@ public class InspectorBuilderImpl implements InspectorBuilder {
             final Component         component,
             final BooleanProperty   property
     ) {
-        throw new UnsupportedOperationException();
+        this.builder.add(new InspectorCheckBox(component, property));
+        return this;
     }
 
     @Override

@@ -77,16 +77,18 @@ public class Inspector extends EditorWindow {
         int height = 0;
 
         int mouseX = localMouseX + 8;
-        int mouseY = localMouseY - offset;
+        int mouseY = localMouseY + offset;
 
         for (InspectorWidget widget : this.widgets) {
+
+            final var hovered = this.isHovered && mouseY > height && mouseY < height + widget.getHeight();
 
             widget.render(
                     graphics,
                     mouseX,
                     mouseY - height,
                     partialTick,
-                    this.isHovered && mouseX > height && mouseY < height + widget.getHeight()
+                    hovered
             );
 
             pose.translate(0f, widget.getHeight());

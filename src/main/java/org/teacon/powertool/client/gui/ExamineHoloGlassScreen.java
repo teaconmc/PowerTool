@@ -175,7 +175,8 @@ public class ExamineHoloGlassScreen extends XKLibBaseScreen {
                         align-items: center;
                         """)
                 .addChild(new Label(IComponent.literal(id.toString())).inlineStyle("""
-                        size: 100%-24rpx 100%;
+                        size: 100%-30rpx 100%;
+                        margin-left: 6rpx;
                         flex-shrink: 0;
                         text-color: -1;
                         text-height: 10rpx;
@@ -198,6 +199,6 @@ public class ExamineHoloGlassScreen extends XKLibBaseScreen {
         ClientPacketDistributor.sendToServer(new UpdateItemStackData(slot, patch));
     }
     
-    private record BlockEntityTypeData(Identifier id, BlockEntityType<?> type) {
+    protected record BlockEntityTypeData(Identifier id, BlockEntityType<?> type) {
     }
 }

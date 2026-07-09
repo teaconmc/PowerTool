@@ -65,6 +65,15 @@ public class ExamineHoloGlass extends Item implements IScreenProviderItem {
         super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
     }
     
+    public static boolean wearingExamineHoloGlass(){
+        var mc = Minecraft.getInstance();
+        var player = mc.player;
+        if (player == null) return false;
+        return player.getMainHandItem().getItem() instanceof ExamineHoloGlass
+                || player.getOffhandItem().getItem() instanceof ExamineHoloGlass
+                || player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof ExamineHoloGlass;
+    }
+    
     public static Collection<TagKey<Block>> getOutLinedBlockTags() {
         var mc = Minecraft.getInstance();
         var player = mc.player;

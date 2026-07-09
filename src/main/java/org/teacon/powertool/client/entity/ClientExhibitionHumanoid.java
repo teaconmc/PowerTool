@@ -58,6 +58,11 @@ public class ClientExhibitionHumanoid extends ExhibitionHumanoid {
             }
         }
 
+        var node = this.getExhibitionNode();
+        if (node.isEditing()) { // preview
+            node.apply(this);
+        }
+
     }
 
     @Override

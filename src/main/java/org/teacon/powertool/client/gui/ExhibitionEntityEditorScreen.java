@@ -12,6 +12,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.client.gui.widget.ConfigurationHierarchy;
 import org.teacon.powertool.client.gui.widget.Inspector;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
+import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 import org.teacon.powertool.inspection.Inspectable;
 import org.teacon.powertool.network.server.UpdateExhibitionEntity;
 
@@ -38,7 +39,9 @@ public class ExhibitionEntityEditorScreen extends Screen {
         this.addRenderableWidget(this.inspector);
 
         this.entity         = entity;
-        this.hierarchy.setRoot(entity.getExhibitionNode());
+        final var node = entity.getExhibitionNode();
+        node.setEditing(true);
+        this.hierarchy.setRoot(node);
         this.hierarchy.setOnSelect(exhibitionNode -> {
             if (exhibitionNode instanceof Inspectable inspectable) {
                 ExhibitionEntityEditorScreen.this.inspector.setInspectObject(inspectable);
@@ -102,6 +105,7 @@ public class ExhibitionEntityEditorScreen extends Screen {
         ClientPacketDistributor.sendToServer(
                 UpdateExhibitionEntity.of(this.entity)
         );
+        this.entity.getExhibitionNode().setEditing(false);
         super.onClose();
     }
 

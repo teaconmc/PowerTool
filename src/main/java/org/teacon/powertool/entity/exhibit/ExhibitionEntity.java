@@ -40,8 +40,6 @@ public abstract class ExhibitionEntity extends PathfinderMob {
             final Level                                     level
     ) {
         super(type, level);
-
-        this.createExhibitionNode();
     }
 
     public ExhibitionNodeManager getExhibitionNode() {
@@ -55,6 +53,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
         var root = new ExhibitionNodeManager(list);
         root.setup(this);
+
         this.entityData.set(DATA_NODE, root);
 
     }
@@ -131,6 +130,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
         if (DATA_NODE.equals(accessor)) {
             log.info("Exhibition node updated.");
+            this.getExhibitionNode().apply(this);
         }
     }
 
@@ -154,7 +154,8 @@ public abstract class ExhibitionEntity extends PathfinderMob {
     }
 
     public void update(final ExhibitionNodeManager manager) {
-        manager.apply(this);
-        this.entityData.set(DATA_NODE, manager);
+        final var node = this.getExhibitionNode();
+        node.copy(manager);
+        this.entityData.set(DATA_NODE, node, true);
     }
 }

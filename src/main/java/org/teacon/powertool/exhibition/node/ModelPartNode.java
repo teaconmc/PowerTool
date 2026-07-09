@@ -114,4 +114,13 @@ public class ModelPartNode extends ExhibitionNode implements Inspectable {
         );
     }
 
+    @Override
+    public void copy(final ExhibitionNode other) {
+        if (other instanceof ModelPartNode node && node.partName.equals(this.partName)) {
+            this.position.set(node.position.get());
+            this.rotation.set(node.rotation.get());
+            this.scale.set(node.scale.get());
+        }
+    }
+
 }

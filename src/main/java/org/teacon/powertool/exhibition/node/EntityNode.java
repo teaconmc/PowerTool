@@ -112,6 +112,17 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
     }
 
     @Override
+    public void copy(final ExhibitionNode other) {
+        if (other instanceof EntityNode node) {
+            this.x.setValue(node.x.getValue());
+            this.y.setValue(node.y.getValue());
+            this.z.setValue(node.z.getValue());
+            this.yaw.setValue(node.yaw.getValue());
+            this.pitch.setValue(node.pitch.getValue());
+        }
+    }
+
+    @Override
     public @Nullable ContextKey<? extends ExhibitionNode> uniqueKey() {
         return UNIQUE_KEY;
     }

@@ -48,7 +48,10 @@ public class SkinNode extends ExhibitionNode implements Inspectable {
                     if (str == null || str.isBlank()) {
                         this.profile = DEFAULT_PROFILE;
                     } else {
-                        this.profile = ResolvableProfile.createUnresolved(str);
+                        var name = this.profile.name();
+                        if (name.isEmpty() || !name.get().equals(str)) {
+                            this.profile = ResolvableProfile.createUnresolved(str);
+                        }
                     }
                 },
                 skin
@@ -80,6 +83,14 @@ public class SkinNode extends ExhibitionNode implements Inspectable {
     @Override
     public ExhibitionNode duplicate() {
         return new SkinNode(this.getSkin());
+    }
+
+    @Override
+    public void copy(final ExhibitionNode other) {
+        if (other instanceof SkinNode node) {
+            this.skin.set(node.getSkin());
+            this.profile = node.profile;
+        }
     }
 
     @Override

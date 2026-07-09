@@ -65,6 +65,16 @@ public class PoseNode extends ExhibitionNode {
     }
 
     @Override
+    public void copy(final ExhibitionNode other) {
+        if (other instanceof PoseNode pose && this.parts.size() == pose.parts.size()) {
+            // suppose the other node has same structure with this one
+            for (int i = 0; i < this.parts.size(); i++) {
+                this.parts.get(i).copy(pose.parts.get(i));
+            }
+        }
+    }
+
+    @Override
     public @Nullable ContextKey<? extends ExhibitionNode> uniqueKey() {
         return UNIQUE_KEY;
     }

@@ -32,6 +32,7 @@ public class ExhibitionNodeManager implements HierarchyEntry {
     private final Map<ContextKey<? extends ExhibitionNode>, ExhibitionNode> unique;
 
     private boolean dirty;
+    private boolean editing;
     private int id;
 
     public ExhibitionNodeManager(final List<ExhibitionNode> nodes) {
@@ -67,6 +68,18 @@ public class ExhibitionNodeManager implements HierarchyEntry {
             nodes.add(node.duplicate());
         }
         return new ExhibitionNodeManager(nodes);
+    }
+
+    // todo: we might need a merge method, for more complex operation
+    public void copy(final ExhibitionNodeManager other) {
+        if (this.nodes.size() != other.nodes.size()) {
+            return;
+        }
+
+        // suppose both manager has same structure of nodes
+        for (int i = 0; i < this.nodes.size(); i++) {
+            this.nodes.get(i).copy(other.nodes.get(i));
+        }
     }
 
     @Override
@@ -106,5 +119,13 @@ public class ExhibitionNodeManager implements HierarchyEntry {
 
     public void setDirty(final boolean dirty) {
         this.dirty = dirty;
+    }
+
+    public boolean isEditing() {
+        return this.editing;
+    }
+
+    public void setEditing(final boolean editing) {
+        this.editing = editing;
     }
 }

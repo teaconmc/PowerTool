@@ -18,18 +18,14 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
         super(36, message, property);
 
         this.editBox = new TextField(Minecraft.getInstance().font, 0, 16, 100, 20, message);
-        this.editBox.setValue(property.get());
+        this.editBox.setValue(property.get(), false);
         this.editBox.setResponder(property::set);
     }
 
     @Override
-    public void render(@NonNull GuiGraphicsExtractor graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    public void render(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, boolean hovered) {
         Font font = Minecraft.getInstance().font;
         graphics.text(font, this.message, 0, 4, 0xffffffff);
-
-        if (this.editBox.getWidth() != width) {
-            this.editBox.setWidth(width);
-        }
 
         graphics.fill(0, 16, this.editBox.getWidth(), 16 + this.editBox.getHeight(), 0x88000000);
         if (this.editBox.isMouseOver(mouseX, mouseY)) {
@@ -47,12 +43,12 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
     }
 
     @Override
-    public void onMousePressed(final MouseButtonEvent event, final boolean doubleClick, int width) {
+    public void onMousePressed(final MouseButtonEvent event, final boolean doubleClick) {
         this.editBox.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public void onMouseReleased(final MouseButtonEvent event, int width) {
+    public void onMouseReleased(final MouseButtonEvent event) {
         this.editBox.mouseReleased(event);
     }
 
@@ -69,5 +65,11 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
     @Override
     public boolean charTyped(final CharacterEvent event) {
         return this.editBox.charTyped(event);
+    }
+
+    @Override
+    public void resize(final int width) {
+        super.resize(width);
+        this.editBox.setWidth(width);
     }
 }

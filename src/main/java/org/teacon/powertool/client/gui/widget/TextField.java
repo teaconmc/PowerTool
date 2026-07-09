@@ -75,7 +75,7 @@ public class TextField extends AbstractWidget {
         return Component.translatable("gui.narrate.editBox", component, this.value);
     }
 
-    public void setValue(String text) {
+    public void setValue(String text, boolean respond) {
         if (this.filter.test(text)) {
             if (text.length() > this.maxLength) {
                 this.value = text.substring(0, this.maxLength);
@@ -85,7 +85,10 @@ public class TextField extends AbstractWidget {
 
             this.moveCursorToEnd(false);
             this.setHighlightPos(this.cursorPos);
-            this.onValueChange(text);
+
+            if (respond) {
+                this.onValueChange(text);
+            }
         }
     }
 
@@ -220,7 +223,8 @@ public class TextField extends AbstractWidget {
             this.setHighlightPos(this.cursorPos);
         }
 
-        this.onValueChange(this.value);
+        // why this?
+//        this.onValueChange(this.value);
     }
 
     public void setCursorPosition(int pos) {

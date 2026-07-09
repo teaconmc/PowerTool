@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.inspection.Inspectable;
 import org.teacon.powertool.inspection.InspectorBuilder;
+import org.teacon.powertool.inspection.constraint.NumberConstraint;
 import org.teacon.powertool.inspection.property.FloatProperty;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -40,6 +41,18 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
             ByteBufCodecs.FLOAT,
             EntityNode::getPitch,
             EntityNode::new
+    );
+
+    private static final NumberConstraint<Float> POSITION = NumberConstraint.number(
+            Float.MIN_VALUE,
+            Float.MAX_VALUE,
+            0
+    );
+
+    private static final NumberConstraint<Float> DEGREES = NumberConstraint.number(
+            -180f,
+            180f,
+            0
     );
 
     private final FloatProperty x;
@@ -75,15 +88,16 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
 
     @Override
     public void onInspect(InspectorBuilder builder) {
-        builder.title(Component.literal(this.name()));
-        builder.title(Component.literal("Position"));
-        builder.inputFloat(Component.literal("X"), this.x);
-        builder.inputFloat(Component.literal("Y"), this.y);
-        builder.inputFloat(Component.literal("Z"), this.z);
+        builder .title(Component.literal(this.name()))
 
-        builder.title(Component.literal("Rotation"));
-        builder.inputFloat(Component.literal("Yaw"), this.yaw);
-        builder.inputFloat(Component.literal("Pitch"), this.pitch);
+                .title(Component.literal("Position"))
+                .inputFloat(Component.literal("X"), this.x, POSITION)
+                .inputFloat(Component.literal("Y"), this.y, POSITION)
+                .inputFloat(Component.literal("Z"), this.z, POSITION)
+
+                .title(Component.literal("Rotation"))
+                .inputFloat(Component.literal("Yaw"), this.yaw, DEGREES)
+                .inputFloat(Component.literal("Pitch"), this.pitch, DEGREES);
     }
 
     @Override

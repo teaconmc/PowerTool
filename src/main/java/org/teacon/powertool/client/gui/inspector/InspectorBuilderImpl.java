@@ -5,6 +5,8 @@ import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Contract;
 import org.teacon.powertool.inspection.InspectorBuilder;
+import org.teacon.powertool.inspection.constraint.InputConstraint;
+import org.teacon.powertool.inspection.constraint.NumberConstraint;
 import org.teacon.powertool.inspection.property.BooleanProperty;
 import org.teacon.powertool.inspection.property.FloatProperty;
 import org.teacon.powertool.inspection.property.IntegerProperty;
@@ -42,9 +44,10 @@ public class InspectorBuilderImpl implements InspectorBuilder {
 
     @Override
     public InspectorBuilder sliderInt(
-            final Component         component,
-            final IntegerProperty   property,
-            final int               step
+            final Component                 component,
+            final IntegerProperty           property,
+            final NumberConstraint<Integer> constraint,
+            final int                       step
     ) {
         this.builder.add(new InspectorSlider.Integer(component, property, step));
         return this;
@@ -52,37 +55,51 @@ public class InspectorBuilderImpl implements InspectorBuilder {
 
     @Override
     public InspectorBuilder sliderFloat(
-            final Component         component,
-            final FloatProperty     property,
-            final float             step
+            final Component                 component,
+            final FloatProperty             property,
+            final NumberConstraint<Float>   constraint,
+            final float                     step
     ) {
         this.builder.add(new InspectorSlider.Float(component, property, step));
         return this;
     }
 
-    @Contract("_, _ -> this")
+    @Contract("_, _, _ -> this")
     public InspectorBuilder inputString(
-            final Component         component,
-            final Property<String>  property
+            final Component                 component,
+            final Property<String>          property,
+            final InputConstraint<String>   constraint
     ) {
         this.builder.add(new InspectorEditBox(component, property));
         return this;
     }
 
-    @Contract("_, _ -> this")
+    @Contract("_, _, _ -> this")
     public InspectorBuilder inputInt(
-            final Component         component,
-            final IntegerProperty   property
+            final Component                 component,
+            final IntegerProperty           property,
+            final NumberConstraint<Integer> constraint
     ) {
-        throw new UnsupportedOperationException();
+        this.builder.add(new InspectorVectorInput<>(
+                component,
+                property,
+                constraint
+        ));
+        return this;
     }
 
-    @Contract("_, _ -> this")
+    @Contract("_, _, _ -> this")
     public InspectorBuilder inputFloat(
-            final Component         component,
-            final FloatProperty     property
+            final Component                 component,
+            final FloatProperty             property,
+            final NumberConstraint<Float>   constraint
     ) {
-        throw new UnsupportedOperationException();
+        this.builder.add(new InspectorVectorInput<>(
+                component,
+                property,
+                constraint
+        ));
+        return this;
     }
 
     @Contract("_, _ -> this")

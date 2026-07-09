@@ -1,7 +1,6 @@
 package org.teacon.powertool.client.gui.widget;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -66,8 +65,6 @@ public class Inspector extends EditorWindow {
             final GuiGraphicsExtractor  graphics,
             int                         localMouseX,
             int                         localMouseY,
-            int                         innerWidth,
-            int                         innerHeight,
             float                       partialTick
     ) {
 
@@ -76,7 +73,7 @@ public class Inspector extends EditorWindow {
         int offset = (int) this.getOffset();
         pose.translate(0, -offset);
 
-        int maxHeight = this.height + offset;
+        int innerWidth = this.getFrameWidth();
         int height = 0;
 
         localMouseX -= this.getX() + 8;
@@ -86,7 +83,6 @@ public class Inspector extends EditorWindow {
 
             widget.render(
                     graphics,
-                    innerWidth,
                     localMouseX,
                     localMouseY - height,
                     partialTick,
@@ -118,7 +114,7 @@ public class Inspector extends EditorWindow {
                                 mouseY - height,
                                 remapped.buttonInfo()
                         ),
-                        doubleClick, this.width
+                        doubleClick
                 );
 
                 if (this.focus != null && this.focus != widget) {
@@ -159,7 +155,7 @@ public class Inspector extends EditorWindow {
                                 mouseX,
                                 mouseY - height,
                                 event.buttonInfo()
-                        ), this.width
+                        )
                 );
                 return true;
             }
@@ -186,7 +182,7 @@ public class Inspector extends EditorWindow {
                         mouseX,
                         mouseY - height,
                         event.buttonInfo()
-                ), dx, dy, this.width);
+                ), dx, dy);
                 return true;
             }
             height += widget.getHeight();
@@ -226,5 +222,17 @@ public class Inspector extends EditorWindow {
             return this.focus.charTyped(event);
         }
         return false;
+    }
+
+    @Override
+    protected void resizeFrame(
+            final int innerWidth,
+            final int innerHeight
+    ) {
+        if (this.widgets != null) {
+            for (final var widget : this.widgets) {
+                widget.resize(innerWidth);
+            }
+        }
     }
 }

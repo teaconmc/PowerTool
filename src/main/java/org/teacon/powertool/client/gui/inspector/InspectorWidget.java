@@ -7,6 +7,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 
 public abstract class InspectorWidget {
     private final int height;
+    private int width;
 
     private boolean focused = false;
 
@@ -14,13 +15,13 @@ public abstract class InspectorWidget {
         this.height = height;
     }
 
-    public void render(GuiGraphicsExtractor graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {}
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, boolean hovered) {}
 
-    public void onMousePressed(MouseButtonEvent event, boolean doubleClick, int width) {}
+    public void onMousePressed(MouseButtonEvent event, boolean doubleClick) {}
 
-    public void onMouseReleased(MouseButtonEvent event, int width) {}
+    public void onMouseReleased(MouseButtonEvent event) {}
 
-    public void onMouseDragging(MouseButtonEvent event, double deltaX, double deltaY, int width) {}
+    public void onMouseDragging(MouseButtonEvent event, double deltaX, double deltaY) {}
 
     public boolean onKeyPressed(KeyEvent event) { return false; }
 
@@ -34,6 +35,10 @@ public abstract class InspectorWidget {
         return this.height;
     }
 
+    public int getWidth() {
+        return this.width;
+    }
+
     public boolean isFocused() {
         return this.focused;
     }
@@ -41,5 +46,9 @@ public abstract class InspectorWidget {
 
     public void setFocused(final boolean focused) {
         this.focused = focused;
+    }
+
+    public void resize(final int width) {
+        this.width = width;
     }
 }

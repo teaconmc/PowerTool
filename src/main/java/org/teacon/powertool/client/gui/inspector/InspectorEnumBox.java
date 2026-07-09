@@ -22,7 +22,10 @@ public class InspectorEnumBox<T extends DisplayableType> extends InspectorModifi
     }
 
     @Override
-    public void render(@NonNull GuiGraphicsExtractor graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    public void render(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, boolean hovered) {
+
+        int width = this.getWidth();
+
         int buttonWidth = width / 2;
         int left = width - buttonWidth;
 
@@ -63,7 +66,7 @@ public class InspectorEnumBox<T extends DisplayableType> extends InspectorModifi
     }
 
     @Override
-    public void onMouseReleased(final MouseButtonEvent event, int width) {
+    public void onMouseReleased(final MouseButtonEvent event) {
 
         var button = event.button();
         var mouseY = event.y();

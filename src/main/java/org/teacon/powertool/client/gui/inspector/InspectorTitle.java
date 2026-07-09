@@ -14,7 +14,7 @@ public class InspectorTitle extends InspectorWidget {
     }
 
     @Override
-    public void render(@NonNull GuiGraphicsExtractor graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    public void render(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, boolean hovered) {
         var pose = graphics.pose();
         pose.pushMatrix();
         pose.scale(1.1f, 1.1f);

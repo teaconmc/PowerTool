@@ -40,12 +40,13 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
     @Override
     public void render(
             GuiGraphicsExtractor    graphics,
-            int                     width,
             int                     mouseX,
             int                     mouseY,
             float                   partialTick,
             boolean                 hovered
     ) {
+        int width           = this.getWidth();
+
         Font font           = Minecraft.getInstance().font;
         graphics            .text(font, this.message, 0, 4, 0xffffffff);
 
@@ -69,8 +70,9 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
     }
 
     @Override
-    public void onMousePressed(final MouseButtonEvent event, final boolean doubleClick, int width) {
+    public void onMousePressed(final MouseButtonEvent event, final boolean doubleClick) {
 
+        var width  = this.getWidth();
         var mouseX = event.x();
         var mouseY = event.y();
         var button = event.button();
@@ -87,8 +89,9 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
     }
 
     @Override
-    public void onMouseDragging(final MouseButtonEvent event, double deltaX, double deltaY, int width) {
+    public void onMouseDragging(final MouseButtonEvent event, double deltaX, double deltaY) {
 
+        var width  = this.getWidth();
         var mouseX = event.x();
         var button = event.button();
 

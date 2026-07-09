@@ -14,6 +14,7 @@ public abstract class EditorWindow extends AbstractWidget {
 
     private static final int        HEAD_HEIGHT = 24;  // dummy
 
+    private int                     frameWidth;
     private int                     frameHeight;
     private int                     channelHeight;
     private int                     sliderHeight;
@@ -24,7 +25,7 @@ public abstract class EditorWindow extends AbstractWidget {
 
     public EditorWindow(final int x, final int y, final int width, final int height, final Component message) {
         super(x, y, width, height, message);
-        this.updateFrameHeight();
+        this.updateFrame();
         this.updateScrollHeight(0);
     }
 
@@ -34,8 +35,6 @@ public abstract class EditorWindow extends AbstractWidget {
             final GuiGraphicsExtractor  graphics,
             int                         localMouseX,
             int                         localMouseY,
-            int                         innerWidth,
-            int                         innerHeight,
             float                       partialTick
     );
 
@@ -63,7 +62,7 @@ public abstract class EditorWindow extends AbstractWidget {
 
         int innerTop = top + 4;
         int innerLeft = this.getX() + 8;
-        int innerWidth = this.getWidth() - 16;
+        int innerWidth = this.frameWidth;
         int innerHeight = this.frameHeight;
 
         var pose = graphics.pose();
@@ -81,8 +80,6 @@ public abstract class EditorWindow extends AbstractWidget {
                 graphics,
                 mouseX - innerLeft,
                 mouseY - innerTop,
-                innerWidth,
-                innerHeight,
                 partialTick
         );
 
@@ -123,13 +120,13 @@ public abstract class EditorWindow extends AbstractWidget {
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
-        this.updateFrameHeight();
+        this.updateFrame();
     }
 
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
-        this.updateFrameHeight();
+        this.updateFrame();
     }
 
     protected float getOffset() {
@@ -149,9 +146,12 @@ public abstract class EditorWindow extends AbstractWidget {
 
     }
 
-    private void updateFrameHeight() {
-        this.frameHeight = height - HEAD_HEIGHT - 8;
+    private void updateFrame() {
+        this.frameWidth = this.width - 16;
+        this.frameHeight = this.height - HEAD_HEIGHT - 8;
         this.channelHeight = this.frameHeight - 4;
+
+        this.resizeFrame(this.frameWidth, this.frameHeight);
     }
 
     protected void updateScrollHeight(int scrollHeight) {
@@ -163,5 +163,20 @@ public abstract class EditorWindow extends AbstractWidget {
         this.sliderHeight = Math.min((int) ((fh / sh) * this.channelHeight), this.channelHeight);
         this.available = Math.max(this.channelHeight - this.sliderHeight, 0);
         this.scroll = Math.clamp(this.scroll, 0, this.available);
+    }
+
+    protected void resizeFrame(
+            final int innerWidth,
+            final int innerHeight
+    ) {
+
+    }
+
+    protected int getFrameWidth() {
+        return this.frameWidth;
+    }
+
+    protected int getFrameHeight() {
+        return this.frameHeight;
     }
 }

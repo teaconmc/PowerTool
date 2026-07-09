@@ -97,8 +97,6 @@ public class ConfigurationHierarchy extends EditorWindow {
             final GuiGraphicsExtractor  graphics,
             int                         localMouseX,
             int                         localMouseY,
-            int                         innerWidth,
-            int                         innerHeight,
             float                       partialTick
     ) {
         final var pose = graphics.pose();

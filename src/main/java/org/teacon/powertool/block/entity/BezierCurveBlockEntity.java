@@ -10,19 +10,20 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.block.PowerToolBlocks;
-import org.teacon.powertool.network.client.UpdateBezierCurveChunkDataPacket;
+import org.teacon.powertool.client.renders.BezierCurveRenderingPipeline;
 import org.teacon.powertool.utils.VanillaUtils;
 import org.teacon.powertool.utils.math.BezierCurve3f;
 import org.teacon.powertool.utils.math.Line3f;
@@ -52,7 +53,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
     public BezierCurve3f bezierCurve;
     @Nullable
     public Line3f line;
-    private Set<ChunkPos> affectedChunks = Set.of();
+    private Set<SectionPos> affectedSections = Set.of();
     
     public BezierCurveBlockEntity(BlockPos pos, BlockState blockState) {
         super(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), pos, blockState);
@@ -70,9 +71,10 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
                     : null;
         }
         if (getLevel() instanceof ServerLevel serverLevel) {
-            updateAffectedChunks(serverLevel, calculateAffectedChunks());
             this.setChanged();
             serverLevel.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        } else {
+            updateClientRendering();
         }
     }
     
@@ -100,17 +102,31 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
     @Override
     public void onLoad() {
         super.onLoad();
-        if (getLevel() instanceof ServerLevel serverLevel) {
-            updateAffectedChunks(serverLevel, calculateAffectedChunks());
-        }
+        updateClientRendering();
     }
 
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
-        if (getLevel() instanceof ServerLevel serverLevel) {
-            updateAffectedChunks(serverLevel, Set.of());
-        }
+        removeClientRendering();
         super.preRemoveSideEffects(pos, state);
+    }
+
+    @Override
+    public void setRemoved() {
+        removeClientRendering();
+        super.setRemoved();
+    }
+
+    private void removeClientRendering() {
+        var level = getLevel();
+        if (level != null && level.isClientSide()) {
+            updateAffectedChunkAttachments(level, Set.of());
+            affectedSections = Set.of();
+            var pipeline = BezierCurveRenderingPipeline.getInstance();
+            if (pipeline != null) {
+                pipeline.remove(this);
+            }
+        }
     }
     
     public void write(ValueOutput output) {
@@ -164,72 +180,80 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    private Set<ChunkPos> calculateAffectedChunks() {
+    private void updateClientRendering() {
+        var level = getLevel();
+        if (level != null && level.isClientSide()) {
+            var newAffectedSections = calculateAffectedSections();
+            updateAffectedChunkAttachments(level, newAffectedSections);
+            affectedSections = newAffectedSections;
+            var pipeline = BezierCurveRenderingPipeline.getInstance();
+            if (pipeline != null) {
+                pipeline.update(this);
+            }
+        }
+    }
+
+    public boolean affectsSection(SectionPos sectionPos) {
+        return affectedSections.contains(sectionPos);
+    }
+
+    public boolean affectsChunk(ChunkPos chunkPos) {
+        return affectedSections.stream().anyMatch(sectionPos -> sectionPos.x() == chunkPos.x() && sectionPos.z() == chunkPos.z());
+    }
+
+    private Set<SectionPos> calculateAffectedSections() {
         if (bezierCurve == null) return Set.of();
         var points = bezierCurve.getPoints();
-        var result = new HashSet<ChunkPos>();
+        var result = new HashSet<SectionPos>();
         for (int i = 0; i < points.size() - 1; i++) {
-            addAffectedChunks(result, points.get(i), points.get(i + 1));
+            addAffectedSections(result, points.get(i), points.get(i + 1));
         }
         return Set.copyOf(result);
     }
 
-    private void addAffectedChunks(Set<ChunkPos> result, Vector3f start, Vector3f end) {
-        double startX = start.x + (worldCoordinate ? 0 : getBlockPos().getX());
-        double startZ = start.z + (worldCoordinate ? 0 : getBlockPos().getZ());
-        double endX = end.x + (worldCoordinate ? 0 : getBlockPos().getX());
-        double endZ = end.z + (worldCoordinate ? 0 : getBlockPos().getZ());
-        int chunkX = SectionPos.blockToSectionCoord((int) Math.floor(startX));
-        int chunkZ = SectionPos.blockToSectionCoord((int) Math.floor(startZ));
-        int endChunkX = SectionPos.blockToSectionCoord((int) Math.floor(endX));
-        int endChunkZ = SectionPos.blockToSectionCoord((int) Math.floor(endZ));
-        result.add(new ChunkPos(chunkX, chunkZ));
-        double deltaX = endX - startX;
-        double deltaZ = endZ - startZ;
-        int stepX = Double.compare(deltaX, 0);
-        int stepZ = Double.compare(deltaZ, 0);
-        double tDeltaX = stepX == 0 ? Double.POSITIVE_INFINITY : 16.0 / Math.abs(deltaX);
-        double tDeltaZ = stepZ == 0 ? Double.POSITIVE_INFINITY : 16.0 / Math.abs(deltaZ);
-        double boundaryX = stepX > 0 ? (chunkX + 1) * 16.0 : chunkX * 16.0;
-        double boundaryZ = stepZ > 0 ? (chunkZ + 1) * 16.0 : chunkZ * 16.0;
-        double tMaxX = stepX == 0 ? Double.POSITIVE_INFINITY : (boundaryX - startX) / deltaX;
-        double tMaxZ = stepZ == 0 ? Double.POSITIVE_INFINITY : (boundaryZ - startZ) / deltaZ;
-        while (chunkX != endChunkX || chunkZ != endChunkZ) {
-            if (tMaxX < tMaxZ) {
-                chunkX += stepX;
-                tMaxX += tDeltaX;
-            } else if (tMaxZ < tMaxX) {
-                chunkZ += stepZ;
-                tMaxZ += tDeltaZ;
-            } else {
-                chunkX += stepX;
-                chunkZ += stepZ;
-                tMaxX += tDeltaX;
-                tMaxZ += tDeltaZ;
+    private void addAffectedSections(Set<SectionPos> result, Vector3f start, Vector3f end) {
+        double offsetX = worldCoordinate ? 0 : getBlockPos().getX();
+        double offsetY = worldCoordinate ? 0 : getBlockPos().getY();
+        double offsetZ = worldCoordinate ? 0 : getBlockPos().getZ();
+        double expansion = Math.abs(radius);
+        int minSectionX = SectionPos.blockToSectionCoord((int) Math.floor(Math.min(start.x, end.x) + offsetX - expansion));
+        int minSectionY = SectionPos.blockToSectionCoord((int) Math.floor(Math.min(start.y, end.y) + offsetY - expansion));
+        int minSectionZ = SectionPos.blockToSectionCoord((int) Math.floor(Math.min(start.z, end.z) + offsetZ - expansion));
+        int maxSectionX = SectionPos.blockToSectionCoord((int) Math.floor(Math.max(start.x, end.x) + offsetX + expansion));
+        int maxSectionY = SectionPos.blockToSectionCoord((int) Math.floor(Math.max(start.y, end.y) + offsetY + expansion));
+        int maxSectionZ = SectionPos.blockToSectionCoord((int) Math.floor(Math.max(start.z, end.z) + offsetZ + expansion));
+        for (int sectionX = minSectionX; sectionX <= maxSectionX; sectionX++) {
+            for (int sectionY = minSectionY; sectionY <= maxSectionY; sectionY++) {
+                for (int sectionZ = minSectionZ; sectionZ <= maxSectionZ; sectionZ++) {
+                    result.add(SectionPos.of(sectionX, sectionY, sectionZ));
+                }
             }
-            result.add(new ChunkPos(chunkX, chunkZ));
         }
     }
 
-    private void updateAffectedChunks(ServerLevel level, Set<ChunkPos> newAffectedChunks) {
-        var chunksToUpdate = new HashSet<>(affectedChunks);
-        chunksToUpdate.addAll(newAffectedChunks);
+    private void updateAffectedChunkAttachments(Level level, Set<SectionPos> newAffectedSections) {
+        var oldChunks = collectAffectedChunks(affectedSections);
+        var newChunks = collectAffectedChunks(newAffectedSections);
+        var chunksToUpdate = new HashSet<>(oldChunks);
+        chunksToUpdate.addAll(newChunks);
         for (var chunkPos : chunksToUpdate) {
-            var chunk = level.getChunk(chunkPos.x(), chunkPos.z());
+            var chunk = level.getChunkSource().getChunk(chunkPos.x(), chunkPos.z(), ChunkStatus.FULL, false);
+            if (chunk == null) continue;
             var blockPositions = new ArrayList<>(chunk.getData(PowerToolAttachments.BEZIER_CURVES));
             blockPositions.removeIf(getBlockPos()::equals);
-            if (newAffectedChunks.contains(chunkPos)) {
+            if (newChunks.contains(chunkPos)) {
                 blockPositions.add(getBlockPos());
             }
-            var updatedBlockPositions = List.copyOf(blockPositions);
-            chunk.setData(PowerToolAttachments.BEZIER_CURVES, updatedBlockPositions);
-            PacketDistributor.sendToPlayersTrackingChunk(
-                    level,
-                    chunkPos,
-                    new UpdateBezierCurveChunkDataPacket(chunkPos.x(), chunkPos.z(), updatedBlockPositions)
-            );
+            chunk.setData(PowerToolAttachments.BEZIER_CURVES, List.copyOf(blockPositions));
         }
-        affectedChunks = Set.copyOf(newAffectedChunks);
+    }
+
+    private Set<ChunkPos> collectAffectedChunks(Set<SectionPos> sections) {
+        var result = new HashSet<ChunkPos>();
+        for (var sectionPos : sections) {
+            result.add(new ChunkPos(sectionPos.x(), sectionPos.z()));
+        }
+        return result;
     }
     
 }

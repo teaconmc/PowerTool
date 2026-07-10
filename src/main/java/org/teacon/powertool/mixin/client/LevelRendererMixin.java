@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.teacon.powertool.CreativeNoClip;
 import org.teacon.powertool.client.CachedModeClient;
 import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
+import org.teacon.powertool.client.renders.BezierCurveRenderingPipeline;
 
 //todo
 @Mixin(LevelRenderer.class)
@@ -37,6 +38,10 @@ public abstract class LevelRendererMixin {
 	)
 	void recompileBlockEntities(Camera camera, CallbackInfo ci) {
 		CacheableBERenderingPipeline.getInstance().runTasks();
+		var bezierCurveRenderingPipeline = BezierCurveRenderingPipeline.getInstance();
+		if (bezierCurveRenderingPipeline != null) {
+			bezierCurveRenderingPipeline.runTasks();
+		}
 	}
 
 	@Inject(
@@ -49,6 +54,10 @@ public abstract class LevelRendererMixin {
 	)
 	void renderCachedBE(GpuBufferSlice terrainFog, LevelRenderState levelRenderState, ProfilerFiller profiler, ChunkSectionsToRender chunkSectionsToRender, Matrix4fc modelViewMatrix, ResourceHandle entityOutlineTarget, ResourceHandle translucentTarget, ResourceHandle mainTarget, ResourceHandle itemEntityTarget, ResourceHandle particleTarget, boolean renderOutline, CallbackInfo ci) {
 		CacheableBERenderingPipeline.getInstance().render();
+		var bezierCurveRenderingPipeline = BezierCurveRenderingPipeline.getInstance();
+		if (bezierCurveRenderingPipeline != null) {
+			bezierCurveRenderingPipeline.render();
+		}
 	}
 
 	@WrapOperation(

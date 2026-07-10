@@ -10,7 +10,6 @@ import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.network.client.RecordDebugData;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
-import org.teacon.powertool.network.client.UpdateBezierCurveChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateCreativeNoClipPacket;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateFlyNoDriftPacket;
@@ -91,12 +90,6 @@ public class PowerToolNetwork {
                 UpdateStaticModeChunkDataPacket.STREAM_CODEC,
                 UpdateStaticModeChunkDataPacket::handle
         );
-        register.playToClient(
-                UpdateBezierCurveChunkDataPacket.TYPE,
-                UpdateBezierCurveChunkDataPacket.STREAM_CODEC,
-                UpdateBezierCurveChunkDataPacket::handle
-        );
-        
         register.commonToServer(
                 SetCommandBlockPacket.TYPE,
                 SetCommandBlockPacket.STREAM_CODEC,

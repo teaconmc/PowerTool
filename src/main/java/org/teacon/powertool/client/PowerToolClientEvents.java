@@ -23,7 +23,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
@@ -49,7 +48,6 @@ import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
 import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
-import org.teacon.powertool.client.renders.BezierCurveBlockRenderer;
 import org.teacon.powertool.client.renders.entity.AutoVanishBoatRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
@@ -84,12 +82,6 @@ public class PowerToolClientEvents {
         tickCount++;
     }
 
-    @SubscribeEvent
-    public static void addBezierCurveGeometry(AddSectionGeometryEvent event) {
-        BezierCurveBlockRenderer.addSectionGeometry(event);
-    }
-    
-    
     /**
      * The following code is inspired by BookRightClickHandler::onRenderHUD from the Patchouli mod,
      * originally authored by Vazkii, williewillus and other Violet Moon members.

@@ -54,6 +54,16 @@ public class BezierCurveBlock extends BaseEntityBlock {
     protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
         return 1f;
     }
+
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getLightDampening(BlockState state) {
+        return 0;
+    }
     
     @Nullable
     @Override

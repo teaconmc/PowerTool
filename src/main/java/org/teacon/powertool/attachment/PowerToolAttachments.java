@@ -1,10 +1,7 @@
 package org.teacon.powertool.attachment;
 
 import com.mojang.serialization.Codec;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -56,10 +53,7 @@ public class PowerToolAttachments {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<List<BlockPos>>> BEZIER_CURVES = ATTACHMENT_TYPE.register(
             "bezier_curves",
-            () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>())
-                    .serialize(BlockPos.CODEC.listOf().fieldOf("pos_list"))
-                    .sync(blockPosListStreamCodec())
-                    .build()
+            () -> AttachmentType.<List<BlockPos>>builder(() -> new ArrayList<>()).build()
     );
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> FLY_NO_DRIFT = ATTACHMENT_TYPE.register(
@@ -72,9 +66,5 @@ public class PowerToolAttachments {
     
     public static void register(IEventBus bus) {
         ATTACHMENT_TYPE.register(bus);
-    }
-
-    private static StreamCodec<ByteBuf, List<BlockPos>> blockPosListStreamCodec() {
-        return ByteBufCodecs.<ByteBuf, BlockPos>list().apply(BlockPos.STREAM_CODEC);
     }
 }

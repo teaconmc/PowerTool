@@ -156,7 +156,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
     public void update(final ExhibitionNodeManager manager) {
         final var node = this.getExhibitionNode();
-        node.copy(manager);
+        node.paste(manager);
         this.entityData.set(DATA_NODE, node, true);
     }
 }

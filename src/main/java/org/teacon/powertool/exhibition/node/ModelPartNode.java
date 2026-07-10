@@ -11,6 +11,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.teacon.powertool.exhibition.HierarchyEntry;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.Inspectable;
 import org.teacon.powertool.inspection.InspectorBuilder;
 import org.teacon.powertool.inspection.constraint.NumberConstraint;
@@ -155,13 +157,21 @@ public class ModelPartNode extends ExhibitionNode implements Inspectable {
     }
 
     @Override
-    public void copy(final ExhibitionNode other) {
-        if (other instanceof ModelPartNode node && node.partName.equals(this.partName)) {
-            this.position.set(node.position.get());
-            this.rotation.set(node.rotation.get());
-            this.scale.set(node.scale.get());
-            this.visible.set(node.visible.get());
+    public void paste(final Duplicatable other) {
+        if (other.getClass() != ModelPartNode.class) {
+            return;
         }
+
+        final ModelPartNode node = (ModelPartNode) other;
+
+        if (!this.partName.equals(node.partName)) {
+            return;
+        }
+
+        this.position.set(node.position.get());
+        this.rotation.set(node.rotation.get());
+        this.scale.set(node.scale.get());
+        this.visible.set(node.visible.get());
     }
 
 }

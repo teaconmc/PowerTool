@@ -7,8 +7,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.context.ContextKey;
+import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
+import org.teacon.powertool.inspection.Duplicatable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ExhibitionNodeManager implements HierarchyEntry {
+public class ExhibitionNodeManager
+        implements HierarchyEntry {
 
     public static final Codec<ExhibitionNodeManager> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExhibitionNode.CODEC.listOf().fieldOf("nodes").forGetter(ExhibitionNodeManager::nodes)
@@ -62,7 +65,8 @@ public class ExhibitionNodeManager implements HierarchyEntry {
         return null;
     }
 
-    public ExhibitionNodeManager duplicate() {
+    @Override
+    public @NonNull ExhibitionNodeManager duplicate() {
         final var nodes = new ArrayList<ExhibitionNode>();
         for (final var node : this.nodes) {
             nodes.add(node.duplicate());
@@ -70,15 +74,22 @@ public class ExhibitionNodeManager implements HierarchyEntry {
         return new ExhibitionNodeManager(nodes);
     }
 
-    // todo: we might need a merge method, for more complex operation
-    public void copy(final ExhibitionNodeManager other) {
-        if (this.nodes.size() != other.nodes.size()) {
+    @Override
+    public void paste(final Duplicatable other) {
+
+        if (!(other.getClass() == ExhibitionNodeManager.class)) {
+            return;
+        }
+
+        final var manager = (ExhibitionNodeManager) other;
+
+        if (this.nodes.size() != manager.nodes.size()) {
             return;
         }
 
         // suppose both manager has same structure of nodes
         for (int i = 0; i < this.nodes.size(); i++) {
-            this.nodes.get(i).copy(other.nodes.get(i));
+            this.nodes.get(i).paste(manager.nodes.get(i));
         }
     }
 

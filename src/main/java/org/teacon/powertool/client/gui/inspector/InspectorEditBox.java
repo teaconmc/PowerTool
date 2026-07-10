@@ -9,9 +9,8 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.client.gui.widget.TextField;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.property.Property;
-
-import java.util.function.Predicate;
 
 public class InspectorEditBox extends InspectorModificationWidget<String> {
     private final TextField editBox;
@@ -76,5 +75,14 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
     public void resize(final int width) {
         super.resize(width);
         this.editBox.setWidth(width);
+    }
+
+    @Override
+    public void paste(final @NonNull Duplicatable copy) {
+        if (copy.getClass() == InspectorEditBox.class) {
+            final var box = (InspectorEditBox) copy;
+            this.editBox.setValue(box.editBox.getValue(), false);
+            this.property.set(box.editBox.getValue());
+        }
     }
 }

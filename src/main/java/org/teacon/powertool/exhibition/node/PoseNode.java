@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.context.ContextKey;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.exhibition.HierarchyEntry;
+import org.teacon.powertool.inspection.Duplicatable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -65,12 +66,18 @@ public class PoseNode extends ExhibitionNode {
     }
 
     @Override
-    public void copy(final ExhibitionNode other) {
-        if (other instanceof PoseNode pose && this.parts.size() == pose.parts.size()) {
-            // suppose the other node has same structure with this one
-            for (int i = 0; i < this.parts.size(); i++) {
-                this.parts.get(i).copy(pose.parts.get(i));
-            }
+    public void paste(final Duplicatable other) {
+        if (other.getClass() != PoseNode.class) {
+            return;
+        }
+
+        final var pose = (PoseNode) other;
+        if (this.parts.size() != pose.parts.size()) {
+            return;
+        }
+
+        for (int i = 0; i < this.parts.size(); i++) {
+            this.parts.get(i).paste(pose.parts.get(i));
         }
     }
 

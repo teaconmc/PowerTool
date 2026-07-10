@@ -13,6 +13,8 @@ import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
+import org.teacon.powertool.exhibition.HierarchyEntry;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.Inspectable;
 import org.teacon.powertool.inspection.InspectorBuilder;
 import org.teacon.powertool.inspection.constraint.NumberConstraint;
@@ -122,8 +124,9 @@ public class EntityNode extends ExhibitionNode implements Inspectable {
     }
 
     @Override
-    public void copy(final ExhibitionNode other) {
-        if (other instanceof EntityNode node) {
+    public void paste(final Duplicatable other) {
+        if (other.getClass() == EntityNode.class) {
+            final var node = (EntityNode) other;
             this.x.setValue(node.x.getValue());
             this.y.setValue(node.y.getValue());
             this.z.setValue(node.z.getValue());

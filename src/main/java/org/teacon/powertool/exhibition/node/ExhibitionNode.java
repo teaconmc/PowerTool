@@ -25,7 +25,8 @@ import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class ExhibitionNode implements HierarchyEntry {
+public abstract class ExhibitionNode
+        implements HierarchyEntry {
 
     private static Map<String, Serializer> SERIALIZERS = new HashMap<>();
 
@@ -43,8 +44,6 @@ public abstract class ExhibitionNode implements HierarchyEntry {
     public abstract String type();
 
     public abstract ExhibitionNode duplicate();
-
-    public abstract void copy(ExhibitionNode other);
 
     public @Nullable ContextKey<? extends ExhibitionNode> uniqueKey() {
         return null;

@@ -9,6 +9,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.client.gui.widget.NumberInputField;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.constraint.NumberConstraint;
 import org.teacon.powertool.inspection.property.NumberProperty;
 
@@ -110,5 +111,13 @@ public class InspectorNumberInput<T extends Number> extends InspectorWidget {
         final var half = width / 2;
         this.input.setX(half);
         this.input.setWidth(width - half);
+    }
+
+    @Override
+    public void paste(@NonNull final Duplicatable copy) {
+        if (copy.getClass() == InspectorNumberInput.class) {
+            final var input = (InspectorNumberInput<?>) copy;
+            this.input.setNumber(input.input.getNumber());
+        }
     }
 }

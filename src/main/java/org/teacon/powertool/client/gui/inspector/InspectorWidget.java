@@ -4,8 +4,10 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import org.jspecify.annotations.NonNull;
+import org.teacon.powertool.inspection.Duplicatable;
 
-public abstract class InspectorWidget {
+public abstract class InspectorWidget implements Duplicatable {
     private final int height;
     private int width;
 
@@ -29,7 +31,7 @@ public abstract class InspectorWidget {
 
     public boolean charTyped(CharacterEvent event) { return false; }
 
-    public boolean paste(InspectorWidget copy) { return false; }
+    public @NonNull Duplicatable duplicate() { return this; }
 
     public int getHeight() {
         return this.height;

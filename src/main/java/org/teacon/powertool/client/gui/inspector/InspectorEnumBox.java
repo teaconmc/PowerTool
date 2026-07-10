@@ -6,6 +6,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.inspection.DisplayableType;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.property.Property;
 
 public class InspectorEnumBox<T extends DisplayableType> extends InspectorModificationWidget<T> {
@@ -95,14 +96,13 @@ public class InspectorEnumBox<T extends DisplayableType> extends InspectorModifi
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean paste(InspectorWidget copy) {
-        if (copy instanceof InspectorEnumBox<?> box) {
+    public void paste(@NonNull Duplicatable copy) {
+        if (copy.getClass() == InspectorEnumBox.class) {
+            final var box = (InspectorEnumBox<?>) copy;
             if (box.selected.getClass() == this.selected.getClass()) {
                 this.selected = (T) box.selected;
                 this.property.set(this.selected);
-                return true;
             }
         }
-        return false;
     }
 }

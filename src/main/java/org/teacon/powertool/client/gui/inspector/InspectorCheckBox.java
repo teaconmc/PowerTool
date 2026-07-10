@@ -6,6 +6,8 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import org.jspecify.annotations.NonNull;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.property.Property;
 
 public class InspectorCheckBox extends InspectorModificationWidget<Boolean> {
@@ -59,5 +61,17 @@ public class InspectorCheckBox extends InspectorModificationWidget<Boolean> {
         super.resize(width);
 
         this.left = width - 20;
+    }
+
+    @Override
+    public void paste(final @NonNull Duplicatable copy) {
+
+        if (copy.getClass() != InspectorCheckBox.class) {
+            return;
+        }
+
+        final var other = (InspectorCheckBox) copy;
+        this.property.set(other.property.get());
+
     }
 }

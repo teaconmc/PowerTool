@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.item.component.ResolvableProfile;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.Inspectable;
 import org.teacon.powertool.inspection.InspectorBuilder;
 import org.teacon.powertool.inspection.property.StringProperty;
@@ -86,10 +87,10 @@ public class SkinNode extends ExhibitionNode implements Inspectable {
     }
 
     @Override
-    public void copy(final ExhibitionNode other) {
-        if (other instanceof SkinNode node) {
+    public void paste(final Duplicatable other) {
+        if (other.getClass() == SkinNode.class) {
+            final var node = (SkinNode) other;
             this.skin.set(node.getSkin());
-            this.profile = node.profile;
         }
     }
 

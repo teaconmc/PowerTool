@@ -18,7 +18,7 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
     public InspectorEditBox(Component message, Property<String> property) {
         super(36, message, property);
 
-        this.editBox = new TextField(Minecraft.getInstance().font, 0, 16, 100, 20, message);
+        this.editBox = new TextField(Minecraft.getInstance().font, 4, 16, 84, 20, message);
         this.editBox.setMaxLength(256);
         this.editBox.setValue(property.get(), false);
         this.editBox.setConfirm(s -> {
@@ -32,11 +32,14 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
         Font font = Minecraft.getInstance().font;
         graphics.text(font, this.message, 0, 4, 0xffffffff);
 
-        graphics.fill(0, 16, this.editBox.getWidth(), 16 + this.editBox.getHeight(), 0x88000000);
-        if (this.editBox.isMouseOver(mouseX, mouseY)) {
-            graphics.outline(0, 16, this.editBox.getWidth(), this.editBox.getHeight(), 0xffffffff);
+        final var width = this.getWidth();
+        graphics.fill(0, 16, width, 16 + this.editBox.getHeight(), 0x88000000);
+        if (hovered && mouseY >= 16) {
+            graphics.outline(0, 16, width, this.editBox.getHeight(), 0xffffffff);
         } else if (this.isFocused()) {
-            graphics.outline(0, 16, this.editBox.getWidth(), this.editBox.getHeight(), 0xffbbbbff);
+            graphics.outline(0, 16, width, this.editBox.getHeight(), 0xffbbbbff);
+        } else {
+            graphics.outline(0, 16, width, this.editBox.getHeight(), 0x40ffffff);
         }
         this.editBox.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }
@@ -75,7 +78,8 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
     @Override
     public void resize(final int width) {
         super.resize(width);
-        this.editBox.setWidth(width);
+        this.editBox.setX(4);
+        this.editBox.setWidth(width - 12);
     }
 
     @Override

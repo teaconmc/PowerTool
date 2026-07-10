@@ -76,7 +76,7 @@ public class Inspector extends EditorWindow {
 
         int height = 0;
 
-        int mouseX = localMouseX + 8;
+        int mouseX = localMouseX;
         int mouseY = localMouseY + offset;
 
         for (InspectorWidget widget : this.widgets) {

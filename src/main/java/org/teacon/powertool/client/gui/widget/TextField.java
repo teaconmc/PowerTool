@@ -29,6 +29,10 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * 非常纯粹的文本输入
+ * 连背景和框都没有的那种
+ * */
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
 public class TextField extends AbstractWidget {

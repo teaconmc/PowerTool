@@ -85,8 +85,22 @@ public class NumberInputField extends AbstractWidget {
 
         if (this.isHovered) {
             final var arrowTop = top + height / 2 - 4;
-            graphics.text(this.font, "<", left + 4, arrowTop, 0xffffffff, false);
-            graphics.text(this.font, ">", right - 8, arrowTop, 0xffffffff, false);
+            graphics.text(
+                    this.font,
+                    "<",
+                    left + 4,
+                    arrowTop,
+                    mouseX < left + PADDING ? 0xffffffff : 0x40ffffff,
+                    false
+            );
+            graphics.text(
+                    this.font,
+                    ">",
+                    right - 8,
+                    arrowTop,
+                    mouseX > right - PADDING ? 0xffffffff : 0x40ffffff,
+                    false
+            );
 
             if (!this.isFocused()) {
                 graphics.outline(
@@ -96,14 +110,11 @@ public class NumberInputField extends AbstractWidget {
                 );
             }
         }
-
-        if (this.isFocused()) {
-            graphics.outline(
-                    left, top,
-                    width, height,
-                    0xffbbbbff
-            );
-        }
+        graphics.outline(
+                left, top,
+                width, height,
+                this.isFocused() ? 0xffbbbbff : 0x40ffffff
+        );
 
         this.textField.extractWidgetRenderState(graphics, mouseX, mouseY, partialTick);
 
@@ -114,6 +125,21 @@ public class NumberInputField extends AbstractWidget {
             final MouseButtonEvent  event,
             final boolean           doubleClick
     ) {
+
+        final var left  = this.getX();
+        final var mx    = event.x();
+        final var inc   = event.hasShiftDown() ? 0.25f : (event.hasControlDown() ? 0.1f : 1.0f);
+
+        if (mx < left + PADDING) {
+            final var value = this.number;
+            this.setNumber(value - inc);
+            return;
+        } else if (mx > left + this.width - PADDING) {
+            final var value = this.number;
+            this.setNumber(value + 1);
+            return;
+        }
+
         if (doubleClick) {
             this.textField.setFocused(true);
         }

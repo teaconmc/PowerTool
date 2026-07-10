@@ -66,9 +66,7 @@ public sealed abstract class InspectorSlider<T extends Number> extends Inspector
         graphics            .fill(4, 23, width - 4, 25, 0x88ffffff);
         graphics            .fill(offset, 17, offset + 2, 31, 0xffffffff);
 
-        if (hover) {
-            graphics        .outline(0, 14, width, 20, 0xffffffff);
-        }
+        graphics            .outline(0, 14, width, 20, hovered ? 0xffffffff : 0x40ffffff);
     }
 
     @Override

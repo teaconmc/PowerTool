@@ -27,7 +27,7 @@ public class InspectorCheckBox extends InspectorModificationWidget<Boolean> {
         final var font = Minecraft.getInstance().font;
 
         graphics.text(font, this.message, 0, 6, 0xffffffff);
-        graphics.outline(this.left, 5, 10, 10, hovered ? 0xffbbbbff : 0xffffffff);
+        graphics.outline(this.left, 5, 10, 10, hovered ? 0xffffffff : 0x40ffffff);
 
         final boolean active = this.property.get();
 
@@ -41,7 +41,7 @@ public class InspectorCheckBox extends InspectorModificationWidget<Boolean> {
             graphics.fill(
                     this.left + 3, 8,
                     this.left + 7, 12,
-                    0xffffffff
+                    0x80ffffff
             );
         }
 

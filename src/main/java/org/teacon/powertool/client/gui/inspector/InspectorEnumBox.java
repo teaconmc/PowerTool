@@ -9,6 +9,9 @@ import org.teacon.powertool.inspection.DisplayableType;
 import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.property.Property;
 
+/**
+ * 有bug
+ * */
 public class InspectorEnumBox<T extends DisplayableType> extends InspectorModificationWidget<T> {
     private final T[] values;
 

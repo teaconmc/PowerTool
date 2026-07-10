@@ -247,5 +247,8 @@
   "tooltip.powertool.exhibition_entity_editor2": "[Shift] + [Right Click] with Entity: Bind the entity",
   "tooltip.powertool.exhibition_entity_editor3": "[Shift] + [Left Click] with Entity: Discard the entity",
   "tooltip.powertool.exhibition_entity_editor4": "[Right Click]: Edit the bound entity",
-  "tooltip.powertool.exhibition_entity_editor5": "[Shift] + [Right Click]: Unbound the entity"
+  "tooltip.powertool.exhibition_entity_editor5": "[Shift] + [Right Click]: Unbound the entity",
+
+  "tooltip.powertool.exhibition_entity_spawner1": "[Shift] + [右键] with Entity: Copy node tree configuration",
+  "tooltip.powertool.exhibition_entity_spawner2": "[Shift] + [右键] with Nothing: Delete stored configuration"
 }

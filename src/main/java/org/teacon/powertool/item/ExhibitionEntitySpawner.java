@@ -1,9 +1,11 @@
 package org.teacon.powertool.item;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,6 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -20,6 +24,7 @@ import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -134,5 +139,24 @@ public class ExhibitionEntitySpawner extends Item {
         }
 
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void appendHoverText(
+            final ItemStack itemStack,
+            final TooltipContext context,
+            final TooltipDisplay display,
+            final Consumer<Component> builder,
+            final TooltipFlag tooltipFlag
+    ) {
+        super.appendHoverText(itemStack, context, display, builder, tooltipFlag);
+        builder.accept(
+                Component.translatable("tooltip.powertool.exhibition_entity_spawner1")
+                        .withStyle(ChatFormatting.GRAY)
+        );
+        builder.accept(
+                Component.translatable("tooltip.powertool.exhibition_entity_spanwer2")
+                        .withStyle(ChatFormatting.GRAY)
+        );
     }
 }

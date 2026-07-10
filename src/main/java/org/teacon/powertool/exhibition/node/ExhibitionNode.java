@@ -101,6 +101,8 @@ public abstract class ExhibitionNode
         builder.put("entity", Serializer.of(EntityNode.CODEC, EntityNode.STREAM_CODEC));
         builder.put("skin", Serializer.of(SkinNode.CODEC, SkinNode.STREAM_CODEC));
         builder.put("pose", Serializer.of(PoseNode.CODEC, PoseNode.STREAM_CODEC));
+        builder.put("interact", Serializer.of(InteractNode.CODEC, InteractNode.STREAM_CODEC));
+        builder.put("command", Serializer.of(CommandNode.CODEC, CommandNode.STREAM_CODEC));
 
         SERIALIZERS = builder.build();
 

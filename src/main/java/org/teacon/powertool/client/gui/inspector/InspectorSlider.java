@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.teacon.powertool.inspection.Duplicatable;
+import org.teacon.powertool.inspection.constraint.NumberConstraint;
 import org.teacon.powertool.inspection.property.FloatProperty;
 import org.teacon.powertool.inspection.property.IntegerProperty;
 import org.teacon.powertool.inspection.property.NumberProperty;
@@ -24,16 +25,18 @@ public sealed abstract class InspectorSlider<T extends Number> extends Inspector
     protected float     value;
 
     protected InspectorSlider(
-            final Component         message,
-            final NumberProperty<T> property,
-            final float             step
+            final Component             message,
+            final NumberProperty<T>     property,
+            final NumberConstraint<T>   constraint,
+            final float                 step
     ) {
         super(36, message, property);
 
-        this.min                = 0;
-        this.max                = 1;
+        this.min                = constraint.min();
+        this.max                = constraint.max();
 
         this.step               = step;
+        this.value              = (float) property.getNumber();
     }
 
     @Override
@@ -54,7 +57,7 @@ public sealed abstract class InspectorSlider<T extends Number> extends Inspector
         graphics            .text(font, text, width - textWidth, 4, 0xffffffff);
 
 
-        int length          = width - 18;
+        int length          = width - 10;
         float interpolate   = (this.value - this.min) / (this.max - this.min);
         int offset          = 4 + (int) (length * interpolate);
 
@@ -108,6 +111,11 @@ public sealed abstract class InspectorSlider<T extends Number> extends Inspector
         }
     }
 
+    @Override
+    public void resize(final int width) {
+        super.resize(width);
+    }
+
     private void slide(final int width, final float mouseX) {
         float interpolate   = Math.clamp((mouseX - 8) / (width - 18), 0.0f, 1.0f);
         float target        = (this.max - this.min) * interpolate + this.min;
@@ -135,11 +143,12 @@ public sealed abstract class InspectorSlider<T extends Number> extends Inspector
 
     public static final class Integer extends InspectorSlider<java.lang.Integer> {
         public Integer(
-                final Component         message,
-                final IntegerProperty   property,
-                final float             step
+                final Component                             message,
+                final IntegerProperty                       property,
+                final NumberConstraint<java.lang.Integer>   constraint,
+                final float                                 step
         ) {
-            super(message, property, step);
+            super(message, property, constraint, step);
         }
 
         @Override
@@ -150,11 +159,12 @@ public sealed abstract class InspectorSlider<T extends Number> extends Inspector
 
     public static final class Float extends InspectorSlider<java.lang.Float> {
         public Float(
-                final Component         message,
-                final FloatProperty     property,
-                final float             step
+                final Component                         message,
+                final FloatProperty                     property,
+                final NumberConstraint<java.lang.Float> constraint,
+                final float                             step
         ) {
-            super(message, property, step);
+            super(message, property, constraint, step);
         }
     }
 

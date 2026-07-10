@@ -19,6 +19,7 @@ public class InspectorEditBox extends InspectorModificationWidget<String> {
         super(36, message, property);
 
         this.editBox = new TextField(Minecraft.getInstance().font, 0, 16, 100, 20, message);
+        this.editBox.setMaxLength(256);
         this.editBox.setValue(property.get(), false);
         this.editBox.setConfirm(s -> {
             property.set(s);

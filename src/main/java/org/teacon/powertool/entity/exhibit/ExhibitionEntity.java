@@ -5,22 +5,28 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.exhibition.ExhibitionNodeManager;
+import org.teacon.powertool.exhibition.node.CommandNode;
 import org.teacon.powertool.exhibition.node.EntityNode;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
+import org.teacon.powertool.exhibition.node.InteractNode;
 import org.teacon.powertool.item.PowerToolDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -62,6 +68,7 @@ public abstract class ExhibitionEntity extends PathfinderMob {
     @Contract(pure = true)
     protected void onCreateExhibitionNode(Consumer<ExhibitionNode> consumer) {
         consumer.accept(EntityNode.of(this));
+        consumer.accept(new InteractNode());
     }
 
     @Override
@@ -84,6 +91,14 @@ public abstract class ExhibitionEntity extends PathfinderMob {
             return true;
         }
 
+        if (source.is(DamageTypes.PLAYER_ATTACK) && source.isDirect()) {
+            final var node = this.getExhibitionNode()
+                    .getUnique(InteractNode.UNIQUE_KEY);
+
+            final var left = node.getLeft();
+            left.invoke(this, ((Player) source.getEntity()));
+        };
+
         return false;
     }
 
@@ -96,6 +111,27 @@ public abstract class ExhibitionEntity extends PathfinderMob {
         }
 
         return false;
+    }
+
+    @Override
+    protected InteractionResult mobInteract(
+            final Player player,
+            final InteractionHand hand
+    ) {
+
+        if (player.level().isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+
+        final var node = this.getExhibitionNode()
+                        .getUnique(InteractNode.UNIQUE_KEY);
+
+        final var right = node.getRight();
+        if (right.invoke(this, player)) {
+            return InteractionResult.SUCCESS;
+        }
+
+        return InteractionResult.FAIL;
     }
 
     @Override

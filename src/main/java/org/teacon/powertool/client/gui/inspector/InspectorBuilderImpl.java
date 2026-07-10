@@ -59,7 +59,7 @@ public class InspectorBuilderImpl implements InspectorBuilder {
             final NumberConstraint<Integer> constraint,
             final int                       step
     ) {
-        this.builder.add(new InspectorSlider.Integer(component, property, step));
+        this.builder.add(new InspectorSlider.Integer(component, property, constraint, step));
         return this;
     }
 
@@ -70,7 +70,7 @@ public class InspectorBuilderImpl implements InspectorBuilder {
             final NumberConstraint<Float>   constraint,
             final float                     step
     ) {
-        this.builder.add(new InspectorSlider.Float(component, property, step));
+        this.builder.add(new InspectorSlider.Float(component, property, constraint, step));
         return this;
     }
 

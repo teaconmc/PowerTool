@@ -196,37 +196,37 @@ public class PowerToolBlocks {
         COSMETIC_HOPPER = BLOCKS.registerBlock("cosmetic_hopper", CosmeticHopper::new,() -> BlockBehaviour.Properties.ofFullCopy(Blocks.HOPPER));
         COSMETIC_CAMPFIRE = BLOCKS.registerBlock("cosmetic_campfire", (p) -> new CosmeticCampfireBlock(true, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CAMPFIRE));
         COSMETIC_SOUL_CAMPFIRE = BLOCKS.registerBlock("cosmetic_soul_campfire", (p) -> new CosmeticCampfireBlock(false, p),() -> BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_CAMPFIRE));
-        HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("holographic_sign", (p) -> new HolographicSignBlock(p.noCollision().noLootTable(), SignType.COMMON));
-        LINK_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("link_holographic_sign", (p) -> new HolographicSignBlock(p.noCollision().noLootTable(), SignType.URL));
-        RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("raw_json_holographic_sign", (p) -> new HolographicSignBlock(p.noCollision().noLootTable(), SignType.RAW_JSON));
-        WHITE_TRASH_CAN = BLOCKS.registerBlock("white_trash_can", (p) -> new TrashCanWithContainer(p.noOcclusion()));
-        WHITE_TRASH_CAN_CAP = BLOCKS.registerBlock("white_trash_can_cap", (p) -> new TrapDoorBlock(BlockSetType.COPPER, p.noOcclusion()));
-        GRAY_TRASH_CAN = BLOCKS.registerBlock("gray_trash_can", (p) -> new TrashCanWithContainer(p.noOcclusion()));
+        HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.COMMON));
+        LINK_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("link_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.URL));
+        RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("raw_json_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.RAW_JSON));
+        WHITE_TRASH_CAN = BLOCKS.registerBlock("white_trash_can", (p) -> new TrashCanWithContainer(p.strength(1.0F).noOcclusion()));
+        WHITE_TRASH_CAN_CAP = BLOCKS.registerBlock("white_trash_can_cap", (p) -> new TrapDoorBlock(BlockSetType.COPPER, p.strength(1.0F).noOcclusion()));
+        GRAY_TRASH_CAN = BLOCKS.registerBlock("gray_trash_can", (p) -> new TrashCanWithContainer(p.strength(1.0F).noOcclusion()));
         //GRAY_TRASH_CAN_CAP = BLOCKS.registerBlock("gray_trash_can_cap",() -> new TrapDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
-        GREEN_TRASH_CAN = BLOCKS.registerBlock("green_trash_can", (p) -> new TrashCanWithContainer(p.noOcclusion()));
-        GREEN_TRASH_CAN_CAP = BLOCKS.registerBlock("green_trash_can_cap", (p) -> new TrapDoorBlock(BlockSetType.COPPER, p.noOcclusion()));
+        GREEN_TRASH_CAN = BLOCKS.registerBlock("green_trash_can", (p) -> new TrashCanWithContainer(p.strength(1.0F).noOcclusion()));
+        GREEN_TRASH_CAN_CAP = BLOCKS.registerBlock("green_trash_can_cap", (p) -> new TrapDoorBlock(BlockSetType.COPPER, p.strength(1.0F).noOcclusion()));
         
-        REGISTER = BLOCKS.registerBlock("register", (p) -> new RegisterBlock(p.noOcclusion()));
-        GORGEOUS_REGISTER = BLOCKS.registerBlock("gorgeous_register", (p) -> new RegisterBlock(p.noOcclusion()));
-        MECHANICAL_REGISTER = BLOCKS.registerBlock("mechanical_register", (p) -> new RegisterBlock(p.noOcclusion()));
-        TECH_REGISTER = BLOCKS.registerBlock("tech_register", (p) -> new RegisterBlock(p.noOcclusion()));
+        REGISTER = BLOCKS.registerBlock("register", (p) -> new RegisterBlock(p.strength(1.0F).noOcclusion()));
+        GORGEOUS_REGISTER = BLOCKS.registerBlock("gorgeous_register", (p) -> new RegisterBlock(p.strength(1.0F).noOcclusion()));
+        MECHANICAL_REGISTER = BLOCKS.registerBlock("mechanical_register", (p) -> new RegisterBlock(p.strength(1.0F).noOcclusion()));
+        TECH_REGISTER = BLOCKS.registerBlock("tech_register", (p) -> new RegisterBlock(p.strength(1.0F).noOcclusion()));
         
         SAFE = BLOCKS.registerBlock("safe", (p) -> new SafeBlock(p.strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         GORGEOUS_SAFE = BLOCKS.registerBlock("gorgeous_safe", (p) -> new SafeBlock(p.strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         MECHANICAL_SAFE = BLOCKS.registerBlock("mechanical_safe", (p) -> new SafeBlock(p.strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
         TECH_SAFE = BLOCKS.registerBlock("tech_safe", (p) -> new SafeBlock(p.strength(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)));
-        TEMPLE = BLOCKS.registerBlock("temple", (p) -> new TempleBlock(p.noOcclusion()));
+        TEMPLE = BLOCKS.registerBlock("temple", (p) -> new TempleBlock(p.strength(1.0F).noOcclusion()));
         
-        REAL_TIME_OBSERVER = BLOCKS.registerBlock("observer_realtime", (p) -> new TimeObserverBlock(p, TimeObserverBlock.Type.REAL_TIME));
-        REAL_TIME_CYCLE_OBSERVER = BLOCKS.registerBlock("observer_realtime_cyl", (p) -> new TimeObserverBlock(p, TimeObserverBlock.Type.REAL_DAILY_CYCLE));
-        GAME_TIME_CYCLE_OBSERVER = BLOCKS.registerBlock("observer_gametime_cyl", (p) -> new TimeObserverBlock(p, TimeObserverBlock.Type.GAME_DAILY_CYCLE));
-        DELAYER = BLOCKS.registerBlock("delayer", RedStoneDelayBlock::new);
-        BEZIER_CURVE_BLOCK = BLOCKS.registerBlock("bezier_curve_block", (p) -> new BezierCurveBlock(p.noOcclusion()));
-        JEI_RECIPE_DISPLAY_BLOCK = BLOCKS.registerBlock("jei_recipe_display_block", (p) -> new JEIRecipeDisplayBlock(p.noOcclusion()));
+        REAL_TIME_OBSERVER = BLOCKS.registerBlock("observer_realtime", (p) -> new TimeObserverBlock(p.strength(1.0F), TimeObserverBlock.Type.REAL_TIME));
+        REAL_TIME_CYCLE_OBSERVER = BLOCKS.registerBlock("observer_realtime_cyl", (p) -> new TimeObserverBlock(p.strength(1.0F), TimeObserverBlock.Type.REAL_DAILY_CYCLE));
+        GAME_TIME_CYCLE_OBSERVER = BLOCKS.registerBlock("observer_gametime_cyl", (p) -> new TimeObserverBlock(p.strength(1.0F), TimeObserverBlock.Type.GAME_DAILY_CYCLE));
+        DELAYER = BLOCKS.registerBlock("delayer", (p) -> new RedStoneDelayBlock(p.strength(1.0F)));
+        BEZIER_CURVE_BLOCK = BLOCKS.registerBlock("bezier_curve_block", (p) -> new BezierCurveBlock(p.strength(1.0F).noOcclusion()));
+        JEI_RECIPE_DISPLAY_BLOCK = BLOCKS.registerBlock("jei_recipe_display_block", (p) -> new JEIRecipeDisplayBlock(p.strength(1.0F).noOcclusion()));
 
         for (var dyeColor : DyeColor.values()) {
             var name = dyeColor.getName() + "_distant_horizon_cheating_block";
-            var block = BLOCKS.registerBlock(name, (p) -> new DistantHorizonCheatingBlock(p.forceSolidOn().noOcclusion().mapColor(dyeColor)));
+            var block = BLOCKS.registerBlock(name, (p) -> new DistantHorizonCheatingBlock(p.strength(1.0F).forceSolidOn().noOcclusion().mapColor(dyeColor)));
             DH_CHEAT_BLOCKS.put(dyeColor, block);
             ITEMS.registerItem(name, (p) -> new PowerToolBlockItem(block.get(), p));
         }

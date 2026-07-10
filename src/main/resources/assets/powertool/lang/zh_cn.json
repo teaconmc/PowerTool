@@ -65,16 +65,14 @@
   "item.powertool.display_mode_tool": "展示模式工具",
   "item.powertool.fake_water_bucket": "假水 桶",
   "item.powertool.exhibition_entity_editor": "展示实体编辑器",
-  "item.powertool.regular_exhibition_humanoid": "展示假人（常规）",
-  "item.powertool.slim_exhibition_humanoid": "展示假人（纤细）",
+  "item.powertool.exhibition_humanoid": "展示假人",
 
   "entity.powertool.fence_knot": "拴栅栏上的结",
   "entity.powertool.fence_knot.tooltip": "跟原版拴绳儿一样，但是是连着俩栅栏儿的",
   "entity.powertool.fence_knot.connecting": "连接开始，起点：%s",
   "entity.powertool.fence_knot.connected": "已连接 %1$s 和 %2$s",
   "entity.powertool.fence_knot.disconnected": "已断开 %1$s 和 %2$s 之间的拴绳",
-  "entity.powertool.regular_exhibition_humanoid": "展示假人（常规）",
-  "entity.powertool.slim_exhibition_humanoid": "假人（纤细）",
+  "entity.powertool.exhibition_humanoid": "展示假人",
 
   "itemGroup.powertool": "PowerTool",
 

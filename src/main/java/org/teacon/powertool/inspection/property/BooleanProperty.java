@@ -1,8 +1,6 @@
 package org.teacon.powertool.inspection.property;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import org.jetbrains.annotations.Nullable;
-import org.teacon.powertool.inspection.constraint.InputConstraint;
 
 import java.util.function.BooleanSupplier;
 
@@ -12,22 +10,24 @@ public interface BooleanProperty extends Property<Boolean> {
             final BooleanConsumer   consumer,
             final boolean           value
     ) {
-        return new BooleanProperty() {
+        final var property = new BooleanProperty() {
 
-            private boolean v = value;
+            private boolean value;
 
             @Override
             public boolean getValue() {
-                return this.v;
+                return this.value;
             }
 
             @Override
             public void setValue(final boolean value) {
-                this.v = value;
+                this.value = value;
                 consumer.accept(value);
             }
 
         };
+        property.value = value;
+        return property;
     }
 
     static BooleanProperty wrap(
@@ -52,20 +52,22 @@ public interface BooleanProperty extends Property<Boolean> {
     static BooleanProperty simple(
             final boolean           value
     ) {
-        return new BooleanProperty() {
+        final var property = new BooleanProperty() {
 
-            private boolean v = value;
+            private boolean value;
 
             @Override
             public boolean getValue() {
-                return this.v;
+                return this.value;
             }
 
             @Override
             public void setValue(final boolean value) {
-                this.v = value;
+                this.value = value;
             }
         };
+        property.value = value;
+        return property;
     }
 
     boolean getValue();

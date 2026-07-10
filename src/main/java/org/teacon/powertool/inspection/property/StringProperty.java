@@ -14,21 +14,23 @@ public interface StringProperty extends Property<String> {
             final Consumer<String> consumer,
             final String value
     ) {
-        return new StringProperty() {
+        final var property = new StringProperty() {
 
-            private String v = value;
+            private String value;
 
             @Override
             public String get() {
-                return v;
+                return value;
             }
 
             @Override
             public void set(final String value) {
-                this.v = value;
+                this.value = value;
                 consumer.accept(value);
             }
         };
+        property.value = value;
+        return property;
     }
 
     static StringProperty wrap(
@@ -50,20 +52,22 @@ public interface StringProperty extends Property<String> {
     }
 
     static StringProperty simple(final String value) {
-        return new StringProperty() {
+        final var property = new StringProperty() {
 
-            private String v = value;
+            private String value;
 
             @Override
             public String get() {
-                return v;
+                return value;
             }
 
             @Override
             public void set(final String value) {
-                this.v = value;
+                this.value = value;
             }
         };
+        property.value = value;
+        return property;
     }
 
 }

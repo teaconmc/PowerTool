@@ -9,22 +9,24 @@ public interface IntegerProperty extends NumberProperty<Integer> {
             final IntConsumer       consumer,
             final int               value
     ) {
-        return new IntegerProperty() {
+        final var property = new IntegerProperty() {
 
-            private int v = value;
+            private int value;
 
             @Override
             public int getValue() {
-                return this.v;
+                return this.value;
             }
 
             @Override
             public void setValue(final int value) {
-                this.v = value;
+                this.value = value;
                 consumer.accept(value);
             }
 
         };
+        property.value = value;
+        return property;
     }
 
     static IntegerProperty wrap(
@@ -49,20 +51,22 @@ public interface IntegerProperty extends NumberProperty<Integer> {
     static IntegerProperty simple(
             final int               value
     ) {
-        return new IntegerProperty() {
+        final var property = new IntegerProperty() {
 
-            private int v = value;
+            private int value;
 
             @Override
             public int getValue() {
-                return this.v;
+                return this.value;
             }
 
             @Override
             public void setValue(final int value) {
-                this.v = value;
+                this.value = value;
             }
         };
+        property.value = value;
+        return property;
     }
 
     int getValue();

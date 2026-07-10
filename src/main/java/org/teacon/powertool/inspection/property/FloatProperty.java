@@ -9,22 +9,24 @@ public interface FloatProperty extends NumberProperty<Float> {
             final FloatConsumer             consumer,
             final float                     value
     ) {
-        return new FloatProperty() {
+        final var property = new FloatProperty() {
 
-            private float v = value;
+            private float value;
 
             @Override
             public float getValue() {
-                return this.v;
+                return this.value;
             }
 
             @Override
             public void setValue(final float value) {
-                this.v = value;
+                this.value = value;
                 consumer.accept(value);
             }
 
         };
+        property.value = value;
+        return property;
     }
 
     static FloatProperty wrap(
@@ -48,20 +50,22 @@ public interface FloatProperty extends NumberProperty<Float> {
     static FloatProperty simple(
             final float                     value
     ) {
-        return new FloatProperty() {
+        final var property = new FloatProperty() {
 
-            private float v = value;
+            private float value;
 
             @Override
             public float getValue() {
-                return this.v;
+                return this.value;
             }
 
             @Override
             public void setValue(final float value) {
-                this.v = value;
+                this.value = value;
             }
         };
+        property.value = value;
+        return property;
     }
 
     float getValue();

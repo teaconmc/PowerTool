@@ -6,6 +6,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.permissions.Permissions;
+import net.minecraft.world.InteractionResult;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.teacon.powertool.entity.exhibit.ExhibitionEntity;
 import org.teacon.powertool.exhibition.ExhibitionNodeManager;
@@ -40,6 +41,12 @@ public record UpdateExhibitionEntity(
     public void handle(IPayloadContext context) {
         context.enqueueWork(() -> {
             final var player = context.player();
+
+            if (!player.isCreative()
+                    || !player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
+                return;
+            }
+
             final var level  = player.level();
             final var entity = level.getEntity(entityId);
 

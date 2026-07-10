@@ -1,6 +1,7 @@
 package org.teacon.powertool.entity.exhibit;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -8,7 +9,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -20,6 +21,7 @@ import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 import org.teacon.powertool.exhibition.node.EntityNode;
 import org.teacon.powertool.exhibition.node.ExhibitionNode;
+import org.teacon.powertool.item.PowerToolDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
@@ -32,8 +34,6 @@ public abstract class ExhibitionEntity extends PathfinderMob {
 
     protected static final EntityDataAccessor<ExhibitionNodeManager> DATA_NODE;
     private static final Logger log = LoggerFactory.getLogger(ExhibitionEntity.class);
-
-    private @Nullable Player editingPlayer;
 
     protected ExhibitionEntity(
             final EntityType<? extends ExhibitionEntity>    type,
@@ -130,24 +130,24 @@ public abstract class ExhibitionEntity extends PathfinderMob {
         super.onSyncedDataUpdated(accessor);
 
         if (DATA_NODE.equals(accessor)) {
-            log.info("Exhibition node updated.");
+            // debug output
+            log.debug("Exhibition node updated: {}", this.getStringUUID());
             this.getExhibitionNode().apply(this);
         }
     }
 
     @Override
-    public void aiStep() {
-        if (this.editingPlayer != null && this.editingPlayer.isRemoved()) {
-            this.editingPlayer = null;
+    public @Nullable ItemStack getPickResult() {
+        final var result = super.getPickResult();
+        if (result != null) {
+            result.set(PowerToolDataComponents.EXHIBITION_NODES, this.getExhibitionNode().toImmutable());
+            result.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
         }
+        return result;
     }
 
-    public @Nullable Player getEditingPlayer() {
-        return this.editingPlayer;
-    }
-
-    public void setEditingPlayer(@Nullable Player editingPlayer) {
-        this.editingPlayer = editingPlayer;
+    @Override
+    public void aiStep() {
     }
 
     static {
@@ -157,6 +157,13 @@ public abstract class ExhibitionEntity extends PathfinderMob {
     public void update(final ExhibitionNodeManager manager) {
         final var node = this.getExhibitionNode();
         node.paste(manager);
+        this.entityData.set(DATA_NODE, node, true);
+    }
+
+    public void init(final ExhibitionNodeManager.Immutable manager) {
+        final var node = this.getExhibitionNode();
+        node.paste(manager);
+        node.setup(this);
         this.entityData.set(DATA_NODE, node, true);
     }
 }

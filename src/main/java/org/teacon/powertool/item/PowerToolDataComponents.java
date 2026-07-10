@@ -1,6 +1,7 @@
 package org.teacon.powertool.item;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -9,8 +10,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.FenceKnotEntity;
+import org.teacon.powertool.exhibition.ExhibitionNodeManager;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PowerToolDataComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, PowerTool.MODID);
@@ -57,6 +60,20 @@ public class PowerToolDataComponents {
             "knot_data", () -> DataComponentType.<FenceKnotEntity.PowerToolKnotData>builder()
                     .persistent(FenceKnotEntity.PowerToolKnotData.CODEC)
                     .networkSynchronized(FenceKnotEntity.PowerToolKnotData.STREAM_CODEC)
+                    .build()
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> EDITING_ENTITY = DATA_COMPONENTS.register(
+            "editing_entity", () -> DataComponentType.<UUID>builder()
+                    .persistent(UUIDUtil.CODEC)
+                    .networkSynchronized(UUIDUtil.STREAM_CODEC)
+                    .build()
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ExhibitionNodeManager.Immutable>> EXHIBITION_NODES = DATA_COMPONENTS.register(
+            "exhibition_nodes", () -> DataComponentType.<ExhibitionNodeManager.Immutable>builder()
+                    .persistent(ExhibitionNodeManager.Immutable.CODEC)
+                    .networkSynchronized(ExhibitionNodeManager.Immutable.STREAM_CODEC)
                     .build()
     );
 }

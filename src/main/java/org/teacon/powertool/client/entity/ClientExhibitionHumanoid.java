@@ -17,7 +17,6 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.entity.exhibit.ExhibitionHumanoid;
-import org.teacon.powertool.exhibition.node.SkinNode;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

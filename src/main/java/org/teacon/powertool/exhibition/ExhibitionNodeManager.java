@@ -1,5 +1,6 @@
 package org.teacon.powertool.exhibition;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -77,19 +78,22 @@ public class ExhibitionNodeManager
     @Override
     public void paste(final Duplicatable other) {
 
-        if (!(other.getClass() == ExhibitionNodeManager.class)) {
+        List<ExhibitionNode> nodes;
+        if (other.getClass() == ExhibitionNodeManager.class) {
+            nodes = ((ExhibitionNodeManager) other).nodes;
+        } else if (other.getClass() == ExhibitionNodeManager.Immutable.class) {
+            nodes = ((ExhibitionNodeManager.Immutable) other).nodes;
+        } else {
             return;
         }
 
-        final var manager = (ExhibitionNodeManager) other;
-
-        if (this.nodes.size() != manager.nodes.size()) {
+        if (this.nodes.size() != nodes.size()) {
             return;
         }
 
         // suppose both manager has same structure of nodes
         for (int i = 0; i < this.nodes.size(); i++) {
-            this.nodes.get(i).paste(manager.nodes.get(i));
+            this.nodes.get(i).paste(nodes.get(i));
         }
     }
 
@@ -139,4 +143,45 @@ public class ExhibitionNodeManager
     public void setEditing(final boolean editing) {
         this.editing = editing;
     }
+
+    public Immutable toImmutable() {
+        return Immutable.of(this);
+    }
+
+    public record Immutable(
+            List<ExhibitionNode> nodes
+    ) implements Duplicatable {
+
+        public static Immutable of(final ExhibitionNodeManager manager) {
+            final var builder = ImmutableList.<ExhibitionNode>builder();
+            for (final var node : manager.nodes) {
+                builder.add(node.duplicate());
+            }
+            return new Immutable(builder.build());
+        }
+
+        public static final Codec<ExhibitionNodeManager.Immutable> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ExhibitionNode.CODEC.listOf().fieldOf("nodes").forGetter(ExhibitionNodeManager.Immutable::nodes)
+        ).apply(instance, ExhibitionNodeManager.Immutable::new));
+
+        public static final StreamCodec<ByteBuf, ExhibitionNodeManager.Immutable> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.collection(ArrayList::new, ExhibitionNode.STREAM_CODEC),
+                ExhibitionNodeManager.Immutable::nodes,
+                ExhibitionNodeManager.Immutable::new
+        );
+
+        public ExhibitionNodeManager toMutable() {
+            return new ExhibitionNodeManager(this.nodes);
+        }
+
+        @Override
+        public @NonNull Duplicatable duplicate() {
+            final var builder = ImmutableList.<ExhibitionNode>builder();
+            for (final var node : this.nodes) {
+                builder.add(node.duplicate());
+            }
+            return new Immutable(builder.build());
+        }
+    }
+
 }

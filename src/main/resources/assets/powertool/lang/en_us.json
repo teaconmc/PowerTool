@@ -243,14 +243,9 @@
   "powertool.setcommand.gui.tick_delay": "tick delay:",
   "powertool.setcommand.gui.consumable": "consumable",
 
-  "powertool.exhibition.name": "Name",
-  "powertool.exhibition.yaw": "Yaw",
-  "powertool.exhibition.pitch": "Pitch",
-  "powertool.exhibition.rot_x": "Rotation X",
-  "powertool.exhibition.rot_y": "Rotation Y",
-  "powertool.exhibition.rot_z": "Rotation Z",
-  "powertool.exhibition.scale_x": "Scale X",
-  "powertool.exhibition.scale_y": "Scale Y",
-  "powertool.exhibition.scale_z": "Scale Z",
-  "powertool.exhibition.slim": "Slim"
+  "tooltip.powertool.exhibition_entity_editor1": "[Right Click] with Entity: Bind and edit the entity",
+  "tooltip.powertool.exhibition_entity_editor2": "[Shift] + [Right Click] with Entity: Bind the entity",
+  "tooltip.powertool.exhibition_entity_editor3": "[Shift] + [Left Click] with Entity: Discard the entity",
+  "tooltip.powertool.exhibition_entity_editor4": "[Right Click]: Edit the bound entity",
+  "tooltip.powertool.exhibition_entity_editor5": "[Shift] + [Right Click]: Unbound the entity"
 }

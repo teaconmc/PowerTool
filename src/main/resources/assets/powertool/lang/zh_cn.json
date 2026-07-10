@@ -247,14 +247,9 @@
   "powertool.setcommand.gui.tick_delay": "延迟刻：",
   "powertool.setcommand.gui.consumable": "会被消耗",
 
-  "powertool.exhibition.name": "名称",
-  "powertool.exhibition.yaw": "偏航角",
-  "powertool.exhibition.pitch": "俯仰角",
-  "powertool.exhibition.rot_x": "X轴旋转",
-  "powertool.exhibition.rot_y": "Y轴旋转",
-  "powertool.exhibition.rot_z": "Z轴旋转",
-  "powertool.exhibition.scale_x": "X轴缩放",
-  "powertool.exhibition.scale_y": "Y轴缩放",
-  "powertool.exhibition.scale_z": "Z轴缩放",
-  "powertool.exhibition.slim": "纤细模型"
+  "tooltip.powertool.exhibition_entity_editor1": "[右键] 实体：绑定并编辑实体",
+  "tooltip.powertool.exhibition_entity_editor2": "[Shift] + [右键] 实体：绑定实体",
+  "tooltip.powertool.exhibition_entity_editor3": "[Shift] + [左键] 实体：删除实体",
+  "tooltip.powertool.exhibition_entity_editor4": "[右键]：编辑绑定实体",
+  "tooltip.powertool.exhibition_entity_editor5": "[Shift] + [右键]：解除绑定实体"
 }

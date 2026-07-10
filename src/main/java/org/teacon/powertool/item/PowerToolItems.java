@@ -56,8 +56,7 @@ public class PowerToolItems {
     public static DeferredHolder<Item, CommandRune> COMMAND_RUNE;
 
     public static DeferredHolder<Item, ExhibitionEntityEditor> EXHIBITION_ENTITY_EDITOR;
-    public static DeferredHolder<Item, SpawnEggItem> EXHIBITION_HUMANOID;
-    public static DeferredHolder<Item, SpawnEggItem> SLIM_EXHIBITION_HUMANOID;
+    public static DeferredHolder<Item, ExhibitionEntitySpawner> EXHIBITION_HUMANOID;
     
     public static Supplier<Item> MARTING_RED = ITEMS.registerItem("marting_car_red", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.RED));
     public static Supplier<Item> MARTING_GREEN = ITEMS.registerItem("marting_car_green", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.GREEN));
@@ -98,7 +97,7 @@ public class PowerToolItems {
 
         EXHIBITION_ENTITY_EDITOR    = ITEMS.registerItem("exhibition_entity_editor", ExhibitionEntityEditor::new);
 
-        EXHIBITION_HUMANOID = ITEMS.registerItem("exhibition_humanoid", (p) -> new SpawnEggItem(p.spawnEgg(PowerToolEntities.EXHIBITION_HUMANOID.get())));
+        EXHIBITION_HUMANOID         = ITEMS.registerItem("exhibition_humanoid", (p) -> new ExhibitionEntitySpawner(p.spawnEgg(PowerToolEntities.EXHIBITION_HUMANOID.get())));
 
         CREATIVE_MODE_TABS.register(bus);
         PowerToolDataComponents.DATA_COMPONENTS.register(bus);

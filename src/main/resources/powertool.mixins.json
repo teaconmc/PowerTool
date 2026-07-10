@@ -21,6 +21,7 @@
   "client": [
     "client.ClientRecipeBookMixin",
     "client.GameRendererMixin",
+    "client.HumanoidModelMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",

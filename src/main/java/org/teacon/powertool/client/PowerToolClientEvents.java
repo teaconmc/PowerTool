@@ -48,6 +48,7 @@ import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
 import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.TempleRenderer;
+import org.teacon.powertool.client.renders.BezierCurveBlockRenderer;
 import org.teacon.powertool.client.renders.entity.AutoVanishBoatRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
@@ -227,6 +228,7 @@ public class PowerToolClientEvents {
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
             event.registerBlockEntityRenderer(PowerToolBlocks.JEI_RECIPE_DISPLAY_BLOCK_ENTITY.get(), JEIRecipeDisplayBlockEntityRenderer::new);
 //            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
+            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
             
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);

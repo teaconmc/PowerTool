@@ -125,15 +125,7 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
                         text-height: 10rpx;
                         text-align: left;
                         """))
-                .addChild(this.controlPointList.inlineStyle("size: 100% 100%-55rpx; flex-shrink: 0;"))
-                .addChild(new Label(IComponent.translatable("powertool.gui.bezier_curve.control_points_warn")).inlineStyle("""
-                        size: 100% 20rpx;
-                        flex-shrink: 0;
-                        margin-top: 5rpx;
-                        text-color: -1;
-                        text-height: 10rpx;
-                        text-align: left;
-                        """));
+                .addChild(this.controlPointList.inlineStyle("size: 100% 100%-35rpx; flex-shrink: 0;"));
         return new ContainerWidget()
                 .inlineStyle("""
                         flex-direction: row;

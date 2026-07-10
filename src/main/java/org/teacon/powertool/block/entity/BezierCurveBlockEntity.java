@@ -66,9 +66,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
             line = null;
         } else {
             bezierCurve = new BezierCurve3f(steps, this.controlPoints);
-            line = getLevel() == null || getLevel().isClientSide()
-                    ? new Line3f(sideCount, radius, bezierCurve.getPoints())
-                    : null;
+            line = getLevel() == null || getLevel().isClientSide() ? new Line3f(sideCount, radius, bezierCurve.getPoints()) : null;
         }
         if (getLevel() instanceof ServerLevel serverLevel) {
             this.setChanged();
@@ -208,7 +206,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         for (int i = 0; i < points.size() - 1; i++) {
             addAffectedSections(result, points.get(i), points.get(i + 1));
         }
-        return Set.copyOf(result);
+        return result;
     }
 
     private void addAffectedSections(Set<SectionPos> result, Vector3f start, Vector3f end) {

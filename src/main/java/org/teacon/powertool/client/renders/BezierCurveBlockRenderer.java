@@ -1,69 +1,183 @@
 package org.teacon.powertool.client.renders;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
+import net.minecraft.data.AtlasIds;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.attachment.PowerToolAttachments;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
+import org.teacon.powertool.utils.math.Line3f;
 
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-public class BezierCurveBlockRenderer  {
+@NonNullByDefault
+public final class BezierCurveBlockRenderer {
     
-    public BezierCurveBlockRenderer(BlockEntityRendererProvider.Context ignore) {
+    private BezierCurveBlockRenderer() {
     }
-    
-    
-    @SuppressWarnings("deprecation")
-    public void renderSectionGeometry(BezierCurveBlockEntity te, AddSectionGeometryEvent.SectionRenderingContext context, PoseStack poseStack, BlockPos pos, BlockPos regionOrigin, int packedLight, MultiBufferSource bufferSource) {
-        var model = te.line;
-        if (model == null) return;
-        var line = model.line;
-        var clampMode = te.clampMode;
-        var steps = te.steps;
-        var sideCount = te.sideCount;
-        var vertexList = model.vertexAndNormalQuadsList();
-        var level = Minecraft.getInstance().level;
-        var selfPos = te.getBlockPos();
-        var useWorldCoordinate = te.worldCoordinate;
-        BlockPos centerPos = null;
-        if (level != null) centerPos = level.getChunkAt(selfPos).getPos().getMiddleBlockPosition(0);
-        if (vertexList.size() < (steps - 1) * sideCount * 4) return;
-        poseStack.pushPose();
-        if (useWorldCoordinate) poseStack.translate(-selfPos.getX(), -selfPos.getY(), -selfPos.getZ());
-        
-        var texture = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(te.texture);
-        var pose = poseStack.last();
-        var buffer = bufferSource.getBuffer(RenderTypes.itemCutout(TextureAtlas.LOCATION_BLOCKS));
-        var uScale = 1f / te.uScale;
-        var vScale = 1f / te.vScale;
-        var color = te.color;
-        var u = 0f;
-        var v = 0f;
-        for (var i = 0; i < steps - 1; ++i) {
-            v = 0f;
-            if (centerPos != null && clampMode && !insideRenderChunk(centerPos, line.get(i), useWorldCoordinate ? 0 : selfPos.getX(), useWorldCoordinate ? 0 : selfPos.getZ()))
-                continue;
-            for (var j = 0; j < sideCount; ++j) {
-                var ptr = j * 4 + i * sideCount * 4;
-                putVertex(buffer, pose, vertexList.get(ptr), texture.getU(u), texture.getV(v), color, packedLight);
-                putVertex(buffer, pose, vertexList.get(ptr + 1), texture.getU(u + uScale), texture.getV(v), color, packedLight);
-                putVertex(buffer, pose, vertexList.get(ptr + 2), texture.getU(u + uScale), texture.getV(v + vScale), color, packedLight);
-                putVertex(buffer, pose, vertexList.get(ptr + 3), texture.getU(u), texture.getV(v + vScale), color, packedLight);
-                v = (v + vScale) % 1f;
+
+    public static void addSectionGeometry(AddSectionGeometryEvent event) {
+        var sectionOrigin = event.getSectionOrigin();
+        var level = event.getLevel();
+        var blockPositions = level.getChunkAt(sectionOrigin).getExistingDataOrNull(PowerToolAttachments.BEZIER_CURVES);
+        if (blockPositions == null || blockPositions.isEmpty()) return;
+        var renderData = new ArrayList<RenderData>();
+        for (var blockPos : blockPositions) {
+            var blockEntity = level.getBlockEntity(blockPos);
+            if (!(blockEntity instanceof BezierCurveBlockEntity bezierCurveBlockEntity)) continue;
+            var data = createRenderData(bezierCurveBlockEntity, sectionOrigin);
+            if (data != null) {
+                renderData.add(data);
             }
-            u = (u + uScale) % 1f;
+        }
+        if (!renderData.isEmpty()) {
+            event.addRenderer(context -> render(renderData, context));
+        }
+    }
+
+    public static void updateChunk(int chunkX, int chunkZ, List<BlockPos> blockPositions) {
+        var minecraft = Minecraft.getInstance();
+        var level = minecraft.level;
+        if (level == null) return;
+        var chunk = level.getChunkSource().getChunk(chunkX, chunkZ, ChunkStatus.FULL, false);
+        if (chunk == null) return;
+        chunk.setData(PowerToolAttachments.BEZIER_CURVES, List.copyOf(blockPositions));
+        minecraft.levelRenderer.setSectionRangeDirty(
+                chunkX,
+                level.getMinSectionY(),
+                chunkZ,
+                chunkX,
+                level.getMaxSectionY(),
+                chunkZ
+        );
+    }
+
+    @Nullable
+    private static RenderData createRenderData(BezierCurveBlockEntity blockEntity, BlockPos sectionOrigin) {
+        var model = blockEntity.line;
+        if (model == null) return null;
+        var bounds = new AABB(
+                sectionOrigin.getX() - 2,
+                sectionOrigin.getY() - 2,
+                sectionOrigin.getZ() - 2,
+                sectionOrigin.getX() + 18,
+                sectionOrigin.getY() + 18,
+                sectionOrigin.getZ() + 18
+        );
+        var segments = new ArrayList<SegmentData>();
+        for (int i = 0; i < model.line.size() - 1; i++) {
+            var start = toWorldPosition(model.line.get(i), blockEntity.getBlockPos(), blockEntity.worldCoordinate);
+            var end = toWorldPosition(model.line.get(i + 1), blockEntity.getBlockPos(), blockEntity.worldCoordinate);
+            var segment = clipSegment(i, start, end, bounds);
+            if (segment != null) {
+                segments.add(segment);
+            }
+        }
+        if (segments.isEmpty()) return null;
+        var texture = Minecraft.getInstance()
+                .getAtlasManager()
+                .getAtlasOrThrow(AtlasIds.BLOCKS)
+                .getSprite(blockEntity.texture);
+        var level = blockEntity.getLevel();
+        int packedLight = level == null ? 15728880 : LevelRenderer.getLightCoords(level, blockEntity.getBlockPos());
+        return new RenderData(
+                model,
+                texture,
+                blockEntity.getBlockPos(),
+                sectionOrigin,
+                blockEntity.worldCoordinate,
+                blockEntity.sideCount,
+                blockEntity.uScale,
+                blockEntity.vScale,
+                blockEntity.color,
+                packedLight,
+                segments
+        );
+    }
+
+    @Nullable
+    private static SegmentData clipSegment(int index, Vec3 start, Vec3 end, AABB bounds) {
+        double minT = 0;
+        double maxT = 1;
+        double[] origins = {start.x, start.y, start.z};
+        double[] deltas = {end.x - start.x, end.y - start.y, end.z - start.z};
+        double[] minimums = {bounds.minX, bounds.minY, bounds.minZ};
+        double[] maximums = {bounds.maxX, bounds.maxY, bounds.maxZ};
+        for (int axis = 0; axis < origins.length; axis++) {
+            double delta = deltas[axis];
+            if (Math.abs(delta) < 1.0E-7) {
+                if (origins[axis] < minimums[axis] || origins[axis] > maximums[axis]) return null;
+                continue;
+            }
+            double first = (minimums[axis] - origins[axis]) / delta;
+            double second = (maximums[axis] - origins[axis]) / delta;
+            if (first > second) {
+                double temporary = first;
+                first = second;
+                second = temporary;
+            }
+            minT = Math.max(minT, first);
+            maxT = Math.min(maxT, second);
+            if (minT > maxT) return null;
+        }
+        return new SegmentData(index, (float) minT, (float) maxT);
+    }
+
+    private static Vec3 toWorldPosition(Vector3f position, BlockPos blockPos, boolean worldCoordinate) {
+        if (worldCoordinate) {
+            return new Vec3(position.x, position.y, position.z);
+        }
+        return new Vec3(
+                position.x + blockPos.getX(),
+                position.y + blockPos.getY(),
+                position.z + blockPos.getZ()
+        );
+    }
+
+    private static void render(List<RenderData> renderData, AddSectionGeometryEvent.SectionRenderingContext context) {
+        var buffer = context.getOrCreateChunkBuffer(ChunkSectionLayer.CUTOUT);
+        for (var data : renderData) {
+            render(data, buffer);
+        }
+    }
+
+    @SuppressWarnings("resource")
+    private static void render(RenderData data, VertexConsumer buffer) {
+        var model = data.model();
+        var vertexList = model.vertexAndNormalQuadsList();
+        var sideCount = data.sideCount();
+        if (vertexList.size() < (model.line.size() - 1) * sideCount * 4) return;
+        float uScale = data.uScale() == 0 ? 1 : 1f / data.uScale();
+        float vScale = data.vScale() == 0 ? 1 : 1f / data.vScale();
+        for (var segment : data.segments()) {
+            float baseU = segment.index() * uScale % 1f;
+            float startU = baseU + segment.start() * uScale;
+            float endU = baseU + segment.end() * uScale;
+            for (int side = 0; side < sideCount; side++) {
+                float v = side * vScale % 1f;
+                int pointer = side * 4 + segment.index() * sideCount * 4;
+                var startSide = vertexList.get(pointer);
+                var endSide = vertexList.get(pointer + 1);
+                var endNextSide = vertexList.get(pointer + 2);
+                var startNextSide = vertexList.get(pointer + 3);
+                putVertex(buffer, data, startSide, endSide, segment.start(), data.texture().getU(startU), data.texture().getV(v));
+                putVertex(buffer, data, startSide, endSide, segment.end(), data.texture().getU(endU), data.texture().getV(v));
+                putVertex(buffer, data, startNextSide, endNextSide, segment.end(), data.texture().getU(endU), data.texture().getV(v + vScale));
+                putVertex(buffer, data, startNextSide, endNextSide, segment.start(), data.texture().getU(startU), data.texture().getV(v + vScale));
+            }
         }
 //        for(var i = 0; i < model.vertexAndNormalQuadsList().size()/4; i++){
 //            putVertex(buffer,pose,model.vertexAndNormalQuadsList().get(i*4),texture.getU0(),texture.getV0(),-1,packedLight);
@@ -71,17 +185,43 @@ public class BezierCurveBlockRenderer  {
 //            putVertex(buffer,pose,model.vertexAndNormalQuadsList().get(i*4+2),texture.getU1(),texture.getV1(),-1,packedLight);
 //            putVertex(buffer,pose,model.vertexAndNormalQuadsList().get(i*4+3),texture.getU0(),texture.getV1(),-1,packedLight);
 //        }
-        poseStack.popPose();
     }
-    
-    public static boolean insideRenderChunk(BlockPos chunkCenter, Vector3f renderPos, int offsetX, int offsetZ) {
-        return Math.abs(chunkCenter.getX() - renderPos.x - offsetX) < 10f && Math.abs(chunkCenter.getZ() - renderPos.z - offsetZ) < 10f;
+
+    private static void putVertex(VertexConsumer buffer, RenderData data, Pair<Vector3f, Vector3f> start, Pair<Vector3f, Vector3f> end, float progress, float u, float v) {
+        var vertex = start.getFirst().lerp(end.getFirst(), progress, new Vector3f());
+        var normal = start.getSecond().lerp(end.getSecond(), progress, new Vector3f());
+        if (normal.lengthSquared() > 1.0E-7f) {
+            normal.normalize();
+        }
+        float offsetX = data.worldCoordinate() ? 0 : data.blockPos().getX();
+        float offsetY = data.worldCoordinate() ? 0 : data.blockPos().getY();
+        float offsetZ = data.worldCoordinate() ? 0 : data.blockPos().getZ();
+        buffer.addVertex(
+                        vertex.x + offsetX - data.sectionOrigin().getX(),
+                        vertex.y + offsetY - data.sectionOrigin().getY(),
+                        vertex.z + offsetZ - data.sectionOrigin().getZ()
+                )
+                .setUv(u, v)
+                .setLight(data.packedLight())
+                .setColor(data.color())
+                .setNormal(normal.x, normal.y, normal.z);
     }
-    
-    public static void putVertex(VertexConsumer buffer, PoseStack.Pose pose, Pair<Vector3f, Vector3f> vertexAndNormal, float u, float v, int color, int light) {
-        var vertex = vertexAndNormal.getFirst();
-        var normal = vertexAndNormal.getSecond();
-        buffer.addVertex(pose, vertex.x, vertex.y, vertex.z).setUv(u, v).setLight(light).setColor(color).setNormal(pose, normal.x, normal.y, normal.z);
+
+    private record RenderData(
+            Line3f model,
+            TextureAtlasSprite texture,
+            BlockPos blockPos,
+            BlockPos sectionOrigin,
+            boolean worldCoordinate,
+            int sideCount,
+            int uScale,
+            int vScale,
+            int color,
+            int packedLight,
+            List<SegmentData> segments
+    ) {
     }
-    
+
+    private record SegmentData(int index, float start, float end) {
+    }
 }

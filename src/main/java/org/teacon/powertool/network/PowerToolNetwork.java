@@ -4,11 +4,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.teacon.powertool.PowerTool;
+import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.network.client.OpenBlockScreen;
 import org.teacon.powertool.network.client.OpenHolographicSignEditor;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.network.client.RecordDebugData;
 import org.teacon.powertool.network.client.UpdateCachedModeChunkDataPacket;
+import org.teacon.powertool.network.client.UpdateBezierCurveChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateCreativeNoClipPacket;
 import org.teacon.powertool.network.client.UpdateDisplayChunkDataPacket;
 import org.teacon.powertool.network.client.UpdateFlyNoDriftPacket;
@@ -21,6 +23,7 @@ import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.network.server.UpdateItemStackData;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
 
+@NonNullByDefault
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolNetwork {
     
@@ -87,6 +90,11 @@ public class PowerToolNetwork {
                 UpdateStaticModeChunkDataPacket.TYPE,
                 UpdateStaticModeChunkDataPacket.STREAM_CODEC,
                 UpdateStaticModeChunkDataPacket::handle
+        );
+        register.playToClient(
+                UpdateBezierCurveChunkDataPacket.TYPE,
+                UpdateBezierCurveChunkDataPacket.STREAM_CODEC,
+                UpdateBezierCurveChunkDataPacket::handle
         );
         
         register.commonToServer(

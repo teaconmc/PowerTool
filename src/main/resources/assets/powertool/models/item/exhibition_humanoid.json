@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "powertool:item/slim_exhibition_humanoid"
+    "layer0": "powertool:item/exhibition_humanoid"
   }
 }

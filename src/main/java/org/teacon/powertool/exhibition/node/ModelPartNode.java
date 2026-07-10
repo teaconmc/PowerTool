@@ -164,9 +164,9 @@ public class ModelPartNode extends ExhibitionNode implements Inspectable {
 
         final ModelPartNode node = (ModelPartNode) other;
 
-        if (!this.partName.equals(node.partName)) {
+        /*if (!this.partName.equals(node.partName)) {
             return;
-        }
+        }*/
 
         this.position.set(node.position.get());
         this.rotation.set(node.rotation.get());

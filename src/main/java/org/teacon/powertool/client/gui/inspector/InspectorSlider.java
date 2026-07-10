@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.property.FloatProperty;
 import org.teacon.powertool.inspection.property.IntegerProperty;
 import org.teacon.powertool.inspection.property.NumberProperty;
@@ -14,13 +15,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public abstract class InspectorSlider<T extends Number> extends InspectorModificationWidget<T> {
+public sealed abstract class InspectorSlider<T extends Number> extends InspectorModificationWidget<T> {
 
     private final float min;
     private final float max;
     private final float step;
 
-    private float       value;
+    protected float     value;
 
     protected InspectorSlider(
             final Component         message,
@@ -34,8 +35,6 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
 
         this.step               = step;
     }
-
-
 
     @Override
     public void render(
@@ -102,13 +101,11 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
         this.slide(width, (float) mouseX);
     }
 
-
     @Override
-    public boolean paste(InspectorWidget copy) {
+    public void paste(final Duplicatable copy) {
         if (copy instanceof InspectorSlider<?> slider) {
             this.apply(slider.value);
         }
-        return false;
     }
 
     private void slide(final int width, final float mouseX) {
@@ -119,7 +116,7 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
         this                .apply(value);
     }
 
-    private void apply(final float value) {
+    protected void apply(final float value) {
         float clamped   = this.clamp(value);
 
         if (clamped != this.value) {
@@ -136,7 +133,7 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
         return value;
     }
 
-    public static class Integer extends InspectorSlider<java.lang.Integer> {
+    public static final class Integer extends InspectorSlider<java.lang.Integer> {
         public Integer(
                 final Component         message,
                 final IntegerProperty   property,
@@ -151,7 +148,7 @@ public abstract class InspectorSlider<T extends Number> extends InspectorModific
         }
     }
 
-    public static class Float extends InspectorSlider<java.lang.Float> {
+    public static final class Float extends InspectorSlider<java.lang.Float> {
         public Float(
                 final Component         message,
                 final FloatProperty     property,

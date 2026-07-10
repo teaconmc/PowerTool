@@ -56,6 +56,7 @@ public class ConfigurationHierarchy extends EditorWindow {
         this.onSelect = onSelect;
     }
 
+    @Override
     public HierarchyEntry getSelected() {
         return this.selected;
     }

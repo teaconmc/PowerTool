@@ -7,6 +7,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.teacon.powertool.client.gui.inspector.InspectorBuilderImpl;
 import org.teacon.powertool.client.gui.inspector.InspectorWidget;
+import org.teacon.powertool.inspection.Duplicatable;
 import org.teacon.powertool.inspection.Inspectable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,8 +20,7 @@ public class Inspector extends EditorWindow {
     private List<InspectorWidget>   widgets;
     private Inspectable             target;
 
-    private InspectorWidget         focus;
-    private InspectorWidget         copy;
+    private InspectorWidget         selected;
 
     public Inspector(int width, int height) {
         super(0, 0, width, height, Component.literal("Inspector"));
@@ -97,6 +97,11 @@ public class Inspector extends EditorWindow {
     }
 
     @Override
+    protected Duplicatable getSelected() {
+        return this.selected;
+    }
+
+    @Override
     public boolean mouseClicked(final MouseButtonEvent event, final boolean doubleClick) {
 
         if (this.widgets == null) {
@@ -119,22 +124,22 @@ public class Inspector extends EditorWindow {
                         doubleClick
                 );
 
-                if (this.focus != null && this.focus != widget) {
-                    this.focus.setFocused(false);
+                if (this.selected != null && this.selected != widget) {
+                    this.selected.setFocused(false);
                 }
 
-                this.focus = widget;
-                this.focus.setFocused(true);
+                this.selected = widget;
+                this.selected.setFocused(true);
                 return true;
             }
 
             height += widget.getHeight();
         }
 
-        if (this.focus != null) {
-            this.focus.setFocused(false);
+        if (this.selected != null) {
+            this.selected.setFocused(false);
         }
-        this.focus = null;
+        this.selected = null;
         return false;
     }
 
@@ -194,34 +199,24 @@ public class Inspector extends EditorWindow {
 
     @Override
     public boolean keyPressed(final KeyEvent event) {
-        if (this.focus != null) {
-            return this.focus.onKeyPressed(event);
+        if (this.selected != null && this.selected.onKeyPressed(event)) {
+            return true;
         }
-        return false;
+        return super.keyPressed(event);
     }
 
     @Override
     public boolean keyReleased(final KeyEvent event) {
-        if (this.focus != null) {
-            if (this.focus.onKeyReleased(event)) {
-                return true;
-            }
-
-            if (event.isCopy()) {
-                this.copy = this.focus;
-                return true;
-            } else if (this.copy != null && event.isPaste()) {
-                this.focus.paste(this.copy);
-                return true;
-            }
+        if (this.selected != null) {
+            return this.selected.onKeyReleased(event);
         }
         return false;
     }
 
     @Override
     public boolean charTyped(final CharacterEvent event) {
-        if (this.focus != null) {
-            return this.focus.charTyped(event);
+        if (this.selected != null) {
+            return this.selected.charTyped(event);
         }
         return false;
     }

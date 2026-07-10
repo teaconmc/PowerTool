@@ -4,8 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.teacon.powertool.inspection.Duplicatable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -23,6 +25,8 @@ public abstract class EditorWindow extends AbstractWidget {
 
     private float                   ratio = 1.0f;
 
+    private Duplicatable            clipboard;
+
     public EditorWindow(final int x, final int y, final int width, final int height, final Component message) {
         super(x, y, width, height, message);
         this.updateFrame();
@@ -37,6 +41,8 @@ public abstract class EditorWindow extends AbstractWidget {
             int                         localMouseY,
             float                       partialTick
     );
+
+    protected abstract Duplicatable getSelected();
 
     @Override
     protected void extractWidgetRenderState(
@@ -115,6 +121,24 @@ public abstract class EditorWindow extends AbstractWidget {
         this.scroll = Math.clamp(this.scroll, 0, this.available);
 
         return true;
+    }
+
+    @Override
+    public boolean keyPressed(final KeyEvent event) {
+
+        final var selected = this.getSelected();
+
+        if (event.isCopy()) {
+            this.clipboard = selected != null ? selected.duplicate() : null;
+            return true;
+        } else if (event.isPaste()
+                && selected != null
+                && this.clipboard != null) {
+            selected.paste(this.clipboard);
+            return true;
+        }
+
+        return false;
     }
 
     @Override

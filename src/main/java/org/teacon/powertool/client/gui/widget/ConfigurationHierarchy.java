@@ -24,11 +24,6 @@ public class ConfigurationHierarchy extends EditorWindow {
     private static final int TOGGLE_SIZE = 8;
     private static final int TOGGLE_MARGIN = 4;
 
-    private static final int COLOR_HUMANOID = 0xff66cc66;
-    private static final int COLOR_MODEL_PART = 0xff6699cc;
-    private static final int COLOR_SKIN = 0xffcc9966;
-    private static final int COLOR_DEFAULT = 0xff888888;
-
     private static final int COLOR_BAR_WIDTH = 3;
 
     private HierarchyEntry root;
@@ -62,9 +57,7 @@ public class ConfigurationHierarchy extends EditorWindow {
     }
 
     private static int typeColor(HierarchyEntry node) {
-        if (node instanceof ModelPartNode) return COLOR_MODEL_PART;
-        if (node instanceof SkinNode) return COLOR_SKIN;
-        return COLOR_DEFAULT;
+        return node.color();
     }
 
     private void rebuildFlatList() {

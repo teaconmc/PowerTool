@@ -211,7 +211,6 @@
   "powertool.gui.bezier_curve.texture": "材质",
   "powertool.gui.bezier_curve.color": "颜色(RGBA)",
   "powertool.gui.bezier_curve.control_points": "控制点: ",
-  "powertool.gui.bezier_curve.control_points_warn": "出于性能考虑,建议控制点个数在四个以下",
   "powertool.gui.bezier_curve.use_clamp_mode": "使用限制渲染模式",
   "powertool.gui.bezier_curve.use_clamp_mode.tooltip": "将不会渲染远离区块中心的顶点.",
   "powertool.gui.bezier_curve.use_world_coordinate": "使用世界坐标",

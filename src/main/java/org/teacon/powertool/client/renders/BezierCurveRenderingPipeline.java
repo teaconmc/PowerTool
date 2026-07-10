@@ -2,7 +2,6 @@ package org.teacon.powertool.client.renders;
 
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.ScissorState;
 import com.mojang.blaze3d.textures.GpuTextureView;
@@ -12,6 +11,7 @@ import com.mojang.blaze3d.vertex.MeshData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.rendertype.OutputTarget;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -53,6 +53,7 @@ public final class BezierCurveRenderingPipeline {
             RenderSetup.builder(RenderPipelines.CUTOUT_BLOCK)
                     .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS)
                     .useLightmap()
+                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
                     .createRenderSetup()
     );
     @Nullable
@@ -109,7 +110,7 @@ public final class BezierCurveRenderingPipeline {
         }
     }
 
-    private void unloadChunk(ChunkPos chunkPos) {
+    private synchronized void unloadChunk(ChunkPos chunkPos) {
         dirtyChunks.remove(chunkPos);
         var chunk = chunks.remove(chunkPos);
         if (chunk != null) {
@@ -117,7 +118,7 @@ public final class BezierCurveRenderingPipeline {
         }
     }
 
-    private void loadChunk(ChunkAccess chunk) {
+    private synchronized void loadChunk(ChunkAccess chunk) {
         var blockPositions = new ArrayList<BlockPos>();
         for (var bezierCurveChunk : chunks.values()) {
             for (var blockPos : bezierCurveChunk.blockPositions) {
@@ -131,7 +132,7 @@ public final class BezierCurveRenderingPipeline {
         chunk.setData(PowerToolAttachments.BEZIER_CURVES, List.copyOf(blockPositions));
     }
 
-    private void sectionRebuilt(Level eventLevel, BlockPos sectionOrigin) {
+    private synchronized void sectionRebuilt(Level eventLevel, BlockPos sectionOrigin) {
         if (eventLevel != level) return;
         var chunk = level.getChunkAt(sectionOrigin);
         var blockPositions = chunk.getExistingDataOrNull(PowerToolAttachments.BEZIER_CURVES);

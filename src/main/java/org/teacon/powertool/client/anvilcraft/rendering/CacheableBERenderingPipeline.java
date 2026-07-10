@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -167,8 +168,8 @@ public class CacheableBERenderingPipeline {
     }
 
     private static void mayWarnForNonRenderThread() {
-        if (!RenderSystem.isOnRenderThread()) {
-            log.warn("CacheableBERenderingPipeline called from wrong thread!", new IllegalStateException());
+        if (!FMLEnvironment.isProduction() && !RenderSystem.isOnRenderThread()) {
+            log.warn("CacheableBERenderingPipeline called from wrong thread!");
         }
     }
 

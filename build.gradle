@@ -9,8 +9,10 @@ plugins {
 abstract class TeaConDumpPathToGitHub extends DefaultTask {
     @Input
     abstract Property<String> getPublishName()
+
     @InputFile
     abstract RegularFileProperty getTargetFile()
+
     @TaskAction
     void dump() {
         if (System.env.GITHUB_ACTIONS) {
@@ -69,6 +71,20 @@ neoForge {
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.disableGlValidation', 'true'
+        }
+
+        clientRenderDoc {
+            client()
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.disableGlValidation', 'true'
+            systemProperty('neoforge.rendernurse.renderdoc.library', file("libs/renderdoc.dll").absolutePath)
+            systemProperty('mixin.debug.export', 'true')
+            jvmArgument("-javaagent:" + file("libs/renderdoc-loader.jar").absolutePath)
+
+            programArgument("--renderDebugLabels")
         }
 
         server {
@@ -116,6 +132,14 @@ repositories {
         }
     }
     maven {
+        name = "caffeinemcRepositoryReleases"
+        url = uri("https://maven.caffeinemc.net/releases")
+    }
+    maven {
+        name = "IrisShaders maven"
+        url = "https://maven.irisshaders.dev/releases"
+    }
+    maven {
         // location of the maven that hosts JEI files since January 2023
         name = "Jared's maven"
         url = "https://maven.blamejared.com/"
@@ -143,43 +167,46 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     implementation "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 
-    jarJar(implementation "com.xkball:xklib-3d:$xklib_version"){
+    compileOnly("net.caffeinemc:sodium-neoforge-mod:0.8.12+mc26.1.2") // sodium mc26.1.2-0.8.12-neoforge
+    compileOnly("maven.modrinth:YL57xq9U:YEGDGnJM") // iris 1.10.9+26.1-neoforge
+
+    jarJar(implementation "com.xkball:xklib-3d:$xklib_version") {
         version {
             strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
-    jarJar(implementation "com.xkball:xklib-ap:$xklib_version"){
+    jarJar(implementation "com.xkball:xklib-ap:$xklib_version") {
         version {
             strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
-    jarJar(implementation "com.xkball:xklib-ui:$xklib_version"){
+    jarJar(implementation "com.xkball:xklib-ui:$xklib_version") {
         version {
             strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
-    jarJar(implementation "com.xkball:xklib-mc:$xklib_version"){
+    jarJar(implementation "com.xkball:xklib-mc:$xklib_version") {
         version {
             strictly "[$xklib_version, 1.0.0)"
             prefer xklib_version
         }
     }
-    jarJar(implementation "dev.vfyjxf:taffy:1.1.4"){
+    jarJar(implementation "dev.vfyjxf:taffy:1.1.4") {
         version {
             strictly '[1.1.4, 2.0.0)'
             prefer '1.1.4'
         }
     }
-    jarJar(implementation "org.antlr:antlr4-runtime:4.13.2"){
+    jarJar(implementation "org.antlr:antlr4-runtime:4.13.2") {
         version {
             strictly '[4.13.2, 5.0.0)'
             prefer '4.13.2'
         }
     }
-    jarJar(implementation "net.lenni0451:LambdaEvents:2.4.2"){
+    jarJar(implementation "net.lenni0451:LambdaEvents:2.4.2") {
         version {
             strictly '[2.4.2, 3.0.0)'
             prefer '2.4.2'

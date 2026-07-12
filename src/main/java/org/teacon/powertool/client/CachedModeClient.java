@@ -19,13 +19,17 @@ public class CachedModeClient {
         BlockEntityRenderer<?,?> renderer = Minecraft.getInstance()
                 .getBlockEntityRenderDispatcher()
                 .getRenderer(be);
-        if (renderer == null) return false;
+        if (renderer == null) {
+            return false;
+        }
         return isCachedModeEnabledOn(be.getBlockPos());
     }
     
     public boolean isCachedModeEnabledOn(BlockPos pos) {
         ChunkPos chunkPos = ChunkPos.containing(pos);
-        if (!cachedModeData.containsKey(chunkPos)) return false;
+        if (!cachedModeData.containsKey(chunkPos)) {
+            return false;
+        }
         return cachedModeData.get(chunkPos).contains(pos);
     }
     

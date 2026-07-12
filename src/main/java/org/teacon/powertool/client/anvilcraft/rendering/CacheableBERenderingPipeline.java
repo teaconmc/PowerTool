@@ -4,7 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -12,10 +15,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import org.jspecify.annotations.Nullable;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL46;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +47,21 @@ public class CacheableBERenderingPipeline {
     private static Vec3 cameraOldPosition = null;
     private static boolean cameraMoved = true;
 
+    private static int glMaxLabelLength = 0;
+
+    public static void create() {
+        if (GL.getCapabilities().GL_KHR_debug) {
+            glMaxLabelLength = GL46.glGetInteger(GL46.GL_MAX_LABEL_LENGTH);
+            glMaxLabelLength /= 2;
+        }
+    }
+
     public CachedChunk getRenderRegion(ChunkPos chunkPos) {
         mayWarnForNonRenderThread();
         synchronized (regions) {
-            if (regions.containsKey(chunkPos)) {
-                return regions.get(chunkPos);
+            CachedChunk cachedChunk = regions.get(chunkPos);
+            if (cachedChunk != null) {
+                return cachedChunk;
             }
             CachedChunk region = new CachedChunk(chunkPos, this);
             regions.put(chunkPos, region);
@@ -130,10 +146,12 @@ public class CacheableBERenderingPipeline {
         }
     }
 
-    public void render() {
+    public void render(Frustum frustum, boolean translucent) {
         mayWarnForNonRenderThread();
         synchronized (regions) {
-            regions.values().forEach(CachedChunk::render);
+            for (CachedChunk value : regions.values()) {
+                value.render(frustum, translucent);
+            }
         }
     }
 
@@ -167,15 +185,26 @@ public class CacheableBERenderingPipeline {
         cameraMoved = true;
     }
 
+    public String truncateName(String s) {
+        return StringUtil.truncateStringIfNecessary(s, glMaxLabelLength, true);
+    }
+
     private static void mayWarnForNonRenderThread() {
         if (!FMLEnvironment.isProduction() && !RenderSystem.isOnRenderThread()) {
             log.warn("CacheableBERenderingPipeline called from wrong thread!");
         }
     }
 
+    public void forcedUpdate() {
+        for (CachedChunk value : regions.values()) {
+            value.forcedUpdate();
+        }
+    }
+
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
         if (getInstance() == null) return;
+        if (event.getLevel() instanceof ServerLevel) return;
         mayWarnForNonRenderThread();
         synchronized (getInstance().regions) {
             ChunkPos chunkPos = event.getChunk().getPos();
@@ -184,5 +213,16 @@ public class CacheableBERenderingPipeline {
                 removed.releaseBuffers();
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void on(RenderFrameEvent.Pre event) {
+        if (instance != null) {
+            instance.handleIntegration();
+        }
+    }
+
+    private void handleIntegration() {
+        // intentionally empty
     }
 }

@@ -21,12 +21,13 @@
   "client": [
     "client.BeaconRendererMixin",
     "client.ClientRecipeBookMixin",
+    "client.GameRendererMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",
-    "client.GameRendererMixin",
     "client.SectionRenderDispatcherMixin",
-    "client.debug.MixinGlProgram"
+    "client.debug.MixinGlProgram",
+    "client.compat.SodiumWorldRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

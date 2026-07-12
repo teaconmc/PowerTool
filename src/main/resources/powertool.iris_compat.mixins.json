@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.teacon.powertool.compat.iris.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "anvillib.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "BezierCurveRenderingPipelineMixin",
+    "CachedBlockEntityRenderingPipelineMixin",
+    "CachedChunkMixin",
+    "FullyBufferedBufferSourceMixin",
+    "RebuildTaskMixin",
+    "iris.OuterWrappedRenderTypeAccess",
+    "BezierCurveChunkMixin"
+  ],
+  "plugin": "org.teacon.powertool.compat.iris.mixins.PTIrisCompatMixinPlugin",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

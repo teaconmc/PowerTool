@@ -12,7 +12,6 @@
     "MixinArmorStand",
     "MixinEntity",
     "MixinItemFrame",
-    "MixinPrimaryLevelData",
     "MixinThrownEgg",
     "PlayerCreativeNoClipMixin",
     "ServerGamePacketListenerImplMixin",
@@ -22,10 +21,10 @@
   "client": [
     "client.BeaconRendererMixin",
     "client.ClientRecipeBookMixin",
-    "client.GameRendererMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",
+    "client.GameRendererMixin",
     "client.SectionRenderDispatcherMixin",
     "client.debug.MixinGlProgram"
   ],

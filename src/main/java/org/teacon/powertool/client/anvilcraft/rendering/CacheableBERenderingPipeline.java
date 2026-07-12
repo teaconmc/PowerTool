@@ -15,6 +15,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.IBlockEntityRendererExtension;
@@ -42,7 +43,7 @@ public class CacheableBERenderingPipeline {
     private final ClientLevel level;
     private final Queue<Runnable> pendingCompiles = new ArrayDeque<>();
     private final Queue<Runnable> pendingUploads = new ArrayDeque<>();
-    private final Map<ChunkPos, CachedChunk> regions = new HashMap<>();
+    private final Map<ChunkPos, CachedChunk> chunks = new HashMap<>();
     private boolean valid = true;
     private static Vec3 cameraOldPosition = null;
     private static boolean cameraMoved = true;
@@ -58,13 +59,13 @@ public class CacheableBERenderingPipeline {
 
     public CachedChunk getRenderRegion(ChunkPos chunkPos) {
         mayWarnForNonRenderThread();
-        synchronized (regions) {
-            CachedChunk cachedChunk = regions.get(chunkPos);
+        synchronized (chunks) {
+            CachedChunk cachedChunk = chunks.get(chunkPos);
             if (cachedChunk != null) {
                 return cachedChunk;
             }
             CachedChunk region = new CachedChunk(chunkPos, this);
-            regions.put(chunkPos, region);
+            chunks.put(chunkPos, region);
             return region;
         }
     }
@@ -74,11 +75,15 @@ public class CacheableBERenderingPipeline {
     }
 
     public void runTasks() {
-        while (!pendingCompiles.isEmpty() && valid) {
-            pendingCompiles.poll().run();
+        synchronized (pendingCompiles) {
+            while (!pendingCompiles.isEmpty() && valid) {
+                pendingCompiles.poll().run();
+            }
         }
-        while (!pendingUploads.isEmpty() && valid) {
-            pendingUploads.poll().run();
+        synchronized (pendingUploads) {
+            while (!pendingUploads.isEmpty() && valid) {
+                pendingUploads.poll().run();
+            }
         }
     }
 
@@ -140,16 +145,16 @@ public class CacheableBERenderingPipeline {
      */
     public void releaseBuffers() {
         mayWarnForNonRenderThread();
-        synchronized (regions) {
-            regions.values().forEach(CachedChunk::releaseBuffers);
+        synchronized (chunks) {
+            chunks.values().forEach(CachedChunk::releaseBuffers);
             valid = false;
         }
     }
 
     public void render(Frustum frustum, boolean translucent) {
         mayWarnForNonRenderThread();
-        synchronized (regions) {
-            for (CachedChunk value : regions.values()) {
+        synchronized (chunks) {
+            for (CachedChunk value : chunks.values()) {
                 value.render(frustum, translucent);
             }
         }
@@ -167,7 +172,7 @@ public class CacheableBERenderingPipeline {
     }
 
     public void forcedUpdate(BlockPos pos) {
-        getRenderRegion(ChunkPos.containing(pos)).forcedUpdate();
+        getRenderRegion(ChunkPos.containing(pos)).scheduleRebuild();
     }
 
     public static boolean isCameraMoved() {
@@ -195,9 +200,25 @@ public class CacheableBERenderingPipeline {
         }
     }
 
+    @SuppressWarnings("unused")
     public void forcedUpdate() {
-        for (CachedChunk value : regions.values()) {
-            value.forcedUpdate();
+        for (CachedChunk value : chunks.values()) {
+            value.scheduleRebuild();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onSectionGeometry(AddSectionGeometryEvent event) {
+        if (instance == null) return;
+        instance.sectionRebuilt(event.getSectionOrigin());
+    }
+
+    private synchronized void sectionRebuilt(BlockPos sectionOrigin) {
+        synchronized (pendingCompiles) {
+            CachedChunk cachedChunk = this.chunks.get(ChunkPos.containing(sectionOrigin));
+            if (cachedChunk != null) {
+                cachedChunk.scheduleRebuild();
+            }
         }
     }
 
@@ -206,9 +227,9 @@ public class CacheableBERenderingPipeline {
         if (getInstance() == null) return;
         if (event.getLevel() instanceof ServerLevel) return;
         mayWarnForNonRenderThread();
-        synchronized (getInstance().regions) {
+        synchronized (getInstance().chunks) {
             ChunkPos chunkPos = event.getChunk().getPos();
-            CachedChunk removed = getInstance().regions.remove(chunkPos);
+            CachedChunk removed = getInstance().chunks.remove(chunkPos);
             if (removed != null) {
                 removed.releaseBuffers();
             }

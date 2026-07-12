@@ -3,6 +3,7 @@ package org.teacon.powertool.client.anvilcraft.rendering;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.ScissorState;
@@ -221,7 +222,7 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         RenderTarget renderTarget = renderType.state.outputTarget.getRenderTarget();
         GpuTextureView colorTexture = RenderSystem.outputColorTextureOverride != null ? RenderSystem.outputColorTextureOverride : renderTarget.getColorTextureView();
         GpuTextureView depthTexture = renderTarget.useDepth ? (RenderSystem.outputDepthTextureOverride != null ? RenderSystem.outputDepthTextureOverride : renderTarget.getDepthTextureView()) : null;
-
+        minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.LEVEL);
         try (RenderPass renderPass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
             () -> "Immediate draw for " + renderType,
             colorTexture,
@@ -283,7 +284,7 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         pipeline.submitCompileTask(new RebuildTask(this));
     }
 
-    public void forcedUpdate() {
+    public void scheduleRebuild() {
         pipeline.submitCompileTask(new RebuildTask(this));
     }
 

@@ -18,6 +18,7 @@ import org.teacon.powertool.network.client.UpdatePermissionPacket;
 import org.teacon.powertool.network.client.UpdatePlayerMovement;
 import org.teacon.powertool.network.client.UpdateStaticModeChunkDataPacket;
 import org.teacon.powertool.network.server.SetCommandBlockPacket;
+import org.teacon.powertool.network.server.UndoCreativeBlockBreakPacket;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.network.server.UpdateItemStackData;
 import org.teacon.powertool.network.server.UpdatePowerSupplyData;
@@ -109,6 +110,11 @@ public class PowerToolNetwork {
                 UpdateItemStackData.TYPE,
                 UpdateItemStackData.STREAM_CODEC,
                 UpdateItemStackData::handle
+        );
+        register.playToServer(
+                UndoCreativeBlockBreakPacket.TYPE,
+                UndoCreativeBlockBreakPacket.STREAM_CODEC,
+                UndoCreativeBlockBreakPacket::handle
         );
     }
     

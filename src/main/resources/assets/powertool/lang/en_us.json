@@ -247,5 +247,9 @@
   "powertool.setcommand.gui.label": "label:",
   "powertool.setcommand.gui.label.empty": "empty",
   "powertool.setcommand.gui.tick_delay": "tick delay:",
-  "powertool.setcommand.gui.consumable": "consumable"
+  "powertool.setcommand.gui.consumable": "consumable",
+  "powertool.creative_block_break_undo.success": "Restored the block at %s.",
+  "powertool.creative_block_break_undo.failed": "Could not restore the block at %s because the position is not empty.",
+  "powertool.creative_block_break_undo.tp": "click to teleport",
+  "powertool.creative_block_break_undo.empty": "There are no creative block breaks to undo."
 }

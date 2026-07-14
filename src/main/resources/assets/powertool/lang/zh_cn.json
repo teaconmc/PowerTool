@@ -251,5 +251,9 @@
   "powertool.setcommand.gui.label": "标签：",
   "powertool.setcommand.gui.label.empty": "空",
   "powertool.setcommand.gui.tick_delay": "延迟刻：",
-  "powertool.setcommand.gui.consumable": "会被消耗"
+  "powertool.setcommand.gui.consumable": "会被消耗",
+  "powertool.creative_block_break_undo.success": "已恢复位于 %s 的方块。",
+  "powertool.creative_block_break_undo.failed": "无法恢复位于 %s 的方块，原位置不是空气。",
+  "powertool.creative_block_break_undo.tp": "点击传送",
+  "powertool.creative_block_break_undo.empty": "没有可撤销的创造模式方块破坏记录。"
 }

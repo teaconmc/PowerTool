@@ -15,6 +15,7 @@
     "MixinThrownEgg",
     "PlayerCreativeNoClipMixin",
     "ServerGamePacketListenerImplMixin",
+    "ServerPlayerGameModeMixin",
     "ServerPlayerMixin",
     "jei.MixinRecipeTransferUtil"
   ],

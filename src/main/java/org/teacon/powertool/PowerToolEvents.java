@@ -90,7 +90,7 @@ public class PowerToolEvents {
     public static void onExplosion(ExplosionEvent.Detonate event) {
         Map<ChunkPos, List<BlockPos>> map = new HashMap<>();
         for (BlockPos affectedBlock : event.getAffectedBlocks()) {
-            map.computeIfAbsent(ChunkPos.containing(affectedBlock), it -> new ArrayList<>())
+            map.computeIfAbsent(ChunkPos.containing(affectedBlock), _ -> new ArrayList<>())
                     .add(affectedBlock);
         }
         map.entrySet()
@@ -190,12 +190,12 @@ public class PowerToolEvents {
         if (PowerToolConfig.vehicleAutoVanish.get()) {
             if (entity instanceof AbstractBoat boat && !(entity instanceof AutoVanishBoat)) {
                 var newBoat = AutoVanishBoat.fromBoat(boat);
-                DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newBoat));
+                DelayServerExecutor.addTask(2, (_) -> level.addFreshEntity(newBoat));
                 event.setCanceled(true);
             }
             if (entity.getClass().equals(Minecart.class)) {
                 var newMinecart = AutoVanishMinecart.fromMinecart((Minecart) entity);
-                DelayServerExecutor.addTask(2, (server) -> level.addFreshEntity(newMinecart));
+                DelayServerExecutor.addTask(2, (_) -> level.addFreshEntity(newMinecart));
                 event.setCanceled(true);
             }
         }
@@ -205,6 +205,13 @@ public class PowerToolEvents {
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             CreativeNoClip.sync(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            CreativeBlockBreakUndo.clear(player);
         }
     }
     

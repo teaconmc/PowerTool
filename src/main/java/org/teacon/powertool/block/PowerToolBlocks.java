@@ -291,8 +291,13 @@ public class PowerToolBlocks {
         ));
         regTrapDoors(Map.of(
                 BlockSetType.CHERRY, Blocks.CHERRY_TRAPDOOR,
+                BlockSetType.PALE_OAK, Blocks.PALE_OAK_TRAPDOOR,
                 BlockSetType.IRON, Blocks.IRON_TRAPDOOR
         ));
+        regTrapDoors(Map.of(BlockSetType.COPPER, Blocks.WAXED_COPPER_TRAPDOOR), "waxed_copper");
+        regTrapDoors(Map.of(BlockSetType.COPPER, Blocks.WAXED_EXPOSED_COPPER_TRAPDOOR), "waxed_exposed_copper");
+        regTrapDoors(Map.of(BlockSetType.COPPER, Blocks.WAXED_WEATHERED_COPPER_TRAPDOOR), "waxed_weathered_copper");
+        regTrapDoors(Map.of(BlockSetType.COPPER, Blocks.WAXED_OXIDIZED_COPPER_TRAPDOOR), "waxed_oxidized_copper");
         
         regCosmetic(SIMPLE_BLOCKS, CosmeticSimpleBlock::new);
         regCosmetic(List.of(Blocks.ICE), CosmeticHalfTransparentBlock::new);
@@ -351,6 +356,14 @@ public class PowerToolBlocks {
     private static void regTrapDoors(Map<BlockSetType, Block> existing) {
         for (var type : existing.entrySet()) {
             var name = "cosmetic_" + type.getKey().name() + "_trapdoor";
+            var block = BLOCKS.registerBlock(name, CosmeticTrapdoor::new,() -> BlockBehaviour.Properties.ofFullCopy(type.getValue()));
+            ITEMS.registerItem(name, (p) -> new PowerToolBlockItem(block.get(), p));
+        }
+    }
+
+    private static void regTrapDoors(Map<BlockSetType, Block> existing, String typeName) {
+        for (var type : existing.entrySet()) {
+            var name = "cosmetic_" + typeName + "_trapdoor";
             var block = BLOCKS.registerBlock(name, CosmeticTrapdoor::new,() -> BlockBehaviour.Properties.ofFullCopy(type.getValue()));
             ITEMS.registerItem(name, (p) -> new PowerToolBlockItem(block.get(), p));
         }

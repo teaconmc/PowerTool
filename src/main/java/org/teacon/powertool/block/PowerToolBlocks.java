@@ -1,6 +1,7 @@
 package org.teacon.powertool.block;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -33,9 +34,16 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.block.cosmetical.CosmeticBarrel;
+import org.teacon.powertool.block.cosmetical.CosmeticAnvil;
 import org.teacon.powertool.block.cosmetical.CosmeticBeehive;
 import org.teacon.powertool.block.cosmetical.CosmeticCampfireBlock;
+import org.teacon.powertool.block.cosmetical.CosmeticCauldron;
+import org.teacon.powertool.block.cosmetical.CosmeticComposter;
+import org.teacon.powertool.block.cosmetical.CosmeticCoralFan;
+import org.teacon.powertool.block.cosmetical.CosmeticCoralPlant;
+import org.teacon.powertool.block.cosmetical.CosmeticCoralWallFan;
 import org.teacon.powertool.block.cosmetical.CosmeticFurnace;
+import org.teacon.powertool.block.cosmetical.CosmeticGrindstone;
 import org.teacon.powertool.block.cosmetical.CosmeticHalfTransparentBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticHopper;
 import org.teacon.powertool.block.cosmetical.CosmeticHorizontalDirectionalBlock;
@@ -61,6 +69,7 @@ import org.teacon.powertool.block.fluid.FakeWater;
 import org.teacon.powertool.block.holo_sign.HolographicSignBlock;
 import org.teacon.powertool.block.holo_sign.SignType;
 import org.teacon.powertool.item.PowerToolBlockItem;
+import org.teacon.powertool.item.CosmeticStandingAndWallBlockItem;
 import org.teacon.powertool.item.PowerToolDataComponents;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -90,7 +99,21 @@ public class PowerToolBlocks {
             () -> SoundEvents.GLOW_ITEM_FRAME_REMOVE_ITEM,
             () -> SoundEvents.MOSS_CARPET_FALL);
     
-    public static final List<Block> SIMPLE_BLOCKS = List.of(Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL, Blocks.TUBE_CORAL_BLOCK, Blocks.BRAIN_CORAL_BLOCK, Blocks.BUBBLE_CORAL_BLOCK, Blocks.FIRE_CORAL_BLOCK, Blocks.HORN_CORAL_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.CARTOGRAPHY_TABLE, Blocks.CRAFTING_TABLE, Blocks.FLETCHING_TABLE, Blocks.SMITHING_TABLE, Blocks.BEACON);
+    public static final List<Block> SIMPLE_BLOCKS = List.of(
+            Blocks.SAND, Blocks.RED_SAND, Blocks.GRAVEL,
+            Blocks.WHITE_CONCRETE_POWDER, Blocks.ORANGE_CONCRETE_POWDER,
+            Blocks.MAGENTA_CONCRETE_POWDER, Blocks.LIGHT_BLUE_CONCRETE_POWDER,
+            Blocks.YELLOW_CONCRETE_POWDER, Blocks.LIME_CONCRETE_POWDER,
+            Blocks.PINK_CONCRETE_POWDER, Blocks.GRAY_CONCRETE_POWDER,
+            Blocks.LIGHT_GRAY_CONCRETE_POWDER, Blocks.CYAN_CONCRETE_POWDER,
+            Blocks.PURPLE_CONCRETE_POWDER, Blocks.BLUE_CONCRETE_POWDER,
+            Blocks.BROWN_CONCRETE_POWDER, Blocks.GREEN_CONCRETE_POWDER,
+            Blocks.RED_CONCRETE_POWDER, Blocks.BLACK_CONCRETE_POWDER,
+            Blocks.TUBE_CORAL_BLOCK, Blocks.BRAIN_CORAL_BLOCK, Blocks.BUBBLE_CORAL_BLOCK,
+            Blocks.FIRE_CORAL_BLOCK, Blocks.HORN_CORAL_BLOCK, Blocks.REDSTONE_BLOCK,
+            Blocks.CARTOGRAPHY_TABLE, Blocks.CRAFTING_TABLE, Blocks.FLETCHING_TABLE,
+            Blocks.SMITHING_TABLE, Blocks.BEACON
+    );
     
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(PowerTool.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, PowerTool.MODID);
@@ -115,6 +138,7 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, CosmeticFurnace> COSMETIC_BLAST_FURNACE;
     public static DeferredHolder<Block, CosmeticFurnace> COSMETIC_SMOKER;
     public static DeferredHolder<Block, CosmeticBarrel> COSMETIC_BARREL;
+    public static DeferredHolder<Block, CosmeticGrindstone> COSMETIC_GRINDSTONE;
     
     public static DeferredHolder<Block, HolographicSignBlock> HOLOGRAPHIC_SIGN;
     public static DeferredHolder<Block, HolographicSignBlock> LINK_HOLOGRAPHIC_SIGN;
@@ -196,6 +220,7 @@ public class PowerToolBlocks {
         COSMETIC_HOPPER = BLOCKS.registerBlock("cosmetic_hopper", CosmeticHopper::new,() -> BlockBehaviour.Properties.ofFullCopy(Blocks.HOPPER));
         COSMETIC_CAMPFIRE = BLOCKS.registerBlock("cosmetic_campfire", (p) -> new CosmeticCampfireBlock(true, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CAMPFIRE));
         COSMETIC_SOUL_CAMPFIRE = BLOCKS.registerBlock("cosmetic_soul_campfire", (p) -> new CosmeticCampfireBlock(false, p),() -> BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_CAMPFIRE));
+        COSMETIC_GRINDSTONE = BLOCKS.registerBlock("cosmetic_grindstone", CosmeticGrindstone::new, () -> BlockBehaviour.Properties.ofFullCopy(Blocks.GRINDSTONE));
         HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.COMMON));
         LINK_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("link_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.URL));
         RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("raw_json_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.RAW_JSON));
@@ -299,10 +324,24 @@ public class PowerToolBlocks {
         regTrapDoors(Map.of(BlockSetType.COPPER, Blocks.WAXED_WEATHERED_COPPER_TRAPDOOR), "waxed_weathered_copper");
         regTrapDoors(Map.of(BlockSetType.COPPER, Blocks.WAXED_OXIDIZED_COPPER_TRAPDOOR), "waxed_oxidized_copper");
         
+        regCosmetic(List.of(
+                Blocks.TUBE_CORAL, Blocks.BRAIN_CORAL, Blocks.BUBBLE_CORAL,
+                Blocks.FIRE_CORAL, Blocks.HORN_CORAL
+        ), CosmeticCoralPlant::new);
+        regCosmeticCoralFans(Map.of(
+                Blocks.TUBE_CORAL_FAN, Blocks.TUBE_CORAL_WALL_FAN,
+                Blocks.BRAIN_CORAL_FAN, Blocks.BRAIN_CORAL_WALL_FAN,
+                Blocks.BUBBLE_CORAL_FAN, Blocks.BUBBLE_CORAL_WALL_FAN,
+                Blocks.FIRE_CORAL_FAN, Blocks.FIRE_CORAL_WALL_FAN,
+                Blocks.HORN_CORAL_FAN, Blocks.HORN_CORAL_WALL_FAN
+        ));
         regCosmetic(SIMPLE_BLOCKS, CosmeticSimpleBlock::new);
         regCosmetic(List.of(Blocks.ICE), CosmeticHalfTransparentBlock::new);
         regCosmetic(List.of(Blocks.ENCHANTING_TABLE), CosmeticWaterloggedBlock::new);
-        regCosmetic(List.of(Blocks.STONECUTTER), CosmeticHorizontalDirectionalBlock::new);
+        regCosmetic(List.of(Blocks.COMPOSTER), CosmeticComposter::new);
+        regCosmetic(List.of(Blocks.CAULDRON), CosmeticCauldron::new);
+        regCosmetic(List.of(Blocks.ANVIL), CosmeticAnvil::new);
+        regCosmetic(List.of(Blocks.STONECUTTER, Blocks.CHISELED_BOOKSHELF), CosmeticHorizontalDirectionalBlock::new);
         
         COSMETIC_BEEHIVE = BLOCKS.registerBlock("cosmetic_beehive", CosmeticBeehive::new,() -> BlockBehaviour.Properties.ofFullCopy(Blocks.BEEHIVE));
         COSMETIC_FURNACE = BLOCKS.registerBlock("cosmetic_furnace", CosmeticFurnace::new,() -> BlockBehaviour.Properties.ofFullCopy(Blocks.FURNACE));
@@ -325,6 +364,7 @@ public class PowerToolBlocks {
         ITEMS.registerItem("cosmetic_hopper", (p) -> new PowerToolBlockItem(COSMETIC_HOPPER.get(), p));
         ITEMS.registerItem("cosmetic_campfire", (p) -> new PowerToolBlockItem(COSMETIC_CAMPFIRE.get(), p));
         ITEMS.registerItem("cosmetic_soul_campfire", (p) -> new PowerToolBlockItem(COSMETIC_SOUL_CAMPFIRE.get(), p));
+        ITEMS.registerItem("cosmetic_grindstone", (p) -> new PowerToolBlockItem(COSMETIC_GRINDSTONE.get(), p));
         ITEMS.registerItem("holographic_sign", (p) -> new PowerToolBlockItem(HOLOGRAPHIC_SIGN.get(), p));
         ITEMS.registerItem("link_holographic_sign", (p) -> new PowerToolBlockItem(LINK_HOLOGRAPHIC_SIGN.get(), p));
         ITEMS.registerItem("raw_json_holographic_sign", (p) -> new PowerToolBlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), p));
@@ -368,7 +408,7 @@ public class PowerToolBlocks {
             ITEMS.registerItem(name, (p) -> new PowerToolBlockItem(block.get(), p));
         }
     }
-    
+
     private static void regCosmetic(List<Block> existing, Function<BlockBehaviour.Properties, Block> factory) {
         for (var existingBlock : existing) {
             var name = "cosmetic_" + BuiltInRegistries.BLOCK.getKey(existingBlock).getPath();
@@ -377,6 +417,20 @@ public class PowerToolBlocks {
             if (flag) properties.noOcclusion();
             var block = BLOCKS.registerBlock(name, factory, () -> properties);
             ITEMS.registerItem(name, (p) -> new PowerToolBlockItem(block.get(), p));
+        }
+    }
+
+    private static void regCosmeticCoralFans(Map<Block, Block> existing) {
+        for (var entry : existing.entrySet()) {
+            var floorName = "cosmetic_" + BuiltInRegistries.BLOCK.getKey(entry.getKey()).getPath();
+            var wallName = "cosmetic_" + BuiltInRegistries.BLOCK.getKey(entry.getValue()).getPath();
+            var floorBlock = BLOCKS.registerBlock(floorName, CosmeticCoralFan::new,
+                    () -> BlockBehaviour.Properties.ofFullCopy(entry.getKey()));
+            var wallBlock = BLOCKS.registerBlock(wallName, CosmeticCoralWallFan::new,
+                    () -> BlockBehaviour.Properties.ofFullCopy(entry.getValue()));
+            ITEMS.registerItem(floorName, properties -> new CosmeticStandingAndWallBlockItem(
+                    floorBlock.get(), wallBlock.get(), Direction.DOWN, properties
+            ));
         }
     }
     

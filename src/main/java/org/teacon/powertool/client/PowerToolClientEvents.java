@@ -12,10 +12,13 @@ import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -31,6 +34,7 @@ import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.fluid.FluidTintSources;
@@ -62,6 +66,7 @@ import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlock
 import org.teacon.powertool.client.renders.item.CommandRuneSpecialRenderer;
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
+import org.teacon.powertool.item.PowerToolItems;
 import org.teacon.powertool.menu.PowerToolMenus;
 import org.teacon.powertool.network.server.UndoCreativeBlockBreakPacket;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -71,17 +76,57 @@ import java.util.List;
 @NonNullByDefault
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class PowerToolClientEvents {
-    
+    private static final GizmoStyle DISPLAY_MODE_GIZMO_STYLE = new GizmoStyle(0xff4b1cfc, 4, 0);
+    private static final GizmoStyle STATIC_MODE_GIZMO_STYLE = new GizmoStyle(0xffefe73e, 4, 0);
+
     public static int tickCount = 0;
-    
+
     @SubscribeEvent
     public static void onScreenOpen(ScreenEvent.Opening event) {
         if (event.getScreen() instanceof CommandBlockEditScreen screen
-                && screen.autoCommandBlock instanceof PeriodicCommandBlockEntity blockEntity) {
+            && screen.autoCommandBlock instanceof PeriodicCommandBlockEntity blockEntity) {
             event.setNewScreen(new PeriodicCommandBlockEditScreen(blockEntity));
         }
     }
-    
+
+    @SubscribeEvent
+    public static void on(SubmitCustomGeometryEvent event) {
+        var player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+
+        var mainHandItem = player.getMainHandItem();
+        var offhandItem = player.getOffhandItem();
+        boolean showDisplayMode = mainHandItem.is(PowerToolItems.DISPLAY_MODE_TOOL.get())
+            || offhandItem.is(PowerToolItems.DISPLAY_MODE_TOOL.get());
+        boolean showStaticMode = mainHandItem.is(PowerToolItems.STATIC_MODE_TOOL.get())
+            || offhandItem.is(PowerToolItems.STATIC_MODE_TOOL.get());
+        if (!showDisplayMode && !showStaticMode) {
+            return;
+        }
+
+        ChunkPos centerChunk = player.chunkPosition();
+        for (int chunkXOffset = -1; chunkXOffset <= 1; chunkXOffset++) {
+            for (int chunkZOffset = -1; chunkZOffset <= 1; chunkZOffset++) {
+                ChunkPos chunkPos = new ChunkPos(
+                    centerChunk.x() + chunkXOffset,
+                    centerChunk.z() + chunkZOffset
+                );
+                if (showDisplayMode) {
+                    for (BlockPos blockPos : AccessControlClient.INSTANCE.getDisplayModeData(chunkPos)) {
+                        Gizmos.cuboid(blockPos, 0.02f, DISPLAY_MODE_GIZMO_STYLE);
+                    }
+                }
+                if (showStaticMode) {
+                    for (BlockPos blockPos : AccessControlClient.INSTANCE.getStaticModeData(chunkPos)) {
+                        Gizmos.cuboid(blockPos, 0.01f, STATIC_MODE_GIZMO_STYLE);
+                    }
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
         tickCount++;
@@ -91,10 +136,10 @@ public class PowerToolClientEvents {
     public static void onKeyInput(InputEvent.Key event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (event.getAction() == InputConstants.PRESS && event.getKey() == GLFW.GLFW_KEY_Z
-                && (event.getModifiers() & InputConstants.MOD_CONTROL) != 0
-                && minecraft.screen == null
-                && minecraft.player != null
-                && minecraft.player.isCreative()) {
+            && (event.getModifiers() & InputConstants.MOD_CONTROL) != 0
+            && minecraft.screen == null
+            && minecraft.player != null
+            && minecraft.player.isCreative()) {
             ClientPacketDistributor.sendToServer(UndoCreativeBlockBreakPacket.INSTANCE);
         }
     }
@@ -108,116 +153,134 @@ public class PowerToolClientEvents {
      * @return The lower right pos of rendered area.
      */
     @SuppressWarnings("SameParameterValue")
-    public static Vector2i drawRegisterInfo(Minecraft mc, GuiGraphicsExtractor guiGraphics, ItemStack item, int xOffset, int yOffset, Component componentTop, Component componentBottom) {
+    public static Vector2i drawRegisterInfo(
+        Minecraft mc,
+        GuiGraphicsExtractor guiGraphics,
+        ItemStack item,
+        int xOffset,
+        int yOffset,
+        Component componentTop,
+        Component componentBottom
+    ) {
         Window window = mc.getWindow();
         int x = window.getGuiScaledWidth() / 2 + xOffset;
         int y = window.getGuiScaledHeight() / 2 + yOffset;
-        
+
         if (!componentTop.getString().isEmpty()) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().scale(0.75F, 0.75F);
             guiGraphics.text(mc.font, componentTop, (int) ((x + 8) / 0.75F), (int) (y / 0.75F), 0xFFB0B0B0, false);
             guiGraphics.pose().popMatrix();
         }
-        
+
         guiGraphics.item(item, x + 8, y + 10);
         guiGraphics.itemDecorations(mc.font, item, x + 8, y + 10);
-        
+
         Component itemDisplayName = item.getHoverName()
-                .copy()
-                .withStyle(item.getRarity().getStyleModifier())
-                .append(" × " + item.getCount());
+            .copy()
+            .withStyle(item.getRarity().getStyleModifier())
+            .append(" × " + item.getCount());
         guiGraphics.text(mc.font, itemDisplayName, x + 28, y + 14, 0xFFFFFFFF, false);
-        
+
         if (!componentBottom.getString().isEmpty()) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().scale(0.75F, 0.75F);
-            guiGraphics.text(mc.font, componentBottom, (int) ((x + 8) / 0.75F), (int) ((y + 30) / 0.75F), 0xFFB0B0B0, false);
+            guiGraphics.text(
+                mc.font,
+                componentBottom,
+                (int) ((x + 8) / 0.75F),
+                (int) ((y + 30) / 0.75F),
+                0xFFB0B0B0,
+                false
+            );
             guiGraphics.pose().popMatrix();
         }
-        
+
         var xSize = xOffset + 28 + mc.font.width(itemDisplayName);
         var ySize = yOffset + 40;
         return new Vector2i(xSize, ySize);
     }
-    
+
     @SubscribeEvent
     static void onMousePress(ScreenEvent.MouseButtonPressed.Pre event) {
         event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
-    
+
     @SubscribeEvent
     static void onMouseRelease(ScreenEvent.MouseButtonReleased.Pre event) {
         event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
-    
+
     @SubscribeEvent
     static void onKeyPress(ScreenEvent.KeyPressed.Pre event) {
         if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
             event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
         }
     }
-    
+
     @SubscribeEvent
     static void onKeyRelease(ScreenEvent.KeyReleased.Pre event) {
         if (event.getKeyCode() != GLFW.GLFW_KEY_ESCAPE) {
             event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
         }
     }
-    
+
     @SubscribeEvent
     static void onCharTyped(ScreenEvent.CharacterTyped.Pre event) {
         event.setCanceled(AccessControlClient.INSTANCE.isDisplayModeEnabledOn(event.getScreen()));
     }
-    
+
     @SubscribeEvent
     static void onScreenClosing(ScreenEvent.Closing event) {
         AccessControlClient.INSTANCE.screenClosed();
     }
-    
+
     @SubscribeEvent
     static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         AccessControlClient.INSTANCE.clear();
         CreativeNoClipClient.setEnabled(false);
     }
-    
+
     @SubscribeEvent
     static void onPlayerClone(ClientPlayerNetworkEvent.Clone event) {
         var p1 = event.getOldPlayer();
         var p2 = event.getNewPlayer();
-        if (p1.level().dimension() != p2.level().dimension()) AccessControlClient.INSTANCE.clear();
+        if (p1.level().dimension() != p2.level().dimension()) {
+            AccessControlClient.INSTANCE.clear();
+        }
     }
-    
+
     @SubscribeEvent
     public static void onRegDebugOverlayEntry(RegisterDebugEntriesEvent event) {
-        event.register(VanillaUtils.modRL("block_access_control_mode"), new DebugEntryLookingAt() {
-                    @Override
-                    public HitResult getHitResult(Entity cameraEntity) {
-                        return cameraEntity.pick(20.0, 0.0F, false);
-                    }
-                    
-                    @Override
-                    public void extractInfo(List<String> result, Level level, BlockPos pos) {
-                        boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(pos);
-                        boolean isCachedModeEnabled = CachedModeClient.INSTANCE.isCachedModeEnabledOn(pos);
-                        result.add(
-                                "Display Mode: "
-                                        + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
-                        );
-                        result.add(
-                                "Cached Mode: "
-                                        + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
-                        );
-                    }
-                    
-                    @Override
-                    public Identifier group() {
-                        return DebugEntryLookingAt.BLOCK_GROUP;
-                    }
+        event.register(
+            VanillaUtils.modRL("block_access_control_mode"), new DebugEntryLookingAt() {
+                @Override
+                public HitResult getHitResult(Entity cameraEntity) {
+                    return cameraEntity.pick(20.0, 0.0F, false);
                 }
+
+                @Override
+                public void extractInfo(List<String> result, Level level, BlockPos pos) {
+                    boolean isDisplayModeEnabled = AccessControlClient.INSTANCE.isDisplayModeEnabledAt(pos);
+                    boolean isCachedModeEnabled = CachedModeClient.INSTANCE.isCachedModeEnabledOn(pos);
+                    result.add(
+                        "Display Mode: "
+                            + (isDisplayModeEnabled ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                    );
+                    result.add(
+                        "Cached Mode: "
+                            + ((isCachedModeEnabled) ? ChatFormatting.GREEN + "Enabled" : ChatFormatting.RED + "Disabled")
+                    );
+                }
+
+                @Override
+                public Identifier group() {
+                    return DebugEntryLookingAt.BLOCK_GROUP;
+                }
+            }
         );
     }
-    
+
     @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
     public static final class OnModBus {
         @SubscribeEvent
@@ -236,48 +299,79 @@ public class PowerToolClientEvents {
 
         @SubscribeEvent
         public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(), ItemDisplayBlockEntityRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(), ItemSupplierBlockEntityRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), HolographicSignBlockEntityRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), LinkHolographicSignBlockEntityRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), RawJsonHolographicSignBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.ITEM_DISPLAY_BLOCK_ENTITY.get(),
+                ItemDisplayBlockEntityRenderer::new
+            );
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.ITEM_SUPPLIER_BLOCK_ENTITY.get(),
+                ItemSupplierBlockEntityRenderer::new
+            );
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(),
+                HolographicSignBlockEntityRenderer::new
+            );
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(),
+                LinkHolographicSignBlockEntityRenderer::new
+            );
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(),
+                RawJsonHolographicSignBlockEntityRenderer::new
+            );
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.JEI_RECIPE_DISPLAY_BLOCK_ENTITY.get(), JEIRecipeDisplayBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.JEI_RECIPE_DISPLAY_BLOCK_ENTITY.get(),
+                JEIRecipeDisplayBlockEntityRenderer::new
+            );
 //            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
-            event.registerBlockEntityRenderer(PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(), BezierCurveBlockRenderer::new);
-            
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.BEZIER_CURVE_BLOCK_ENTITY.get(),
+                BezierCurveBlockRenderer::new
+            );
+
             event.registerEntityRenderer(PowerToolEntities.MARTING.get(), MartingCarEntityRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.FENCE_KNOT.get(), FenceKnotRenderer::new);
             event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_BOAT.get(), AutoVanishBoatRenderer::new);
-            event.registerEntityRenderer(PowerToolEntities.AUTO_VANISH_MINECART.get(), (c) -> new MinecartRenderer(c, ModelLayers.MINECART));
+            event.registerEntityRenderer(
+                PowerToolEntities.AUTO_VANISH_MINECART.get(),
+                (c) -> new MinecartRenderer(c, ModelLayers.MINECART)
+            );
         }
-        
+
         @SubscribeEvent
         public static void onRegModelLayerDef(EntityRenderersEvent.RegisterLayerDefinitions event) {
             for (var v : MartingCarEntity.Variant.values()) {
-                event.registerLayerDefinition(MartingCarEntityRenderer.getModelLayer(v), MartingCarEntityModel::createBodyLayer);
+                event.registerLayerDefinition(
+                    MartingCarEntityRenderer.getModelLayer(v),
+                    MartingCarEntityModel::createBodyLayer
+                );
             }
         }
-        
+
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onRegClientExtensions(RegisterClientExtensionsEvent event) {
-            event.registerFluidType(new IClientFluidTypeExtensions() {
-                @Override
-                public Identifier getRenderOverlayTexture(Minecraft mc) {
-                    return Identifier.withDefaultNamespace("textures/misc/underwater.png");
-                }
-            }, PowerToolBlocks.FAKE_WATER_TYPE.get());
+            event.registerFluidType(
+                new IClientFluidTypeExtensions() {
+                    @Override
+                    public Identifier getRenderOverlayTexture(Minecraft mc) {
+                        return Identifier.withDefaultNamespace("textures/misc/underwater.png");
+                    }
+                }, PowerToolBlocks.FAKE_WATER_TYPE.get()
+            );
         }
 
         @SubscribeEvent
         public static void onRegisterFluidModels(RegisterFluidModelsEvent event) {
-            event.register(new FluidModel.Unbaked(
+            event.register(
+                new FluidModel.Unbaked(
                     new Material(Identifier.withDefaultNamespace("block/water_still"), false),
                     new Material(Identifier.withDefaultNamespace("block/water_flow"), false),
                     null,
                     FluidTintSources.water()
-            ), PowerToolBlocks.FAKE_WATER);
+                ), PowerToolBlocks.FAKE_WATER
+            );
         }
-        
+
     }
 }

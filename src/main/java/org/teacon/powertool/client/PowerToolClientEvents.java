@@ -1,6 +1,7 @@
 package org.teacon.powertool.client;
 
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -24,6 +25,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -34,6 +36,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.fluid.FluidTintSources;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
@@ -64,6 +67,7 @@ import org.teacon.powertool.client.renders.item.CommandRuneSpecialRenderer;
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.menu.PowerToolMenus;
+import org.teacon.powertool.network.server.UndoCreativeBlockBreakPacket;
 import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.List;
@@ -85,6 +89,18 @@ public class PowerToolClientEvents {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
         tickCount++;
+    }
+
+    @SubscribeEvent
+    public static void onKeyInput(InputEvent.Key event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (event.getAction() == InputConstants.PRESS && event.getKey() == GLFW.GLFW_KEY_Z
+                && (event.getModifiers() & InputConstants.MOD_CONTROL) != 0
+                && minecraft.screen == null
+                && minecraft.player != null
+                && minecraft.player.isCreative()) {
+            ClientPacketDistributor.sendToServer(UndoCreativeBlockBreakPacket.INSTANCE);
+        }
     }
 
     /**

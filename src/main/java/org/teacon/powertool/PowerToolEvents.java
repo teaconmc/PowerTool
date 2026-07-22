@@ -61,7 +61,10 @@ public class PowerToolEvents {
         if (maybeEntity != null) {
             uuid = maybeEntity.getUUID();
         }
-        CMD_TRACING_LOGGER.info("Command is executed. Command: '{}', executor: {} (Display Name = {}, UUID = {})", rawString, realSource, executorName, uuid);
+        // Log the thing at DEBUG level to avoid console spam.
+        // (This can be especially annoying if you have command blocks constantly being triggered.)
+        // TODO Need a better string representation of BaseCommandBlock$CloseableCommandBlockSource
+        CMD_TRACING_LOGGER.debug("Command is executed. Command: '{}', executor: {} (Display Name = {}, UUID = {})", rawString, realSource, executorName, uuid);
     }
     
     @SubscribeEvent

@@ -106,6 +106,7 @@
   "item.powertool.transparent_brush":"Transparent Brush",
   "item.powertool.command_wand": "Command Wand",
   "item.powertool.examine_holo_glass": "Examine Holo Glass",
+  "item.powertool.adjustable_spyglass": "Adjustable Spyglass",
   "tooltip.powertool.examine_holo_glass": "See through selected block entities",
   "item.powertool.command_rune": "Command Rune",
   "item.powertool.tonk": "\"TONK\"",

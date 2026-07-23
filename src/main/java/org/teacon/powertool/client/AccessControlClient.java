@@ -52,6 +52,14 @@ public class AccessControlClient {
     public void updateStaticModeData(ChunkPos chunkPos, List<BlockPos> blockPosList) {
         staticModeData.put(chunkPos, blockPosList);
     }
+
+    public Iterable<BlockPos> getDisplayModeData(ChunkPos chunkPos) {
+        return displayModeData.getOrDefault(chunkPos, List.of());
+    }
+
+    public Iterable<BlockPos> getStaticModeData(ChunkPos chunkPos) {
+        return staticModeData.getOrDefault(chunkPos, List.of());
+    }
     
     public boolean isDisplayModeEnabledAt(BlockPos blockPos) {
         ChunkPos pos = ChunkPos.containing(blockPos);

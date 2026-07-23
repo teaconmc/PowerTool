@@ -80,6 +80,9 @@ import java.util.List;
 @NonNullByDefault
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class PowerToolClientEvents {
+    
+    private static final GizmoStyle DISPLAY_MODE_GIZMO_STYLE = new GizmoStyle(0xff4b1cfc, 4, 0);
+    private static final GizmoStyle STATIC_MODE_GIZMO_STYLE = new GizmoStyle(0xffefe73e, 4, 0);
 
     public static int tickCount = 0;
 

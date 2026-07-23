@@ -30,14 +30,20 @@ public class SizedCache<K,V> {
     
     public void tick(){
         if(cache.size() >= size){
-            var newMap = new HashMap<K,V>();
-            for(var key : lastTickUsed){
-                if(lastTickUsed.contains(key)){
-                   newMap.put(key, cache.get(key)); 
+            var iter = cache.entrySet().iterator();
+            while(iter.hasNext()){
+                var entry = iter.next();
+                if (!lastTickUsed.contains(entry.getKey())) {
+                    if(entry.getValue() instanceof AutoCloseable autoCloseable){
+                        try {
+                            autoCloseable.close();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    iter.remove();
                 }
             }
-            cache.clear();
-            cache.putAll(newMap);
         }
         lastTickUsed.clear();
     }

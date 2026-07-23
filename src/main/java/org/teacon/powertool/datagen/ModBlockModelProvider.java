@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.item.SpecialModelWrapper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.TrapDoorBlock;
@@ -50,8 +51,15 @@ public class ModBlockModelProvider extends ModelProvider {
                         new CuboidItemModelWrapper.Unbaked(ModelLocationUtils.getModelLocation(PowerToolItems.COMMAND_RUNE.get()), Optional.empty(), Collections.emptyList()),
                         new SpecialModelWrapper.Unbaked(ModelLocationUtils.getModelLocation(PowerToolItems.COMMAND_RUNE.get()), Optional.empty(), new CommandRuneSpecialRenderer.Unbaked())
                 ),Optional.empty()),new ClientItem.Properties(false, false, 1.0F)));
+        this.itemModelGenerators.itemModelOutput.register(PowerToolItems.ADJUSTABLE_SPYGLASS.get(), new ClientItem(
+                ItemModelGenerators.createFlatModelDispatch(
+                        new CuboidItemModelWrapper.Unbaked(Identifier.withDefaultNamespace("item/spyglass"), Optional.empty(), Collections.emptyList()),
+                        new CuboidItemModelWrapper.Unbaked(Identifier.withDefaultNamespace("item/spyglass_in_hand"), Optional.empty(), Collections.emptyList())
+                ),
+                new ClientItem.Properties(false, false, 1.0F)
+        ));
         for(var entry : PowerToolItems.ITEMS.getEntries()) {
-            if(entry.get() == PowerToolItems.COMMAND_RUNE.get()) continue;
+            if(entry.get() == PowerToolItems.COMMAND_RUNE.get() || entry.get() == PowerToolItems.ADJUSTABLE_SPYGLASS.get()) continue;
             this.itemModelGenerators.itemModelOutput.register(entry.get(), new ClientItem(
                     new CuboidItemModelWrapper.Unbaked(ModelLocationUtils.getModelLocation(entry.get()), Optional.empty(), Collections.emptyList()),
                     new ClientItem.Properties(false, false, 1.0F)

@@ -57,6 +57,7 @@ public class PowerToolItems {
     public static DeferredHolder<Item, TextureExtractor> TEXTURE_EXTRACTOR;
     public static DeferredHolder<Item, ExamineHoloGlass> EXAMINE_HOLO_GLASS;
     public static DeferredHolder<Item, CommandRune> COMMAND_RUNE;
+    public static DeferredHolder<Item, AdjustableSpyglassItem> ADJUSTABLE_SPYGLASS;
     
     public static Supplier<Item> MARTING_RED = ITEMS.registerItem("marting_car_red", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.RED));
     public static Supplier<Item> MARTING_GREEN = ITEMS.registerItem("marting_car_green", (p) -> new MartingCarItem(p, MartingCarEntity.Variant.GREEN));
@@ -76,6 +77,7 @@ public class PowerToolItems {
         ITEMS.registerItem("transparent_brush", TransparentBrushItem::new);
         EXAMINE_HOLO_GLASS = ITEMS.registerItem("examine_holo_glass", ExamineHoloGlass::new);
         COMMAND_RUNE = ITEMS.registerItem("command_rune", CommandRune::new);
+        ADJUSTABLE_SPYGLASS = ITEMS.registerItem("adjustable_spyglass", AdjustableSpyglassItem::new);
         TONK = ITEMS.registerItem("tonk", (p) -> new TonkItem(p, FenceKnotEntity.Type.Thin));
         THICK_TONK = ITEMS.registerItem("thick_tonk", (p) -> new TonkItem(p, FenceKnotEntity.Type.Normal));
         EXTRA_THICK_TONK = ITEMS.registerItem("extra_thick_tonk", (p) -> new TonkItem(p, FenceKnotEntity.Type.Thick));

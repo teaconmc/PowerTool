@@ -12,10 +12,13 @@ import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.entity.MinecartRenderer;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
@@ -33,6 +36,7 @@ import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.fluid.FluidTintSources;
@@ -66,6 +70,7 @@ import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlock
 import org.teacon.powertool.client.renders.item.CommandRuneSpecialRenderer;
 import org.teacon.powertool.entity.MartingCarEntity;
 import org.teacon.powertool.entity.PowerToolEntities;
+import org.teacon.powertool.item.PowerToolItems;
 import org.teacon.powertool.menu.PowerToolMenus;
 import org.teacon.powertool.network.server.UndoCreativeBlockBreakPacket;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -87,6 +92,44 @@ public class PowerToolClientEvents {
     }
 
     @SubscribeEvent
+    public static void on(SubmitCustomGeometryEvent event) {
+        var player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+
+        var mainHandItem = player.getMainHandItem();
+        var offhandItem = player.getOffhandItem();
+        boolean showDisplayMode = mainHandItem.is(PowerToolItems.DISPLAY_MODE_TOOL.get())
+            || offhandItem.is(PowerToolItems.DISPLAY_MODE_TOOL.get());
+        boolean showStaticMode = mainHandItem.is(PowerToolItems.STATIC_MODE_TOOL.get())
+            || offhandItem.is(PowerToolItems.STATIC_MODE_TOOL.get());
+        if (!showDisplayMode && !showStaticMode) {
+            return;
+        }
+
+        ChunkPos centerChunk = player.chunkPosition();
+        for (int chunkXOffset = -1; chunkXOffset <= 1; chunkXOffset++) {
+            for (int chunkZOffset = -1; chunkZOffset <= 1; chunkZOffset++) {
+                ChunkPos chunkPos = new ChunkPos(
+                    centerChunk.x() + chunkXOffset,
+                    centerChunk.z() + chunkZOffset
+                );
+                if (showDisplayMode) {
+                    for (BlockPos blockPos : AccessControlClient.INSTANCE.getDisplayModeData(chunkPos)) {
+                        Gizmos.cuboid(blockPos, 0.02f, DISPLAY_MODE_GIZMO_STYLE);
+                    }
+                }
+                if (showStaticMode) {
+                    for (BlockPos blockPos : AccessControlClient.INSTANCE.getStaticModeData(chunkPos)) {
+                        Gizmos.cuboid(blockPos, 0.01f, STATIC_MODE_GIZMO_STYLE);
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
         tickCount++;
     }
@@ -95,10 +138,10 @@ public class PowerToolClientEvents {
     public static void onKeyInput(InputEvent.Key event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (event.getAction() == InputConstants.PRESS && event.getKey() == GLFW.GLFW_KEY_Z
-                && (event.getModifiers() & InputConstants.MOD_CONTROL) != 0
-                && minecraft.screen == null
-                && minecraft.player != null
-                && minecraft.player.isCreative()) {
+            && (event.getModifiers() & InputConstants.MOD_CONTROL) != 0
+            && minecraft.screen == null
+            && minecraft.player != null
+            && minecraft.player.isCreative()) {
             ClientPacketDistributor.sendToServer(UndoCreativeBlockBreakPacket.INSTANCE);
         }
     }
@@ -204,7 +247,9 @@ public class PowerToolClientEvents {
     static void onPlayerClone(ClientPlayerNetworkEvent.Clone event) {
         var p1 = event.getOldPlayer();
         var p2 = event.getNewPlayer();
-        if (p1.level().dimension() != p2.level().dimension()) AccessControlClient.INSTANCE.clear();
+        if (p1.level().dimension() != p2.level().dimension()) {
+            AccessControlClient.INSTANCE.clear();
+        }
     }
 
     @SubscribeEvent

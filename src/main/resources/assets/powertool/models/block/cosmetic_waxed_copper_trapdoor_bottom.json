@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:block/copper_trapdoor_bottom",
+  "render_type": "cutout"
+}

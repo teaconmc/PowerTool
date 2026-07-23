@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -33,11 +34,13 @@ import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.JEIRecipeDisplayBlockEntity;
+import org.teacon.powertool.client.b3d.DynamicRenderSetup;
 import org.teacon.powertool.client.gui.JEIRecipeDisplayScreen;
 import org.teacon.powertool.compat.jei.PowerToolJEIPlugin;
 import org.teacon.powertool.utils.SizedCache;
 import org.teacon.powertool.utils.VanillaUtils;
 
+import java.util.Map;
 import java.util.Objects;
 
 @NonNullByDefault
@@ -45,52 +48,51 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
     
     @Nullable
     public static SizedCache<RecipeKey, RecipeRenderCache> recipeLayoutCache;
-
+    
     private final SizedCache<RecipeKey, RecipeRenderCache> cache;
     
-
+    
     public JEIRecipeDisplayBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
         this.cache = new SizedCache<>();
         recipeLayoutCache = this.cache;
     }
-
+    
     @Override
     public RenderState createRenderState() {
         return new RenderState();
     }
-
+    
     @Override
     public void extractRenderState(JEIRecipeDisplayBlockEntity blockEntity, RenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        if(PowerToolJEIPlugin.runtime != null && blockEntity.recipeType != null && blockEntity.recipeId != null){
+        if (PowerToolJEIPlugin.runtime != null && blockEntity.recipeType != null && blockEntity.recipeId != null) {
             var key = new RecipeKey(blockEntity.recipeType, blockEntity.recipeId, blockEntity.getBlockPos());
             state.cacheEntry = cache.getOrCreate(key, RecipeRenderCache::create);
-            if(Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult){
+            if (Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult) {
                 state.hit = blockHitResult.getBlockPos().equals(blockEntity.getBlockPos());
-            }
-            else state.hit = false;
+            } else state.hit = false;
             state.partialTicks = partialTicks;
             state.yRotation = blockEntity.yRotation;
         }
     }
     
-    private void renderText(Component text, PoseStack poseStack, SubmitNodeCollector submitNodeCollector){
+    private void renderText(Component text, PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
         var w = Minecraft.getInstance().font.width(text);
         poseStack.pushPose();
-        poseStack.translate(0.5f,0.6f,0.5f);
+        poseStack.translate(0.5f, 0.6f, 0.5f);
         poseStack.scale(0.025f, -0.025f, 0.025f);
-        poseStack.translate(-w/2f,0,0);
-        submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
+        poseStack.translate(-w / 2f, 0, 0);
+        submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(), false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
         poseStack.popPose();
         poseStack.pushPose();
-        poseStack.translate(0.5f,0.6f,0.5f);
+        poseStack.translate(0.5f, 0.6f, 0.5f);
         poseStack.scale(0.025f, -0.025f, 0.025f);
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
-        poseStack.translate(-w/2f,0,0);
-        submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(),false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
+        poseStack.translate(-w / 2f, 0, 0);
+        submitNodeCollector.submitText(poseStack, 0, 0, text.getVisualOrderText(), false, Font.DisplayMode.POLYGON_OFFSET, 15728880, -1, 0, 0);
         poseStack.popPose();
     }
-
+    
     @Override
     public void submit(RenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var entry = state.cacheEntry;
@@ -98,48 +100,47 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             renderText(Component.translatable("powertool.jei_recipe_display.init_jei"), poseStack, submitNodeCollector);
             return;
         }
-        if(entry == null || !entry.valid()){
+        if (entry == null || !entry.valid()) {
             renderText(Component.translatable("powertool.jei_recipe_display.unrecognized_recipe").withStyle(ChatFormatting.RED), poseStack, submitNodeCollector);
             return;
         }
         assert entry.renderType != null && entry.textureTarget != null;
         var cameraEntity = Minecraft.getInstance().getCameraEntity();
-        if(cameraEntity != null){
+        if (cameraEntity != null) {
             var eye = cameraEntity.getEyePosition(state.partialTicks);
             var dir = cameraEntity.getViewVector(state.partialTicks);
             var pair = entry.getWorldCorners(state.blockPos, state.yRotation).raycast(eye.toVector3f(), dir.toVector3f());
             var revDir = entry.renderState.revDir;
             poseStack.pushPose();
-            poseStack.translate(0.5f,(1-entry.getHeight() * 0.01f)/2f,0.5f);
+            poseStack.translate(0.5f, (1 - entry.getHeight() * 0.01f) / 2f, 0.5f);
             poseStack.mulPose(Axis.YP.rotationDegrees(state.yRotation));
             poseStack.scale(0.01f, 0.01f, 0.01f);
             submitNodeCollector.submitCustomGeometry(poseStack, entry.renderType, (pose, consumer) -> {
                 var w = entry.getWidth();
                 var h = entry.getHeight();
-                float l,r,t,b,z;
-                if(entry.extraSize()){
-                    l = -w/2f - w/4f - (revDir ? 256 : 0);
-                    r =  w/2f + w/4f + (revDir ? 0 : 256);
-                    t = h + h/4f;
-                    b = 0 - h/4f - 256;
+                float l, r, t, b, z;
+                if (entry.extraSize()) {
+                    l = -w / 2f - w / 4f - (revDir ? 256 : 0);
+                    r = w / 2f + w / 4f + (revDir ? 0 : 256);
+                    t = h + h / 4f;
+                    b = 0 - h / 4f - 256;
                     z = revDir ? -0.01f : 0.01f;
-                }
-                else {
-                    l = -w/2f - w/4f;
-                    r =  w/2f + w/4f;
-                    t = h + h/4f;
-                    b = 0 - h/4f;
+                } else {
+                    l = -w / 2f - w / 4f;
+                    r = w / 2f + w / 4f;
+                    t = h + h / 4f;
+                    b = 0 - h / 4f;
                     z = 0;
                 }
-                
-                consumer.addVertex(pose,l, t, z).setUv(1, 1).setColor(-1);
-                consumer.addVertex(pose,r, t, z).setUv(0, 1).setColor(-1);
-                consumer.addVertex(pose,r, b, z).setUv(0, 0).setColor(-1);
-                consumer.addVertex(pose,l, b, z).setUv(1, 0).setColor(-1);
-                consumer.addVertex(pose,l, b, z).setUv(0, 0).setColor(-1);
-                consumer.addVertex(pose,r, b, z).setUv(1, 0).setColor(-1);
-                consumer.addVertex(pose,r, t, z).setUv(1, 1).setColor(-1);
-                consumer.addVertex(pose,l, t, z).setUv(0, 1).setColor(-1);
+                var normalZ = revDir ? -1.0f : 1.0f;
+                consumer.addVertex(pose, l, t, z).setUv(1, 1).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, r, t, z).setUv(0, 1).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, r, b, z).setUv(0, 0).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, l, b, z).setUv(1, 0).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, l, b, z).setUv(0, 0).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, r, b, z).setUv(1, 0).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, r, t, z).setUv(1, 1).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
+                consumer.addVertex(pose, l, t, z).setUv(0, 1).setLight(15728880).setColor(-1).setNormal(0, 0, normalZ);
             });
             poseStack.popPose();
             
@@ -153,16 +154,15 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             entry.renderState.dirty = mouseX != 0 || mouseY != 0 || mouseXOld != mouseX || mouseYOld != mouseY;
             entry.updateTextureSize(mouseX != 0 || mouseY != 0);
             entry.renderState.revDir = pair != null && pair.getSecond();
-        }
-        else{
-            if(entry.renderState.mouseX != 0 || entry.renderState.mouseY != 0){
+        } else {
+            if (entry.renderState.mouseX != 0 || entry.renderState.mouseY != 0) {
                 entry.renderState.mouseX = 0;
                 entry.renderState.mouseY = 0;
                 entry.renderState.dirty = true;
             }
         }
     }
-
+    
     public static class RenderState extends BlockEntityRenderState {
         @Nullable RecipeRenderCache cacheEntry;
         boolean hit;
@@ -170,12 +170,12 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         int yRotation;
     }
     
-    public record RecipeKey(Identifier recipeType, Identifier recipeId, BlockPos pos){
+    public record RecipeKey(Identifier recipeType, Identifier recipeId, BlockPos pos) {
     
     }
     
     //todo 动态大小
-    public static class RecipeRenderCacheState{
+    public static class RecipeRenderCacheState {
         public boolean dirty = false;
         public boolean revDir = false;
         public int mouseX = 0;
@@ -184,21 +184,23 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
         public int sizeY = 0;
     }
     
-    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout, @Nullable TextureTarget textureTarget, @Nullable RenderType renderType, RecipeRenderCacheState renderState){
-    
-        public static RecipeRenderCache create(RecipeKey key){
+    public record RecipeRenderCache(@Nullable IRecipeLayoutDrawable<?> layout, @Nullable TextureTarget textureTarget,
+                                    @Nullable RenderType renderType,
+                                    RecipeRenderCacheState renderState) implements AutoCloseable {
+        
+        public static RecipeRenderCache create(RecipeKey key) {
             var layout = JEIRecipeDisplayScreen.updateRecipeLayout(key.recipeType, key.recipeId);
-            if(layout == null){
+            if (layout == null) {
                 return new RecipeRenderCache(null, null, null, new RecipeRenderCacheState());
             }
             var rect = layout.getRect();
             var target = new TextureTarget(key.recipeId.getPath(), (int) (rect.getWidth() * 6f), (int) (rect.getHeight() * 6f), true);
-            var pipeline = ExtendedRenderPipeline.extendedbuilder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-                    .withLocation(VanillaUtils.modRL(key.recipeId.getPath()))
-                    .withDepthStencilState(DepthStencilState.DEFAULT)
-                    .bindSampler("Sampler0", () -> Pair.of(Objects.requireNonNull(target.getColorTextureView()), SamplerCacheCache.NEAREST_CLAMP))
-                    .buildExtended();
-            var renderType = RenderType.create("jei_recipe_display_ber", RenderSetup.builder(pipeline).createRenderSetup());
+            var renderSetupInner = RenderSetup.builder(RenderPipelines.CUTOUT_BLOCK).useLightmap().createRenderSetup();
+            var renderSetup = new DynamicRenderSetup(renderSetupInner,
+                    () -> Map.of(
+                    "Sampler0", new RenderSetup.TextureAndSampler(Objects.requireNonNull(target.getColorTextureView()), SamplerCacheCache.NEAREST_CLAMP),
+                    "Sampler2", new RenderSetup.TextureAndSampler(Minecraft.getInstance().gameRenderer.lightmap(), SamplerCacheCache.LINEAR_CLAMP)));
+            var renderType = RenderType.create("jei_recipe_display_ber", renderSetup);
             var renderState = new RecipeRenderCacheState();
             renderState.dirty = true;
             var result = new RecipeRenderCache(layout, target, renderType, renderState);
@@ -206,39 +208,44 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             return result;
         }
         
-        public boolean extraSize(){
-            if(this.textureTarget == null) return false;
+        private static Vector3f transform(Matrix4f mat, float x, float y, float z) {
+            Vector4f v = new Vector4f(x, y, z, 1);
+            v.mul(mat);
+            return new Vector3f(v.x(), v.y(), v.z());
+        }
+        
+        public boolean extraSize() {
+            if (this.textureTarget == null) return false;
             return this.textureTarget.width != (int) (this.getWidth() * 6f) && this.textureTarget.height != (int) (this.getHeight() * 6f);
         }
         
-        public void updateTextureSize(boolean extraSize){
-            if(this.layout == null) return;
+        public void updateTextureSize(boolean extraSize) {
+            if (this.layout == null) return;
             var rect = this.layout.getRect();
-            if(extraSize){
+            if (extraSize) {
                 this.renderState.sizeX = (int) (rect.getWidth() * 6f + 1024);
                 this.renderState.sizeY = (int) (rect.getHeight() * 6f + 1024);
-            }
-            else {
+            } else {
                 this.renderState.sizeX = (int) (rect.getWidth() * 6f);
                 this.renderState.sizeY = (int) (rect.getHeight() * 6f);
             }
             
         }
         
-        public boolean valid(){
+        public boolean valid() {
             return layout != null;
         }
         
-        public int getWidth(){
+        public int getWidth() {
             return layout == null ? 0 : layout.getRect().getWidth();
         }
         
-        public int getHeight(){
+        public int getHeight() {
             return layout == null ? 0 : layout.getRect().getHeight();
         }
         
         public WorldQuad getWorldCorners(BlockPos pos, float yRotationDegrees) {
-            if(this.textureTarget == null){
+            if (this.textureTarget == null) {
                 return new WorldQuad();
             }
             Matrix4f mat = new Matrix4f()
@@ -251,16 +258,15 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             
             return new WorldQuad(
                     transform(mat, -w / 2f, h, 0),
-                    transform(mat,  w / 2f, h, 0),
-                    transform(mat,  w / 2f, 0, 0),
+                    transform(mat, w / 2f, h, 0),
+                    transform(mat, w / 2f, 0, 0),
                     transform(mat, -w / 2f, 0, 0)
             );
         }
         
-        private static Vector3f transform(Matrix4f mat, float x, float y, float z) {
-            Vector4f v = new Vector4f(x, y, z, 1);
-            v.mul(mat);
-            return new Vector3f(v.x(), v.y(), v.z());
+        @Override
+        public void close() {
+            if (this.textureTarget != null) this.textureTarget.destroyBuffers();
         }
     }
     
@@ -270,7 +276,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             Vector3f bottomRight,
             Vector3f bottomLeft
     ) {
-        public WorldQuad(){
+        public WorldQuad() {
             this(new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f());
         }
         
@@ -284,7 +290,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
         }
         
-        public @Nullable Pair<Vector2f,Boolean> raycast(Vector3f rayOrigin, Vector3f rayDir) {
+        public @Nullable Pair<Vector2f, Boolean> raycast(Vector3f rayOrigin, Vector3f rayDir) {
             Vector3f p0 = topLeft;
             Vector3f uAxis = new Vector3f(topRight).sub(p0);
             Vector3f vAxis = new Vector3f(bottomLeft).sub(p0);

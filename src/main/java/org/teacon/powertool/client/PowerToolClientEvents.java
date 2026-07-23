@@ -33,6 +33,8 @@ import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -45,12 +47,14 @@ import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.PeriodicCommandBlockEntity;
+import org.teacon.powertool.client.anvilcraft.rendering.CacheableBERenderingPipeline;
 import org.teacon.powertool.client.gui.JEIRecipeDisplayScreen;
 import org.teacon.powertool.client.gui.PeriodicCommandBlockEditScreen;
 import org.teacon.powertool.client.gui.PowerSupplyScreen;
 import org.teacon.powertool.client.gui.RegisterScreen;
 import org.teacon.powertool.client.gui.TextureExtractorScreen;
 import org.teacon.powertool.client.gui.TrashCanWithContainerScreen;
+import org.teacon.powertool.client.renders.BezierCurveRenderingPipeline;
 import org.teacon.powertool.client.renders.ItemDisplayBlockEntityRenderer;
 import org.teacon.powertool.client.renders.ItemSupplierBlockEntityRenderer;
 import org.teacon.powertool.client.renders.JEIRecipeDisplayBlockEntityRenderer;
@@ -76,8 +80,6 @@ import java.util.List;
 @NonNullByDefault
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
 public class PowerToolClientEvents {
-    private static final GizmoStyle DISPLAY_MODE_GIZMO_STYLE = new GizmoStyle(0xff4b1cfc, 4, 0);
-    private static final GizmoStyle STATIC_MODE_GIZMO_STYLE = new GizmoStyle(0xffefe73e, 4, 0);
 
     public static int tickCount = 0;
 
@@ -279,6 +281,41 @@ public class PowerToolClientEvents {
                 }
             }
         );
+    }
+
+    @SubscribeEvent
+    public static void on(RenderFrameEvent.Pre event) {
+        if (CacheableBERenderingPipeline.getInstance() != null) {
+            CacheableBERenderingPipeline.getInstance().runTasks();
+        }
+        var bezierCurveRenderingPipeline = BezierCurveRenderingPipeline.getInstance();
+        if (bezierCurveRenderingPipeline != null) {
+            bezierCurveRenderingPipeline.runTasks();
+        }
+    }
+
+    @SubscribeEvent
+    public static void on(RenderLevelStageEvent.AfterOpaqueBlocks event) {
+        if (CacheableBERenderingPipeline.getInstance() != null) {
+            CacheableBERenderingPipeline.getInstance().render(
+                event.getLevelRenderState().cameraRenderState.cullFrustum,
+                false
+            );
+        }
+        var bezierCurveRenderingPipeline = BezierCurveRenderingPipeline.getInstance();
+        if (bezierCurveRenderingPipeline != null) {
+            bezierCurveRenderingPipeline.render();
+        }
+    }
+
+    @SubscribeEvent
+    public static void on(RenderLevelStageEvent.AfterTranslucentFeatures event) {
+        if (CacheableBERenderingPipeline.getInstance() != null) {
+            CacheableBERenderingPipeline.getInstance().render(
+                event.getLevelRenderState().cameraRenderState.cullFrustum,
+                true
+            );
+        }
     }
 
     @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)

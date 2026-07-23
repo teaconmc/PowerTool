@@ -32,34 +32,6 @@ import org.teacon.powertool.client.renders.BezierCurveRenderingPipeline;
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererMixin {
 
-	@Inject(
-			method = "compileSections",
-			at = @At("TAIL")
-	)
-	void recompileBlockEntities(Camera camera, CallbackInfo ci) {
-		CacheableBERenderingPipeline.getInstance().runTasks();
-		var bezierCurveRenderingPipeline = BezierCurveRenderingPipeline.getInstance();
-		if (bezierCurveRenderingPipeline != null) {
-			bezierCurveRenderingPipeline.runTasks();
-		}
-	}
-
-	@Inject(
-			method = "lambda$addMainPass$0",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/renderer/feature/FeatureRenderDispatcher;renderTranslucentFeatures()V",
-					shift = At.Shift.AFTER
-			)
-	)
-	void renderCachedBE(GpuBufferSlice terrainFog, LevelRenderState levelRenderState, ProfilerFiller profiler, ChunkSectionsToRender chunkSectionsToRender, Matrix4fc modelViewMatrix, ResourceHandle entityOutlineTarget, ResourceHandle translucentTarget, ResourceHandle mainTarget, ResourceHandle itemEntityTarget, ResourceHandle particleTarget, boolean renderOutline, CallbackInfo ci) {
-		CacheableBERenderingPipeline.getInstance().render();
-		var bezierCurveRenderingPipeline = BezierCurveRenderingPipeline.getInstance();
-		if (bezierCurveRenderingPipeline != null) {
-			bezierCurveRenderingPipeline.render();
-		}
-	}
-
 	@WrapOperation(
 			method = "extractVisibleBlockEntities(Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/state/level/LevelRenderState;Lnet/minecraft/client/renderer/culling/Frustum;)V",
 			at = @At(

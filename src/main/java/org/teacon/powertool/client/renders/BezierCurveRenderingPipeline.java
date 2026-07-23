@@ -8,6 +8,7 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -25,6 +26,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
@@ -56,6 +58,7 @@ public final class BezierCurveRenderingPipeline {
                     .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
                     .createRenderSetup()
     );
+
     @Nullable
     private static BezierCurveRenderingPipeline instance;
     private final ClientLevel level;
@@ -71,6 +74,12 @@ public final class BezierCurveRenderingPipeline {
             instance.releaseBuffers();
         }
         instance = new BezierCurveRenderingPipeline(level);
+    }
+
+    public void rebuildAll() {
+        synchronized (dirtyChunks) {
+            dirtyChunks.addAll(chunks.keySet());
+        }
     }
 
     @Nullable
@@ -102,6 +111,17 @@ public final class BezierCurveRenderingPipeline {
                 chunk.rebuild(level);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void on(RenderFrameEvent.Pre event) {
+        if (instance != null) {
+            instance.handleIntegration();
+        }
+    }
+
+    private void handleIntegration() {
+        // intentionally empty
     }
 
     public void render() {
@@ -181,7 +201,7 @@ public final class BezierCurveRenderingPipeline {
         instance.sectionRebuilt(event.getLevel(), event.getSectionOrigin());
     }
 
-    private static final class BezierCurveChunk {
+    public static final class BezierCurveChunk {
         private final Minecraft minecraft = Minecraft.getInstance();
         private final ChunkPos chunkPos;
         private final Set<BlockPos> blockPositions = new HashSet<>();
@@ -217,18 +237,18 @@ public final class BezierCurveRenderingPipeline {
                     indexCount = 0;
                     return;
                 }
-                upload(mesh);
+                upload(mesh, builder.format, builder.mode);
             }
         }
 
-        private void upload(MeshData mesh) {
+        private void upload(MeshData mesh, VertexFormat format, VertexFormat.Mode mode) {
             try (mesh) {
-                long size = mesh.vertexBuffer().remaining();
+                long size = (long) format.getVertexSize() * mesh.drawState().vertexCount();
                 if (vertexBuffer == null || vertexBuffer.size() < size) {
                     var replacement = RenderSystem.getDevice().createBuffer(
-                            () -> "PowerTool Bezier Curve " + chunkPos,
-                            GpuBuffer.USAGE_VERTEX | GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_COPY_SRC,
-                            size
+                        () -> "PowerTool Bezier Curve " + chunkPos,
+                        GpuBuffer.USAGE_VERTEX | GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_COPY_SRC,
+                        size
                     );
                     if (vertexBuffer != null) {
                         vertexBuffer.close();

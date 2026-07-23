@@ -46,7 +46,7 @@ import java.util.UUID;
 @NonNullByDefault
 @EventBusSubscriber(modid = PowerTool.MODID)
 public class PowerToolEvents {
-    
+
     private static final Logger CMD_TRACING_LOGGER = LoggerFactory.getLogger("COMMAND_TRACING");
 
     @SubscribeEvent
@@ -66,29 +66,38 @@ public class PowerToolEvents {
         // TODO Need a better string representation of BaseCommandBlock$CloseableCommandBlockSource
         CMD_TRACING_LOGGER.debug("Command is executed. Command: '{}', executor: {} (Display Name = {}, UUID = {})", rawString, realSource, executorName, uuid);
     }
-    
+
     @SubscribeEvent
     public static void onChunkSent(ChunkWatchEvent.Sent event) {
         ChunkPos chunkPos = event.getPos();
-        var listDisplayModeData = event.getChunk().getData(PowerToolAttachments.DISPLAY_MODE);
-        var listStaticModeData = event.getChunk().getData(PowerToolAttachments.STATIC_MODE);
-        var listCachedModeData = event.getChunk().getData(PowerToolAttachments.CACHED_MODE);
-        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateDisplayChunkDataPacket(chunkPos.x(), chunkPos.z(), listDisplayModeData));
-        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateStaticModeChunkDataPacket(chunkPos.x(), chunkPos.z(), listStaticModeData));
-        PacketDistributor.sendToPlayer(event.getPlayer(), new UpdateCachedModeChunkDataPacket(chunkPos.x(), chunkPos.z(), listCachedModeData));
+        var listDisplayModeData = event.getChunk().getExistingData(PowerToolAttachments.DISPLAY_MODE);
+        var listStaticModeData = event.getChunk().getExistingData(PowerToolAttachments.STATIC_MODE);
+        var listCachedModeData = event.getChunk().getExistingData(PowerToolAttachments.CACHED_MODE);
+        listDisplayModeData.ifPresent(blockPos -> PacketDistributor.sendToPlayer(
+            event.getPlayer(),
+            new UpdateDisplayChunkDataPacket(chunkPos.x(), chunkPos.z(), blockPos)
+        ));
+        listStaticModeData.ifPresent(blockPos -> PacketDistributor.sendToPlayer(
+            event.getPlayer(),
+            new UpdateStaticModeChunkDataPacket(chunkPos.x(), chunkPos.z(), blockPos)
+        ));
+        listCachedModeData.ifPresent(blockPos -> PacketDistributor.sendToPlayer(
+            event.getPlayer(),
+            new UpdateCachedModeChunkDataPacket(chunkPos.x(), chunkPos.z(), blockPos)
+        ));
     }
-    
+
     @SubscribeEvent
     public static void onPlayerRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(), event.getPos()));
     }
-    
+
     @SubscribeEvent
     public static void onPlayerLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         event.setCanceled(VanillaUtils.isBlockStaticMode(event.getEntity(), event.getPos()));
     }
-    
+
     @SubscribeEvent
     public static void onExplosion(ExplosionEvent.Detonate event) {
         Map<ChunkPos, List<BlockPos>> map = new HashMap<>();
@@ -97,31 +106,31 @@ public class PowerToolEvents {
                     .add(affectedBlock);
         }
         map.entrySet()
-                .stream()
-                .map(it -> Map.entry(
-                        Map.entry(
-                                event.getLevel().getChunk(it.getKey().x(), it.getKey().z()),
-                                it.getKey()
-                        ),
-                        it.getValue()
-                ))
-                .collect(Util.toMap())
-                .forEach((entry, list) -> {
-                    LevelChunk chunk = entry.getKey();
-                    ChunkPos pos = entry.getValue();
-                    for (BlockPos blockPos : list) {
-                        removeAccessControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
-                        removeCachedModeControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
-                    }
-                });
+            .stream()
+            .map(it -> Map.entry(
+                Map.entry(
+                    event.getLevel().getChunk(it.getKey().x(), it.getKey().z()),
+                    it.getKey()
+                ),
+                it.getValue()
+            ))
+            .collect(Util.toMap())
+            .forEach((entry, list) -> {
+                LevelChunk chunk = entry.getKey();
+                ChunkPos pos = entry.getValue();
+                for (BlockPos blockPos : list) {
+                    removeAccessControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
+                    removeCachedModeControl((ServerLevel) event.getLevel(), pos, chunk, blockPos, null);
+                }
+            });
     }
-    
+
     private static void removeCachedModeControl(
-            ServerLevel level,
-            ChunkPos chunkPos,
-            ChunkAccess chunk,
-            BlockPos pos,
-            @Nullable ServerPlayer player
+        ServerLevel level,
+        ChunkPos chunkPos,
+        ChunkAccess chunk,
+        BlockPos pos,
+        @Nullable ServerPlayer player
     ) {
         var cachedEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.CACHED_MODE));
         cachedEnabledPosList.remove(pos);
@@ -134,13 +143,13 @@ public class PowerToolEvents {
         }
         PacketDistributor.sendToPlayer(player, packet);
     }
-    
+
     private static void removeAccessControl(
-            ServerLevel level,
-            ChunkPos chunkPos,
-            ChunkAccess chunk,
-            BlockPos pos,
-            @Nullable ServerPlayer player
+        ServerLevel level,
+        ChunkPos chunkPos,
+        ChunkAccess chunk,
+        BlockPos pos,
+        @Nullable ServerPlayer player
     ) {
         var displayEnabledPosList = new ArrayList<>(chunk.getData(PowerToolAttachments.DISPLAY_MODE));
         displayEnabledPosList.remove(pos);
@@ -159,33 +168,33 @@ public class PowerToolEvents {
         PacketDistributor.sendToPlayer(player, displayModePacket);
         PacketDistributor.sendToPlayer(player, staticModePacket);
     }
-    
+
     private static void removeAccessControl(
-            ServerLevel level,
-            BlockPos pos,
-            @Nullable ServerPlayer player
+        ServerLevel level,
+        BlockPos pos,
+        @Nullable ServerPlayer player
     ) {
         ChunkPos chunkPos = ChunkPos.containing(pos);
         ChunkAccess chunk = level.getChunk(pos);
         removeAccessControl(level, chunkPos, chunk, pos, player);
         removeCachedModeControl(level, chunkPos, chunk, pos, player);
     }
-    
+
     @SubscribeEvent
     public static void onBlockBreak(BreakBlockEvent event) {
-        if(event.getLevel() instanceof ServerLevel level){
+        if (event.getLevel() instanceof ServerLevel level) {
             BlockPos pos = event.getPos();
             removeAccessControl(level, pos, (ServerPlayer) event.getPlayer());
         }
     }
-    
+
     @SubscribeEvent
     public static void onChangeDimension(EntityTravelToDimensionEvent event) {
         if (event.getDimension().equals(ServerLevel.END) && PowerToolConfig.disableTeleportToEnd.get()) {
             event.setCanceled(true);
         }
     }
-    
+
     @SubscribeEvent
     public static void onAddEntity(EntityJoinLevelEvent event) {
         var entity = event.getEntity();
@@ -203,7 +212,7 @@ public class PowerToolEvents {
             }
         }
     }
-    
+
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
@@ -224,7 +233,7 @@ public class PowerToolEvents {
             CreativeNoClip.sync(player);
         }
     }
-    
+
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {

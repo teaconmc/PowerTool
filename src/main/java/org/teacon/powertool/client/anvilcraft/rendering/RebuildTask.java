@@ -28,6 +28,19 @@ public class RebuildTask implements Runnable {
         cachedChunk.setEmpty(true);
         FullyBufferedBufferSource bufferSource = new FullyBufferedBufferSource();
 
+        SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
+
+        FeatureRenderDispatcher dispatcher = new FeatureRenderDispatcher(
+            submitNodeStorage,
+            Minecraft.getInstance().getModelManager(),
+            bufferSource,
+            Minecraft.getInstance().getAtlasManager(),
+            EmptyOutlineBufferSource.INSTANCE,
+            EmptyBufferSource.INSTANCE,
+            Minecraft.getInstance().font,
+            Minecraft.getInstance().gameRenderer.getGameRenderState()
+        );
+
         for (BlockEntity be : new ArrayList<>(cachedChunk.blockEntities)) {
             if (cancelled) {
                 bufferSource.close();
@@ -42,7 +55,7 @@ public class RebuildTask implements Runnable {
                 pos.getZ() - cachedChunk.chunkPos.getMinBlockZ()
             );
 
-            SubmitNodeStorage submitNodeStorage = new SubmitNodeStorage();
+
             BlockEntityRenderDispatcher renderDispatcher = Minecraft.getInstance().levelRenderer.blockEntityRenderDispatcher;
 
             BlockEntityRenderer<BlockEntity, BlockEntityRenderState> renderer = renderDispatcher.getRenderer(be);
@@ -63,23 +76,11 @@ public class RebuildTask implements Runnable {
                     Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState
                 );
             }
-
-            FeatureRenderDispatcher dispatcher = new FeatureRenderDispatcher(
-                submitNodeStorage,
-                Minecraft.getInstance().getModelManager(),
-                bufferSource,
-                Minecraft.getInstance().getAtlasManager(),
-                EmptyOutlineBufferSource.INSTANCE,
-                EmptyBufferSource.INSTANCE,
-                Minecraft.getInstance().font,
-                Minecraft.getInstance().gameRenderer.getGameRenderState()
-            );
-
-            dispatcher.renderAllFeatures();
-            dispatcher.endFrame();
-
             poseStack.popPose();
         }
+
+        dispatcher.renderAllFeatures();
+        dispatcher.endFrame();
 
         cachedChunk.setEmpty(bufferSource.isEmpty());
         bufferSource.upload(cachedChunk);

@@ -63,16 +63,18 @@ public class AccessControlClient {
     
     public boolean isDisplayModeEnabledAt(BlockPos blockPos) {
         ChunkPos pos = ChunkPos.containing(blockPos);
-        if (displayModeData.containsKey(pos)) {
-            return displayModeData.get(pos).contains(blockPos);
+        List<BlockPos> list = displayModeData.get(pos);
+        if (list != null) {
+            return list.contains(blockPos);
         }
         return false;
     }
     
     public boolean isStaticModeEnabledAt(BlockPos blockPos) {
         ChunkPos pos = ChunkPos.containing(blockPos);
-        if (staticModeData.containsKey(pos)) {
-            return staticModeData.get(pos).contains(blockPos);
+        List<BlockPos> list = staticModeData.get(pos);
+        if (list != null) {
+            return list.contains(blockPos);
         }
         return false;
     }

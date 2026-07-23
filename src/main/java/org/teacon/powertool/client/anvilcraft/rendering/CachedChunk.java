@@ -3,38 +3,45 @@ package org.teacon.powertool.client.anvilcraft.rendering;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderPass;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.systems.ScissorState;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4fStack;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Consumer;
 
 /**
  * @author ZhuRuoLing
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
     private final Map<RenderType, GpuBuffer> vertexBuffers = new HashMap<>();
     private final Map<RenderType, GpuBuffer> indexBuffers = new HashMap<>();
     private final Map<RenderType, ByteBufferBuilder> sortBuffers = new HashMap<>();
     private final Minecraft minecraft = Minecraft.getInstance();
+    private final AABB renderingBB;
 
     @Nullable
     private RebuildTask lastRebuildTask;
@@ -51,6 +58,15 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
     public CachedChunk(ChunkPos chunkPos, CacheableBERenderingPipeline pipeline) {
         this.chunkPos = chunkPos;
         this.pipeline = pipeline;
+
+        this.renderingBB = new AABB(
+            this.chunkPos.getMinBlockX(),
+            -65,
+            this.chunkPos.getMinBlockZ(),
+            this.chunkPos.getMaxBlockX(),
+            321,
+            this.chunkPos.getMaxBlockZ()
+        );
     }
 
     /**
@@ -98,8 +114,9 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         }
     }
 
-    public void render() {
-        renderInternal(vertexBuffers.keySet());
+    public void render(Frustum frustum, boolean translucent) {
+        if (!frustum.isVisible(renderingBB)) return;
+        renderInternal(vertexBuffers.keySet(), translucent);
     }
 
     public GpuBuffer getBuffer(Map<RenderType, GpuBuffer> buffers, RenderType renderType, long size, int usage) {
@@ -107,7 +124,11 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
             GpuBuffer buffer = buffers.get(renderType);
 
             if (buffer.size() < size) {
-                buffer = RenderSystem.getDevice().createBuffer(renderType::toString, usage | GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_COPY_SRC, size);
+                buffer = RenderSystem.getDevice().createBuffer(
+                    renderType::toString,
+                    usage | GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_COPY_SRC,
+                    size
+                );
                 GpuBuffer old = buffers.put(renderType, buffer);
                 if (old != null) {
                     old.close();
@@ -116,7 +137,11 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
 
             return buffers.get(renderType);
         }
-        GpuBuffer vb = RenderSystem.getDevice().createBuffer(renderType::toString, usage | GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_COPY_SRC, size);
+        GpuBuffer vb = RenderSystem.getDevice().createBuffer(
+            renderType::toString,
+            usage | GpuBuffer.USAGE_COPY_DST | GpuBuffer.USAGE_COPY_SRC,
+            size
+        );
         buffers.put(renderType, vb);
         return vb;
     }
@@ -138,24 +163,33 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         return builder;
     }
 
-    private void renderInternal(Collection<RenderType> renderTypes) {
+    private void renderInternal(Collection<RenderType> renderTypes, boolean translucent) {
         if (isEmpty) return;
 
         Vec3 cameraPosition = minecraft.gameRenderer.getMainCamera().position();
         int renderDistance = Minecraft.getInstance().options.getEffectiveRenderDistance() * 16;
 
-        if (cameraPosition.distanceTo(new Vec3(chunkPos.x() * 16, cameraPosition.y, chunkPos.z() * 16)) > renderDistance) {
+        Vec3 chunkStart = new Vec3(
+            chunkPos.x() * 16,
+            cameraPosition.y,
+            chunkPos.z() * 16
+        );
+        if (cameraPosition.distanceTo(chunkStart) > renderDistance) {
             return;
         }
 
-        List<RenderType> renderingOrders = new ArrayList<>(renderTypes);
-        renderingOrders.sort(Comparator.comparingInt(a -> (a.sortOnUpload() ? 1 : 0)));
-
-        for (RenderType renderType : renderingOrders) {
+        for (RenderType renderType : renderTypes) {
+            //noinspection DataFlowIssue
+            renderType = modifyRenderTypeIfNeeded(renderType);
+            if (renderType.sortOnUpload() != translucent) continue;
             GpuBuffer vb = vertexBuffers.get(renderType);
             if (vb == null) continue;
             renderLayer(renderType, vb, cameraPosition);
         }
+    }
+
+    private RenderType modifyRenderTypeIfNeeded(RenderType rt) {
+        return rt;
     }
 
     public void releaseBuffers() {
@@ -175,7 +209,12 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
 
         Matrix4fStack modelViewStack = translateModelViewStack(renderType, cameraPosition);
 
-        GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(RenderSystem.getModelViewMatrix(), new Vector4f(1.0F, 1.0F, 1.0F, 1.0F), new Vector3f(), renderType.state.textureTransform.getMatrix());
+        GpuBufferSlice dynamicTransforms = RenderSystem.getDynamicUniforms().writeTransform(
+            RenderSystem.getModelViewMatrix(),
+            new Vector4f(1.0F, 1.0F, 1.0F, 1.0F),
+            new Vector3f(),
+            renderType.state.textureTransform.getMatrix()
+        );
         Map<String, RenderSetup.TextureAndSampler> textures = renderType.state.getTextures();
 
         IndexGenerationResult result = getIndexBuffer(renderType, cameraPosition, sortState, indexCount);
@@ -183,12 +222,23 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         RenderTarget renderTarget = renderType.state.outputTarget.getRenderTarget();
         GpuTextureView colorTexture = RenderSystem.outputColorTextureOverride != null ? RenderSystem.outputColorTextureOverride : renderTarget.getColorTextureView();
         GpuTextureView depthTexture = renderTarget.useDepth ? (RenderSystem.outputDepthTextureOverride != null ? RenderSystem.outputDepthTextureOverride : renderTarget.getDepthTextureView()) : null;
-
-        try (RenderPass renderPass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(() -> "Immediate draw for " + renderType, colorTexture, OptionalInt.empty(), depthTexture, OptionalDouble.empty())) {
+        minecraft.gameRenderer.getLighting().setupFor(Lighting.Entry.LEVEL);
+        try (RenderPass renderPass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+            () -> "Immediate draw for " + renderType,
+            colorTexture,
+            OptionalInt.empty(),
+            depthTexture,
+            OptionalDouble.empty()
+        )) {
             renderPass.setPipeline(renderType.state.pipeline);
             ScissorState scissorState = RenderSystem.getScissorStateForRenderTypeDraws();
             if (scissorState.enabled()) {
-                renderPass.enableScissor(scissorState.x(), scissorState.y(), scissorState.width(), scissorState.height());
+                renderPass.enableScissor(
+                    scissorState.x(),
+                    scissorState.y(),
+                    scissorState.width(),
+                    scissorState.height()
+                );
             }
 
             RenderSystem.bindDefaultUniforms(renderPass);
@@ -206,7 +256,7 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         modelViewStack.popMatrix();
     }
 
-    private @NonNull Matrix4fStack translateModelViewStack(RenderType renderType, Vec3 cameraPosition) {
+    private Matrix4fStack translateModelViewStack(RenderType renderType, Vec3 cameraPosition) {
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
         Consumer<Matrix4fStack> modelViewModifier = renderType.state.layeringTransform.getModifier();
 
@@ -234,7 +284,7 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         pipeline.submitCompileTask(new RebuildTask(this));
     }
 
-    public void forcedUpdate() {
+    public void scheduleRebuild() {
         pipeline.submitCompileTask(new RebuildTask(this));
     }
 
@@ -245,8 +295,12 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         }
     }
 
-
-    private CachedChunk.IndexGenerationResult getIndexBuffer(RenderType renderType, Vec3 cameraPosition, MeshData.@Nullable SortState sortState, int indexCount) {
+    private CachedChunk.IndexGenerationResult getIndexBuffer(
+        RenderType renderType,
+        Vec3 cameraPosition,
+        MeshData.@Nullable SortState sortState,
+        int indexCount
+    ) {
         VertexFormat.IndexType indexType;
         GpuBuffer indices;
         if (sortState == null) {
@@ -258,7 +312,11 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
                 if (isFreshMesh) {
                     isFreshMesh = false;
                 }
-                Vector3f relativePos = cameraPosition.toVector3f().sub(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ());
+                Vector3f relativePos = cameraPosition.toVector3f().sub(
+                    chunkPos.getMinBlockX(),
+                    0,
+                    chunkPos.getMinBlockZ()
+                );
 
                 ByteBufferBuilder builder = this.getSortingByteBufferBuilder(renderType);
                 ByteBufferBuilder.Result result = sortState.buildSortedIndexBuffer(
@@ -310,7 +368,10 @@ public class CachedChunk implements FullyBufferedBufferSource.VertexBufferHost {
         pipeline.submitUploadTask(runnable);
     }
 
-    public void replaceMeshData(Map<RenderType, MeshData.SortState> meshSorts, Reference2IntMap<RenderType> indexCountMap) {
+    public void replaceMeshData(
+        Map<RenderType, MeshData.SortState> meshSorts,
+        Reference2IntMap<RenderType> indexCountMap
+    ) {
         this.meshSortings = meshSorts;
         this.indexCountMap = indexCountMap;
         indexBuffers.forEach((_, buffers) -> buffers.close());

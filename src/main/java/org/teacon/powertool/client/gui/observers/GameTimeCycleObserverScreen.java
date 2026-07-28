@@ -91,9 +91,9 @@ public class GameTimeCycleObserverScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         super.extractRenderState(graphics, mouseX, mouseY, a);
         var textColor = VanillaUtils.getColor(255, 255, 255, 255);
-        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SKY_COLOR_IMAGE, (int) (width / 2f - width * 0.2f), height / 2 - 110, (int) (width * 0.4f), 25);
-        var text = Component.literal("Sky Color During Time Of Day: ");
-        graphics.text(font, text, (int) (width / 2f - width * 0.2f - font.width(text)), height / 2 - 108, textColor);
+//        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, SKY_COLOR_IMAGE, (int) (width / 2f - width * 0.2f), height / 2 - 110, (int) (width * 0.4f), 25);
+//        var text = Component.literal("Sky Color During Time Of Day: ");
+//        graphics.text(font, text, (int) (width / 2f - width * 0.2f - font.width(text)), height / 2 - 108, textColor);
         graphics.horizontalLine((int) (width / 2f - width * 0.2f), (int) (width / 2f + width * 0.2f - 1), height / 2 - 85, textColor);
         graphics.text(font, "0.0", (int) (width / 2f - width * 0.2f - font.width("0.0") / 2f), height / 2 - 93, textColor);
         graphics.text(font, "1.0", (int) (width / 2f + width * 0.2f - font.width("1.0") / 2f), height / 2 - 93, textColor);

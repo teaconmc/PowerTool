@@ -1,8 +1,11 @@
 package org.teacon.powertool.utils.time;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.timeline.Timelines;
 
 import java.util.function.Supplier;
 
@@ -21,8 +24,15 @@ public class InWorldDailyCycleTimeSection implements ITimeSection {
     
     @Override
     public boolean inTimeSection(long timeWithMills) {
-        var current = levelGetter.get().getOverworldClockTime();
-        return start <= current && end > current;
+        var period = levelGetter.get()
+                .holder(Timelines.OVERWORLD_DAY)
+                .flatMap(timeLine -> timeLine.getDelegate().value().periodTicks());
+        if(period.isPresent()) {
+            var current = (double)(levelGetter.get().getOverworldClockTime() % period.get()) / period.get();
+            if(start < end) return start <= current && end > current;
+            else return start <= current || end > current;
+        }
+        return false;
     }
     
     @Override

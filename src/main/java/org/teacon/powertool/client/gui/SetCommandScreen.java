@@ -188,7 +188,7 @@ public class SetCommandScreen extends XKLibBaseScreen {
     }
 
     protected void openLabelSelector() {
-        this.minecraft.setScreen(new CommandRuneLabelSelectScreen(this, this::setLabelStack));
+        this.minecraft.setScreen(new CommandRuneLabelSelectScreen(this, this.labelStack, this::setLabelStack));
     }
 
     protected void setLabelStack(ItemStack stack) {

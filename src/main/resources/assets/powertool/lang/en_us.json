@@ -272,6 +272,8 @@
   "powertool.gui.bezier_curve.use_clamp_mode.tooltip": "Will not render vertexes far from chunk center.",
   "powertool.gui.bezier_curve.use_world_coordinate": "Use World Coordinate",
   "powertool.gui.bezier_curve.use_world_coordinate.tooltip": "Determines whether control points represent relative or absolute(world) coordinates.",
+  "powertool.gui.bezier_curve.ignore_lighting": "Ignore Lighting",
+  "powertool.gui.bezier_curve.ignore_lighting.tooltip": "When enabled, the Bezier curve is always rendered at full brightness.",
   "powertool.gui.examine_holo_glass.warn": "Calculated independently relative to the left side.",
   "powertool.gui.static_mode_enabled": "Enabled static mode on %s",
   "powertool.gui.static_mode_disabled": "Disabled static mode on %s",

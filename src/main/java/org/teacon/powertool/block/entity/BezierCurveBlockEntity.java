@@ -47,6 +47,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
     public int color = -1;
     public boolean clampMode = false;
     public boolean worldCoordinate = false;
+    public boolean ignoreLighting = false;
     public Identifier texture = VanillaUtils.MISSING_TEXTURE;
     public List<Vector3f> controlPoints = new ArrayList<>();
     @Nullable
@@ -85,6 +86,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         texture = input.read("texture", Identifier.CODEC).orElse(VanillaUtils.MISSING_TEXTURE);
         clampMode = input.getBooleanOr("clampMode", false);
         worldCoordinate = input.getBooleanOr("worldCoordinate", false);
+        ignoreLighting = input.getBooleanOr("ignoreLighting", false);
         color = input.getIntOr("color", -1);
         var size = input.getIntOr("controlPointSize", 1);
         controlPoints = new ArrayList<>();
@@ -137,6 +139,7 @@ public class BezierCurveBlockEntity extends BlockEntity implements IClientUpdate
         output.putString("texture", texture.toString());
         output.putBoolean("clampMode", clampMode);
         output.putBoolean("worldCoordinate", worldCoordinate);
+        output.putBoolean("ignoreLighting", ignoreLighting);
         output.putInt("color", color);
         for (int i = 0; i < controlPoints.size(); i++) {
             output.putFloat("controlPoint" + i + "x", controlPoints.get(i).x());

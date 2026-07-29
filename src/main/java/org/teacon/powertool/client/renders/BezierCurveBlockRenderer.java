@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.AtlasIds;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -130,7 +131,9 @@ public final class BezierCurveBlockRenderer implements BlockEntityRenderer<Bezie
         float worldZ = vertex.z + (blockEntity.worldCoordinate ? 0 : blockPos.getZ());
         var level = blockEntity.getLevel();
         var lightPos = BlockPos.containing(worldX, worldY, worldZ);
-        int packedLight = level == null ? 15728880 : LevelRenderer.getLightCoords(level, lightPos);
+        int packedLight = blockEntity.ignoreLighting || level == null
+                ? LightCoordsUtil.FULL_BRIGHT
+                : LevelRenderer.getLightCoords(level, lightPos);
         buffer.addVertex(worldX - chunkPos.getMinBlockX(), worldY, worldZ - chunkPos.getMinBlockZ())
                 .setColor(blockEntity.color)
                 .setUv(u, v)

@@ -262,6 +262,8 @@
   "powertool.gui.bezier_curve.use_clamp_mode.tooltip": "将不会渲染远离区块中心的顶点.",
   "powertool.gui.bezier_curve.use_world_coordinate": "使用世界坐标",
   "powertool.gui.bezier_curve.use_world_coordinate.tooltip": "决定控制点代表相对坐标还是绝对(世界)坐标.",
+  "powertool.gui.bezier_curve.ignore_lighting": "无视光照",
+  "powertool.gui.bezier_curve.ignore_lighting.tooltip": "开启后，贝塞尔曲线将始终以满级光照渲染。",
   "powertool.gui.examine_holo_glass.warn": "相对左侧独立计算.",
   "powertool.gui.static_mode_enabled": "已在%s上启用静态模式",
   "powertool.gui.static_mode_disabled": "已在%s上禁用静态模式",

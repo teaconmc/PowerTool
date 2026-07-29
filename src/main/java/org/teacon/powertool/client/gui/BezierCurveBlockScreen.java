@@ -43,6 +43,7 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
     protected @Nullable ObjectInputWidget<Integer> colorInput;
     protected @Nullable ObjectInputWidget<Identifier> textureInput;
     protected @Nullable Checkbox useWorldCoordinate;
+    protected @Nullable Checkbox ignoreLighting;
     
     
     public BezierCurveBlockScreen(BezierCurveBlockEntity te) {
@@ -73,6 +74,10 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
                 .tooltip(Tooltip.create(Component.translatable("powertool.gui.bezier_curve.use_world_coordinate.tooltip")))
                 .selected(te.worldCoordinate)
                 .build();
+        this.ignoreLighting = Checkbox.builder(Component.translatable("powertool.gui.bezier_curve.ignore_lighting"), font)
+                .tooltip(Tooltip.create(Component.translatable("powertool.gui.bezier_curve.ignore_lighting.tooltip")))
+                .selected(te.ignoreLighting)
+                .build();
         var doneButton = WidgetWrapper.button(CommonComponents.GUI_DONE, _ -> this.onDone());
         var leftPanel = new ContainerWidget()
                 .inlineStyle("""
@@ -93,6 +98,7 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.vScale"), this.vScaleInput).inlineStyle("margin-top: 5rpx;"))
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.color"), this.colorInput).inlineStyle("margin-top: 5rpx;"))
                 .addChild(new WidgetWrapper(this.useWorldCoordinate).inlineStyle("size: 65% 20rpx; flex-shrink: 0; margin-top: 5rpx; margin-left: 35%;"))
+                .addChild(new WidgetWrapper(this.ignoreLighting).inlineStyle("size: 65% 20rpx; flex-shrink: 0; margin-top: 5rpx; margin-left: 35%;"))
                 .addChild(lengthLabel().inlineStyle("""
                         size: 100% 20rpx;
                         flex-shrink: 0;
@@ -141,7 +147,7 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
     
     @Override
     public void removed() {
-        if (this.controlPointList == null || this.stepInput == null || this.sideCountInput == null || this.radiusInput == null || this.textureInput == null || this.uScaleInput == null || this.vScaleInput == null || this.colorInput == null || this.useWorldCoordinate == null) return;
+        if (this.controlPointList == null || this.stepInput == null || this.sideCountInput == null || this.radiusInput == null || this.textureInput == null || this.uScaleInput == null || this.vScaleInput == null || this.colorInput == null || this.useWorldCoordinate == null || this.ignoreLighting == null) return;
         te.steps = Objects.requireNonNullElse(stepInput.getValue(), 2);
         te.sideCount = Objects.requireNonNullElse(sideCountInput.getValue(), 3);
         te.radius = Objects.requireNonNullElse(radiusInput.getValue(), 0f);
@@ -150,6 +156,7 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
         te.vScale = Objects.requireNonNullElse(vScaleInput.getValue(), 1);
         te.color = Objects.requireNonNullElse(colorInput.getValue(), -1);
         te.worldCoordinate = useWorldCoordinate.selected();
+        te.ignoreLighting = ignoreLighting.selected();
         te.setControlPoints(controlPointList.getValue());
         ClientPacketDistributor.sendToServer(UpdateBlockEntityData.create(te));
     }

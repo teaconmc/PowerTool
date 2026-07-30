@@ -51,15 +51,15 @@ public class LinkHolographicSignBlockEntityRenderer implements BlockEntityRender
     
     @Override
     public void submit(LinkSignBEState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-        renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, state.yRotate, state.xRotate, camera);
+        renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, false, camera);
         if (state.bidirectional) {
-            renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, (state.yRotate + 180) % 360, (360 - state.xRotate) % 360, camera);
+            renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, true, camera);
         }
     }
     
-    public void renderInternal(LinkSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, int yRotation, int xRotation, CameraRenderState camera) {
+    public void renderInternal(LinkSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, boolean backFace, CameraRenderState camera) {
         poseStack.pushPose();
-        HolographicSignBlockEntityRenderer.beforeRender(theSign, poseStack, camera, yRotation, xRotation);
+        HolographicSignBlockEntityRenderer.beforeRender(theSign, poseStack, camera, backFace);
         var text = theSign.displayContent.getString();
         text = text.startsWith("🌐") ? text : "🌐" + text;
         var component = Component.literal(text).withStyle(LINK_STYLE);

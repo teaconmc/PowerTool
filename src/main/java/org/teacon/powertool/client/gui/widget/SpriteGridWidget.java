@@ -14,17 +14,20 @@ import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @NonNullByDefault
 public class SpriteGridWidget extends AbstractWidget {
 
     private static final int CELL_SIZE = 44;
     private static final int SPRITE_SIZE = 32;
+    private final Consumer<Identifier> clickHandler;
     private List<Identifier> sprites = List.of();
     private int scrollRow;
 
-    public SpriteGridWidget(int x, int y, int width, int height) {
+    public SpriteGridWidget(int x, int y, int width, int height, Consumer<Identifier> clickHandler) {
         super(x, y, width, height, Component.empty());
+        this.clickHandler = clickHandler;
     }
 
     public void setSprites(List<Identifier> sprites) {
@@ -72,7 +75,7 @@ public class SpriteGridWidget extends AbstractWidget {
     public void onClick(MouseButtonEvent event, boolean doubleClick) {
         Identifier sprite = this.spriteAt(event.x(), event.y());
         if (sprite != null) {
-            Minecraft.getInstance().keyboardHandler.setClipboard(sprite.toString());
+            this.clickHandler.accept(sprite);
         }
     }
 

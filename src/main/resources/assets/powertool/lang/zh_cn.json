@@ -257,6 +257,7 @@
   "powertool.gui.bezier_curve.uScale": "材质轴向缩放",
   "powertool.gui.bezier_curve.vScale": "材质径向缩放",
   "powertool.gui.bezier_curve.texture": "材质",
+  "powertool.gui.bezier_curve.select_texture": "选取材质",
   "powertool.gui.bezier_curve.color": "颜色(RGBA)",
   "powertool.gui.bezier_curve.control_points": "控制点: ",
   "powertool.gui.bezier_curve.use_clamp_mode": "使用限制渲染模式",

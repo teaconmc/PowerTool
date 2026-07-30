@@ -24,7 +24,7 @@ public class TextureExtractorMenu extends AbstractContainerMenu {
         }
     }
 
-    protected TextureExtractorMenu(int containerId, Inventory inventory) {
+    public TextureExtractorMenu(int containerId, Inventory inventory) {
         super(PowerToolMenus.TEXTURE_EXTRACTOR_MENU.get(), containerId);
     }
 

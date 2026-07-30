@@ -13,6 +13,7 @@ import com.xkball.xklibmc.ui.widget.ObjectInputWidget;
 import com.xkball.xklibmc.ui.widget.mc.ObjectInputBox;
 import com.xkball.xklibmc.x3d.backend.b3d.gui.ComponentConverter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.CommonComponents;
@@ -23,6 +24,9 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
+import org.teacon.powertool.client.gui.widget.ItemStackButton;
+import org.teacon.powertool.item.PowerToolItems;
+import org.teacon.powertool.menu.TextureExtractorMenu;
 import org.teacon.powertool.network.server.UpdateBlockEntityData;
 import org.teacon.powertool.utils.VanillaUtils;
 
@@ -64,6 +68,9 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
                 ObjectInputBox.FLOAT_RESPONDER, String.valueOf(te.radius));
         this.textureInput = inputWidget(ObjectInputBox.TEXTURE_VALIDATOR,
                 ObjectInputBox.TEXTURE_RESPONDER, te.texture.toString());
+        var textureButton = (ItemStackButton) Button.builder(Component.empty(), _ -> this.openTextureSelector())
+                .build(ItemStackButton::new);
+        textureButton.setStack(PowerToolItems.TEXTURE_EXTRACTOR.get().getDefaultInstance());
         this.uScaleInput = inputWidget(ObjectInputBox.INT_VALIDATOR,
                 ObjectInputBox.INT_RESPONDER, String.valueOf(te.uScale));
         this.vScaleInput = inputWidget(ObjectInputBox.INT_VALIDATOR,
@@ -93,7 +100,7 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.step"), this.stepInput).inlineStyle("margin-top: 20rpx;"))
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.sides"), this.sideCountInput).inlineStyle("margin-top: 5rpx;"))
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.radius"), this.radiusInput).inlineStyle("margin-top: 5rpx;"))
-                .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.texture"), this.textureInput).inlineStyle("margin-top: 5rpx;"))
+                .addChild(textureInputLine(IComponent.translatable("powertool.gui.bezier_curve.texture"), this.textureInput, new WidgetWrapper(textureButton).withTooltip(IComponent.translatable("powertool.gui.bezier_curve.select_texture"))).inlineStyle("margin-top: 5rpx;"))
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.uScale"), this.uScaleInput).inlineStyle("margin-top: 5rpx;"))
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.vScale"), this.vScaleInput).inlineStyle("margin-top: 5rpx;"))
                 .addChild(labeledInput(IComponent.translatable("powertool.gui.bezier_curve.color"), this.colorInput).inlineStyle("margin-top: 5rpx;"))
@@ -144,6 +151,26 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
     protected void onDone() {
         this.minecraft.setScreen(null);
     }
+
+    protected void openTextureSelector() {
+        var player = this.minecraft.player;
+        if (player == null) {
+            return;
+        }
+        this.minecraft.setScreen(TextureExtractorScreen.forSelection(
+                new TextureExtractorMenu(0, player.getInventory()),
+                player.getInventory(),
+                Component.translatable("item.powertool.texture_extractor"),
+                this,
+                this::setTexture
+        ));
+    }
+
+    protected void setTexture(Identifier texture) {
+        if (this.textureInput != null) {
+            this.textureInput.setAsString(texture.toString());
+        }
+    }
     
     @Override
     public void removed() {
@@ -189,6 +216,14 @@ public class BezierCurveBlockScreen extends XKLibBaseScreen {
                         text-align: left;
                         """))
                 .addChild(input.inlineStyle("size: 65% 100%; flex-shrink: 0;"));
+    }
+
+    private static ContainerWidget textureInputLine(IComponent label, ObjectInputWidget<Identifier> input, Widget button) {
+        return new ContainerWidget()
+                .inlineStyle("size: 100% 20rpx; flex-shrink: 0; align-items: center;")
+                .addChild(new Label(label).inlineStyle("size: 35% 100%; flex-shrink: 0; text-color: -1; text-height: 10rpx; text-align: left;"))
+                .addChild(input.inlineStyle("size: 100%-20rpx 100%; flex-shrink: 1;"))
+                .addChild(button.inlineStyle("size: 20rpx 20rpx; flex-shrink: 0; margin-left: 2rpx;"));
     }
     
     public static class ControlPointInputWidget extends ContainerWidget implements IInputWidget<Vector3f> {

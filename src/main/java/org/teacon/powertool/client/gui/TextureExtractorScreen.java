@@ -2,6 +2,7 @@ package org.teacon.powertool.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -23,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 @NonNullByDefault
 public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtractorMenu> {
@@ -30,11 +32,23 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
     private static final int FILTER_SLOT_SIZE = 22;
     private static final int MAX_GUI_WIDTH = 440;
     private static final int MAX_GUI_HEIGHT = 300;
+    private final @Nullable Screen parent;
+    private final @Nullable Consumer<Identifier> spriteConsumer;
     private ItemStack filterStack = ItemStack.EMPTY;
     private @Nullable SpriteGridWidget spriteGrid;
 
     public TextureExtractorScreen(TextureExtractorMenu menu, Inventory playerInventory, Component title) {
+        this(menu, playerInventory, title, null, null);
+    }
+
+    public static TextureExtractorScreen forSelection(TextureExtractorMenu menu, Inventory playerInventory, Component title, Screen parent, Consumer<Identifier> spriteConsumer) {
+        return new TextureExtractorScreen(menu, playerInventory, title, parent, spriteConsumer);
+    }
+
+    private TextureExtractorScreen(TextureExtractorMenu menu, Inventory playerInventory, Component title, Screen parent, Consumer<Identifier> spriteConsumer) {
         super(menu, playerInventory, title);
+        this.parent = parent;
+        this.spriteConsumer = spriteConsumer;
     }
 
     @Override
@@ -46,7 +60,8 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
                 this.leftPos + 8,
                 this.topPos + 58,
                 this.imageWidth - 16,
-                this.imageHeight - 66
+                this.imageHeight - 66,
+                this::handleSpriteClick
         ));
         this.refreshSprites();
     }
@@ -102,6 +117,16 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
+    @Override
+    public void onClose() {
+        Screen parent = this.parent;
+        if (parent != null) {
+            this.minecraft.setScreen(parent);
+            return;
+        }
+        super.onClose();
+    }
+
     public int filterSlotX() {
         return (this.width - FILTER_SLOT_SIZE) / 2;
     }
@@ -134,6 +159,17 @@ public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtra
             return;
         }
         grid.setSprites(this.getFilteredSprites());
+    }
+
+    private void handleSpriteClick(Identifier sprite) {
+        Consumer<Identifier> consumer = this.spriteConsumer;
+        Screen parent = this.parent;
+        if (consumer != null && parent != null) {
+            consumer.accept(sprite);
+            this.minecraft.setScreen(parent);
+            return;
+        }
+        Minecraft.getInstance().keyboardHandler.setClipboard(sprite.toString());
     }
 
     private List<Identifier> getFilteredSprites() {

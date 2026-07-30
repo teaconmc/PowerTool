@@ -68,9 +68,9 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
     }
     
     public static class HoloSignBEState extends HoloSignStateBase {
-        public List<String> contents;
+        public List<? extends Component> contents;
     }
-    
+
     @Override
     public HoloSignBEState createRenderState() {
         return new HoloSignBEState();
@@ -112,13 +112,13 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         var align = theSign.align;
         for (int i = 0; i < contents.size(); i++) {
             var text = contents.get(i);
-            if (text != null && !text.isEmpty()) {
+            if (text != null && !text.getString().isEmpty()) {
                 int xOffset = switch (align) {
                     case LEFT -> -maxWidth / 2;
                     case CENTER -> -widths[i] / 2;
                     case RIGHT -> maxWidth / 2 - widths[i];
                 };
-                renderText(poseStack,nodeCollector,Component.literal(text),dropShadow,fontColor,bgColor,packedLight,xOffset,yOffset,widths[i]);
+                renderText(poseStack,nodeCollector,text,dropShadow,fontColor,bgColor,packedLight,xOffset,yOffset,widths[i]);
             }
             yOffset += this.font.lineHeight + 2;
         }

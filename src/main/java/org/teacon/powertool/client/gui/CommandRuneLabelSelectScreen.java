@@ -3,6 +3,7 @@ package org.teacon.powertool.client.gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -28,11 +29,8 @@ public class CommandRuneLabelSelectScreen extends Screen {
 
     @Override
     protected void init() {
-        this.addRenderableWidget(Button.builder(Component.translatable("powertool.setcommand.gui.label.clear"), button -> this.acceptLabel(ItemStack.EMPTY))
-                .bounds(this.width / 2 - BUTTON_WIDTH - 2, this.slotY() + SLOT_SIZE + 20, BUTTON_WIDTH, 20)
-                .build());
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose())
-                .bounds(this.width / 2 + 2, this.slotY() + SLOT_SIZE + 20, BUTTON_WIDTH, 20)
+                .bounds((this.width - BUTTON_WIDTH) / 2, this.slotY() + SLOT_SIZE + 20, BUTTON_WIDTH, 20)
                 .build());
     }
 
@@ -60,6 +58,15 @@ public class CommandRuneLabelSelectScreen extends Screen {
         if (this.minecraft != null) {
             this.minecraft.setScreen(this.parent);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.isOverSlot(event.x(), event.y()) && !this.labelStack.isEmpty()) {
+            this.acceptLabel(ItemStack.EMPTY);
+            return true;
+        }
+        return super.mouseClicked(event, doubleClick);
     }
 
     public int slotX() {

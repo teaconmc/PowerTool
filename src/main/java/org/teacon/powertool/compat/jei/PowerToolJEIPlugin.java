@@ -14,6 +14,7 @@ import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.client.gui.CommandRuneLabelSelectScreen;
+import org.teacon.powertool.client.gui.TextureExtractorScreen;
 import org.teacon.powertool.utils.VanillaUtils;
 
 @JeiPlugin
@@ -43,6 +44,7 @@ public class PowerToolJEIPlugin implements IModPlugin {
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
         registration.addGuiScreenHandler(CommandRuneLabelSelectScreen.class, screen -> new GuiProperties(CommandRuneLabelSelectScreen.class, screen.width / 2 - 80, screen.slotY() - 30, 160, 100, screen.width, screen.height));
         registration.addGhostIngredientHandler(CommandRuneLabelSelectScreen.class, new CommandRuneLabelGhostIngredientHandler());
+        registration.addGhostIngredientHandler(TextureExtractorScreen.class, new TextureExtractorGhostIngredientHandler());
     }
 
     @SuppressWarnings("unchecked")

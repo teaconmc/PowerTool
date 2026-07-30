@@ -1,133 +1,168 @@
 package org.teacon.powertool.client.gui;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
-import com.xkball.xklib.ui.widget.Widget;
-import com.xkball.xklib.ui.widget.container.ContainerWidget;
-import com.xkball.xklibmc.ui.XKLibBaseContainerScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.core.Direction;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Inventory;
-import org.teacon.powertool.client.gui.widget.SpriteList;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.client.gui.widget.SpriteGridWidget;
 import org.teacon.powertool.menu.TextureExtractorMenu;
-import org.teacon.powertool.utils.VanillaUtils;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
-public class TextureExtractorScreen extends XKLibBaseContainerScreen<TextureExtractorMenu> {
-    
-    private static final Identifier BG_LOCATION = VanillaUtils.modRL("textures/gui/texture_extractor.png");
-    
-    protected SpriteList spriteList;
-    private EditBox searchBar;
-    
+@NonNullByDefault
+public class TextureExtractorScreen extends AbstractContainerScreen<TextureExtractorMenu> {
+
+    private static final int FILTER_SLOT_SIZE = 22;
+    private static final int MAX_GUI_WIDTH = 440;
+    private static final int MAX_GUI_HEIGHT = 300;
+    private ItemStack filterStack = ItemStack.EMPTY;
+    private @Nullable SpriteGridWidget spriteGrid;
+
     public TextureExtractorScreen(TextureExtractorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.addScreenLayer(this.createLayout());
     }
-    
-    private Widget createLayout() {
-        this.spriteList = new SpriteList(this);
-        return new ContainerWidget()
-                .inlineStyle("""
-                        size: 100% 100%;
-                        align-items: center;
-                        justify-content: center;
-                        """)
-                .addChild(this.spriteList.inlineStyle("""
-                        size: 33% 80%;
-                        flex-shrink: 0;
-                        """));
-    }
-    
+
     @Override
     protected void init() {
+        this.imageWidth = Math.min(MAX_GUI_WIDTH, Math.max(220, this.width - 120));
+        this.imageHeight = Math.min(MAX_GUI_HEIGHT, Math.max(180, this.height - 36));
         super.init();
-        this.searchBar = new EditBox(font, (int) (10 + width * 0.1), (int) (height * 0.9 + 5), (int) (width * 0.2), 20, Component.empty());
-        this.searchBar.setResponder((str) -> menu.needRefreshFilter = true);
-        this.searchBar.setMaxLength(1000);
+        this.spriteGrid = this.addRenderableWidget(new SpriteGridWidget(
+                this.leftPos + 8,
+                this.topPos + 58,
+                this.imageWidth - 16,
+                this.imageHeight - 66
+        ));
+        this.refreshSprites();
     }
-    
+
     @Override
-    public void containerTick() {
-        super.containerTick();
-        if (menu.needRefreshFilter) {
-            spriteList.update();
-            menu.needRefreshFilter = false;
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTick);
+        graphics.fill(this.leftPos, this.topPos, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xDD181818);
+        graphics.fill(this.leftPos, this.topPos, this.leftPos + this.imageWidth, this.topPos + 1, 0xFF777777);
+        graphics.fill(this.leftPos, this.topPos + this.imageHeight - 1, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xFF555555);
+        graphics.fill(this.leftPos, this.topPos, this.leftPos + 1, this.topPos + this.imageHeight, 0xFF777777);
+        graphics.fill(this.leftPos + this.imageWidth - 1, this.topPos, this.leftPos + this.imageWidth, this.topPos + this.imageHeight, 0xFF555555);
+    }
+
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        Component instruction = Component.translatable("powertool.texture_extractor.filter_hint");
+        int slotX = this.filterSlotX();
+        int slotY = this.filterSlotY();
+        int borderColor = this.isOverFilterSlot(mouseX, mouseY) ? 0xFFFFFFFF : 0xFFAAAAAA;
+        graphics.text(this.font, instruction, this.width / 2 - this.font.width(instruction) / 2, this.topPos + 8, 0xFFFFFFFF);
+        graphics.fill(slotX, slotY, slotX + FILTER_SLOT_SIZE, slotY + FILTER_SLOT_SIZE, 0xFF242424);
+        graphics.fill(slotX, slotY, slotX + FILTER_SLOT_SIZE, slotY + 1, borderColor);
+        graphics.fill(slotX, slotY + FILTER_SLOT_SIZE - 1, slotX + FILTER_SLOT_SIZE, slotY + FILTER_SLOT_SIZE, borderColor);
+        graphics.fill(slotX, slotY, slotX + 1, slotY + FILTER_SLOT_SIZE, borderColor);
+        graphics.fill(slotX + FILTER_SLOT_SIZE - 1, slotY, slotX + FILTER_SLOT_SIZE, slotY + FILTER_SLOT_SIZE, borderColor);
+        if (!this.filterStack.isEmpty()) {
+            graphics.item(this.filterStack, slotX + 3, slotY + 3);
+            graphics.itemDecorations(this.font, this.filterStack, slotX + 3, slotY + 3);
         }
     }
-    //todo 换成新UI轮子
-    public List<Identifier> getFilteredTextures() {
-//        var filteredTexturesSet = new HashSet<Identifier>();
-//        var mc = Minecraft.getInstance();
-//        var item = menu.targetContainer.getItem(0);
-//        if (item.isEmpty()) {
-//            //noinspection deprecation
-//            filteredTexturesSet.addAll(mc.getModelManager().getAtlas(TextureAtlas.LOCATION_BLOCKS).getTextures().keySet());
-//        } else {
-//            var model = mc.getItemRenderer().getModel(item, mc.level, mc.player, 943);
-//            var quads = model.getQuads(null, null, RandomSource.create(943), ModelData.EMPTY, null);
-//            filteredTexturesSet.add(model.getParticleIcon(ModelData.EMPTY).contents().name());
-//            filteredTexturesSet.addAll(quads.stream().map(quad -> quad.getSprite().contents().name()).toList());
-//        }
-//        return filteredTexturesSet.stream().filter(rl -> {
-//            if (searchBar == null) return true;
-//            var str = searchBar.getValue().toLowerCase();
-//            if (str.isEmpty()) return true;
-//            return rl.toString().contains(str);
-//        }).sorted(Comparator.comparing(Identifier::toString)).toList();
-        var mc = Minecraft.getInstance();
-        var filteredTexturesSet = mc.getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS).getTextures().keySet();
-        return filteredTexturesSet.stream().filter(rl -> {
-            if (searchBar == null) return true;
-            var str = searchBar.getValue().toLowerCase();
-            if (str.isEmpty()) return true;
-            return rl.toString().contains(str);
-        }).sorted(Comparator.comparing(Identifier::toString)).toList();
+
+    @Override
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     }
-//
-//    @Override
-//    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-//        if (textureAtlasSpriteList.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
-//        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
-//    }
-//
-//    @Override
-//    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-//        if (searchBar.keyPressed(keyCode, scanCode, modifiers)) return true;
-//        if (searchBar.isFocused() && searchBar.isActive()) return true;
-//        return super.keyPressed(keyCode, scanCode, modifiers);
-//    }
-//
-//    @Override
-//    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-//        if (searchBar.keyReleased(keyCode, scanCode, modifiers)) return true;
-//        return super.keyReleased(keyCode, scanCode, modifiers);
-//    }
-//
-//    @Override
-//    public boolean charTyped(char codePoint, int modifiers) {
-//        if (searchBar.charTyped(codePoint, modifiers)) return true;
-//        return super.charTyped(codePoint, modifiers);
-//    }
-//
-//    @Override
-//    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-//        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//        guiGraphics.blit(BG_LOCATION, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-//    }
-//
-//    @Override
-//    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        super.render(guiGraphics, mouseX, mouseY, partialTick);
-//        var str = "Search: ";
-//        guiGraphics.drawString(font, str, (int) (10 + width * 0.1) - font.width(str) - 2, (int) (height * 0.9 + 5 + 2), -1);
-//    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (this.isOverFilterSlot(event.x(), event.y()) && !this.filterStack.isEmpty()) {
+            this.setFilterStack(ItemStack.EMPTY);
+            return true;
+        }
+        return super.mouseClicked(event, doubleClick);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        SpriteGridWidget grid = this.spriteGrid;
+        if (grid != null && grid.mouseScrolled(mouseX, mouseY, scrollX, scrollY)) {
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    public int filterSlotX() {
+        return (this.width - FILTER_SLOT_SIZE) / 2;
+    }
+
+    public int filterSlotY() {
+        return this.topPos + 28;
+    }
+
+    public int filterSlotSize() {
+        return FILTER_SLOT_SIZE;
+    }
+
+    public void setFilterStack(ItemStack stack) {
+        if (!stack.isEmpty() && !(stack.getItem() instanceof BlockItem)) {
+            return;
+        }
+        this.filterStack = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1);
+        this.refreshSprites();
+    }
+
+    private boolean isOverFilterSlot(double mouseX, double mouseY) {
+        int slotX = this.filterSlotX();
+        int slotY = this.filterSlotY();
+        return mouseX >= slotX && mouseX < slotX + FILTER_SLOT_SIZE && mouseY >= slotY && mouseY < slotY + FILTER_SLOT_SIZE;
+    }
+
+    private void refreshSprites() {
+        SpriteGridWidget grid = this.spriteGrid;
+        if (grid == null) {
+            return;
+        }
+        grid.setSprites(this.getFilteredSprites());
+    }
+
+    private List<Identifier> getFilteredSprites() {
+        var atlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
+        Set<Identifier> sprites;
+        if (this.filterStack.getItem() instanceof BlockItem blockItem) {
+            sprites = this.getModelSprites(blockItem);
+        } else {
+            sprites = atlas.getTextures().keySet();
+        }
+        return sprites.stream()
+                .sorted(Comparator.comparing(Identifier::toString))
+                .toList();
+    }
+
+    private Set<Identifier> getModelSprites(BlockItem blockItem) {
+        var minecraft = Minecraft.getInstance();
+        var model = minecraft.getModelManager().getBlockStateModelSet().get(blockItem.getBlock().defaultBlockState());
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        model.collectParts(RandomSource.create(42L), parts);
+        Set<Identifier> sprites = new HashSet<>();
+        sprites.add(model.particleMaterial().sprite().contents().name());
+        for (var part : parts) {
+            sprites.add(part.particleMaterial().sprite().contents().name());
+            part.getQuads(null).forEach(quad -> sprites.add(quad.materialInfo().sprite().contents().name()));
+            for (Direction direction : Direction.values()) {
+                part.getQuads(direction).forEach(quad -> sprites.add(quad.materialInfo().sprite().contents().name()));
+            }
+        }
+        return sprites;
+    }
 }

@@ -218,6 +218,7 @@
   "item.powertool.auto_vanish_minecart": "自动消失矿车",
   "item.powertool.static_mode_tool": "静态模式工具",
   "item.powertool.texture_extractor": "材质提取器",
+  "powertool.texture_extractor.filter_hint": "从 JEI 拖入方块以筛选",
 
   "powertool.gametime_cycle_observer.gui": "游戏日循环侦测器",
   "powertool.realtime_cycle_observer.gui": "现实日循环侦测器",

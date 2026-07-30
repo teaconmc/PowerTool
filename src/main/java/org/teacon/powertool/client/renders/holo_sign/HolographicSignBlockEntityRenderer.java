@@ -87,15 +87,15 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
     
     @Override
     public void submit(HoloSignBEState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
-        renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, state.yRotate, state.xRotate, camera);
+        renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, false, camera);
         if (state.bidirectional) {
-            renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, (state.yRotate + 180) % 360, (360 - state.xRotate) % 360, camera);
+            renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, true, camera);
         }
     }
     
-    public void renderInternal(HoloSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, int yRotation, int xRotation,CameraRenderState camera) {
+    public void renderInternal(HoloSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, boolean backFace, CameraRenderState camera) {
         poseStack.pushPose();
-        beforeRender(theSign, poseStack, camera, yRotation, xRotation);
+        beforeRender(theSign, poseStack, camera, backFace);
         int bgColor = getBackgroundColor(theSign);
         var dropShadow = theSign.dropShadow;
         var contents = theSign.contents;
@@ -125,18 +125,22 @@ public class HolographicSignBlockEntityRenderer implements BlockEntityRenderer<C
         poseStack.popPose();
     }
     
-    public static void beforeRender(HoloSignStateBase theSign, PoseStack transform, CameraRenderState camera, int yRotation, int xRotation) {
+    public static void beforeRender(HoloSignStateBase theSign, PoseStack transform, CameraRenderState camera, boolean backFace) {
         transform.translate(0.5, 0.5, 0.5);
         if (theSign.lock) {
-            transform.mulPose(Axis.YP.rotationDegrees(yRotation));
-            transform.mulPose(Axis.XP.rotationDegrees(xRotation));
+            transform.mulPose(Axis.YP.rotationDegrees(backFace ? (theSign.yRotate + 180) % 360 : theSign.yRotate));
+            transform.mulPose(Axis.XP.rotationDegrees(backFace ? (360 - theSign.xRotate) % 360 : theSign.xRotate));
         } else {
             transform.mulPose(camera.orientation);
             transform.mulPose(Axis.YP.rotationDegrees(180));
         }
-        transform.translate(theSign.xOffset, theSign.yOffset, 0.0);
+        transform.translate(
+            backFace ? -theSign.xOffset : theSign.xOffset,
+            theSign.yOffset,
+            0.0
+        );
         transform.scale(-0.025F * theSign.scale, -0.025F * theSign.scale, -0.25F);
-        transform.translate(0.0, 0.0, -theSign.zOffset * 4);
+        transform.translate(0.0, 0.0, (backFace ? theSign.zOffset : -theSign.zOffset) * 4);
     }
     
     public static int getBackgroundColor(HoloSignStateBase theSign) {

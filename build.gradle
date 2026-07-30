@@ -159,6 +159,11 @@ repositories {
     maven {
         url "https://maven.su5ed.dev/releases"
     }
+    maven {
+        // Placeholder API NeoForge
+        name = "OffsetMonkey538"
+        url = "https://maven.offsetmonkey538.top/releases"
+    }
 }
 
 dependencies {
@@ -169,6 +174,12 @@ dependencies {
 
     compileOnly("net.caffeinemc:sodium-neoforge-mod:0.8.12+mc26.1.2") // sodium mc26.1.2-0.8.12-neoforge
     compileOnly("maven.modrinth:YL57xq9U:YEGDGnJM") // iris 1.10.9+26.1-neoforge
+
+    jarJar(implementation "eu.pb4:placeholder-api-neoforge:3.0.0+26.1+neoforge") {
+        version {
+            prefer "3.0.0"
+        }
+    }
 
     jarJar(implementation "com.xkball:xklib-3d:$xklib_version") {
         version {

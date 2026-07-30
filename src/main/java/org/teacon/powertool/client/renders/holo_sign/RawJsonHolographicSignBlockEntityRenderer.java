@@ -50,9 +50,9 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
     @Override
     public void submit(RawJsonSignBEState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         var renderHoverText = Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().equals(state.blockPos);
-        renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, state.yRotate, state.xRotate, camera, renderHoverText);
+        renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, false, camera, renderHoverText);
         if (state.bidirectional) {
-            renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, (state.yRotate + 180) % 360, (360 - state.xRotate) % 360, camera, renderHoverText);
+            renderInternal(state, poseStack, submitNodeCollector, state.lightCoords, true, camera, renderHoverText);
         }
     }
     
@@ -95,9 +95,9 @@ public class RawJsonHolographicSignBlockEntityRenderer implements BlockEntityRen
         return y - yr;
     }
     
-    public void renderInternal(RawJsonSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, int yRotation, int xRotation, CameraRenderState camera, boolean renderHoverText) {
+    public void renderInternal(RawJsonSignBEState theSign, PoseStack poseStack, SubmitNodeCollector nodeCollector, int packedLight, boolean backFace, CameraRenderState camera, boolean renderHoverText) {
         poseStack.pushPose();
-        HolographicSignBlockEntityRenderer.beforeRender(theSign, poseStack, camera, yRotation, xRotation);
+        HolographicSignBlockEntityRenderer.beforeRender(theSign, poseStack, camera, backFace);
         int yOffset = (int) -(0.5 * this.font.lineHeight);
         renderComponentList(theSign.forRender, 0, yOffset, poseStack, nodeCollector, theSign.dropShadow, packedLight, theSign.colorInARGB, HolographicSignBlockEntityRenderer.getBackgroundColor(theSign), renderHoverText);
         poseStack.popPose();

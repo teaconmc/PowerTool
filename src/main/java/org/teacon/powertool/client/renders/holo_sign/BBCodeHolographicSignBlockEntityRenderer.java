@@ -2,6 +2,7 @@ package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import eu.pb4.placeholders.api.PlaceholderContext;
+import eu.pb4.placeholders.api.parsers.MarkdownLiteParserV1;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -168,7 +169,7 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         Boolean italic = segment.italic() != null ? segment.italic() : false;
 
         // Parse with TPAPI first
-        Component parsed = BBCodeHolographicSignBlockEntity.TPAPI_PARSER
+        Component parsed = MarkdownLiteParserV1.ALL
                 .parseComponent(segment.text(), PlaceholderContext.of(Minecraft.getInstance().player).asParserContext());
 
         // Create BBC style from segment properties
@@ -179,7 +180,7 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
                 .withItalic(italic);
 
         // Merge: BBC as base, TPAPI parsed style on top (overrides)
-        return parsed.copy().setStyle(bbcStyle.applyTo(parsed.getStyle()));
+        return parsed.copy().setStyle(parsed.getStyle().applyTo(bbcStyle));
     }
 
     @Override

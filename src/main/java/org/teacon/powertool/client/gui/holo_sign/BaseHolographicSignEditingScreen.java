@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.block.entity.BBCodeHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
@@ -63,6 +64,8 @@ public class BaseHolographicSignEditingScreen<T extends BaseHolographicSignBlock
                     sign instanceof LinkHolographicSignBlockEntity be ? new LinkHolographicSignEditingScreen(be) : null;
             case RAW_JSON ->
                     sign instanceof RawJsonHolographicSignBlockEntity be ? new RawJsonHolographicSignEditingScreen(be) : null;
+            case BBC ->
+                    sign instanceof BBCodeHolographicSignBlockEntity be ? new BBCodeHolographicSignEditingScreen(be) : null;
         };
     }
     

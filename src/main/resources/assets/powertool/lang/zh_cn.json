@@ -155,6 +155,7 @@
   "block.powertool.temple": "土地庙",
   "block.powertool.link_holographic_sign": "超链接全息告示牌",
   "block.powertool.raw_json_holographic_sign": "原始Json格式全息告示牌",
+  "block.powertool.bbc_holographic_sign": "BBC全息告示牌",
   "block.powertool.white_trash_can": "白色垃圾桶",
   "block.powertool.white_trash_can_cap": "白色垃圾桶盖子",
   "block.powertool.gray_trash_can": "灰色垃圾桶",
@@ -308,5 +309,7 @@
   "powertool.creative_block_break_undo.success": "已恢复位于 %s 的方块。",
   "powertool.creative_block_break_undo.failed": "无法恢复位于 %s 的方块，原位置不是空气。",
   "powertool.creative_block_break_undo.tp": "点击传送",
-  "powertool.creative_block_break_undo.empty": "没有可撤销的创造模式方块破坏记录。"
+  "powertool.creative_block_break_undo.empty": "没有可撤销的创造模式方块破坏记录。",
+
+  "sign.edit.bbc": "编辑 BBC 告示牌内容"
 }

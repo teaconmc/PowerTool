@@ -50,6 +50,7 @@ import org.teacon.powertool.block.cosmetical.CosmeticHorizontalDirectionalBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticSimpleBlock;
 import org.teacon.powertool.block.cosmetical.CosmeticTrapdoor;
 import org.teacon.powertool.block.cosmetical.CosmeticWaterloggedBlock;
+import org.teacon.powertool.block.entity.BBCodeHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.BezierCurveBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
@@ -143,6 +144,7 @@ public class PowerToolBlocks {
     public static DeferredHolder<Block, HolographicSignBlock> HOLOGRAPHIC_SIGN;
     public static DeferredHolder<Block, HolographicSignBlock> LINK_HOLOGRAPHIC_SIGN;
     public static DeferredHolder<Block, HolographicSignBlock> RAW_JSON_HOLOGRAPHIC_SIGN;
+    public static DeferredHolder<Block, HolographicSignBlock> BBC_HOLOGRAPHIC_SIGN;
     public static DeferredHolder<Block, TrashCanWithContainer> WHITE_TRASH_CAN;
     public static DeferredHolder<Block, TrapDoorBlock> WHITE_TRASH_CAN_CAP;
     public static DeferredHolder<Block, TrashCanWithContainer> GRAY_TRASH_CAN;
@@ -175,6 +177,7 @@ public class PowerToolBlocks {
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<CommonHolographicSignBlockEntity>> HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<LinkHolographicSignBlockEntity>> LINK_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<RawJsonHolographicSignBlockEntity>> RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
+    public static DeferredHolder<BlockEntityType<?>, BlockEntityType<BBCodeHolographicSignBlockEntity>> BBC_HOLOGRAPHIC_SIGN_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<TrashCanWithContainerBlockEntity>> TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<RegisterBlockEntity>> REGISTER_BLOCK_ENTITY;
     public static DeferredHolder<BlockEntityType<?>, BlockEntityType<SafeBlockEntity>> SAFE_BLOCK_ENTITY;
@@ -224,6 +227,7 @@ public class PowerToolBlocks {
         HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.COMMON));
         LINK_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("link_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.URL));
         RAW_JSON_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("raw_json_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.RAW_JSON));
+        BBC_HOLOGRAPHIC_SIGN = BLOCKS.registerBlock("bbc_holographic_sign", (p) -> new HolographicSignBlock(p.strength(1.0F).noCollision().noLootTable(), SignType.BBC));
         WHITE_TRASH_CAN = BLOCKS.registerBlock("white_trash_can", (p) -> new TrashCanWithContainer(p.strength(1.0F).noOcclusion()));
         WHITE_TRASH_CAN_CAP = BLOCKS.registerBlock("white_trash_can_cap", (p) -> new TrapDoorBlock(BlockSetType.COPPER, p.strength(1.0F).noOcclusion()));
         GRAY_TRASH_CAN = BLOCKS.registerBlock("gray_trash_can", (p) -> new TrashCanWithContainer(p.strength(1.0F).noOcclusion()));
@@ -276,6 +280,9 @@ public class PowerToolBlocks {
         ));
         RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("raw_json_holographic_sign", () -> new BlockEntityType<>(
                 RawJsonHolographicSignBlockEntity::new, RAW_JSON_HOLOGRAPHIC_SIGN.get()
+        ));
+        BBC_HOLOGRAPHIC_SIGN_BLOCK_ENTITY = BLOCK_ENTITIES.register("bbc_holographic_sign", () -> new BlockEntityType<>(
+                BBCodeHolographicSignBlockEntity::new, BBC_HOLOGRAPHIC_SIGN.get()
         ));
         TRASH_CAN_WITH_CONTAINER_BLOCK_ENTITY = BLOCK_ENTITIES.register("trash_can_with_container", () -> new BlockEntityType<>(
                 TrashCanWithContainerBlockEntity::new, TRASH_CAN.get(), WHITE_TRASH_CAN.get(), GRAY_TRASH_CAN.get(), GREEN_TRASH_CAN.get()
@@ -368,6 +375,7 @@ public class PowerToolBlocks {
         ITEMS.registerItem("holographic_sign", (p) -> new PowerToolBlockItem(HOLOGRAPHIC_SIGN.get(), p));
         ITEMS.registerItem("link_holographic_sign", (p) -> new PowerToolBlockItem(LINK_HOLOGRAPHIC_SIGN.get(), p));
         ITEMS.registerItem("raw_json_holographic_sign", (p) -> new PowerToolBlockItem(RAW_JSON_HOLOGRAPHIC_SIGN.get(), p));
+        ITEMS.registerItem("bbc_holographic_sign", (p) -> new PowerToolBlockItem(BBC_HOLOGRAPHIC_SIGN.get(), p));
         ITEMS.registerItem("trash_can", (p) -> new PowerToolBlockItem(TRASH_CAN.get(), p));
         ITEMS.registerItem("white_trash_can", (p) -> new PowerToolBlockItem(WHITE_TRASH_CAN.get(), p));
         ITEMS.registerItem("white_trash_can_cap", (p) -> new PowerToolBlockItem(WHITE_TRASH_CAN_CAP.get(), p));

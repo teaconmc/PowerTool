@@ -1,6 +1,7 @@
 package org.teacon.powertool.client.renders.holo_sign;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import eu.pb4.placeholders.api.PlaceholderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -10,12 +11,14 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.annotation.NonNullByDefault;
 import org.teacon.powertool.block.entity.BBCodeHolographicSignBlockEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NonNullByDefault
@@ -26,12 +29,65 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
     public BBCodeHolographicSignBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
 
+    /**
+     * Cached render data for a single text segment.
+     */
+    public static class CachedSegment {
+        public final Component component;
+        public final float scale;
+        public final int color;
+        public final int backgroundColor;
+        public final int width;
+
+        public CachedSegment(Component component, float scale, int color, int backgroundColor, int width) {
+            this.component = component;
+            this.scale = scale;
+            this.color = color;
+            this.backgroundColor = backgroundColor;
+            this.width = width;
+        }
+    }
+
+    /**
+     * Cached render data for a single line.
+     */
+    public static class CachedLine {
+        public final List<CachedSegment> segments;
+        public final BBCodeHolographicSignBlockEntity.TextAlign align;
+        public final int lineWidth;
+        public final float lineHeight;
+        public final float maxScale;
+
+        public CachedLine(List<CachedSegment> segments, BBCodeHolographicSignBlockEntity.TextAlign align, int lineWidth, float lineHeight, float maxScale) {
+            this.segments = segments;
+            this.align = align;
+            this.lineWidth = lineWidth;
+            this.lineHeight = lineHeight;
+            this.maxScale = maxScale;
+        }
+    }
+
+    /**
+     * All cached render data for the sign.
+     */
+    public static class CachedRenderData {
+        public final List<CachedLine> lines;
+        public final float totalHeight;
+
+        public CachedRenderData(List<CachedLine> lines, float totalHeight) {
+            this.lines = lines;
+            this.totalHeight = totalHeight;
+        }
+    }
+
     public static class BBCSignBEState extends HolographicSignBlockEntityRenderer.HoloSignStateBase {
         public List<BBCodeHolographicSignBlockEntity.ParsedLine> parsedLines;
         public float defaultScale;
         public int defaultColor;
         public float defaultLineHeight;
         public float minWidth;
+        public int globalBackgroundColor;
+        public CachedRenderData cachedData;
     }
 
     @Override
@@ -49,6 +105,81 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         state.defaultColor = be.defaultColor;
         state.defaultLineHeight = be.defaultLineHeight;
         state.minWidth = be.minWidth;
+        state.globalBackgroundColor = HolographicSignBlockEntityRenderer.getBackgroundColor(state);
+
+        // Check if we need to build cached data
+        if (be.clientCacheData instanceof CachedRenderData cached) {
+            state.cachedData = cached;
+        } else {
+            state.cachedData = buildCachedData(be, this.font, state.globalBackgroundColor);
+            be.clientCacheData = state.cachedData;
+        }
+    }
+
+    /**
+     * Build cached render data from parsed lines.
+     */
+    private CachedRenderData buildCachedData(BBCodeHolographicSignBlockEntity be, Font font, int globalBackgroundColor) {
+        List<CachedLine> lines = new ArrayList<>();
+        float totalHeight = 0;
+
+        for (var line : be.parsedLines) {
+            List<CachedSegment> segments = new ArrayList<>();
+            int maxWidth = 0;
+            float maxScale = be.defaultScale;
+            float lineHeightMult = line.lineLineHeight != null ? line.lineLineHeight : be.defaultLineHeight;
+
+            for (var segment : line.segments) {
+                // Build component with TPAPI_PARSER + BBC styles
+                Component styledComponent = buildSegmentComponent(segment, be, font);
+
+                float segmentScale = segment.size() != null ? segment.size() : be.defaultScale;
+                int segmentColor = segment.color() != null ? segment.color() : be.defaultColor;
+                int segmentBgColor = segment.backgroundColor() != null ? segment.backgroundColor() : globalBackgroundColor;
+
+                // Calculate width
+                int segmentWidth = (int) (font.width(styledComponent.getString()) * segmentScale);
+
+                segments.add(new CachedSegment(styledComponent, segmentScale, segmentColor, segmentBgColor, segmentWidth));
+
+                if (segmentWidth > maxWidth) maxWidth = segmentWidth;
+                if (segmentScale > maxScale) maxScale = segmentScale;
+            }
+
+            // Apply minimum width
+            float minPixelWidth = be.minWidth * 40.0F;
+            if (maxWidth < minPixelWidth) maxWidth = (int) minPixelWidth;
+
+            float lineHeight = (font.lineHeight + 2) * lineHeightMult * maxScale;
+            lines.add(new CachedLine(segments, line.lineAlign, maxWidth, lineHeight, maxScale));
+            totalHeight += lineHeight;
+        }
+
+        return new CachedRenderData(lines, totalHeight);
+    }
+
+    /**
+     * Build a styled component for a text segment.
+     */
+    private Component buildSegmentComponent(BBCodeHolographicSignBlockEntity.TextSegment segment, BBCodeHolographicSignBlockEntity be, Font font) {
+        int segmentColor = segment.color() != null ? segment.color() : be.defaultColor;
+        Boolean bold = segment.bold() != null ? segment.bold() : be.dropShadow;
+        Boolean underline = segment.underline() != null ? segment.underline() : false;
+        Boolean italic = segment.italic() != null ? segment.italic() : false;
+
+        // Parse with TPAPI first
+        Component parsed = BBCodeHolographicSignBlockEntity.TPAPI_PARSER
+                .parseComponent(segment.text(), PlaceholderContext.of(Minecraft.getInstance().player).asParserContext());
+
+        // Create BBC style from segment properties
+        Style bbcStyle = Style.EMPTY
+                .withColor(TextColor.fromRgb(segmentColor & 0xFFFFFF))
+                .withBold(bold)
+                .withUnderlined(underline)
+                .withItalic(italic);
+
+        // Merge: BBC as base, TPAPI parsed style on top (overrides)
+        return parsed.copy().setStyle(bbcStyle.applyTo(parsed.getStyle()));
     }
 
     @Override
@@ -63,61 +194,21 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         poseStack.pushPose();
         HolographicSignBlockEntityRenderer.beforeRender(theSign, poseStack, camera, backFace);
 
-        var parsedLines = theSign.parsedLines;
-        if (parsedLines.isEmpty()) {
+        var cachedData = theSign.cachedData;
+        if (cachedData == null || cachedData.lines.isEmpty()) {
             poseStack.popPose();
             return;
         }
 
-        int bgColor = HolographicSignBlockEntityRenderer.getBackgroundColor(theSign);
-
-        // Calculate total height and line information
-        float totalHeight = 0;
-        int[] lineWidths = new int[parsedLines.size()];
-        float[] lineHeightMultipliers = new float[parsedLines.size()];
-        float[] maxScalesPerLine = new float[parsedLines.size()];
-
-        for (int i = 0; i < parsedLines.size(); i++) {
-            var line = parsedLines.get(i);
-            int maxWidth = 0;
-            float maxScale = theSign.defaultScale;
-            float lineHeightMult = line.lineLineHeight != null ? line.lineLineHeight : theSign.defaultLineHeight;
-
-            for (var segment : line.segments) {
-                float segmentScale = segment.size() != null ? segment.size() : theSign.defaultScale;
-                int segmentWidth = (int) (this.font.width(segment.text()) * segmentScale);
-                if (segmentWidth > maxWidth) {
-                    maxWidth = segmentWidth;
-                }
-                if (segmentScale > maxScale) {
-                    maxScale = segmentScale;
-                }
-            }
-
-            // Apply minimum width (convert from blocks to pixels at scale 1.0)
-            // At scale 1.0, 1 block = 40 pixels (0.025 scale factor)
-            float minPixelWidth = theSign.minWidth * 40.0F;
-            if (maxWidth < minPixelWidth) {
-                maxWidth = (int) minPixelWidth;
-            }
-
-            lineWidths[i] = maxWidth;
-            lineHeightMultipliers[i] = lineHeightMult;
-            maxScalesPerLine[i] = maxScale;
-
-            // Calculate line height: (font height + 2) * lineHeightMultiplier * maxScaleInLine
-            float lineHeight = (this.font.lineHeight + 2) * lineHeightMult * maxScale;
-            totalHeight += lineHeight;
-        }
+        int bgColor = theSign.globalBackgroundColor;
 
         // Starting Y position (centered vertically)
-        float currentY = -totalHeight / 2.0F;
+        float currentY = -cachedData.totalHeight / 2.0F;
 
-        for (int i = 0; i < parsedLines.size(); i++) {
-            var line = parsedLines.get(i);
-            var lineAlign = line.lineAlign;
-            int lineWidth = lineWidths[i];
-            float lineHeight = (this.font.lineHeight + 2) * lineHeightMultipliers[i] * maxScalesPerLine[i];
+        for (var line : cachedData.lines) {
+            var lineAlign = line.align;
+            int lineWidth = line.lineWidth;
+            float lineHeight = line.lineHeight;
 
             // Calculate starting X based on alignment
             float segmentStartX = switch (lineAlign) {
@@ -129,55 +220,23 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
             float currentX = segmentStartX;
 
             for (var segment : line.segments) {
-                if (segment.text() != null && !segment.text().isEmpty()) {
-                    float segmentScale = segment.size() != null ? segment.size() : theSign.defaultScale;
-                    int segmentColor = segment.color() != null ? segment.color() : theSign.defaultColor;
-                    // Use segment background color if specified, otherwise use global background
-                    int segmentBgColor = segment.backgroundColor() != null ? segment.backgroundColor() : bgColor;
+                // Calculate X position for this segment based on line alignment
+                float x = getX(lineAlign, currentX);
 
-                    // Calculate segment width with scale
-                    int segmentWidth = (int) (this.font.width(segment.text()) * segmentScale);
+                // Render the segment with its specific scale and background color
+                boolean isCenterAlign = lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER;
+                renderSegmentWithScale(poseStack, nodeCollector, segment.component, theSign.dropShadow,
+                        segment.color, segment.backgroundColor, packedLight, x, currentY, segment.scale, segment.width, isCenterAlign);
 
-                    // Calculate X position for this segment based on line alignment
-                    // For continuous text segments, we need to handle alignment properly:
-                    // LEFT: segments start from segmentStartX and extend right
-                    // CENTER: segments are centered around their cumulative position
-                    // RIGHT: segments end at segmentStartX and extend left
-                    float x = getX(lineAlign, currentX);
-
-                    // For RIGHT align, currentX moves left (decreases) as we add segments
-                    // For LEFT and CENTER, currentX moves right (increases)
-
-                    // Create styled component for rendering
-                    Style style = Style.EMPTY
-                            .withColor(net.minecraft.network.chat.TextColor.fromRgb(segmentColor & 0xFFFFFF))
-                            .withBold(segment.bold() != null ? segment.bold() : theSign.dropShadow)
-                            .withUnderlined(segment.underline() != null ? segment.underline() : false)
-                            .withItalic(segment.italic() != null ? segment.italic() : false);
-
-                    Component styledComponent = Component.literal(segment.text()).setStyle(style);
-
-                    // Render the segment with its specific scale and background color
-                    // For CENTER align, x represents the center of the segment
-                    // For LEFT/RIGHT align, x represents the left edge
-                    boolean isCenterAlign = lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER;
-                    renderSegmentWithScale(poseStack, nodeCollector, styledComponent, theSign.dropShadow,
-                            segmentColor, segmentBgColor, packedLight, x, currentY, segmentScale, segmentWidth, isCenterAlign);
-
-                    // Update currentX for next segment
-                    if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.LEFT) {
-                        currentX += segmentWidth;
-                    } else if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER) {
-                        // Move center position by half of current segment + half of next segment's width
-                        // But since we don't know next segment's width yet, we move by full current width
-                        // The next segment's center will be at current position + currentWidth/2 + nextWidth/2
-                        // For simplicity: currentX tracks the right edge of current segment
-                        currentX += segmentWidth;
-                    } else { // RIGHT
-                        currentX -= segmentWidth;
-                    }
-                    segmentStartX = currentX;
+                // Update currentX for next segment
+                if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.LEFT) {
+                    currentX += segment.width;
+                } else if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER) {
+                    currentX += segment.width;
+                } else { // RIGHT
+                    currentX -= segment.width;
                 }
+                segmentStartX = currentX;
             }
 
             // Move to next line
@@ -188,31 +247,19 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
     }
 
     private static float getX(BBCodeHolographicSignBlockEntity.TextAlign lineAlign, float currentX) {
-        float x;
-        if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.LEFT) {
-            // Left align: x is the left edge of the segment
-            x = currentX;
-        } else if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER) {
-            // Center align: x is the center of the segment
-            // currentX is the center position where this segment should be placed
-            // But we want to render from the segment's perspective, so we need to offset
-            x = currentX;
-        } else { // RIGHT
-            // Right align: x is the right edge of the segment
-            x = currentX;
-        }
-        return x;
+        return switch (lineAlign) {
+            case LEFT -> currentX;
+            case CENTER -> currentX;
+            case RIGHT -> currentX;
+        };
     }
 
     /**
      * Render a text segment with a specific scale.
-     * We need to apply the scale transformation for each segment individually.
-     *
-     * @param isCenterAlign If true, x represents the center of the segment; otherwise x is the left edge
      */
     private void renderSegmentWithScale(PoseStack poseStack, SubmitNodeCollector nodeCollector,
-            Component textComponent, boolean dropShadow, int color, int backgroundColor, int packedLight,
-            float x, float y, float scale, int width, boolean isCenterAlign) {
+                                        Component textComponent, boolean dropShadow, int color, int backgroundColor, int packedLight,
+                                        float x, float y, float scale, int width, boolean isCenterAlign) {
 
         poseStack.pushPose();
 
@@ -224,18 +271,16 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         // Calculate render position based on alignment
         float renderX = x;
         if (isCenterAlign) {
-            // For center align, x is the center position, so we offset by half width
             renderX = x - (float) width / 2.0F / scale;
         }
 
         // Render background if enabled
         if (backgroundColor != 0 && backgroundColor != org.teacon.powertool.utils.VanillaUtils.TRANSPARENT) {
-            // Note: background is drawn at the scaled position
             HolographicSignBlockEntityRenderer.renderBackground(poseStack, nodeCollector, backgroundColor, packedLight,
                     renderX - 1.0F / scale, y - 1.0F / scale, (int) ((float) width / scale));
         }
 
-        // Render text with styling (bold, underline, italic handled by the component's style)
+        // Render text with styling
         nodeCollector.submitText(poseStack, renderX, y, textComponent.getVisualOrderText(),
                 dropShadow, Font.DisplayMode.POLYGON_OFFSET, packedLight, color, 0, 0);
 

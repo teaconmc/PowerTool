@@ -1,5 +1,7 @@
 package org.teacon.powertool.block.entity;
 
+import eu.pb4.placeholders.api.parsers.NodeParser;
+import eu.pb4.placeholders.api.parsers.TagParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +19,8 @@ import java.util.concurrent.CompletableFuture;
 
 
 public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEntity {
+
+    public static final NodeParser TPAPI_PARSER = TagParser.DEFAULT;
 
     /**
      * Represents text alignment for BBCodes and global default.
@@ -134,8 +138,7 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
                 currentLine.addSegment(new TextSegment(
                         currentText.toString(),
                         currentColor, currentBackgroundColor, currentSize, currentAlign,
-                        currentLineHeight, currentBold, currentUnderline, currentItalic
-                ));
+                        currentLineHeight, currentBold, currentUnderline, currentItalic));
                 currentText = new StringBuilder();
             }
         }
@@ -159,7 +162,7 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
          * 应用一个打开标签，更新当前样式状态
          * 将当前状态压入栈中，以便后续关闭标签时恢复
          */
-        void applyOpenTag(String tagName, String tagParam) {
+        boolean applyOpenTag(String tagName, String tagParam) {
             flushText(); // 先处理之前的文本
 
             // 保存当前状态到栈（在修改之前）
@@ -167,11 +170,18 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
                     currentLineHeight, currentBold, currentUnderline, currentItalic));
 
             switch (tagName.toLowerCase()) {
-                case "color", "c" -> currentColor = parseColor(tagParam);
-                case "bg", "background" -> currentBackgroundColor = parseColor(tagParam);
+                case "color", "c" -> {
+                    currentColor = parseColor(tagParam);
+                    return true;
+                }
+                case "bg", "background" -> {
+                    currentBackgroundColor = parseColor(tagParam);
+                    return true;
+                }
                 case "size" -> {
                     try {
                         currentSize = Float.parseFloat(tagParam);
+                        return true;
                     } catch (NumberFormatException e) {
                         currentSize = null;
                     }
@@ -179,6 +189,7 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
                 case "align", "a" -> {
                     try {
                         currentAlign = TextAlign.valueOf(tagParam.toUpperCase());
+                        return true;
                     } catch (IllegalArgumentException e) {
                         currentAlign = null;
                     }
@@ -186,14 +197,25 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
                 case "lineheight", "lh" -> {
                     try {
                         currentLineHeight = Float.parseFloat(tagParam);
+                        return true;
                     } catch (NumberFormatException e) {
                         currentLineHeight = null;
                     }
                 }
-                case "bold", "b" -> currentBold = true;
-                case "underline", "u" -> currentUnderline = true;
-                case "italic", "i" -> currentItalic = true;
+                case "bold", "b" -> {
+                    currentBold = true;
+                    return true;
+                }
+                case "underline", "u" -> {
+                    currentUnderline = true;
+                    return true;
+                }
+                case "italic", "i" -> {
+                    currentItalic = true;
+                    return true;
+                }
             }
+            return false;
         }
 
         /**
@@ -236,19 +258,42 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
      * Represents a styled text segment with all formatting properties.
      * Characters with the same style should be merged into one segment.
      *
-     * @param color           null means use default
-     * @param backgroundColor null means use default (transparent)
-     * @param size            null means use default
-     * @param align           null means use default (affects entire line)
-     * @param lineHeight      null means use default
-     * @param bold            null means use default
-     * @param underline       null means use default
-     * @param italic          null means use default
      */
-    public record TextSegment(String text, @Nullable Integer color, @Nullable Integer backgroundColor,
-                              @Nullable Float size, @Nullable TextAlign align,
-                              @Nullable Float lineHeight, @Nullable Boolean bold, @Nullable Boolean underline,
-                              @Nullable Boolean italic) {
+    public static final class TextSegment {
+        private final String text;
+        private final @Nullable Integer color;
+        private final @Nullable Integer backgroundColor;
+        private final @Nullable Float size;
+        private final @Nullable TextAlign align;
+        private final @Nullable Float lineHeight;
+        private final @Nullable Boolean bold;
+        private final @Nullable Boolean underline;
+        private final @Nullable Boolean italic;
+
+        /**
+         * @param color           null means use default
+         * @param backgroundColor null means use default (transparent)
+         * @param size            null means use default
+         * @param align           null means use default (affects entire line)
+         * @param lineHeight      null means use default
+         * @param bold            null means use default
+         * @param underline       null means use default
+         * @param italic          null means use default
+         */
+        public TextSegment(String text, @Nullable Integer color, @Nullable Integer backgroundColor,
+                           @Nullable Float size, @Nullable TextAlign align,
+                           @Nullable Float lineHeight, @Nullable Boolean bold, @Nullable Boolean underline,
+                           @Nullable Boolean italic) {
+            this.text = text;
+            this.color = color;
+            this.backgroundColor = backgroundColor;
+            this.size = size;
+            this.align = align;
+            this.lineHeight = lineHeight;
+            this.bold = bold;
+            this.underline = underline;
+            this.italic = italic;
+        }
 
         /**
          * Check if this segment has the same style as another (ignoring text content).
@@ -273,6 +318,78 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
             return new TextSegment(this.text + other.text, color, backgroundColor, size, align,
                     lineHeight, bold, underline, italic);
         }
+
+        public String text() {
+            return text;
+        }
+
+        public @Nullable Integer color() {
+            return color;
+        }
+
+        public @Nullable Integer backgroundColor() {
+            return backgroundColor;
+        }
+
+        public @Nullable Float size() {
+            return size;
+        }
+
+        public @Nullable TextAlign align() {
+            return align;
+        }
+
+        public @Nullable Float lineHeight() {
+            return lineHeight;
+        }
+
+        public @Nullable Boolean bold() {
+            return bold;
+        }
+
+        public @Nullable Boolean underline() {
+            return underline;
+        }
+
+        public @Nullable Boolean italic() {
+            return italic;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (TextSegment) obj;
+            return Objects.equals(this.text, that.text) &&
+                    Objects.equals(this.color, that.color) &&
+                    Objects.equals(this.backgroundColor, that.backgroundColor) &&
+                    Objects.equals(this.size, that.size) &&
+                    Objects.equals(this.align, that.align) &&
+                    Objects.equals(this.lineHeight, that.lineHeight) &&
+                    Objects.equals(this.bold, that.bold) &&
+                    Objects.equals(this.underline, that.underline) &&
+                    Objects.equals(this.italic, that.italic);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(text, color, backgroundColor, size, align, lineHeight, bold, underline, italic);
+        }
+
+        @Override
+        public String toString() {
+            return "TextSegment[" +
+                    "text=" + text + ", " +
+                    "color=" + color + ", " +
+                    "backgroundColor=" + backgroundColor + ", " +
+                    "size=" + size + ", " +
+                    "align=" + align + ", " +
+                    "lineHeight=" + lineHeight + ", " +
+                    "bold=" + bold + ", " +
+                    "underline=" + underline + ", " +
+                    "italic=" + italic + ']';
+        }
+
     }
 
     /**
@@ -319,6 +436,9 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
 
     // Raw BBCodes content (one entry per line for editing)
     public List<String> rawContent = new ArrayList<>();
+
+    // Client-side render cache (built by renderer)
+    public Object clientCacheData = null;
 
     // Parsed for rendering (lines separated by \n in the original text)
     public List<ParsedLine> parsedLines = new ArrayList<>();
@@ -449,6 +569,9 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
         ParseContext ctx = new ParseContext(defaultAlign, defaultLineHeight);
         parseWithStateMachine(fullText.toString(), ctx);
         parsedLines = ctx.parsedLines;
+
+        // Clear client cache so renderer will rebuild it
+        clientCacheData = null;
     }
 
     /**
@@ -533,12 +656,21 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
                     } else if (c == ']') {
                         // 无参数标签完成
                         ctx.pendingTagName = ctx.tagBuffer.toString();
-                        ctx.applyOpenTag(ctx.pendingTagName, null);
+                        boolean result = ctx.applyOpenTag(ctx.pendingTagName, null);
+                        if (!result) {
+                            ctx.currentText.append('[');
+                            ctx.currentText.append(ctx.pendingTagName);
+                            ctx.currentText.append(']');
+                        }
                         ctx.state = ParserState.TEXT;
                     } else if (Character.isLetterOrDigit(c)) {
                         ctx.tagBuffer.append(c);
                     } else {
                         // 无效标签，丢弃
+                        ctx.currentText.append('[');
+                        ctx.currentText.append(ctx.tagBuffer);
+                        ctx.currentText.append(c);
+                        ctx.tagBuffer.setLength(0);
                         ctx.state = ParserState.TEXT;
                     }
                 }
@@ -547,7 +679,12 @@ public class BBCodeHolographicSignBlockEntity extends BaseHolographicSignBlockEn
                     if (c == ']') {
                         // 有参数标签完成
                         ctx.pendingTagParam = ctx.tagBuffer.toString();
-                        ctx.applyOpenTag(ctx.pendingTagName, ctx.pendingTagParam);
+                        boolean result = ctx.applyOpenTag(ctx.pendingTagName, ctx.pendingTagParam);
+                        if (!result) {
+                            ctx.currentText.append('[');
+                            ctx.currentText.append(ctx.pendingTagName);
+                            ctx.currentText.append(']');
+                        }
                         ctx.state = ParserState.TEXT;
                     } else {
                         ctx.tagBuffer.append(c);

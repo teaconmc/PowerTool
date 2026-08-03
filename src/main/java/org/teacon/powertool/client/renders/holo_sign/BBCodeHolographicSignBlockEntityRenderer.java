@@ -25,70 +25,36 @@ import java.util.List;
 @NonNullByDefault
 public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRenderer<BBCodeHolographicSignBlockEntity, BBCodeHolographicSignBlockEntityRenderer.BBCSignBEState> {
 
-    private Font font;
-
     public BBCodeHolographicSignBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     /**
      * Cached render data for a single text segment.
      */
-    public static class CachedSegment {
-        public final Component component;
-        public final float scale;
-        public final int color;
-        public final int backgroundColor;
-        public final int width;
-
-        public CachedSegment(Component component, float scale, int color, int backgroundColor, int width) {
-            this.component = component;
-            this.scale = scale;
-            this.color = color;
-            this.backgroundColor = backgroundColor;
-            this.width = width;
-        }
+    public record CachedSegment(Component component, float scale, int color, int backgroundColor, float width) {
     }
 
     /**
      * Cached render data for a single line.
      */
-    public static class CachedLine {
-        public final List<CachedSegment> segments;
-        public final BBCodeHolographicSignBlockEntity.TextAlign align;
-        public final int lineWidth;
-        public final float lineHeight;
-        public final float maxScale;
-
-        public CachedLine(List<CachedSegment> segments, BBCodeHolographicSignBlockEntity.TextAlign align, int lineWidth, float lineHeight, float maxScale) {
-            this.segments = segments;
-            this.align = align;
-            this.lineWidth = lineWidth;
-            this.lineHeight = lineHeight;
-            this.maxScale = maxScale;
-        }
+    public record CachedLine(List<CachedSegment> segments, BBCodeHolographicSignBlockEntity.TextAlign align,
+                             float lineWidth, float lineHeight, float maxScale) {
     }
 
     /**
      * All cached render data for the sign.
      */
-    public static class CachedRenderData {
-        public final List<CachedLine> lines;
-        public final float totalHeight;
-
-        public CachedRenderData(List<CachedLine> lines, float totalHeight) {
-            this.lines = lines;
-            this.totalHeight = totalHeight;
-        }
+    public record CachedRenderData(List<CachedLine> lines, float totalMaxWidth, float totalHeight) {
     }
 
     public static class BBCSignBEState extends HolographicSignBlockEntityRenderer.HoloSignStateBase {
-        public List<BBCodeHolographicSignBlockEntity.ParsedLine> parsedLines;
+        public @Nullable List<BBCodeHolographicSignBlockEntity.ParsedLine> parsedLines;
         public float defaultScale;
         public int defaultColor;
         public float defaultLineHeight;
         public float minWidth;
         public int globalBackgroundColor;
-        public CachedRenderData cachedData;
+        public @Nullable CachedRenderData cachedData;
     }
 
     @Override
@@ -99,7 +65,7 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
     @Override
     public void extractRenderState(BBCodeHolographicSignBlockEntity be, BBCSignBEState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(be, state, partialTicks, cameraPosition, breakProgress);
-        this.font = Minecraft.getInstance().font;
+        Font font = Minecraft.getInstance().font;
         state.extractState(be);
         state.parsedLines = be.parsedLines;
         state.defaultScale = be.defaultScale;
@@ -112,7 +78,7 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         if (be.clientCacheData instanceof CachedRenderData cached) {
             state.cachedData = cached;
         } else {
-            state.cachedData = buildCachedData(be, this.font, state.globalBackgroundColor);
+            state.cachedData = buildCachedData(be, font, state.globalBackgroundColor);
             be.clientCacheData = state.cachedData;
         }
     }
@@ -123,46 +89,45 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
     private CachedRenderData buildCachedData(BBCodeHolographicSignBlockEntity be, Font font, int globalBackgroundColor) {
         List<CachedLine> lines = new ArrayList<>();
         float totalHeight = 0;
+        float totalMaxWidth = be.minWidth * 40.0F;
 
         for (var line : be.parsedLines) {
             List<CachedSegment> segments = new ArrayList<>();
-            int maxWidth = 0;
+            float lineWidth = 0.0f;
             float maxScale = be.defaultScale;
             float lineHeightMult = line.lineLineHeight != null ? line.lineLineHeight : be.defaultLineHeight;
 
             for (var segment : line.segments) {
                 // Build component with TPAPI_PARSER + BBC styles
-                Component styledComponent = buildSegmentComponent(segment, be, font);
+                Component styledComponent = buildSegmentComponent(segment, be);
 
                 float segmentScale = segment.size() != null ? segment.size() : be.defaultScale;
                 int segmentColor = segment.color() != null ? segment.color() : be.defaultColor;
                 int segmentBgColor = segment.backgroundColor() != null ? segment.backgroundColor() : globalBackgroundColor;
 
                 // Calculate width
-                int segmentWidth = (int) (font.width(styledComponent.getString()) * segmentScale);
+                float segmentWidth = (font.width(styledComponent.getString()) * segmentScale);
 
                 segments.add(new CachedSegment(styledComponent, segmentScale, segmentColor, segmentBgColor, segmentWidth));
 
-                if (segmentWidth > maxWidth) maxWidth = segmentWidth;
+                lineWidth += segmentWidth;
                 if (segmentScale > maxScale) maxScale = segmentScale;
             }
 
-            // Apply minimum width
-            float minPixelWidth = be.minWidth * 40.0F;
-            if (maxWidth < minPixelWidth) maxWidth = (int) minPixelWidth;
 
             float lineHeight = (font.lineHeight + 2) * lineHeightMult * maxScale;
-            lines.add(new CachedLine(segments, line.lineAlign, maxWidth, lineHeight, maxScale));
+            lines.add(new CachedLine(segments, line.lineAlign, lineWidth, lineHeight, maxScale));
             totalHeight += lineHeight;
+            totalMaxWidth = Math.max(lineWidth, totalMaxWidth);
         }
 
-        return new CachedRenderData(lines, totalHeight);
+        return new CachedRenderData(lines, totalMaxWidth, totalHeight);
     }
 
     /**
      * Build a styled component for a text segment.
      */
-    private Component buildSegmentComponent(BBCodeHolographicSignBlockEntity.TextSegment segment, BBCodeHolographicSignBlockEntity be, Font font) {
+    private Component buildSegmentComponent(BBCodeHolographicSignBlockEntity.TextSegment segment, BBCodeHolographicSignBlockEntity be) {
         int segmentColor = segment.color() != null ? segment.color() : be.defaultColor;
         Boolean bold = segment.bold() != null ? segment.bold() : be.dropShadow;
         Boolean underline = segment.underline() != null ? segment.underline() : false;
@@ -201,43 +166,30 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
             return;
         }
 
-        int bgColor = theSign.globalBackgroundColor;
-
         // Starting Y position (centered vertically)
         float currentY = -cachedData.totalHeight / 2.0F;
 
         for (var line : cachedData.lines) {
             var lineAlign = line.align;
-            int lineWidth = line.lineWidth;
+            float lineWidth = line.lineWidth;
             float lineHeight = line.lineHeight;
 
             // Calculate starting X based on alignment
-            float segmentStartX = switch (lineAlign) {
-                case LEFT -> -lineWidth / 2.0F;
-                case CENTER -> 0;
-                case RIGHT -> lineWidth / 2.0F;
+
+            float currentX = switch (lineAlign) {
+                case LEFT -> -cachedData.totalMaxWidth / 2.0F;
+                case CENTER -> -lineWidth / 2.0F;
+                case RIGHT -> cachedData.totalMaxWidth / 2.0F - lineWidth;
             };
 
-            float currentX = segmentStartX;
-
             for (var segment : line.segments) {
-                // Calculate X position for this segment based on line alignment
-                float x = getX(lineAlign, currentX);
+                float x = currentX;
 
-                // Render the segment with its specific scale and background color
-                boolean isCenterAlign = lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER;
                 renderSegmentWithScale(poseStack, nodeCollector, segment.component, theSign.dropShadow,
-                        segment.color, segment.backgroundColor, packedLight, x, currentY, segment.scale, segment.width, isCenterAlign);
+                        segment.color, segment.backgroundColor, packedLight, x, currentY, segment.scale, segment.width);
 
                 // Update currentX for next segment
-                if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.LEFT) {
-                    currentX += segment.width;
-                } else if (lineAlign == BBCodeHolographicSignBlockEntity.TextAlign.CENTER) {
-                    currentX += segment.width;
-                } else { // RIGHT
-                    currentX -= segment.width;
-                }
-                segmentStartX = currentX;
+                currentX += segment.width;
             }
 
             // Move to next line
@@ -247,20 +199,12 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         poseStack.popPose();
     }
 
-    private static float getX(BBCodeHolographicSignBlockEntity.TextAlign lineAlign, float currentX) {
-        return switch (lineAlign) {
-            case LEFT -> currentX;
-            case CENTER -> currentX;
-            case RIGHT -> currentX;
-        };
-    }
-
     /**
      * Render a text segment with a specific scale.
      */
     private void renderSegmentWithScale(PoseStack poseStack, SubmitNodeCollector nodeCollector,
                                         Component textComponent, boolean dropShadow, int color, int backgroundColor, int packedLight,
-                                        float x, float y, float scale, int width, boolean isCenterAlign) {
+                                        float x, float y, float scale, float width) {
 
         poseStack.pushPose();
 
@@ -270,19 +214,15 @@ public class BBCodeHolographicSignBlockEntityRenderer implements BlockEntityRend
         poseStack.translate(-x, -y, 0);
 
         // Calculate render position based on alignment
-        float renderX = x;
-        if (isCenterAlign) {
-            renderX = x - (float) width / 2.0F / scale;
-        }
 
         // Render background if enabled
         if (backgroundColor != 0 && backgroundColor != org.teacon.powertool.utils.VanillaUtils.TRANSPARENT) {
             HolographicSignBlockEntityRenderer.renderBackground(poseStack, nodeCollector, backgroundColor, packedLight,
-                    renderX - 1.0F / scale, y - 1.0F / scale, (int) ((float) width / scale));
+                    x - 1.0F / scale, y - 1.0F / scale, (int) (width / scale));
         }
 
         // Render text with styling
-        nodeCollector.submitText(poseStack, renderX, y, textComponent.getVisualOrderText(),
+        nodeCollector.submitText(poseStack, x, y, textComponent.getVisualOrderText(),
                 dropShadow, Font.DisplayMode.POLYGON_OFFSET, packedLight, color, 0, 0);
 
         poseStack.popPose();

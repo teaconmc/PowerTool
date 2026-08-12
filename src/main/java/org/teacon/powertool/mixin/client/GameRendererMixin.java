@@ -29,6 +29,7 @@ public class GameRendererMixin {
     private void beforeRender(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
         var cache = JEIRecipeDisplayBlockEntityRenderer.recipeLayoutCache;
         if (cache != null) {
+            int count = 0;
             for(var v : cache.getMap().values()){
                 if(v.layout() == null || v.textureTarget() == null || !v.renderState().dirty) continue;
                 if(v.textureTarget().width != v.renderState().sizeX || v.textureTarget().height != v.renderState().sizeY){
@@ -46,6 +47,8 @@ public class GameRendererMixin {
                     guiGraphicsExtractor.pose().popMatrix();
                 } );
                 v.renderState().dirty = false;
+                count += 1;
+                if(count > 4) break;
             }
             cache.tick();
         }

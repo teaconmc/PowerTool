@@ -151,7 +151,7 @@ public class JEIRecipeDisplayBlockEntityRenderer implements BlockEntityRenderer<
             var mouseY = mouse == null ? 0 : (int) (mouse.y * entry.getHeight() + entry.getHeight() / 4f);
             entry.renderState.mouseX = mouseX;
             entry.renderState.mouseY = mouseY;
-            entry.renderState.dirty = mouseX != 0 || mouseY != 0 || mouseXOld != mouseX || mouseYOld != mouseY;
+            entry.renderState.dirty = entry.renderState.dirty || mouseX != 0 || mouseY != 0 || mouseXOld != mouseX || mouseYOld != mouseY;
             entry.updateTextureSize(mouseX != 0 || mouseY != 0);
             entry.renderState.revDir = pair != null && pair.getSecond();
         } else {

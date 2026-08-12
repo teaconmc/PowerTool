@@ -105,7 +105,7 @@ neoForge {
 
         // applies to all the run configs above
         configureEach {
-            logLevel = org.slf4j.event.Level.INFO
+            logLevel = org.slf4j.event.Level.DEBUG
         }
     }
 

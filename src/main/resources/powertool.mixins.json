@@ -8,6 +8,7 @@
     "CommandBlockMixin",
     "CommandsMixin",
     "CommandSourceStackMixin",
+    "ConnectionMixin",
     "DedicatedServerPropertiesMixin",
     "MixinArmorStand",
     "MixinEntity",
@@ -27,8 +28,8 @@
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",
     "client.SectionRenderDispatcherMixin",
-    "client.debug.MixinGlProgram",
-    "client.compat.SodiumWorldRenderMixin"
+    "client.compat.SodiumWorldRenderMixin",
+    "client.debug.MixinGlProgram"
   ],
   "injectors": {
     "defaultRequire": 1

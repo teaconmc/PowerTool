@@ -14,6 +14,7 @@
     "MixinEntity",
     "MixinItemFrame",
     "MixinThrownEgg",
+    "PersistentEntitySectionManagerMixin",
     "PlayerCreativeNoClipMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin",

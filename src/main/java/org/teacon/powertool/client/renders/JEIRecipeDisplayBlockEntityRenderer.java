@@ -1,12 +1,10 @@
 package org.teacon.powertool.client.renders;
 
-import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import com.xkball.xklibmc.api.client.b3d.SamplerCacheCache;
-import com.xkball.xklibmc.client.b3d.pipeline.ExtendedRenderPipeline;
 import mezz.jei.api.gui.IRecipeLayoutDrawable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -19,7 +17,6 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,7 +35,6 @@ import org.teacon.powertool.client.b3d.DynamicRenderSetup;
 import org.teacon.powertool.client.gui.JEIRecipeDisplayScreen;
 import org.teacon.powertool.compat.jei.PowerToolJEIPlugin;
 import org.teacon.powertool.utils.SizedCache;
-import org.teacon.powertool.utils.VanillaUtils;
 
 import java.util.Map;
 import java.util.Objects;

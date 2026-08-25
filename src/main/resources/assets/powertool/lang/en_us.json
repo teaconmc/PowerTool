@@ -5,6 +5,7 @@
   "block.powertool.item_display": "Item Display",
   "block.powertool.glow_item_display": "Glow Item Display",
   "block.powertool.item_display.tooltip": "Block version of vanilla Item Frame. A bit tough to break.",
+  "tooltip.powertool.vanilla_item_frame": "Try PowerTool's block-based item display instead.",
   "block.powertool.item_supplier": "Item Supplier",
   "block.powertool.item_supplier.tooltip": "In creative mode, right-click to permanently put held items in. After that, left-click or right-click to get unlimited items out.",
   "block.powertool.slim_item_supplier": "Item Supplier",

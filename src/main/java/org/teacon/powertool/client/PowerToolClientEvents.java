@@ -18,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -41,6 +42,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.fluid.FluidTintSources;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
@@ -85,6 +87,15 @@ public class PowerToolClientEvents {
     private static final GizmoStyle STATIC_MODE_GIZMO_STYLE = new GizmoStyle(0xffefe73e, 4, 0);
 
     public static int tickCount = 0;
+
+    @SubscribeEvent
+    public static void onItemTooltip(ItemTooltipEvent event) {
+        if (event.getItemStack().is(Items.ITEM_FRAME) || event.getItemStack().is(Items.GLOW_ITEM_FRAME)) {
+            event.getToolTip().add(
+                Component.translatable("tooltip.powertool.vanilla_item_frame").withStyle(ChatFormatting.GRAY)
+            );
+        }
+    }
 
     @SubscribeEvent
     public static void onScreenOpen(ScreenEvent.Opening event) {

@@ -9,6 +9,9 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -18,6 +21,7 @@ import org.teacon.powertool.utils.VanillaUtils;
 import java.util.HashSet;
 import java.util.Set;
 
+@EventBusSubscriber
 public class PowerToolEntities {
     
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, PowerTool.MODID);
@@ -61,5 +65,10 @@ public class PowerToolEntities {
     public static void register(IEventBus bus) {
         ENTITIES.register(bus);
         ENTITY_DATA_SERIALIZER.register(bus);
+    }
+    
+    @SubscribeEvent
+    public static void onRegAttributeMap(EntityAttributeCreationEvent event) {
+        event.put(PowerToolEntities.MARTING.get(), MartingCarEntity.createMartingCarAttributes());
     }
 }

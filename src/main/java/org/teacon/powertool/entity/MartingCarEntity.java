@@ -32,7 +32,10 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import org.jspecify.annotations.Nullable;
 import org.teacon.powertool.PowerTool;
 import org.teacon.powertool.annotation.NonNullByDefault;
@@ -337,16 +340,7 @@ public class MartingCarEntity extends LivingEntity {
         entityData.set(DATA_ID_DAMAGE, value);
     }
     
-    
-    @Override
-    public AttributeMap getAttributes() {
-        if (attributeMap == null) {
-            attributeMap = new AttributeMap(createAttributes());
-        }
-        return attributeMap;
-    }
-    
-    public static AttributeSupplier createAttributes() {
+    public static AttributeSupplier createMartingCarAttributes() {
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 1)
                 .add(Attributes.STEP_HEIGHT, 1.5)

@@ -28,6 +28,7 @@
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",
+    "client.ContainerMenuAccessControlMixin",
     "client.SectionRenderDispatcherMixin",
     "client.compat.SodiumWorldRenderMixin",
     "client.debug.MixinGlProgram"

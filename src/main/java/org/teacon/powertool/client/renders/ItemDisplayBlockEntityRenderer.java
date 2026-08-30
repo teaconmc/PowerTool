@@ -12,10 +12,12 @@ import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
+import org.teacon.powertool.block.PowerToolBlocks;
 import org.teacon.powertool.block.entity.ItemDisplayBlockEntity;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -41,6 +43,7 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
         this.itemModelResolver.updateForTopItem(state.itemState, blockEntity.itemToDisplay, ItemDisplayContext.FIXED, blockEntity.getLevel(), null, (int) (blockEntity.getBlockPos().asLong()));
         state.direction = blockEntity.getBlockState().getValue(BlockStateProperties.FACING);
         state.rotation = blockEntity.rotation;
+        state.fullBright = blockEntity.getBlockState().is(PowerToolBlocks.GLOW_ITEM_DISPLAY.get());
     }
     
     @Override
@@ -58,7 +61,7 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
             case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90));
         }
         poseStack.mulPose(Axis.ZP.rotationDegrees(state.rotation));
-        state.itemState.submit(poseStack,submitNodeCollector,state.lightCoords, OverlayTexture.NO_OVERLAY,0);
+        state.itemState.submit(poseStack, submitNodeCollector, state.fullBright ? LightCoordsUtil.FULL_BRIGHT : state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         poseStack.popPose();
     }
     
@@ -66,5 +69,6 @@ public class ItemDisplayBlockEntityRenderer implements BlockEntityRenderer<ItemD
         public ItemStackRenderState itemState;
         public Direction direction;
         public int rotation;
+        public boolean fullBright;
     }
 }

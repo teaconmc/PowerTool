@@ -9,8 +9,7 @@
       },
       "neoforge_data": {
         "color": "FFFFFFFF",
-        "block_light": 5,
-        "sky_light": 15
+        "light_emission": 15
       }
     },
     {
@@ -26,8 +25,7 @@
       },
       "neoforge_data": {
         "color": "FFFFFFFF",
-        "block_light": 5,
-        "sky_light": 15
+        "light_emission": 15
       }
     },
     {
@@ -43,8 +41,7 @@
       },
       "neoforge_data": {
         "color": "FFFFFFFF",
-        "block_light": 5,
-        "sky_light": 15
+        "light_emission": 15
       }
     },
     {
@@ -58,8 +55,7 @@
       },
       "neoforge_data": {
         "color": "FFFFFFFF",
-        "block_light": 5,
-        "sky_light": 15
+        "light_emission": 15
       }
     },
     {
@@ -73,8 +69,7 @@
       },
       "neoforge_data": {
         "color": "FFFFFFFF",
-        "block_light": 5,
-        "sky_light": 15
+        "light_emission": 15
       }
     }
   ],

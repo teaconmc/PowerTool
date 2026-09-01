@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.ChunkPos;
+import org.teacon.powertool.api.IScreenAccessControlData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,25 +18,33 @@ public class AccessControlClient {
     private final Map<ChunkPos, List<BlockPos>> displayModeData = new HashMap<>();
     private final Map<ChunkPos, List<BlockPos>> staticModeData = new HashMap<>();
     private BlockPos interactionSourcePos = null;
-    
-    public boolean isDisplayModeEnabledOn(Screen screen) {
+
+    public void setAndConsumeInteractionSourcePos(Screen screen) {
         Player player = Minecraft.getInstance().player;
         if (player == null || interactionSourcePos == null || player.getAbilities().instabuild) {
-            return false;
+            interactionSourcePos = null;
+            return;
         }
-        if (screen instanceof AbstractContainerScreen<? extends AbstractContainerMenu> abstractContainerScreen) {
+        if (screen instanceof AbstractContainerScreen<? extends AbstractContainerMenu> containerScreen && containerScreen.getMenu() instanceof IScreenAccessControlData isacd) {
             ChunkPos pos = ChunkPos.containing(interactionSourcePos);
             if (displayModeData.containsKey(pos)) {
-                return displayModeData.get(pos).contains(interactionSourcePos);
+                isacd.powerTool$setDisplayMode(displayModeData.get(pos).contains(interactionSourcePos));
             }
+        }
+        interactionSourcePos = null;
+    }
+
+    public boolean isDisplayModeEnabledOn(Screen screen) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null || player.getAbilities().instabuild) {
+            return false;
+        }
+        if (screen instanceof AbstractContainerScreen<? extends AbstractContainerMenu> containerScreen && containerScreen.getMenu() instanceof IScreenAccessControlData isacd) {
+            return isacd.powerTool$getDisplayMode();
         }
         return false;
     }
-    
-    public void screenClosed() {
-        interactionSourcePos = null;
-    }
-    
+
     public void clear() {
         displayModeData.clear();
         staticModeData.clear();

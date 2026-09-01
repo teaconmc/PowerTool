@@ -247,8 +247,8 @@ public class PowerToolClientEvents {
     }
 
     @SubscribeEvent
-    static void onScreenClosing(ScreenEvent.Closing event) {
-        AccessControlClient.INSTANCE.screenClosed();
+    static void onScreenOpening(ScreenEvent.Opening event) {
+        AccessControlClient.INSTANCE.setAndConsumeInteractionSourcePos(event.getScreen());
     }
 
     @SubscribeEvent

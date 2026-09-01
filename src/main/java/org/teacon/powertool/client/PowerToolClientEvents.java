@@ -16,6 +16,7 @@ import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -43,6 +44,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.client.fluid.FluidTintSources;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.teacon.powertool.PowerTool;
@@ -75,9 +77,13 @@ import org.teacon.powertool.entity.PowerToolEntities;
 import org.teacon.powertool.item.PowerToolItems;
 import org.teacon.powertool.menu.PowerToolMenus;
 import org.teacon.powertool.network.server.UndoCreativeBlockBreakPacket;
+import org.teacon.powertool.utils.DelayServerExecutor;
 import org.teacon.powertool.utils.VanillaUtils;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @NonNullByDefault
 @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)
@@ -85,7 +91,7 @@ public class PowerToolClientEvents {
     
     private static final GizmoStyle DISPLAY_MODE_GIZMO_STYLE = new GizmoStyle(0xff4b1cfc, 4, 0);
     private static final GizmoStyle STATIC_MODE_GIZMO_STYLE = new GizmoStyle(0xffefe73e, 4, 0);
-
+    private static List<Task> tasks = new ArrayList<>();
     public static int tickCount = 0;
 
     @SubscribeEvent
@@ -330,6 +336,23 @@ public class PowerToolClientEvents {
                 true
             );
         }
+    }
+    
+    public static void addTask(int tickDelay, Runnable task) {
+        tasks.add(new Task(tickDelay, task));
+    }
+    
+    @SubscribeEvent
+    public static void afterServerTick(ClientTickEvent.Post event) {
+        var tasksNew = new ArrayList<Task>();
+        for (var task : tasks) {
+            if (task.tickDelay <= 0) task.task.run();
+            else tasksNew.add(new Task(task.tickDelay - 1, task.task));
+        }
+        tasks = tasksNew;
+    }
+    
+    private record Task(int tickDelay, Runnable task) {
     }
 
     @EventBusSubscriber(value = Dist.CLIENT, modid = PowerTool.MODID)

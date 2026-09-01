@@ -14,6 +14,10 @@ public class PowerToolClientCommands {
         event.getDispatcher().register(
                 Commands.literal("powertool")
                         .redirect(event.getDispatcher().register(Commands.literal("pt")
+                                        .executes((c) -> {
+                                            System.out.println(111);
+                                            return 0;
+                                        })
                                 
                                 )
                         ));

@@ -12,8 +12,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.client.ClientCommandHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.teacon.powertool.annotation.NonNullByDefault;
+import org.teacon.powertool.client.PowerToolClientEvents;
 import org.teacon.powertool.network.client.OpenItemScreen;
 import org.teacon.powertool.utils.DelayServerExecutor;
 import org.teacon.powertool.utils.VanillaUtils;
@@ -74,6 +76,21 @@ public class CommandRune extends Item implements IScreenProviderItem {
                 }
             }
             
+        }
+        else {
+            String command = stack.get(PowerToolDataComponents.COMMAND);
+            if (command != null) {
+                ClientCommandHandler.runCommand(command);
+            }
+            var delayCommands = stack.get(PowerToolDataComponents.DELAYED_COMMANDS);
+            if (delayCommands != null && livingEntity instanceof Player player) {
+                var i = 0;
+                for (var pair : delayCommands) {
+                    i += pair.delay;
+                    if (!pair.command.isEmpty())
+                        PowerToolClientEvents.addTask(i, () -> ClientCommandHandler.runCommand(pair.command));
+                }
+            }
         }
         return stack;
     }

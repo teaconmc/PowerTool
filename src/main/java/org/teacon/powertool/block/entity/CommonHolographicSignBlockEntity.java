@@ -2,6 +2,7 @@ package org.teacon.powertool.block.entity;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import eu.pb4.placeholders.api.ParserContext;
+import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.parsers.NodeParser;
 import eu.pb4.placeholders.api.parsers.TagParser;
 import net.minecraft.core.BlockPos;
@@ -22,16 +23,16 @@ import java.util.List;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEntity {
-    
+
     public List<? extends Component> contents = Collections.emptyList();
     public List<? extends Component> renderedContents = Collections.emptyList();
 
     public static final NodeParser TPAPI_PARSER = TagParser.DEFAULT;
-    
+
     public CommonHolographicSignBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(PowerToolBlocks.HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
-    
+
     @Override
     public void readFrom(ValueInput input) {
         super.readFrom(input);
@@ -39,7 +40,7 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
         if (getLevel() != null && getLevel().isClientSide()) {
             renderedContents = contents.stream().map(storedComponent -> {
                 String storedComponentFormatless = storedComponent.getString();
-                Component parsed = TPAPI_PARSER.parseComponent(storedComponentFormatless, ParserContext.of());
+                Component parsed = TPAPI_PARSER.parseComponent(storedComponentFormatless, PlaceholderContext.of(getLevel()).asParserContext());
                 if (parsed.getString().equals(storedComponentFormatless)) {
                     return Component.literal(storedComponentFormatless);
                 } else {
@@ -48,7 +49,7 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
             }).toList();
         }
     }
-    
+
     @Override
     public void writeTo(ValueOutput output) {
         super.writeTo(output);
@@ -57,7 +58,7 @@ public class CommonHolographicSignBlockEntity extends BaseHolographicSignBlockEn
             list.add(c);
         }
     }
-    
+
     @Override
     public void filterMessage(ServerPlayer player) {
         var task = player.getTextFilter()

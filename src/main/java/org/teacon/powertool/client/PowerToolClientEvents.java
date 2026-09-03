@@ -68,6 +68,7 @@ import org.teacon.powertool.client.renders.entity.AutoVanishBoatRenderer;
 import org.teacon.powertool.client.renders.entity.FenceKnotRenderer;
 import org.teacon.powertool.client.renders.entity.MartingCarEntityRenderer;
 import org.teacon.powertool.client.renders.entity.model.MartingCarEntityModel;
+import org.teacon.powertool.client.renders.holo_sign.BBCodeHolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.HolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.LinkHolographicSignBlockEntityRenderer;
 import org.teacon.powertool.client.renders.holo_sign.RawJsonHolographicSignBlockEntityRenderer;
@@ -392,6 +393,10 @@ public class PowerToolClientEvents {
             event.registerBlockEntityRenderer(
                 PowerToolBlocks.RAW_JSON_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(),
                 RawJsonHolographicSignBlockEntityRenderer::new
+            );
+            event.registerBlockEntityRenderer(
+                PowerToolBlocks.BBC_HOLOGRAPHIC_SIGN_BLOCK_ENTITY.get(),
+                BBCodeHolographicSignBlockEntityRenderer::new
             );
             event.registerBlockEntityRenderer(PowerToolBlocks.TEMPLE_BLOCK_ENTITY.get(), TempleRenderer::new);
             event.registerBlockEntityRenderer(

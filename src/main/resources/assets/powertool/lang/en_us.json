@@ -102,6 +102,7 @@
   "block.powertool.temple": "Keeper's shrine",
   "block.powertool.link_holographic_sign": "Hyperlink Holographic Sign",
   "block.powertool.raw_json_holographic_sign": "Raw Json Holographic Sign",
+  "block.powertool.bbc_holographic_sign": "BBC Holographic Sign",
   "block.powertool.white_trash_can": "White Trash Can",
   "block.powertool.white_trash_can_cap": "White Trash Can Cap",
   "block.powertool.gray_trash_can": "Gray Trash Can",
@@ -305,5 +306,7 @@
   "powertool.creative_block_break_undo.success": "Restored the block at %s.",
   "powertool.creative_block_break_undo.failed": "Could not restore the block at %s because the position is not empty.",
   "powertool.creative_block_break_undo.tp": "click to teleport",
-  "powertool.creative_block_break_undo.empty": "There are no creative block breaks to undo."
+  "powertool.creative_block_break_undo.empty": "There are no creative block breaks to undo.",
+
+  "sign.edit.bbc": "Edit BBC Sign Content"
 }

@@ -1,7 +1,9 @@
 package org.teacon.powertool.entity;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -28,6 +30,11 @@ public class AutoVanishMinecart extends Minecart {
         var result = new AutoVanishMinecart(minecart.level(), minecart.xo, minecart.yo, minecart.zo);
         result.setYRot(minecart.getYRot());
         return result;
+    }
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return passenger instanceof Player && super.canAddPassenger(passenger);
     }
     
     @Override

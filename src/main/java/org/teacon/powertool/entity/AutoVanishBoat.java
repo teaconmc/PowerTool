@@ -1,12 +1,13 @@
 package org.teacon.powertool.entity;
 
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -16,10 +17,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.teacon.powertool.item.PowerToolItems;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -71,6 +70,11 @@ public class AutoVanishBoat extends AbstractBoat {
     @Override
     protected double rideHeight(EntityDimensions dimensions) {
         return this.rideHeightFunc.apply(dimensions);
+    }
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return passenger instanceof Player && super.canAddPassenger(passenger);
     }
     
     @Override

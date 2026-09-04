@@ -56,6 +56,15 @@ public class CommandRune extends Item implements IScreenProviderItem {
             String command = stack.get(PowerToolDataComponents.COMMAND); // get(Supplier<DataComponentType<T>>) is from NeoForge
             if (command != null) {
                 VanillaUtils.runCommand(command, livingEntity);
+                var delayCommands = stack.get(PowerToolDataComponents.DELAYED_COMMANDS);
+                if (delayCommands != null && livingEntity instanceof Player player) {
+                    var i = 0;
+                    for (var pair : delayCommands) {
+                        i += pair.delay;
+                        if (!pair.command.isEmpty())
+                            DelayServerExecutor.addTask(i, (server) -> VanillaUtils.runCommand(pair.command, server, player.getUUID()));
+                    }
+                }
                 if (Boolean.TRUE.equals(stack.get(PowerToolDataComponents.CONSUME)) && (!(livingEntity instanceof Player player) || !player.getAbilities().instabuild)) {
                     stack.shrink(1);
                 }
@@ -66,16 +75,6 @@ public class CommandRune extends Item implements IScreenProviderItem {
 //                        ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
 //                stack.hurtAndBreak(1, livingEntity, slot);
             }
-            var delayCommands = stack.get(PowerToolDataComponents.DELAYED_COMMANDS);
-            if (delayCommands != null && livingEntity instanceof Player player) {
-                var i = 0;
-                for (var pair : delayCommands) {
-                    i += pair.delay;
-                    if (!pair.command.isEmpty())
-                        DelayServerExecutor.addTask(i, (server) -> VanillaUtils.runCommand(pair.command, server, player.getUUID()));
-                }
-            }
-            
         }
         else {
             String command = stack.get(PowerToolDataComponents.COMMAND);

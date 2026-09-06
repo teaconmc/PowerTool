@@ -31,8 +31,8 @@ public class PowerToolCommands {
                                     }
                                     return 1;
                                 }));
-        event.getDispatcher().register(Commands.literal("powertool").requires(Commands.hasPermission(Commands.LEVEL_OWNERS)).then(setGameTimeCommand));
-        event.getDispatcher().register(Commands.literal("pt").requires(Commands.hasPermission(Commands.LEVEL_OWNERS)).then(setGameTimeCommand));
+//        event.getDispatcher().register(Commands.literal("powertool").requires(Commands.hasPermission(Commands.LEVEL_OWNERS)).then(setGameTimeCommand));
+//        event.getDispatcher().register(Commands.literal("pt").requires(Commands.hasPermission(Commands.LEVEL_OWNERS)).then(setGameTimeCommand));
     }
     
 }

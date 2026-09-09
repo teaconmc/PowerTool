@@ -24,11 +24,12 @@
   "client": [
     "client.BeaconRendererMixin",
     "client.ClientRecipeBookMixin",
+    "client.ContainerMenuAccessControlMixin",
     "client.GameRendererMixin",
     "client.LevelRendererMixin",
     "client.MinecraftMixin",
     "client.MixinObjectInputWidget",
-    "client.ContainerMenuAccessControlMixin",
+    "client.MixinTextInputManager",
     "client.SectionRenderDispatcherMixin",
     "client.compat.SodiumWorldRenderMixin",
     "client.debug.MixinGlProgram"

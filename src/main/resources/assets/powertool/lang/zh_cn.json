@@ -240,7 +240,7 @@
   "item.powertool.marting_car_green": "马丁车（绿色）",
   "item.powertool.marting_car_blue": "马丁车（蓝色）",
   "tooltip.powertool.marting": "马雷让写的卡丁车，简称马丁车",
-  "tooltip.powertool.marting2": "按下空格加速",
+  "tooltip.powertool.marting2": "按下空格加速, 长时间不用自动消失",
   "powertool.gui.register.rev": "需求物品:",
   "powertool.gui.register.sup": "提供物品(可选):",
   "powertool.gui.register.display_supply": "在HUD显示提供的物品",

@@ -250,7 +250,7 @@
   "item.powertool.marting_car_green": "Marting Car (Green)",
   "item.powertool.marting_car_blue": "Marting Car (Blue)",
   "tooltip.powertool.marting": "MalayP asked me to write a karting car",
-  "tooltip.powertool.marting2": "Press space to speed up.",
+  "tooltip.powertool.marting2": "Press space to speed up. Will auto disappear if not used for a long time.",
   "powertool.gui.register.rev": "Require Item:",
   "powertool.gui.register.sup": "Supply Item (Optional):",
   "powertool.gui.register.display_supply": "Display Supply Item On HUD",

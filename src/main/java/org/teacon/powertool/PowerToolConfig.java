@@ -27,6 +27,8 @@ public class PowerToolConfig {
     public static ModConfigSpec.ConfigValue<Boolean> vehicleAutoVanish;
     
     public static ModConfigSpec.ConfigValue<Boolean> noLittleChicken;
+
+    public static ModConfigSpec.ConfigValue<Boolean> fixSpawnHeight;
     
     public static ModConfigSpec.ConfigValue<List<? extends String>> recipeBookWhiteListConfig;
     
@@ -39,6 +41,7 @@ public class PowerToolConfig {
         disableBeaconRender = builder.comment("Disable beacon beam rendering.").define("disableBeaconRender", true);
         vehicleAutoVanish = builder.comment("Replace boat and minecart as auto banish version when placing.(Not include chest boat.)").define("vehicleAutoVanish", true);
         noLittleChicken = builder.comment("Disable thrown egg create little chickens.").define("noLittleChicken", true);
+        fixSpawnHeight = builder.comment("Should Minecraft attempt to fix the spawn point height heuristically?").define("fixSpawnHeight", false);
         recipeBookWhiteListConfig = builder.comment("A list of namespace that allows build recipe book.").defineListAllowEmpty("recipeBookWhiteList", List.of("anomaly_delight"), null, (obj) -> true);
         container.registerConfig(ModConfig.Type.SERVER, builder.build());
     }

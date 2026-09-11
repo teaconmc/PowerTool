@@ -16,6 +16,7 @@
     "MixinThrownEgg",
     "PersistentEntitySectionManagerMixin",
     "PlayerCreativeNoClipMixin",
+    "PlayerSpawnFinderMixin",
     "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin",
     "ServerPlayerMixin",

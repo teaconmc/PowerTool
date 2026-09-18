@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.NonNull;
 import org.teacon.powertool.block.entity.BaseHolographicSignBlockEntity;
+import org.teacon.powertool.block.entity.BBCodeHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.CommonHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.LinkHolographicSignBlockEntity;
 import org.teacon.powertool.block.entity.RawJsonHolographicSignBlockEntity;
@@ -20,6 +21,7 @@ public enum SignType implements StringRepresentable {
     COMMON(CommonHolographicSignBlockEntity::new),
     URL(LinkHolographicSignBlockEntity::new),
     RAW_JSON(RawJsonHolographicSignBlockEntity::new),
+    BBC(BBCodeHolographicSignBlockEntity::new),
     ;
     
     private final BiFunction<BlockPos, BlockState, ? extends BaseHolographicSignBlockEntity> blockEntitySupplier;

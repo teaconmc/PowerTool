@@ -1,4 +1,5 @@
-// 26.1.2	2026-07-15T21:53:24.6999995	Model Definitions - powertool
+// 26.1.2	2026-08-03T14:45:54.5401026	Model Definitions - powertool
+a3b63de8a87442d752fca4d7e0b19538467a2e42 assets/powertool/items/adjustable_spyglass.json
 8ea8f7958a6d3eb49c2e3750c50b8c4cf1b2ea78 assets/powertool/items/auto_vanish_acacia_boat.json
 05e9e4bd8b74fd0ae65ff5047d1bf36a36e5d5b3 assets/powertool/items/auto_vanish_bamboo_raft.json
 49f5b6218b25736e0ea25adbe2ca71534b347c25 assets/powertool/items/auto_vanish_birch_boat.json
@@ -9,6 +10,7 @@ b4d893ae13496f3bbfe1bb789fe124485eef95df assets/powertool/items/auto_vanish_mang
 8acb3dcb82337a67704631a307531f93037d7b5d assets/powertool/items/auto_vanish_minecart.json
 9472ac537b3f38519b308e5fc7b521a586920d6a assets/powertool/items/auto_vanish_oak_boat.json
 4bdbc7743d9e08df96f3114f80e3dfc5807415d6 assets/powertool/items/auto_vanish_spruce_boat.json
+93f05d0d848ec7d7731686386c15823adcec6a3b assets/powertool/items/bbc_holographic_sign.json
 f373c5954ab4a9d638ad70c37dbb4ff545eda294 assets/powertool/items/bezier_curve_block.json
 a0ece115128e69014712a99caba3e7782fa9c0da assets/powertool/items/black_distant_horizon_cheating_block.json
 4963a077391c03d50b6497d5db92a3e08858ef85 assets/powertool/items/blue_distant_horizon_cheating_block.json
